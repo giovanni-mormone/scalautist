@@ -1,0 +1,13 @@
+language: scala
+
+jdk: openjdk8
+
+scala:
+  - 2.13.1
+  - 2.13.2
+os:
+  - linux
+  - osx
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION test
