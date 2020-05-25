@@ -1,0 +1,5 @@
+package receiver
+
+trait Receiver {
+
+}

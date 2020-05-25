@@ -17,7 +17,7 @@ lazy val client = project.settings(
   scalacOptions ++= compilerOptions,
   assemblySettings
 
-).dependsOn(utils,server)
+).dependsOn(utils,event)
 lazy val server = project.settings(
 
   dockerBaseImage       := "openjdk:jre",
@@ -38,6 +38,19 @@ lazy val server = project.settings(
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
+).dependsOn(utils,event)
+
+lazy val event = project.settings(
+  name := "scalautist-event-scala",
+  libraryDependencies ++= Seq(
+    libraries.rabbit,
+    libraries.akkaActor,
+    libraries.akkaStream,
+    libraries.sprayJson
+  ),
+  scalacOptions ++= compilerOptions,
+  assemblySettings
+
 ).dependsOn(utils)
 lazy val utils = project.settings(
   name := "scalautist-util-scala",
@@ -67,6 +80,7 @@ lazy val libraries = new {
   val mssqlVersion    = "8.2.2.jre8"
   val jwtVersion      = "4.2.0"
   val scalaReflectVersion = "2.13.2"
+  val rabbitVersion = "5.9.0"
   val akkaHttp       = "com.typesafe.akka"        %% "akka-http"                % akkaHttpVersion
   val akkaActor      ="com.typesafe.akka"         %% "akka-actor-typed"         % akkaVersion
   val akkaStream     = "com.typesafe.akka"        %% "akka-stream"              % akkaVersion
@@ -77,6 +91,7 @@ lazy val libraries = new {
   val mssql          = "com.microsoft.sqlserver"   % "mssql-jdbc"               % mssqlVersion
   val scalaReflect   = "org.scala-lang"            % "scala-reflect"            % scalaReflectVersion
   val jwt            = "com.pauldijou"            %% "jwt-spray-json"           % jwtVersion
+  val rabbit         = "com.rabbitmq"              % "amqp-client"              % rabbitVersion
 }
 
 lazy val librariesTest = new {
