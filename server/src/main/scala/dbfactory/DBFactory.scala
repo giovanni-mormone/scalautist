@@ -1,5 +1,0 @@
-package dbfactory
-
-trait DBFactory {
-
-}
