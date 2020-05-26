@@ -22,7 +22,7 @@ trait Controller[A<:BaseView] {
  *           The type of view class that i control. Should be subtype of
  *           [[view.BaseView]]
  */
-abstract class AbstractController[A] extends Controller[A]{
+abstract class AbstractController[A<:BaseView] extends Controller[A]{
   /**
    * The view that i control.
    */
