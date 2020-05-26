@@ -1,3 +1,3 @@
-object MainClient {
+object MainClient extends App{
 
 }
