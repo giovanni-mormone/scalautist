@@ -1,0 +1,9 @@
+#loginbox{
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+#error{
+    -fx-text-fill: #ff3936;
+}

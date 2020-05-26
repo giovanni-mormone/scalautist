@@ -7,7 +7,7 @@ import javafx.fxml.{FXML, Initializable}
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import view.BaseView
-import view.fxview.loaders.FXLoader
+import view.fxview.loader.FXLoader
 
 /**
  * Template class of type [[view.BaseView]] with basic funtionality to show
