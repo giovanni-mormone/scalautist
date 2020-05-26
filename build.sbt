@@ -19,7 +19,6 @@ lazy val client = project.settings(
 
 ).dependsOn(utils,event)
 lazy val server = project.settings(
-
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
   mainClass  := Some("main.MainServer"),
@@ -70,6 +69,7 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
+  "-language:postfixOps"
 )
 
 lazy val libraries = new {
