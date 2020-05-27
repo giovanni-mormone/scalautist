@@ -4,10 +4,10 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label, TextField}
+import javafx.scene.control.{Button, Label, PasswordField, TextField}
 import javafx.scene.input.KeyCode
 import view.fxview.component.{AbstractComponent, Component}
-import view.fxview.mainview.{LoginParent, LoginView}
+import view.fxview.mainview.LoginParent
 
 /**
  * Component for the LoginBox contained in a [[view.fxview.mainview.LoginParent]]
@@ -30,17 +30,14 @@ object LoginBox{
     @FXML
     var usernameField: TextField = _
     @FXML
-    var passwordField: TextField = _
+    var passwordField: PasswordField = _
     @FXML
     var loginButton: Button = _
     @FXML
     var error: Label = _
 
-    /**
-     * Shows a message error on the view. If alredy showed does nothing.
-     */
     override def showErrorMessage(): Unit =
-      error.setVisible(true)
+      error setVisible true
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       usernameField.setPromptText(resources.getString("user"))

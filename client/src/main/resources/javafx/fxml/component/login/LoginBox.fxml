@@ -7,7 +7,7 @@
 <VBox fx:id="loginbox" stylesheets="@../../../css/component/login/LoginBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <TextField fx:id="usernameField" />
-        <TextField fx:id="passwordField" />
+        <PasswordField fx:id="passwordField" />
         <Label fx:id="error"/>
         <Button fx:id="loginButton" mnemonicParsing="false" />
     </children>

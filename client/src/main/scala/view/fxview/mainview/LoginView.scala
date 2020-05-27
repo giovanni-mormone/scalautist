@@ -18,12 +18,20 @@ trait LoginView extends BaseView{
    * Method that shows a message of error in case of a bad login(e.g. wrong username or password)
    */
   def badLogin():Unit
+  def firstUserAccess(userID:Int): Unit
 }
 
 /**
  * A LoginParent is the container of a [[view.fxview.component.Login.LoginBox]] [[view.fxview.component.Component]]
  */
 trait LoginParent{
+  /**
+   * Method called to submit user credentials. It should be called by a [[view.fxview.component.Login.LoginBox]]
+   * @param username
+   *                 The username of the user.
+   * @param password
+   *                 The password of the user.
+   */
   def login(username: String, password: String): Unit
 }
 
@@ -36,14 +44,9 @@ object LoginView{
     private var myController:LoginController = _
     private var loginBox:LoginBox = _
 
-    override def show(): Unit =
-      myStage show
-
-    override def hide(): Unit =
-      myStage hide
-
     override def close(): Unit =
       myStage close
+
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
@@ -59,6 +62,9 @@ object LoginView{
 
     override def badLogin(): Unit =
       loginBox.showErrorMessage()
+
+    override def firstUserAccess(userID: Int): Unit =
+      ChangePasswordView(myStage,Some(myStage.getScene),userID)
   }
 
   def apply(stage:Stage):LoginView = new LoginViewFX(stage)
