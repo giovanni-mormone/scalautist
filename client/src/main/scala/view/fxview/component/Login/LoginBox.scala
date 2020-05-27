@@ -17,6 +17,11 @@ trait LoginBox extends Component[LoginParent]{
    * Shows a message error on the view. If alredy showed does nothing.
    */
   def showErrorMessage():Unit
+
+  /**
+   * Resets the message error, if showed, and cleans the password field.
+   */
+  def resetViewFields():Unit
 }
 
 /**
@@ -46,12 +51,18 @@ object LoginBox{
       error.setText(resources.getString("error-message"))
 
       error.setVisible(false)
-      loginButton.setOnAction(_ => this.loginSent)
-      loginButton.setOnKeyReleased(ev => if (ev.getCode eq (KeyCode.ENTER)) loginSent)
+      loginButton.setOnAction(_ => this.loginSent())
     }
 
-    private def loginSent() :Unit = {
+    private def loginSent(): Unit =
       parent.login(usernameField.getText, passwordField.getText)
+
+    /**
+     * Resets the message error, if showed, and to clean the password field.
+     */
+    override def resetViewFields(): Unit = {
+      error setVisible false
+      passwordField setText ""
     }
   }
 }

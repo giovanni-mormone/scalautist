@@ -1,7 +1,7 @@
 package view
 
 /**
- * Basic definition of view functionalities
+ * Basic definition of view functionalities.
  */
 trait BaseView {
 

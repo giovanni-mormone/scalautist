@@ -4,9 +4,10 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import controller.LoginController
-import javafx.stage.Stage
+import javafx.scene.control.Alert
+import javafx.stage.{Modality, Stage}
 import view.BaseView
-import view.fxview.AbstractFXView
+import view.fxview.{AbstractFXView, FXModalFactory}
 import view.fxview.component.Login.LoginBox
 
 /**
@@ -43,6 +44,7 @@ object LoginView{
   private class LoginViewFX(stage:Stage) extends AbstractFXView(stage) with LoginView with LoginParent {
     private var myController:LoginController = _
     private var loginBox:LoginBox = _
+    private var firstLogin:String = _
 
     override def close(): Unit =
       myStage close
@@ -50,6 +52,7 @@ object LoginView{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
+      firstLogin = resources.getString("first-login")
       myController = LoginController()
       loginBox = LoginBox()
       myController.setView(this)
@@ -63,8 +66,11 @@ object LoginView{
     override def badLogin(): Unit =
       loginBox.showErrorMessage()
 
-    override def firstUserAccess(userID: Int): Unit =
+    override def firstUserAccess(userID: Int): Unit = {
+      FXModalFactory(new Stage(), myStage, firstLogin).show()
+      loginBox.resetViewFields()
       ChangePasswordView(myStage,Some(myStage.getScene),userID)
+    }
   }
 
   def apply(stage:Stage):LoginView = new LoginViewFX(stage)
