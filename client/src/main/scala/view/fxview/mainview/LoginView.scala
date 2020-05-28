@@ -67,7 +67,7 @@ object LoginView{
       loginBox.showErrorMessage()
 
     override def firstUserAccess(userID: Int): Unit = {
-      FXModalFactory(new Stage(), myStage, firstLogin).show()
+      FXModalFactory(myStage, firstLogin).show()
       loginBox.resetViewFields()
       ChangePasswordView(myStage,Some(myStage.getScene),userID)
     }

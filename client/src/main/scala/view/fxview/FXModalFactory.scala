@@ -14,14 +14,15 @@ import view.fxview.loader.FXLoader
  */
 object FXModalFactory {
 
-  def apply(myStage:Stage, parent:Stage, message:String): BaseView = new FXModal(myStage,parent,message)
+  def apply(parent:Stage, message:String): BaseView = new FXModal(parent,message)
 
-  private class FXModal(myStage:Stage, parent:Stage, message:String) extends Initializable with BaseView{
+  private class FXModal(parent:Stage, message:String) extends Initializable with BaseView{
 
     @FXML
     var messageLabel: Label = _
     @FXML
     var confirmationButton:Button = _
+    private val myStage = new Stage()
 
     FXLoader.loadScene(myStage,this,"ModalBase")
 
