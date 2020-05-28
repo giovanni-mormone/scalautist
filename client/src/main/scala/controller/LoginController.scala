@@ -1,6 +1,8 @@
 package controller
 
+import caseclass.CaseClassDB.Persona
 import model.entity.PersonaModel
+import passwordutilities.PasswordHelper
 import view.fxview.mainview.LoginView
 
 import scala.util.{Failure, Success}
@@ -32,18 +34,22 @@ object LoginController {
   private class LoginControllerImpl extends LoginController{
 
     override def login(username: String, password: String): Unit = (username,password) match{
-      case (s1,s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin
-      case _ => {
+      case (s1,s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin()
+      case _ =>
         myModel.login(username,password).onComplete{
-          case Success(t) => t match {
-            case Some(user) =>
-              Utils.username = user.userName
-              Utils.userId = user.matricola.head
-            case None => myView.badLogin
-          }
+          case Success(t) => checkLoginResult(t)
           case Failure(exception) => println(exception)
         }
-      }
+    }
+
+    private val checkLoginResult:Option[Persona] => Unit = {
+      case Some(user) if user.isNew => myView.firstUserAccess()
+      case Some(user) if user.ruolo == 1 => println("ADMIN")//admin
+      case Some(user) if user.ruolo == 2 => println("RISORSE UMANE")//risorse umane
+      case Some(user) if user.ruolo == 3 => println("CONDUCENTE")//conducente
+      case _ =>
+        myView.firstUserAccess()
+        //myView.badLogin
     }
   }
 }

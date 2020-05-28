@@ -1,6 +1,10 @@
 package controller
 
+import model.entity.PersonaModel
+import passwordutilities.PasswordHelper
 import view.fxview.mainview.ChangePasswordView
+
+import scala.util.Success
 
 /**
  * A change password controller for a view of type [[view.fxview.mainview.ChangePasswordView]]
@@ -24,12 +28,17 @@ trait ChangePasswordController extends AbstractController[ChangePasswordView]{
  */
 object ChangePasswordController{
   private val instance = new ChangePasswordControllerImpl
+  private val myModel = PersonaModel()
 
   def apply(): ChangePasswordController = instance
 
   private class ChangePasswordControllerImpl extends ChangePasswordController{
     override def changePassword(oldPassword: String, newPassword: String): Unit = newPassword match{
-      case x if x.length > 8 => {println("OK!", x); myView.back}
+      case x if PasswordHelper.passwordRegex().matches(x) =>
+        myModel.changePassword(Utils.username,oldPassword,newPassword).onComplete{
+          case Success(_) => myView.okChange()
+          case _ => myView.errorChange()
+        }
       case _ => println("ERROR")
     }
   }

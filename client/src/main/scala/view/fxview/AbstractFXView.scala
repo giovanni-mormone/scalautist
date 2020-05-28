@@ -26,7 +26,7 @@ abstract class AbstractFXView(val myStage:Stage) extends Initializable with Base
   /**
    * Stage of this view.
    */
-  FXLoader.loadScene(myStage,this,"StackBase")
+  FXLoader.loadScene(myStage,this,"Base")
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
     myStage.setTitle(resources.getString("nome"))

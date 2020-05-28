@@ -74,16 +74,23 @@ object LoginView{
 
     override def badLogin(): Unit = {
       Platform.runLater(()=>{
-        loginBox.enable()
-        pane.getChildren.remove(FXHelperFactory.loadingBox)
+        stopLoading()
         loginBox.showErrorMessage()
       })
     }
 
     override def firstUserAccess(): Unit = {
-      FXHelperFactory.modalWithMessage(myStage, firstLoginMessage).show()
-      loginBox.resetViewFields()
-      ChangePasswordView(myStage,Some(myStage.getScene))
+      Platform.runLater(() => {
+        FXHelperFactory.modalWithMessage(myStage, firstLoginMessage).show()
+        stopLoading()
+        loginBox.resetViewFields()
+        ChangePasswordView(myStage,Some(myStage.getScene))
+      })
+    }
+
+    private def stopLoading():Unit = {
+      loginBox.enable()
+      pane.getChildren.remove(FXHelperFactory.loadingBox)
     }
   }
 

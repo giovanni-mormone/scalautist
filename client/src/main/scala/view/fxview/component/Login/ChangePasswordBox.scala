@@ -54,6 +54,7 @@ object ChangePasswordBox{
       passError setVisible false
       changePasswordButton setDisable true
 
+      oldPasswordField.textProperty().addListener((_,_,_)=> checkPassword(passwordField.getText))
       passwordField.textProperty().addListener((_,_,newV)=> checkPassword(newV))
       confirmPasswordField.textProperty().addListener((_,_,newV)=>  checkConfirmPassword(newV,passwordField.getText))
 
@@ -70,7 +71,7 @@ object ChangePasswordBox{
     }
 
     private def checkConfirmPassword(confirmText:String,passText: String): Unit = confirmText match{
-      case `passText` if regex.matches(passText) =>
+      case `passText` if regex.matches(passText) && oldPasswordField.getText.length > 0 =>
         confirmError setVisible false
         disableButton(false)
       case _ =>
@@ -80,6 +81,5 @@ object ChangePasswordBox{
 
     private def disableButton(usable: Boolean): Unit =
       changePasswordButton setDisable usable
-
   }
 }

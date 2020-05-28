@@ -17,7 +17,7 @@ object FXLoader {
   private val SCENE_PATH = "/javafx/fxml/"
   private val COMPONENT_PATH = "/javafx/fxml/component/"
   private val EXTENSION = ".fxml"
-  private val SCENE_BUNDLE_PATH = "javafx.fxml.properties.Base"
+  private val SCENE_BUNDLE_PATH = "javafx.fxml.properties."
   private val COMPONENT_BUNDLE_PATH = "javafx.fxml.properties.component."
 
 
@@ -34,7 +34,7 @@ object FXLoader {
    */
   def loadScene(primaryStage: Stage, controller: BaseView, layoutPath: String):Unit = {
     val loader = new FXMLLoader(getClass.getResource(SCENE_PATH +  layoutPath + EXTENSION))
-    val bundle = ResourceBundle.getBundle(SCENE_BUNDLE_PATH ,new Locale("it","IT"))
+    val bundle = ResourceBundle.getBundle(SCENE_BUNDLE_PATH + layoutPath ,new Locale("it","IT"))
     loader.setController(controller)
     loader.setResources(bundle)
     loader.load

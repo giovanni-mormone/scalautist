@@ -4,10 +4,11 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import controller.ChangePasswordController
+import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.stage.Stage
 import view.GoBackView
-import view.fxview.AbstractFXViewWithBack
+import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.Login.ChangePasswordBox
 
 /**
@@ -16,6 +17,10 @@ import view.fxview.component.Login.ChangePasswordBox
  * once the password is changed.
  */
 trait ChangePasswordView extends GoBackView{
+
+  def errorChange()
+
+  def okChange()
 }
 
 /**
@@ -39,22 +44,49 @@ object ChangePasswordView{
   private class ChangePasswordViewFX(stage:Stage, scene:Option[Scene]) extends AbstractFXViewWithBack(stage,scene) with ChangePasswordView with ChangePasswordParent{
     private var myController: ChangePasswordController = _
     private var changePasswordBox: ChangePasswordBox= _
+    private var errorMsg: String = _
+    private var goodChangeMsg: String = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      errorMsg = resources.getString("error-change-pass")
+      goodChangeMsg = resources.getString("good-change-pass")
       myController = ChangePasswordController()
       changePasswordBox = ChangePasswordBox()
       myController.setView(this)
       changePasswordBox.setParent(this)
       pane.getChildren.add(changePasswordBox pane)
     }
-    override def changePass(oldPassword:String ,newPassword: String): Unit =
+    override def changePass(oldPassword:String ,newPassword: String): Unit = {
+      pane.getChildren.add(FXHelperFactory.loadingBox)
+      changePasswordBox.disable()
       myController.changePassword(oldPassword,newPassword)
+    }
 
     /**
      * Closes the view.
      */
     override def close(): Unit =
       myStage close
+
+    override def errorChange(): Unit ={
+      Platform.runLater(() =>{
+        stopLoading()
+        FXHelperFactory.modalWithMessage(myStage,errorMsg)
+      })
+    }
+
+    override def okChange(): Unit = {
+      Platform.runLater(() => {
+        stopLoading()
+        FXHelperFactory.modalWithMessage(myStage,goodChangeMsg)
+        back()
+      })
+    }
+
+    private def stopLoading(): Unit = {
+      pane.getChildren.remove(FXHelperFactory.loadingBox)
+      changePasswordBox.enable()
+    }
   }
 }
