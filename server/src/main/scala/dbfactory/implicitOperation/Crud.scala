@@ -18,22 +18,62 @@ import dbfactory.table.StraordinarioTable.StraordinarioTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
-
+import dbfactory.util.Helper._
 import scala.concurrent.Future
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 /**
- * [[caseclass.CaseClassDB]]
- * @tparam A
+ * Trait which enables operation generic in all tables [[caseclass.CaseClassDB]]
+ * @tparam A Is a case class that represent instance of the table in database
  */
 trait Crud[A]{
+  /**
+   *
+   * @param element Id for select one element in a table in the database
+   * @return Option of case class which represent a instance of object in database
+   */
   private[implicitOperation] def select(element:Int):Future[Option[A]]
+
+  /**
+   * Select all element in a table in the database
+   * @return List of all element in the table of the database
+   */
   private[implicitOperation] def selectAll: Future[List[A]]
+
+  /**
+   * Generic operation which enable insert any element in any table in database
+   * @param element case class that represent instance of the table in database
+   * @return Future of Int that represent status of operation
+   */
   private[implicitOperation] def insert(element:A):Future[Int]
+
+  /**
+   *  Generic operation which enable insert a List of any element in any table in database
+   * @param element List of case class that represent instance of the table in database
+   * @return Future of List of Int that represent status of operation
+   */
   private[implicitOperation] def insertAll(element:List[A]):Future[List[Int]]
+
+  /**
+   *  Generic operation which enable delete one element in any table in database
+   * @param element case class that represent one element in one table in database
+   * @return Future of Int that represent status of operation
+   */
   private[implicitOperation] def delete(element:A):Future[Int]
+
+  /**
+   *  Generic Operation which enable delete a List of element of any table in database
+   * @param element List of case class that represent one instance of a table in database
+   * @return Future of Int that represent status of operation
+   */
   private[implicitOperation] def deleteAll(element:List[A]): Future[Int]
+
+  /**
+   *  Operation which enable update one element in any table in database
+   * @param element case class that represent element in table of the database we want update
+   * @return Future of Int that represent status of operation
+   */
   private[implicitOperation] def update(element:A):Future[Int]
 }
 
@@ -91,15 +131,15 @@ object Crud {
   implicit object CrudPersona extends OperationImplicit[Persona,PersonaTableRep] with Crud[Persona] {
     private val operation: Operation[Persona, PersonaTableRep] = Operation[Persona,PersonaTableRep]()
     override private[implicitOperation] def insert(element: Persona):Future[Int]                 = typeDB().insert(element)
-    override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = operation.execQuery(f=>(f.nome, f.cognome,f.numTelefono,Option[String](""),f.ruolo,f.terminaleId,Option[Int](element)),element)
+    override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = operation.execQuery(personaSelect,element)
                                                                                                   .map(convertTupleToPerson)
     override private[implicitOperation] def delete(element: Persona): Future[Int]                = typeDB().delete(element.matricola.get)
     override private[implicitOperation] def update(element: Persona): Future[Int]                = typeDB().update(element)
-    override private[implicitOperation] def selectAll: Future[List[Persona]]                     = operation.execQueryAll(t=>(t.nome, t.cognome,t.numTelefono,Option[String](""),t.ruolo,t.terminaleId,t.id.?))
+    override private[implicitOperation] def selectAll: Future[List[Persona]]                     = operation.execQueryAll(personaSelect)
                                                                                                    .map(_.map(r=>convertTupleToPerson(Some(r)).get))
     override private[implicitOperation] def insertAll(element: List[Persona]): Future[List[Int]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Persona]): Future[Int]       = typeDB().deleteAll(element.map(t=>t.matricola.get))
-    private def convertTupleToPerson(persona:Option[(String, String, String,Option[String], Int,Option[Int], Option[Int])]):Option[Persona] = persona.map(value =>Persona.apply _ tupled value)
+
   }
   implicit object CrudPresenza extends OperationImplicit[Presenza,PresenzaTableRep] with Crud[Presenza] {
     override private[implicitOperation] def insert(element: Presenza):Future[Int]                 = typeDB().insert(element)

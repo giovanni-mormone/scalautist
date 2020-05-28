@@ -16,7 +16,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val richiestaTeoricaJsonFormat: RootJsonFormat[RichiestaTeorica] = jsonFormat3(RichiestaTeorica)
     implicit val richiestaJsonFormat: RootJsonFormat[Richiesta] = jsonFormat4(Richiesta)
     implicit val presenzaJsonFormat: RootJsonFormat[Presenza] = jsonFormat4(Presenza)
-    implicit val personaJsonFormat: RootJsonFormat[Persona] = jsonFormat7(Persona)
+    implicit val personaJsonFormat: RootJsonFormat[Persona] = jsonFormat9(Persona)
     implicit val parametroJsonFormat: RootJsonFormat[Parametro] = jsonFormat3(Parametro)
     implicit val gruppoTerminaleJsonFormat: RootJsonFormat[GruppoTerminale] = jsonFormat2(GruppoTerminale)
     implicit val giornoJsonFormat: RootJsonFormat[Giorno] = jsonFormat3(Giorno)

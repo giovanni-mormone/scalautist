@@ -13,7 +13,9 @@ object PersonaTable{
     def numTelefono: Rep[String] = column[String]("NumTelefono")
     def password: Rep[String] = column[String]("Password")
     def ruolo: Rep[Int] = column[Int]("Ruolo")
-    override def * : ProvenShape[Persona] = (nome,cognome,numTelefono,password.?,ruolo,terminaleId,id.?).mapTo[Persona]
+    def isNew:Rep[Boolean] = column[Boolean]("IsNew")
+    def userName:Rep[String]= column[String]("UserName")
+    override def * : ProvenShape[Persona] = (nome,cognome,numTelefono,password.?,ruolo,isNew,userName,terminaleId,id.?).mapTo[Persona]
     def terminale: ForeignKeyQuery[TerminaleTableRep, Terminale] = foreignKey("Terminale_IdTerminale", terminaleId, TableQuery[TerminaleTableRep])(_.id.?, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
   }
 }

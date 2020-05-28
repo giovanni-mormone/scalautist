@@ -27,7 +27,7 @@ import slick.jdbc.SQLServerProfile.api._
  */
 trait Table[C,A<:GenericTable[C]] extends Brands[C,A]{
   /**
-   * method which call [[dbfactory.setting.GenericTableQuery.tableDB()]] for generate instance of a table
+   * method which call [[dbfactory.setting.GenericTableQuery.tableDB]] for generate instance of a table
    * @return instance of a table of the database
    */
   def tableQuery():TableQuery[A]

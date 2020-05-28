@@ -41,15 +41,15 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (6
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
-SELECT  * From PersoneSets
+
 --PERSONA
 
 SET IDENTITY_INSERT [dbo].[PersoneSets] ON
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password]) VALUES (1, N'Fabian',  N'Aspee', N'569918598',1, null,  N'admin')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password]) VALUES (2, N'Francesco', N'Cassano',N'9184756',3, 1,  N'admin2')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password]) VALUES (3, N'Giovanni', N'Mormone',N'394562358',2, null,  N'root')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password]) VALUES (4, N'Luciano',  N'Fuentes',N'365478962',3,2,  N'yoyo')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password]) VALUES (5, N'Valerio', N'Vigliano',N'91485236',3,3,  N'tutu')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (1, N'Fabian',  N'Aspee', N'569918598',1, null,  N'admin',1,N'admin')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (2, N'Francesco', N'Cassano',N'9184756',3, 1,  N'admin2',1,N'admin2')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (3, N'Giovanni', N'Mormone',N'394562358',2, null,  N'root',1,  N'root')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (4, N'Luciano',  N'Fuentes',N'365478962',3,2,  N'yoyo',1,  N'yoyo')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (5, N'Valerio', N'Vigliano',N'91485236',3,3,  N'tutu',1,  N'tutu')
 SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 
 --//PERSONA
@@ -93,3 +93,4 @@ SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO
 
+select * from PersoneSets

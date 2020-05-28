@@ -2,13 +2,16 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/26/2020 22:51:14
+-- Date Created: 05/28/2020 17:07:12
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\DataBasePPS.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
+
 USE [viroli];
+
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
+
 
 -- --------------------------------------------------
 -- Dropping existing FOREIGN KEY constraints
@@ -16,44 +19,64 @@ IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 
 IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoContrato]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoContrato];
+
 IF OBJECT_ID(N'[dbo].[FK_GiornoSettimana]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_GiornoSettimana];
+
 IF OBJECT_ID(N'[dbo].[FK_RichiestaGiorno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaGiorno];
+
 IF OBJECT_ID(N'[dbo].[FK_ParametriGruppiTerminali]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GruppiTerminaliSets] DROP CONSTRAINT [FK_ParametriGruppiTerminali];
+
 IF OBJECT_ID(N'[dbo].[FK_PresenzaPersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PresenzaSets] DROP CONSTRAINT [FK_PresenzaPersone];
+
 IF OBJECT_ID(N'[dbo].[FK_RisultatoPersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_RisultatoPersone];
+
 IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoPersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoPersone];
+
 IF OBJECT_ID(N'[dbo].[FK_StraordinariPersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StraordinariSets] DROP CONSTRAINT [FK_StraordinariPersone];
+
 IF OBJECT_ID(N'[dbo].[FK_TerminalePersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PersoneSets] DROP CONSTRAINT [FK_TerminalePersone];
+
 IF OBJECT_ID(N'[dbo].[FK_PresenzaTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PresenzaSets] DROP CONSTRAINT [FK_PresenzaTurno];
+
 IF OBJECT_ID(N'[dbo].[FK_RichiestaTeoricaRichiesta]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaTeoricaRichiesta];
+
 IF OBJECT_ID(N'[dbo].[FK_RichiestaTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaTurno];
+
 IF OBJECT_ID(N'[dbo].[FK_TurnoRisultato]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_TurnoRisultato];
+
 IF OBJECT_ID(N'[dbo].[FK_SettimanaTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimanaTurno];
+
 IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoTurno];
+
 IF OBJECT_ID(N'[dbo].[FK_TurnoStoricoContratto]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_TurnoStoricoContratto];
+
 IF OBJECT_ID(N'[dbo].[FK_StraordinariTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StraordinariSets] DROP CONSTRAINT [FK_StraordinariTurno];
+
 IF OBJECT_ID(N'[dbo].[FK_ZonaTerminale]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[TerminalSets] DROP CONSTRAINT [FK_ZonaTerminale];
+
 IF OBJECT_ID(N'[dbo].[FK_ParametriSetSettimane]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[SettimaneSet] DROP CONSTRAINT [FK_ParametriSetSettimane];
+
 IF OBJECT_ID(N'[dbo].[FK_SettimaneSettimanaSet]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimaneSettimanaSet];
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -61,40 +84,61 @@ ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimaneSettimana
 
 IF OBJECT_ID(N'[dbo].[ContratoeSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ContratoeSets];
+
 IF OBJECT_ID(N'[dbo].[GiornoSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[GiornoSets];
+
 IF OBJECT_ID(N'[dbo].[GruppiTerminaliSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[GruppiTerminaliSets];
+
 IF OBJECT_ID(N'[dbo].[ParametriSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ParametriSets];
+
 IF OBJECT_ID(N'[dbo].[PersoneSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[PersoneSets];
+
 IF OBJECT_ID(N'[dbo].[PresenzaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[PresenzaSets];
+
 IF OBJECT_ID(N'[dbo].[RichiestaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[RichiestaSets];
+
 IF OBJECT_ID(N'[dbo].[RichiestaTeoricaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[RichiestaTeoricaSets];
+
 IF OBJECT_ID(N'[dbo].[RisultatoSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[RisultatoSets];
+
 IF OBJECT_ID(N'[dbo].[GiornoInSettimanaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[GiornoInSettimanaSets];
+
 IF OBJECT_ID(N'[dbo].[StoricoContrattoSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StoricoContrattoSets];
+
 IF OBJECT_ID(N'[dbo].[StraordinariSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StraordinariSets];
+
 IF OBJECT_ID(N'[dbo].[sysdiagrams]', 'U') IS NOT NULL
     DROP TABLE [dbo].[sysdiagrams];
+
 IF OBJECT_ID(N'[dbo].[TerminalSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[TerminalSets];
+
 IF OBJECT_ID(N'[dbo].[TurnoSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[TurnoSets];
+
 IF OBJECT_ID(N'[dbo].[ZonaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ZonaSets];
+
 IF OBJECT_ID(N'[dbo].[database_firewall_rules]', 'U') IS NOT NULL
     DROP TABLE [dbo].[database_firewall_rules];
+
 IF OBJECT_ID(N'[dbo].[SettimaneSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[SettimaneSet];
+
+IF OBJECT_ID(N'[dbo].[AssenzaSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[AssenzaSet];
+
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -107,6 +151,7 @@ CREATE TABLE [dbo].[ContratoeSets] (
                                        [TurnoFisso] bit  NOT NULL
 );
 
+
 -- Creating table 'GiornoSets'
 CREATE TABLE [dbo].[GiornoSets] (
                                     [IdGiorno] int IDENTITY(1,1) NOT NULL,
@@ -114,18 +159,21 @@ CREATE TABLE [dbo].[GiornoSets] (
                                     [NomeGiorno] nvarchar(max)  NOT NULL
 );
 
+
 -- Creating table 'GruppiTerminaliSets'
 CREATE TABLE [dbo].[GruppiTerminaliSets] (
                                              [IdGrupoTerminale] int IDENTITY(1,1) NOT NULL,
                                              [ParametriIdParametri] int  NOT NULL
 );
 
+
 -- Creating table 'ParametriSets'
 CREATE TABLE [dbo].[ParametriSets] (
                                        [IdParametri] int IDENTITY(1,1) NOT NULL,
                                        [TreSabato] bit  NOT NULL,
-                                       [Rla] nvarchar(max)  NOT NULL
+                                       [Rela] nvarchar(max)  NOT NULL
 );
+
 
 -- Creating table 'PersoneSets'
 CREATE TABLE [dbo].[PersoneSets] (
@@ -135,8 +183,11 @@ CREATE TABLE [dbo].[PersoneSets] (
                                      [NumTelefono] nvarchar(max)  NOT NULL,
                                      [Ruolo] int  NOT NULL,
                                      [Terminale_IdTerminale] int  NULL,
-                                     [Password] nvarchar(max)  NOT NULL
+                                     [Password] nvarchar(max)  NOT NULL,
+                                     [IsNew] bit  NOT NULL,
+                                     [UserName] nvarchar(max)  NOT NULL
 );
+
 
 -- Creating table 'PresenzaSets'
 CREATE TABLE [dbo].[PresenzaSets] (
@@ -146,6 +197,7 @@ CREATE TABLE [dbo].[PresenzaSets] (
                                       [Turno_IdTurno] int  NOT NULL
 );
 
+
 -- Creating table 'RichiestaSets'
 CREATE TABLE [dbo].[RichiestaSets] (
                                        [IdRichiesta] int IDENTITY(1,1) NOT NULL,
@@ -154,12 +206,14 @@ CREATE TABLE [dbo].[RichiestaSets] (
                                        [RichiestaTeorica_IdRichiestaTeorica] int  NOT NULL
 );
 
+
 -- Creating table 'RichiestaTeoricaSets'
 CREATE TABLE [dbo].[RichiestaTeoricaSets] (
                                               [IdRichiestaTeorica] int IDENTITY(1,1) NOT NULL,
                                               [DataInizio] datetime  NOT NULL,
                                               [DataFine] datetime  NULL
 );
+
 
 -- Creating table 'RisultatoSets'
 CREATE TABLE [dbo].[RisultatoSets] (
@@ -169,6 +223,7 @@ CREATE TABLE [dbo].[RisultatoSets] (
                                        [Turno_IdTurno] int  NOT NULL
 );
 
+
 -- Creating table 'GiornoInSettimanaSets'
 CREATE TABLE [dbo].[GiornoInSettimanaSets] (
                                                [IdSettimana] int IDENTITY(1,1) NOT NULL,
@@ -177,6 +232,7 @@ CREATE TABLE [dbo].[GiornoInSettimanaSets] (
                                                [Parametri_IdParametri] int  NOT NULL,
                                                [SettimaneIdSettimane] int  NOT NULL
 );
+
 
 -- Creating table 'StoricoContrattoSets'
 CREATE TABLE [dbo].[StoricoContrattoSets] (
@@ -189,6 +245,7 @@ CREATE TABLE [dbo].[StoricoContrattoSets] (
                                               [Turno1_IdTurno] int  NULL
 );
 
+
 -- Creating table 'StraordinariSets'
 CREATE TABLE [dbo].[StraordinariSets] (
                                           [IdStraordinari] int IDENTITY(1,1) NOT NULL,
@@ -196,6 +253,7 @@ CREATE TABLE [dbo].[StraordinariSets] (
                                           [Persone_Matricola] int  NOT NULL,
                                           [Turno_IdTurno] int  NOT NULL
 );
+
 
 -- Creating table 'sysdiagrams'
 CREATE TABLE [dbo].[sysdiagrams] (
@@ -206,12 +264,14 @@ CREATE TABLE [dbo].[sysdiagrams] (
                                      [definition] varbinary(max)  NULL
 );
 
+
 -- Creating table 'TerminalSets'
 CREATE TABLE [dbo].[TerminalSets] (
                                       [IdTerminale] int IDENTITY(1,1) NOT NULL,
                                       [NomeTerminale] nvarchar(max)  NOT NULL,
                                       [ZonaIdZona] int  NOT NULL
 );
+
 
 -- Creating table 'TurnoSets'
 CREATE TABLE [dbo].[TurnoSets] (
@@ -220,11 +280,13 @@ CREATE TABLE [dbo].[TurnoSets] (
                                    [FasciaOraria] nvarchar(max)  NOT NULL
 );
 
+
 -- Creating table 'ZonaSets'
 CREATE TABLE [dbo].[ZonaSets] (
                                   [IdZona] int IDENTITY(1,1) NOT NULL,
                                   [Zone] nvarchar(max)  NOT NULL
 );
+
 
 -- Creating table 'database_firewall_rules'
 CREATE TABLE [dbo].[database_firewall_rules] (
@@ -236,11 +298,22 @@ CREATE TABLE [dbo].[database_firewall_rules] (
                                                  [modify_date] datetime  NOT NULL
 );
 
+
 -- Creating table 'SettimaneSet'
 CREATE TABLE [dbo].[SettimaneSet] (
                                       [IdSettimane] int IDENTITY(1,1) NOT NULL,
                                       [ParametriSetIdParametri] int  NOT NULL
 );
+
+
+-- Creating table 'AssenzaSet'
+CREATE TABLE [dbo].[AssenzaSet] (
+                                    [IdAssenza] int IDENTITY(1,1) NOT NULL,
+                                    [DataInizio] nvarchar(max)  NOT NULL,
+                                    [DataFine] nvarchar(max)  NOT NULL,
+                                    [IsMalattia] nvarchar(max)  NOT NULL
+);
+
 
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
@@ -251,90 +324,114 @@ ALTER TABLE [dbo].[ContratoeSets]
     ADD CONSTRAINT [PK_ContratoeSets]
         PRIMARY KEY CLUSTERED ([IdContratto] ASC);
 
+
 -- Creating primary key on [IdGiorno] in table 'GiornoSets'
 ALTER TABLE [dbo].[GiornoSets]
     ADD CONSTRAINT [PK_GiornoSets]
         PRIMARY KEY CLUSTERED ([IdGiorno] ASC);
+
 
 -- Creating primary key on [IdGrupoTerminale] in table 'GruppiTerminaliSets'
 ALTER TABLE [dbo].[GruppiTerminaliSets]
     ADD CONSTRAINT [PK_GruppiTerminaliSets]
         PRIMARY KEY CLUSTERED ([IdGrupoTerminale] ASC);
 
+
 -- Creating primary key on [IdParametri] in table 'ParametriSets'
 ALTER TABLE [dbo].[ParametriSets]
     ADD CONSTRAINT [PK_ParametriSets]
         PRIMARY KEY CLUSTERED ([IdParametri] ASC);
+
 
 -- Creating primary key on [Matricola] in table 'PersoneSets'
 ALTER TABLE [dbo].[PersoneSets]
     ADD CONSTRAINT [PK_PersoneSets]
         PRIMARY KEY CLUSTERED ([Matricola] ASC);
 
+
 -- Creating primary key on [IdPresenza] in table 'PresenzaSets'
 ALTER TABLE [dbo].[PresenzaSets]
     ADD CONSTRAINT [PK_PresenzaSets]
         PRIMARY KEY CLUSTERED ([IdPresenza] ASC);
+
 
 -- Creating primary key on [IdRichiesta] in table 'RichiestaSets'
 ALTER TABLE [dbo].[RichiestaSets]
     ADD CONSTRAINT [PK_RichiestaSets]
         PRIMARY KEY CLUSTERED ([IdRichiesta] ASC);
 
+
 -- Creating primary key on [IdRichiestaTeorica] in table 'RichiestaTeoricaSets'
 ALTER TABLE [dbo].[RichiestaTeoricaSets]
     ADD CONSTRAINT [PK_RichiestaTeoricaSets]
         PRIMARY KEY CLUSTERED ([IdRichiestaTeorica] ASC);
+
 
 -- Creating primary key on [IdRisultato] in table 'RisultatoSets'
 ALTER TABLE [dbo].[RisultatoSets]
     ADD CONSTRAINT [PK_RisultatoSets]
         PRIMARY KEY CLUSTERED ([IdRisultato] ASC);
 
+
 -- Creating primary key on [IdSettimana] in table 'GiornoInSettimanaSets'
 ALTER TABLE [dbo].[GiornoInSettimanaSets]
     ADD CONSTRAINT [PK_GiornoInSettimanaSets]
         PRIMARY KEY CLUSTERED ([IdSettimana] ASC);
+
 
 -- Creating primary key on [IdStoricoContratto] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
     ADD CONSTRAINT [PK_StoricoContrattoSets]
         PRIMARY KEY CLUSTERED ([IdStoricoContratto] ASC);
 
+
 -- Creating primary key on [IdStraordinari] in table 'StraordinariSets'
 ALTER TABLE [dbo].[StraordinariSets]
     ADD CONSTRAINT [PK_StraordinariSets]
         PRIMARY KEY CLUSTERED ([IdStraordinari] ASC);
+
 
 -- Creating primary key on [diagram_id] in table 'sysdiagrams'
 ALTER TABLE [dbo].[sysdiagrams]
     ADD CONSTRAINT [PK_sysdiagrams]
         PRIMARY KEY CLUSTERED ([diagram_id] ASC);
 
+
 -- Creating primary key on [IdTerminale] in table 'TerminalSets'
 ALTER TABLE [dbo].[TerminalSets]
     ADD CONSTRAINT [PK_TerminalSets]
         PRIMARY KEY CLUSTERED ([IdTerminale] ASC);
+
 
 -- Creating primary key on [IdTurno] in table 'TurnoSets'
 ALTER TABLE [dbo].[TurnoSets]
     ADD CONSTRAINT [PK_TurnoSets]
         PRIMARY KEY CLUSTERED ([IdTurno] ASC);
 
+
 -- Creating primary key on [IdZona] in table 'ZonaSets'
 ALTER TABLE [dbo].[ZonaSets]
     ADD CONSTRAINT [PK_ZonaSets]
         PRIMARY KEY CLUSTERED ([IdZona] ASC);
+
 
 -- Creating primary key on [id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] in table 'database_firewall_rules'
 ALTER TABLE [dbo].[database_firewall_rules]
     ADD CONSTRAINT [PK_database_firewall_rules]
         PRIMARY KEY CLUSTERED ([id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] ASC);
 
+
 -- Creating primary key on [IdSettimane] in table 'SettimaneSet'
 ALTER TABLE [dbo].[SettimaneSet]
     ADD CONSTRAINT [PK_SettimaneSet]
         PRIMARY KEY CLUSTERED ([IdSettimane] ASC);
+
+
+-- Creating primary key on [IdAssenza] in table 'AssenzaSet'
+ALTER TABLE [dbo].[AssenzaSet]
+    ADD CONSTRAINT [PK_AssenzaSet]
+        PRIMARY KEY CLUSTERED ([IdAssenza] ASC);
+
 
 -- --------------------------------------------------
 -- Creating all FOREIGN KEY constraints
@@ -348,10 +445,12 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
                 ([IdContratto])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoricoContrattoContrato'
 CREATE INDEX [IX_FK_StoricoContrattoContrato]
     ON [dbo].[StoricoContrattoSets]
         ([Contrato_IdContratto]);
+
 
 -- Creating foreign key on [GiornoIdGiorno] in table 'GiornoInSettimanaSets'
 ALTER TABLE [dbo].[GiornoInSettimanaSets]
@@ -361,10 +460,12 @@ ALTER TABLE [dbo].[GiornoInSettimanaSets]
                 ([IdGiorno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_GiornoSettimana'
 CREATE INDEX [IX_FK_GiornoSettimana]
     ON [dbo].[GiornoInSettimanaSets]
         ([GiornoIdGiorno]);
+
 
 -- Creating foreign key on [Giorno_IdGiorno] in table 'RichiestaSets'
 ALTER TABLE [dbo].[RichiestaSets]
@@ -374,10 +475,12 @@ ALTER TABLE [dbo].[RichiestaSets]
                 ([IdGiorno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaGiorno'
 CREATE INDEX [IX_FK_RichiestaGiorno]
     ON [dbo].[RichiestaSets]
         ([Giorno_IdGiorno]);
+
 
 -- Creating foreign key on [ParametriIdParametri] in table 'GruppiTerminaliSets'
 ALTER TABLE [dbo].[GruppiTerminaliSets]
@@ -387,10 +490,12 @@ ALTER TABLE [dbo].[GruppiTerminaliSets]
                 ([IdParametri])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_ParametriGruppiTerminali'
 CREATE INDEX [IX_FK_ParametriGruppiTerminali]
     ON [dbo].[GruppiTerminaliSets]
         ([ParametriIdParametri]);
+
 
 -- Creating foreign key on [Persone_Matricola] in table 'PresenzaSets'
 ALTER TABLE [dbo].[PresenzaSets]
@@ -400,10 +505,12 @@ ALTER TABLE [dbo].[PresenzaSets]
                 ([Matricola])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_PresenzaPersone'
 CREATE INDEX [IX_FK_PresenzaPersone]
     ON [dbo].[PresenzaSets]
         ([Persone_Matricola]);
+
 
 -- Creating foreign key on [Persone_Matricola] in table 'RisultatoSets'
 ALTER TABLE [dbo].[RisultatoSets]
@@ -413,10 +520,12 @@ ALTER TABLE [dbo].[RisultatoSets]
                 ([Matricola])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_RisultatoPersone'
 CREATE INDEX [IX_FK_RisultatoPersone]
     ON [dbo].[RisultatoSets]
         ([Persone_Matricola]);
+
 
 -- Creating foreign key on [Persone_Matricola] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
@@ -426,10 +535,12 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
                 ([Matricola])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoricoContrattoPersone'
 CREATE INDEX [IX_FK_StoricoContrattoPersone]
     ON [dbo].[StoricoContrattoSets]
         ([Persone_Matricola]);
+
 
 -- Creating foreign key on [Persone_Matricola] in table 'StraordinariSets'
 ALTER TABLE [dbo].[StraordinariSets]
@@ -439,10 +550,12 @@ ALTER TABLE [dbo].[StraordinariSets]
                 ([Matricola])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_StraordinariPersone'
 CREATE INDEX [IX_FK_StraordinariPersone]
     ON [dbo].[StraordinariSets]
         ([Persone_Matricola]);
+
 
 -- Creating foreign key on [Terminale_IdTerminale] in table 'PersoneSets'
 ALTER TABLE [dbo].[PersoneSets]
@@ -452,10 +565,12 @@ ALTER TABLE [dbo].[PersoneSets]
                 ([IdTerminale])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_TerminalePersone'
 CREATE INDEX [IX_FK_TerminalePersone]
     ON [dbo].[PersoneSets]
         ([Terminale_IdTerminale]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'PresenzaSets'
 ALTER TABLE [dbo].[PresenzaSets]
@@ -465,10 +580,12 @@ ALTER TABLE [dbo].[PresenzaSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_PresenzaTurno'
 CREATE INDEX [IX_FK_PresenzaTurno]
     ON [dbo].[PresenzaSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [RichiestaTeorica_IdRichiestaTeorica] in table 'RichiestaSets'
 ALTER TABLE [dbo].[RichiestaSets]
@@ -478,10 +595,12 @@ ALTER TABLE [dbo].[RichiestaSets]
                 ([IdRichiestaTeorica])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaTeoricaRichiesta'
 CREATE INDEX [IX_FK_RichiestaTeoricaRichiesta]
     ON [dbo].[RichiestaSets]
         ([RichiestaTeorica_IdRichiestaTeorica]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'RichiestaSets'
 ALTER TABLE [dbo].[RichiestaSets]
@@ -491,10 +610,12 @@ ALTER TABLE [dbo].[RichiestaSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaTurno'
 CREATE INDEX [IX_FK_RichiestaTurno]
     ON [dbo].[RichiestaSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'RisultatoSets'
 ALTER TABLE [dbo].[RisultatoSets]
@@ -504,10 +625,12 @@ ALTER TABLE [dbo].[RisultatoSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_TurnoRisultato'
 CREATE INDEX [IX_FK_TurnoRisultato]
     ON [dbo].[RisultatoSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'GiornoInSettimanaSets'
 ALTER TABLE [dbo].[GiornoInSettimanaSets]
@@ -517,10 +640,12 @@ ALTER TABLE [dbo].[GiornoInSettimanaSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_SettimanaTurno'
 CREATE INDEX [IX_FK_SettimanaTurno]
     ON [dbo].[GiornoInSettimanaSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [Turno1_IdTurno] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
@@ -530,10 +655,12 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoricoContrattoTurno'
 CREATE INDEX [IX_FK_StoricoContrattoTurno]
     ON [dbo].[StoricoContrattoSets]
         ([Turno1_IdTurno]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
@@ -543,10 +670,12 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_TurnoStoricoContratto'
 CREATE INDEX [IX_FK_TurnoStoricoContratto]
     ON [dbo].[StoricoContrattoSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [Turno_IdTurno] in table 'StraordinariSets'
 ALTER TABLE [dbo].[StraordinariSets]
@@ -556,10 +685,12 @@ ALTER TABLE [dbo].[StraordinariSets]
                 ([IdTurno])
             ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_StraordinariTurno'
 CREATE INDEX [IX_FK_StraordinariTurno]
     ON [dbo].[StraordinariSets]
         ([Turno_IdTurno]);
+
 
 -- Creating foreign key on [ZonaIdZona] in table 'TerminalSets'
 ALTER TABLE [dbo].[TerminalSets]
@@ -569,10 +700,12 @@ ALTER TABLE [dbo].[TerminalSets]
                 ([IdZona])
             ON DELETE CASCADE ON UPDATE NO ACTION;
 
+
 -- Creating non-clustered index for FOREIGN KEY 'FK_ZonaTerminale'
 CREATE INDEX [IX_FK_ZonaTerminale]
     ON [dbo].[TerminalSets]
         ([ZonaIdZona]);
+
 
 -- Creating foreign key on [ParametriSetIdParametri] in table 'SettimaneSet'
 ALTER TABLE [dbo].[SettimaneSet]

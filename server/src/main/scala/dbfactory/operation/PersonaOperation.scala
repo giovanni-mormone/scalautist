@@ -2,20 +2,56 @@ package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassHttpMessage.ChangePassword
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
+import dbfactory.util.Helper._
+
+/**
+ *  Trait which allows to perform operations on the person table,
+ *  this trait have methods that represent monadic join
+ */
 trait PersonaOperation extends OperationCrud[Persona]{
+  /**
+   * method that implement filter in database by name of the person
+   * @param name name of a persona
+   * @return Option of List of Persona with all fields full, only password is empty
+   */
   def filterByName(name:String):Future[Option[List[Persona]]]
+
+  /**
+   * method that implement filter in database by surname of the person
+   * @param surname surname of a persona
+   * @return Option of List of Persona with all fields full, only password is empty
+   */
   def filterBySurname(surname: String): Future[Option[List[Persona]]]
+
+  /**
+   *
+   */
   def monadicInnerJoin():Unit
+
+  /**
+   * Method which allow login a user in the system
+   * @param login case class with username and password for login in the system
+   * @return Option of person with all fields full, only password is empty
+   */
   def login(login:Login):Future[Option[Persona]]
 
+  /**
+   * Method which allow change password a user in the system
+   * @param changePassword case class with iduser, oldpassword and newpassword for change password in the system
+   * @return Option of Int that represent status of the operation
+   */
+  def changePassword(changePassword: ChangePassword):Future[Option[Int]]
 }
 object PersonaOperation extends PersonaOperation {
+  private val generator = scala.util.Random.alphanumeric
 
   override def filterByName(name: String): Future[Option[List[Persona]]] = {
     val promiseFilterByName = Promise[Option[List[Persona]]]
@@ -34,6 +70,35 @@ object PersonaOperation extends PersonaOperation {
       case Failure(_)=>promiseFilterBySurname.success(None)
     }
   }
+  override def insert(element: Persona): Future[Int] ={
+    val persona = Persona(element.nome,element.cognome,element.numTelefono,createString(""),element.ruolo,element.isNew,createString("").head)
+    super.insert(persona)
+  }
+  private val createString:String=>Option[String]=t => Some(generator.take(10).map(c => t.concat(c.toString)).mkString)
+
+  override def login(login: Login): Future[Option[Persona]] = {
+    val promiseLogin = Promise[Option[Persona]]
+    InstancePersona.operation().
+      execQueryFilter(personaSelect, x => x.nome === login.user && x.password === login.password)
+      .onComplete{
+      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head)))
+      case Success(_) =>promiseLogin.success(None)
+      case Failure(exception) => promiseLogin.failure(exception)
+    }
+    promiseLogin.future
+  }
+
+  override def changePassword(changePassword: ChangePassword):Future[Option[Int]]={
+    val changePasswordP = Promise[Option[Int]]
+    InstancePersona.operation().
+      execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
+      .onComplete{
+        case Success(value) if value==1 => changePasswordP.success(Some(value))
+        case Success(value) =>changePasswordP.success(Some(value))
+        case Failure(exception) => changePasswordP.failure(exception)
+      }
+    changePasswordP.future
+  }
   override def monadicInnerJoin(): Unit = {
     val monadicInnerJoin = for {
       c <- PersonaTableQuery.tableQuery()
@@ -45,38 +110,4 @@ object PersonaOperation extends PersonaOperation {
       println(t)
     })
   }
-  override def login(login: Login): Future[Option[Persona]] = {
-    val promiseLogin = Promise[Option[Persona]]
-    InstancePersona.operation().execQueryFilter(f => (f.nome, f.cognome, f.numTelefono, Option[String](""), f.ruolo, f.terminaleId, f.id.?), x => x.nome === login.user && x.password === login.password)
-      .onComplete{
-      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head)))
-      case Success(_) =>promiseLogin.success(None)
-      case Failure(exception) => promiseLogin.failure(exception)
-    }
-    promiseLogin.future
-  }
-  private def convertTupleToPerson(persona:Option[(String, String, String,Option[String], Int,Option[Int], Option[Int])]):Option[Persona] = persona.map(value =>Persona.apply _ tupled value)
-  def changePassword():Future[Option[Int]]={//query update all values that match with filter
-    val changePassword = Promise[Option[Int]]
-    InstancePersona.operation().execQueryUpdate(f => (f.nome, f.cognome), x => x.nome === "Fabian" && x.password === "912345",("Pedro","Sanchez"))
-      .onComplete{
-        case Success(value) if value==1 => changePassword.success(Some(value))
-        case Success(value) =>changePassword.success(Some(value))
-        case Failure(exception) => changePassword.failure(exception)
-      }
-    changePassword.future
-  }
-}
-object ttt extends App{//verificar changepassword
-  PersonaOperation.monadicInnerJoin()
-  val per = Persona("Fabian","Aspee","569918598",Some("912345"),1,None,Some(8))
-  PersonaOperation.update(per)onComplete{
-    case Success(value) => println(value)
-    case Failure(exception) => println(exception)
-  }
-  PersonaOperation.changePassword() onComplete{
-    case Success(value) => println(value)
-    case Failure(exception) => println(exception)
-  }
-  while (true){}
 }

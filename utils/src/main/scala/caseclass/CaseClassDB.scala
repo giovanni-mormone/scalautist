@@ -18,7 +18,7 @@ object CaseClassDB{
   final case class Giorno(quantita:Int,nomeGiorno:String,idGiorno:Option[Int]=None)
   final case class GruppoTerminale(parametriId:Int,idGruppoTerminale:Option[Int]=None)
   final case class Parametro(treSabato:Byte,Regola:String,idParametri:Option[Int]=None)
-  final case class Persona(nome:String,cognome:String,numTelefono:String,password:Option[String],ruolo:Int,idTerminale:Option[Int]=None,matricola:Option[Int]=None)
+  final case class Persona(nome:String,cognome:String,numTelefono:String,password:Option[String],ruolo:Int,isNew:Boolean,userName:String,idTerminale:Option[Int]=None,matricola:Option[Int]=None)
   final case class Presenza(data:Date,personaId:Int,turnoId:Int,idPresenza:Option[Int]=None)
   final case class Richiesta(turnoId:Int,giornoId:Int,richiestaTeoricaId:Int,idRichiesta:Option[Int]=None)
   final case class RichiestaTeorica(dataInizio:Date,dataFine:Option[Date],idRichiestaTeorica:Option[Int]=None)
