@@ -23,4 +23,6 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val giornoInSettimanaJsonFormat: RootJsonFormat[GiornoInSettimana] = jsonFormat5(GiornoInSettimana)
     implicit val contrattoJsonFormat: RootJsonFormat[Contratto] = jsonFormat3(Contratto)
     implicit val loginJsonFormat: RootJsonFormat[Login] = jsonFormat2(Login)
+    implicit val stipendioJsonFormat: RootJsonFormat[Stipendio] = jsonFormat4(Stipendio)
+    implicit val assenzaJsonFormat: RootJsonFormat[Assenza] = jsonFormat5(Assenza)
 }
