@@ -1,5 +1,6 @@
 package servermodel.routes.subroute
 
+import akka.http.scaladsl.model
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, onComplete, post}
 import akka.http.scaladsl.server.Route

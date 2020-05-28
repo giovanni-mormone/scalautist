@@ -34,6 +34,9 @@ object MasterRoutePersona {
       },
       path("loginpersona") {
         loginPersona()
-      }
+      }//,//TODO
+      //path("updatepassword") {
+        //updatePassword()
+      //}
     )
 }

@@ -2,6 +2,7 @@ package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
+import servermodel.routes.subroute.ZonaRoute._
 
 object MasterRouteZona {
 

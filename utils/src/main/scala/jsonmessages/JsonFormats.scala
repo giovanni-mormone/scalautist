@@ -1,4 +1,5 @@
 package jsonmessages
+
 import caseclass.CaseClassDB._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
