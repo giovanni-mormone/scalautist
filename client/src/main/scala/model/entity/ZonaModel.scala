@@ -73,7 +73,7 @@ object ZonaModel {
       val result = Promise[Unit]
       val zonaToIns = Zona(nome)
       val request = Post(getURI("createzona"), zonaToIns)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
+      dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
     }
 
@@ -82,7 +82,7 @@ object ZonaModel {
       var list: List[Zona] = List()
       ids.foreach(x => list = Zona("",Some(x))::list)
       val request = Post(getURI("deleteallzona"), list)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
+      dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
     }
   }

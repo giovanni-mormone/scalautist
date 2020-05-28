@@ -77,5 +77,6 @@ object ChangePasswordBox{
 
     private def disableButton(usable: Boolean): Unit =
       changePasswordButton setDisable usable
+
   }
 }

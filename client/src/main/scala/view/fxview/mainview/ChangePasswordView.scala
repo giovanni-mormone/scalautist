@@ -43,7 +43,7 @@ object ChangePasswordView{
       changePasswordBox = ChangePasswordBox()
       myController.setView(this)
       changePasswordBox.setParent(this)
-      pane.setCenter(changePasswordBox pane)
+      pane.getChildren.add(changePasswordBox pane)
     }
     override def changePass(newPassword: String): Unit =
       myController.changePassword(newPassword, userID)

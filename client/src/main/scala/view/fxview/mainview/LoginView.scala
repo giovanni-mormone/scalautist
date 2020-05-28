@@ -4,10 +4,11 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import controller.LoginController
+import javafx.application.Platform
 import javafx.scene.control.Alert
 import javafx.stage.{Modality, Stage}
 import view.BaseView
-import view.fxview.{AbstractFXView, FXModalFactory}
+import view.fxview.{AbstractFXView, FXHelperFactory}
 import view.fxview.component.Login.LoginBox
 
 /**
@@ -44,7 +45,7 @@ object LoginView{
   private class LoginViewFX(stage:Stage) extends AbstractFXView(stage) with LoginView with LoginParent {
     private var myController:LoginController = _
     private var loginBox:LoginBox = _
-    private var firstLogin:String = _
+    private var firstLoginMessage:String = _
 
     override def close(): Unit =
       myStage close
@@ -52,22 +53,30 @@ object LoginView{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
-      firstLogin = resources.getString("first-login")
+      firstLoginMessage = resources.getString("first-login")
       myController = LoginController()
       loginBox = LoginBox()
       myController.setView(this)
       loginBox.setParent(this)
-      pane.setCenter(loginBox.pane())
+      pane.getChildren.add(loginBox pane)
     }
 
-    override def login(username: String, password: String): Unit =
+    override def login(username: String, password: String): Unit = {
+      loginBox.disable()
+      pane.getChildren.add(FXHelperFactory.loadingBox)
       myController.login(username, password)
+    }
 
-    override def badLogin(): Unit =
-      loginBox.showErrorMessage()
+    override def badLogin(): Unit = {
+      Platform.runLater(()=>{
+        loginBox.enable()
+        pane.getChildren.remove(FXHelperFactory.loadingBox)
+        loginBox.showErrorMessage()
+      })
+    }
 
     override def firstUserAccess(userID: Int): Unit = {
-      FXModalFactory(myStage, firstLogin).show()
+      FXHelperFactory.modalWithMessage(myStage, firstLoginMessage).show()
       loginBox.resetViewFields()
       ChangePasswordView(myStage,Some(myStage.getScene),userID)
     }

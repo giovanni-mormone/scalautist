@@ -94,7 +94,7 @@ object HumanResourceModel {
 
   private class HumanResourceHttp extends HumanResourceModel{
 
-    override def recruit(persona: Persona): Future[Login] = {
+    override def recruit(persona: Persona): Future[Unit] = {
       val result = Promise[Unit]
       val request = Post(getURI("createpersona"), persona)
       dispatcher.serverRequest(request).onComplete(_ => result.success(Login))//TODO
@@ -106,7 +106,7 @@ object HumanResourceModel {
       var list: List[Persona] = List()
       ids.foreach(x => list = Persona("","",new Date(1),"",1,None,Some(x))::list)
       val request = Post(getURI("deleteallpersona"), list)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
+      dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
     }
 
@@ -123,33 +123,33 @@ object HumanResourceModel {
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, true)
-      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+      /*val request = Post(getURI("addabsence"), absence) //TODO creare la route
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success(Unit)
         case Failure(exception) => result.failure(exception)
-      }
+      }*/
       result.future
     }
 
 
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
-      val absence = Assenza(idPersona, startDate, endDate, false)
+      /*val absence = Assenza(idPersona, startDate, endDate, false)
       val request = Post(getURI("addabsence"), absence) //TODO creare la route
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success(Unit)
         case Failure(exception) => result.failure(exception)
-      }
+      }*/
       result.future
     }
 
     override def passwordRecovery(user: String): Future[Login] = {
       val result = Promise[Login]
-      val user = Login(user, ModelUtils.generatePassword)
+      /*val user = Login(user, ModelUtils.generatePassword)
       val request = Post(getURI("updatepassword"), user)
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success(user)
-      }
+      }*/
       result.future
     }
   }

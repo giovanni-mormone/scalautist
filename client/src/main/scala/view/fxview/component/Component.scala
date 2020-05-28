@@ -17,14 +17,24 @@ trait Component[A] {
    * @return
    *        The pane where the component is contained, loaded from fxml.
    */
-  def pane(): Pane
+  val pane: Pane
 
   /**
    * Setter for the parent of this [[view.fxview.component.Component]].
    * @param parent
    *               The parent to set.
    */
-  def setParent(parent:A)
+  def setParent(parent:A):Unit
+
+  /**
+   * Disables the component, making it not interactive.
+   */
+  def disable(): Unit
+
+  /**
+   * Enables the component, making it interactive
+   */
+  def enable(): Unit
 }
 
 /**
@@ -41,12 +51,15 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
    * The parent of the component
    */
   protected var parent:A = _
-  private val loadedPane:Pane = FXLoader.loadComponent(this,path)
 
-  override def pane(): Pane = {
-    loadedPane
-  }
+  val pane:Pane = FXLoader.loadComponent(this,path)
 
-  override def setParent(observer: A): Unit =
-    this.parent = observer
+  override def setParent(parent: A): Unit =
+    this.parent = parent
+
+  override def disable(): Unit =
+    pane.setDisable(true)
+
+  override def enable(): Unit =
+    pane.setDisable(false)
 }

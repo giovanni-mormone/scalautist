@@ -6,7 +6,7 @@ import java.util.ResourceBundle
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.Scene
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.{BorderPane, StackPane}
 import javafx.stage.Stage
 import view.{BaseView, GoBackView}
 import view.fxview.loader.FXLoader
@@ -22,11 +22,11 @@ abstract class AbstractFXView(val myStage:Stage) extends Initializable with Base
    * The base pane of the fxView where the components are added.
    */
   @FXML
-  protected var pane: BorderPane = _
+  protected var pane: StackPane = _
   /**
    * Stage of this view.
    */
-  FXLoader.loadScene(myStage,this,"BorderBase")
+  FXLoader.loadScene(myStage,this,"StackBase")
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
     myStage.setTitle(resources.getString("nome"))

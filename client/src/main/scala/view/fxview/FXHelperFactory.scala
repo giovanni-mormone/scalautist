@@ -10,11 +10,35 @@ import view.BaseView
 import view.fxview.loader.FXLoader
 
 /**
- * Object to create standard modals with a provided message
+ * Object to create Common view parts to utilize when needed
  */
-object FXModalFactory {
+object FXHelperFactory {
 
-  def apply(parent:Stage, message:String): BaseView = new FXModal(parent,message)
+  /**
+   * Creates a modal that shows a message to the user. The modal is a [[view.BaseView]]
+   * and have to be showed. It sits on top of the stage provided and blocks
+   * it until the user closes the created modal.
+   * @param parent
+   *               The parent stage of the modal.
+   * @param message
+   *                The message to show to the user
+   * @return
+   *         The created modal.
+   */
+  def modalWithMessage(parent:Stage, message:String): BaseView = new FXModal(parent,message)
+
+  /**
+   * A simple javafx box to containing [[javafx.scene.control.ProgressIndicator]].
+   */
+  val loadingBox = {
+    import javafx.geometry.Pos
+    import javafx.scene.control.ProgressIndicator
+    import javafx.scene.layout.VBox
+    val pi = new ProgressIndicator
+    val box = new VBox(pi)
+    box.setAlignment(Pos.CENTER)
+    box
+  }
 
   private class FXModal(parent:Stage, message:String) extends Initializable with BaseView{
 
