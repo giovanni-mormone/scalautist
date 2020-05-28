@@ -13,19 +13,23 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     val result = 1//Await.result(runScript(),Duration.Inf)
     require(result==1)
     login = Login("Fabian","admin")
-    persona=Persona("Fabian","Aspee","569918598","",1,None,Some(1))
+    persona=Persona("Fabian","Aspee","569918598",Some(""),1,None,Some(1))
   }
   behavior of "Login"
-  it should "eventually a person log in" in {
+  it should "eventually return a person" in {
     val futureLogin: Future[Option[Persona]] = PersonaOperation.login(login)
-    // You can map assertions onto a Future, then return
-    // the resulting Future[Assertion] to ScalaTest:
     futureLogin map { login => assert(login.getOrElse() == persona) }
   }
-  it should "eventually return 0" in {
+  it should "eventually return None" in {
     val futureLogin: Future[Option[Persona]] = PersonaOperation.login(Login("persona","persona"))
-    // You can map assertions onto a Future, then return
-    // the resulting Future[Assertion] to ScalaTest:
     futureLogin map { login => assert(login.isEmpty) }
   }
+  behavior of "CRUD"
+  it should "return a person when select for id" in {
+    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona.matricola.get)
+    selectPersona map {
+      persona =>println(persona)
+      assert(persona.get == this.persona) }
+  }
+
 }

@@ -20,7 +20,16 @@ import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 
+/**
+ * Trait which allow obtain the instance of table of the database this allow create join and another operation
+ * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
+ * @tparam A case class that represent instance in database [[caseclass.CaseClassDB]]
+ */
 trait Table[C,A<:GenericTable[C]] extends Brands[C,A]{
+  /**
+   * method which call [[dbfactory.setting.GenericTableQuery.tableDB()]] for generate instance of a table
+   * @return instance of a table of the database
+   */
   def tableQuery():TableQuery[A]
 }
 object Table{

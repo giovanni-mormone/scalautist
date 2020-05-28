@@ -41,7 +41,7 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (6
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
-
+SELECT  * From PersoneSets
 --PERSONA
 
 SET IDENTITY_INSERT [dbo].[PersoneSets] ON

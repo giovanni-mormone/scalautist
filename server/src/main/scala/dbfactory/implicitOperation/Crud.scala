@@ -1,6 +1,7 @@
 package dbfactory.implicitOperation
 
 import caseclass.CaseClassDB._
+import dbfactory.setting.GenericOperation.Operation
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
@@ -19,6 +20,13 @@ import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 
 import scala.concurrent.Future
+import slick.jdbc.SQLServerProfile.api._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+/**
+ * [[caseclass.CaseClassDB]]
+ * @tparam A
+ */
 trait Crud[A]{
   private[implicitOperation] def select(element:Int):Future[Option[A]]
   private[implicitOperation] def selectAll: Future[List[A]]
@@ -81,14 +89,17 @@ object Crud {
 
   }
   implicit object CrudPersona extends OperationImplicit[Persona,PersonaTableRep] with Crud[Persona] {
+    private val operation: Operation[Persona, PersonaTableRep] = Operation[Persona,PersonaTableRep]()
     override private[implicitOperation] def insert(element: Persona):Future[Int]                 = typeDB().insert(element)
-    override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = typeDB().select(element)
+    override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = operation.execQuery(f=>(f.nome, f.cognome,f.numTelefono,Option[String](""),f.ruolo,f.terminaleId,Option[Int](element)),element)
+                                                                                                  .map(convertTupleToPerson)
     override private[implicitOperation] def delete(element: Persona): Future[Int]                = typeDB().delete(element.matricola.get)
     override private[implicitOperation] def update(element: Persona): Future[Int]                = typeDB().update(element)
-    override private[implicitOperation] def selectAll: Future[List[Persona]]                     = typeDB().selectAll
+    override private[implicitOperation] def selectAll: Future[List[Persona]]                     = operation.execQueryAll(t=>(t.nome, t.cognome,t.numTelefono,Option[String](""),t.ruolo,t.terminaleId,t.id.?))
+                                                                                                   .map(_.map(r=>convertTupleToPerson(Some(r)).get))
     override private[implicitOperation] def insertAll(element: List[Persona]): Future[List[Int]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Persona]): Future[Int]       = typeDB().deleteAll(element.map(t=>t.matricola.get))
-
+    private def convertTupleToPerson(persona:Option[(String, String, String,Option[String], Int,Option[Int], Option[Int])]):Option[Persona] = persona.map(value =>Persona.apply _ tupled value)
   }
   implicit object CrudPresenza extends OperationImplicit[Presenza,PresenzaTableRep] with Crud[Presenza] {
     override private[implicitOperation] def insert(element: Presenza):Future[Int]                 = typeDB().insert(element)

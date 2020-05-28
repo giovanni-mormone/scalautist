@@ -2,12 +2,14 @@ package dbfactory.implicitOperation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success}
 abstract class OperationCrud[A](implicit crud:Crud[A]) {
   def select (element:Int):Future[Option[A]]= {
     val promiseInsert = Promise[Option[A]]
     Future {
       crud.select(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -16,7 +18,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[List[A]]
     Future {
       crud.selectAll onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -25,7 +28,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[Int]
     Future {
       crud.insert(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -34,7 +38,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[List[Int]]
     Future {
       crud.insertAll(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -44,7 +49,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[Int]
     Future {
       crud.delete(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -54,7 +60,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[Int]
     Future {
       crud.deleteAll(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
@@ -64,7 +71,8 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
     val promiseInsert = Promise[Int]
     Future {
       crud.update(element) onComplete {
-        result=>promiseInsert.success(result.get)
+        case Success(value) =>promiseInsert.success(value)
+        case Failure(exception) => promiseInsert.failure(exception)
       }
     }
     promiseInsert.future
