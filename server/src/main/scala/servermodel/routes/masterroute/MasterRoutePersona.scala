@@ -34,14 +34,12 @@ object MasterRoutePersona {
       },
       path("loginpersona") {
         loginPersona()
-      }//,
-      //path("updatepassword") {            //TODO update password
-        //updatePassword()
-      //},
-      /*
+      },
+      path("updatepassword") {            //TODO update password
+        updatePassword
+      },
       path("addabsence") {          //TODO add absence
           addAbsence()
       }
-      */
     )
 }

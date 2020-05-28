@@ -27,7 +27,7 @@ trait HumanResourceModel extends Model {
    * @return
    * Future
    */
-  def recruit(persona:Persona):Future[Unit]
+  def recruit(persona:Persona):Future[Login]
 
   /**
    * Layoff operations, delete a set of people from the database
@@ -95,10 +95,14 @@ object HumanResourceModel {
   private class HumanResourceHttp extends HumanResourceModel{
 
     override def recruit(persona: Persona): Future[Login] = {
-      val result = Promise[Unit]
+      val credential = Promise[Login]
       val request = Post(getURI("createpersona"), persona)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Login))//TODO
-      result.future
+      dispatcher.serverRequest(request).onComplete{
+        case Success(result) =>
+          Unmarshal(result).to[Login].onComplete(data => credential.success(data.get))
+        case Failure(exception) => credential.failure(exception)
+      }
+      credential.future
     }
 
     override def fires(ids: Set[Int]): Future[Unit] = {

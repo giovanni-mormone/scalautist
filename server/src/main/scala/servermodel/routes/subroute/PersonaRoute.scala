@@ -3,10 +3,13 @@ package servermodel.routes.subroute
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
-import caseclass.CaseClassDB.Persona
+import caseclass.CaseClassDB.{Assenza, Persona}
+import caseclass.CaseClassHttpMessage.ChangePassword
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB //TODO
+import dbfactory.DummyDB
+
+import scala.util.Success //TODO
 
 object PersonaRoute {
 
@@ -94,6 +97,26 @@ object PersonaRoute {
       /*entity(as[Login]) { login =>
         onComplete(PersonaOperation.login(login)) {
           case Success(t)  =>  complete(StatusCodes.Created,t)
+        }
+      }*/
+    }
+
+  def updatePassword: Route =
+    post {
+      dummy()
+      /*entity(as[ChangePassword]) {
+        change => onComplete(PersonaOperation.changePassword(change)){
+          case Success(credential) => complete(StatusCodes.Created, credential)
+        }
+      }*/
+    }
+
+  def addAbsence: Route =
+    post {
+      dummy()
+      /*entity(as[Assenza]){
+        absence => onComplete(PersonaOperation.addAbsence(absence)){
+          case Success(_) => complete(StatusCodes.Created)
         }
       }*/
     }
