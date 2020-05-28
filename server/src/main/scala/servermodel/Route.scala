@@ -1,5 +1,0 @@
-package servermodel
-
-trait Route {
-
-}
