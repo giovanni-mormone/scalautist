@@ -1,6 +1,6 @@
 package model.entity
 
-import caseclass.CaseClassDB.Turno
+import caseclass.CaseClassDB.{Stipendio, Turno}
 import model.Model
 
 import scala.concurrent.Future
@@ -20,9 +20,18 @@ trait DriverModel extends Model {
    * @param endData
    * The end date of the workshift period to be shown
    * @return
-   * Future of Turno seq
+   * Future of list of Turno
    */
-  def getTurn(id: Int, startData: String, endData: String): Future[Seq[Turno]]
+  def getWorkshift(id: Int, startData: String, endData: String): Future[List[Turno]]
 
-  def getSalaries(id: Int): Future[]
+  /**
+   * Return a set of driver's Stipendio
+   * @param id
+   * User id
+   * @return
+   * Future of List of Stipendio
+   */
+  def getSalaries(id: Int): Future[List[Stipendio]]
+
+
 }

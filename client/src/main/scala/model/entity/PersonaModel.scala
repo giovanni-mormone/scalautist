@@ -22,11 +22,11 @@ trait PersonaModel extends Model {
    * Check credential on the database, if the result is positive it returns personal data, else empty.
    *
    * @param user
-   *             string to identify user
+   * string to identify user
    * @param password
-   *                 user password string
+   * user password string
    * @return
-   *         future of istance of persona
+   * future of istance of persona
    */
   def login(user: String, password: String): Future[Option[Persona]]
 
@@ -63,6 +63,7 @@ object PersonaModel {
       val person = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
+
       dispatcher.serverRequest(request).onComplete{
         case Success(result) =>
           Unmarshal(result).to[Persona].onComplete(dbPerson => person.success(dbPerson.toOption) )
@@ -72,7 +73,7 @@ object PersonaModel {
 
     override def changePassword(user: String, oldPassword: String, newPassword: String): Future[Unit] = {
       val result = Promise[Unit]
-      val oldCredential = login(user, oldPassword)
+      val oldCredential = login(user, oldPassword) //TODO case class con 2 password
       val newCredential = Login(user, newPassword)
       val request = Post(getURI("updatepassword"), newCredential) // cambiare request
 

@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassDB.{Assenza, Login, Persona}
 import java.sql.Date
 
 import model.utils.ModelUtils
@@ -27,7 +27,7 @@ trait HumanResourceModel extends Model {
    * @return
    * Future
    */
-  def Recruit(persona:Persona):Future[Unit]
+  def recruit(persona:Persona):Future[Unit]
 
   /**
    * Layoff operations, delete a set of people from the database
@@ -47,25 +47,30 @@ trait HumanResourceModel extends Model {
 
   /**
    * Assign an illness to an employee
-   * @param start
+   *
+   * @param idPersona
+   * Employee id
+   * @param startDate
    * Date of start of illness period
-   * @param end
+   * @param endDate
    * Date of end of illness period
    * @return
    * Future
    */
-  def illnessPeriod(start: String, end: String): Future[Unit]
+  def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
 
   /**
    * Assign a holiday period to an employee
-   * @param Start
+   * @param idPersona
+   * Employee id
+   * @param startDate
    * Date of start of holiday period
-   * @param end
+   * @param endDate
    * Date of end of holiday period
    * @return
    * Future
    */
-  def holidays(Start: String, end: String): Future[Unit]
+  def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
 
   /**
    * Recover an employee's password
@@ -89,10 +94,10 @@ object HumanResourceModel {
 
   private class HumanResourceHttp extends HumanResourceModel{
 
-    override def Recruit(persona: Persona): Future[Unit] = {
+    override def recruit(persona: Persona): Future[Login] = {
       val result = Promise[Unit]
       val request = Post(getURI("createpersona"), persona)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
+      dispatcher.serverRequest(request).onComplete(_ => result.success(Login))//TODO
       result.future
     }
 
@@ -115,14 +120,28 @@ object HumanResourceModel {
       list.future
     }
 
-    override def illnessPeriod(start: String, end: String): Future[Unit] = {
+    override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
-      //val request = //TODO parte del db e case class db
+      val absence = Assenza(idPersona, startDate, endDate, true)
+      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+      dispatcher.serverRequest(request).onComplete{
+        case Success(_) => result.success(Unit)
+        case Failure(exception) => result.failure(exception)
+      }
+      result.future
     }
 
 
-    override def holidays(Start: String, end: String): Future[Unit] = ??? //TODO parte del db e case class db
-
+    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
+      val result = Promise[Unit]
+      val absence = Assenza(idPersona, startDate, endDate, false)
+      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+      dispatcher.serverRequest(request).onComplete{
+        case Success(_) => result.success(Unit)
+        case Failure(exception) => result.failure(exception)
+      }
+      result.future
+    }
 
     override def passwordRecovery(user: String): Future[Login] = {
       val result = Promise[Login]
@@ -133,6 +152,6 @@ object HumanResourceModel {
       }
       result.future
     }
-}
+  }
 
 }
