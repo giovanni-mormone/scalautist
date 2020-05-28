@@ -28,6 +28,8 @@ object ChangePasswordBox{
     @FXML
     var passwordField: PasswordField = _
     @FXML
+    var oldPasswordField:PasswordField = _
+    @FXML
     var confirmPasswordField: PasswordField = _
     @FXML
     var changePasswordButton: Button = _
@@ -45,6 +47,7 @@ object ChangePasswordBox{
       passError.setText(resources.getString("pass-error-message"))
       confirmError.setText(resources.getString("confirm-error-message"))
       passwordField.setPromptText(resources.getString("pass"))
+      oldPasswordField.setPromptText(resources.getString("old-password"))
       confirmPasswordField.setPromptText(resources.getString("confirm-pass"))
       changePasswordButton.setText(resources.getString("change-pass"))
       confirmError setVisible false
@@ -54,7 +57,7 @@ object ChangePasswordBox{
       passwordField.textProperty().addListener((_,_,newV)=> checkPassword(newV))
       confirmPasswordField.textProperty().addListener((_,_,newV)=>  checkConfirmPassword(newV,passwordField.getText))
 
-      changePasswordButton.setOnAction(_ => parent.changePass(confirmPasswordField getText))
+      changePasswordButton.setOnAction(_ => parent.changePass(oldPasswordField getText ,confirmPasswordField getText))
     }
 
     private def checkPassword(text: String): Unit = regex.matches(text) match {

@@ -24,16 +24,19 @@ trait ChangePasswordView extends GoBackView{
 trait ChangePasswordParent{
   /**
    * Called to submit the new password chosen by the user. It should be called by a
+   * @param oldPassword
+   *                    The oldPassword submitted by the user.
    * @param newPassword
+   *                    The newPassword submitted by the user.
    */
-  def changePass(newPassword: String)
+  def changePass(oldPassword:String, newPassword: String)
 }
 
 object ChangePasswordView{
 
-  def apply(stage:Stage, scene:Option[Scene], userID: Int): ChangePasswordView = new ChangePasswordViewFX(stage,scene,userID)
+  def apply(stage:Stage, scene:Option[Scene]): ChangePasswordView = new ChangePasswordViewFX(stage,scene)
 
-  private class ChangePasswordViewFX(stage:Stage, scene:Option[Scene], userID: Int) extends AbstractFXViewWithBack(stage,scene) with ChangePasswordView with ChangePasswordParent{
+  private class ChangePasswordViewFX(stage:Stage, scene:Option[Scene]) extends AbstractFXViewWithBack(stage,scene) with ChangePasswordView with ChangePasswordParent{
     private var myController: ChangePasswordController = _
     private var changePasswordBox: ChangePasswordBox= _
 
@@ -45,8 +48,8 @@ object ChangePasswordView{
       changePasswordBox.setParent(this)
       pane.getChildren.add(changePasswordBox pane)
     }
-    override def changePass(newPassword: String): Unit =
-      myController.changePassword(newPassword, userID)
+    override def changePass(oldPassword:String ,newPassword: String): Unit =
+      myController.changePassword(oldPassword,newPassword)
 
     /**
      * Closes the view.

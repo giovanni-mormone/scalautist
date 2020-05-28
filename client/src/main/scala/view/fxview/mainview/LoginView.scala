@@ -5,8 +5,7 @@ import java.util.ResourceBundle
 
 import controller.LoginController
 import javafx.application.Platform
-import javafx.scene.control.Alert
-import javafx.stage.{Modality, Stage}
+import javafx.stage.Stage
 import view.BaseView
 import view.fxview.{AbstractFXView, FXHelperFactory}
 import view.fxview.component.Login.LoginBox
@@ -20,7 +19,13 @@ trait LoginView extends BaseView{
    * Method that shows a message of error in case of a bad login(e.g. wrong username or password)
    */
   def badLogin():Unit
-  def firstUserAccess(userID:Int): Unit
+
+  /**
+   * Method called to notify a login by a user not validated. it opens a
+   * [[view.fxview.mainview.ChangePasswordView]].
+   *
+   */
+  def firstUserAccess(): Unit
 }
 
 /**
@@ -75,10 +80,10 @@ object LoginView{
       })
     }
 
-    override def firstUserAccess(userID: Int): Unit = {
+    override def firstUserAccess(): Unit = {
       FXHelperFactory.modalWithMessage(myStage, firstLoginMessage).show()
       loginBox.resetViewFields()
-      ChangePasswordView(myStage,Some(myStage.getScene),userID)
+      ChangePasswordView(myStage,Some(myStage.getScene))
     }
   }
 

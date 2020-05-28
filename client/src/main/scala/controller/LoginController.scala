@@ -35,7 +35,12 @@ object LoginController {
       case (s1,s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin
       case _ => {
         myModel.login(username,password).onComplete{
-          case Success(t) => println(t.getOrElse(myView.badLogin))
+          case Success(t) => t match {
+            case Some(user) =>
+              Utils.username = user.userName
+              Utils.userId = user.matricola.head
+            case None => myView.badLogin
+          }
           case Failure(exception) => println(exception)
         }
       }

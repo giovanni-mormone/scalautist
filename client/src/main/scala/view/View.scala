@@ -21,7 +21,6 @@ trait BaseView {
   def close(): Unit
 }
 
-
 /**
  * Extension of [[BaseView]]. Adds the functionality to go back to the previous view.
  */
