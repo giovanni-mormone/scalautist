@@ -6,16 +6,14 @@ import java.sql.Date
  *
  */
 object CaseClassDB{
-
-  /**
+   /**
    * Login is a case class that represent parameters for login
    * @param user
    *             user name in system
    * @param password
    *                 user password in system
    */
-  final case class Login(user:String,password:String)
-
+  final case class Login(user:String,password:String) 
   final case class Contratto(tipoContratto:String,turnoFisso:Byte,idContratto:Option[Int]=None)
   final case class Giorno(quantita:Int,nomeGiorno:String,idGiorno:Option[Int]=None)
   final case class GruppoTerminale(parametriId:Int,idGruppoTerminale:Option[Int]=None)
@@ -32,7 +30,7 @@ object CaseClassDB{
   final case class Turno(nomeTurno: String, fasciaOraria: String,id: Option[Int] = None)
   final case class Zona(zones:String,idZone:Option[Int]=None)
   final case class Settimana(parametriSetId:Int,idZone:Option[Int]=None)
-
-
+  final case class Stipendio(personaId: Int, valore: Double, data: Date, idStipendio: Option[Int] = None)
+  final case class Assenza(perosnaId: Int, dataInizio: Date, dataFine: Date, malattia: Boolean, idAssenza: Option[Int] = None)
 }
 
