@@ -3,8 +3,7 @@ name := "scalautist"
 version := "0.1"
 
 ThisBuild /scalaVersion := "2.13.2"
-enablePlugins(JavaAppPackaging)
-enablePlugins(DockerPlugin)
+
 
 lazy val client = project.settings(
   mainClass := Some("view.MainClient"),
@@ -24,10 +23,11 @@ lazy val client = project.settings(
   assemblySettings
 
 ).dependsOn(utils,event)
-lazy val server = project.settings(
+lazy val server = project.enablePlugins(JavaAppPackaging).
+enablePlugins(DockerPlugin).settings(
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
-  mainClass  := Some("servermodel.StartServer"),
+  mainClass  in Compile := Some("servermodel.StartServer"),
   name := "scalautist-server-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,
@@ -126,5 +126,6 @@ lazy val librariesTest = new {
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
+  scalacOptions ++= compilerOptions,
   excludeDependencies ++= Seq(librariesTest.scalatestOrg,librariesTest.junitCom,librariesTest.scalaCheckOrg, librariesTest.testFXOrg, librariesTest.juntPl)
 )
