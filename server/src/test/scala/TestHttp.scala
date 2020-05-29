@@ -3,7 +3,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.SystemMaterializer
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import servermodel.StartServer
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
@@ -29,7 +30,7 @@ trait HttpRequest {
   StartServer.startServer()
 }
 
-class TestHttpDummydb extends  AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
+class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
 
   behavior of "dummyRequest"
   it should "return some String from MasterRoutePersona" in {

@@ -12,7 +12,10 @@ lazy val client = project.settings(
     libraries.akkaHttp,
     libraries.akkaActor,
     libraries.akkaStream,
-    libraries.sprayJson
+    libraries.sprayJson,
+    librariesTest.scalatest,
+    librariesTest.scalaCheck,
+    librariesTest.junit
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
