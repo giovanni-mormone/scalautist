@@ -23,7 +23,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
 
   override def beforeEach(): Unit = {
 
-    login = Login("Fabian","admin")
+    login = Login("admin","admin")
     changePassword = ChangePassword(1,"admin","admin")
     persona=Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,Some(1))
     persona2=Persona("Fabian","Aspee","569918598",Some(""),1,isNew = false,"admin",None,Some(1))
@@ -62,8 +62,8 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     insertAllPersona map { insertAll => assert(insertAll.length == 2) }
   }
   it should "return a person when select for id" in {
-    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona2.matricola.get)
-    selectPersona map {persona =>  assert(persona.get == this.persona2) }
+    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona.matricola.get)
+    selectPersona map {persona =>  assert(persona.get == this.persona) }
   }
   it should "return a List of Person when selectAll" in {
     val selectAllPersona: Future[List[Persona]] = PersonaOperation.selectAll
