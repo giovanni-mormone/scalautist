@@ -3,7 +3,8 @@ name := "scalautist"
 version := "0.1"
 
 ThisBuild /scalaVersion := "2.13.2"
-
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
 
 lazy val client = project.settings(
   mainClass := Some("view.MainClient"),
@@ -22,7 +23,7 @@ lazy val server = project.settings(
 
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
-  mainClass  := Some("main.MainServer"),
+  mainClass  := Some("servermodel.StartServer"),
   name := "scalautist-server-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,
