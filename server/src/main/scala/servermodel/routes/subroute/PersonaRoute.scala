@@ -87,7 +87,7 @@ object PersonaRoute {
     post {
       entity(as[Login]) { login =>
         onComplete(PersonaOperation.login(login)) {
-          case Success(t)  =>  complete(StatusCodes.Created,t)
+          case Success(t)  =>  complete((StatusCodes.Created,t.head))
         }
       }
     }
@@ -97,7 +97,7 @@ object PersonaRoute {
       import jsonmessages.JsonMessageFormats._
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){
-          case Success(t)  =>  complete(StatusCodes.Created)
+          case Success(t)  =>  complete(StatusCodes.Accepted)
         }
       }
     }

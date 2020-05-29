@@ -79,7 +79,5 @@ object PersonaModel {
       dispatcher.serverRequest(request).onComplete(_ => result.success() )
       result.future
     }
-
-}
-
+  }
 }
