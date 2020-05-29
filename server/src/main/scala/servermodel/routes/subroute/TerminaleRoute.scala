@@ -12,6 +12,16 @@ import scala.util.Success
 
 object TerminaleRoute  {
 
+  def dummy() =
+    onComplete(DummyDB.dummyReq()) {
+      case t => complete(StatusCodes.Accepted,t)
+    }
+
+  def methodDummy(): Route =
+    post {
+      dummy()
+    }
+
   def getTerminale(id: Int): Route =
     get {
       onComplete(DummyDB.dummyReq()) {

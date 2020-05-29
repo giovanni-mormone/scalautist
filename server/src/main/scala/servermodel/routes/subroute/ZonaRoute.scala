@@ -12,6 +12,16 @@ import scala.util.Success
 
 object ZonaRoute {
 
+  def dummy() =
+    onComplete(DummyDB.dummyReq()) {
+      case t => complete(StatusCodes.Accepted,t)
+    }
+
+  def methodDummy(): Route =
+    post {
+      dummy()
+    }
+
   def getZona(id: Int): Route =
     get {
      onComplete(DummyDB.dummyReq()) {

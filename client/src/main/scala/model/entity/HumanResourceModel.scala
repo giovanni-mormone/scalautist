@@ -108,7 +108,7 @@ object HumanResourceModel {
     override def fires(ids: Set[Int]): Future[Unit] = {
       val result = Promise[Unit]
       var list: List[Persona] = List()
-      ids.foreach(x => list = Persona("","",new Date(1),"",1,None,Some(x))::list)
+      ids.foreach(x => list = Persona("","",new Date(1),"",1,None,Some(x))::list) //TODO
       val request = Post(getURI("deleteallpersona"), list)
       dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
       result.future
