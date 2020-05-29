@@ -34,7 +34,7 @@ object TurnoRoute {
       entity(as[Turno]) { turno =>
         onComplete(DummyDB.dummyReq()) {
           //onComplete(TurnoOperation.insert(turno)) {
-          case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(t)))
+          case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(2/*t*/)))
         }
       }
     }

@@ -36,7 +36,7 @@ object MasterRoutePersona {
         loginPersona()
       },
       path("updatepassword") {            //TODO update password
-        updatePassword
+        updatePassword()
       },
       path("addabsence") {          //TODO add absence
           addAbsence()

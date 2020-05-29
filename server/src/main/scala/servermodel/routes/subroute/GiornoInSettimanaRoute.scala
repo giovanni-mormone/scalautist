@@ -29,11 +29,11 @@ object GiornoInSettimanaRoute {
 
   def createGiornoInSettimana(): Route =
     post {
-      entity(as[GiornoInSettimana]) { giornoInSettimana =>
+      //entity(as[GiornoInSettimana]) { giornoInSettimana =>
         onComplete(DummyDB.dummyReq()) {
         //onComplete(GiornoInSettimanaOperation.insert(giornoInSettimana)) {
           case Success(t)  =>  complete(StatusCodes.Created)
         }
-      }
+      //}
     }
 }

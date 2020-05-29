@@ -35,7 +35,7 @@ object PersonaRoute {
   def getAllPersona: Route =
     post {
       dummy()
-      /*dummy()
+      /*
       onComplete(PersonaOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
       }*/
@@ -101,7 +101,7 @@ object PersonaRoute {
       }*/
     }
 
-  def updatePassword: Route =
+  def updatePassword(): Route =
     post {
       dummy()
       /*entity(as[ChangePassword]) {
@@ -111,7 +111,7 @@ object PersonaRoute {
       }*/
     }
 
-  def addAbsence: Route =
+  def addAbsence(): Route =
     post {
       dummy()
       /*entity(as[Assenza]){
