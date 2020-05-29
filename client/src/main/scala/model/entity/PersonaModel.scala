@@ -1,11 +1,10 @@
 package model.entity
 
-import model.Model
-import model.ModelDispatcher
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
+import model.{Model, ResponceCode}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
+import akka.http.scaladsl.model.StatusCodes
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.ChangePassword
 
@@ -43,7 +42,7 @@ trait PersonaModel extends Model {
    * @return
    * future
    */
-  def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Unit]
+  def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
 
 }
 
@@ -63,7 +62,6 @@ object PersonaModel {
       val person = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-
       dispatcher.serverRequest(request).onComplete{
         case Success(result) =>
           Unmarshal(result).to[Persona].onComplete(dbPerson => person.success(dbPerson.toOption) )
@@ -71,12 +69,19 @@ object PersonaModel {
       person.future
     }
 
-    override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Unit] = {
-      val result = Promise[Unit]
+    override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
+      val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
       import jsonmessages.JsonMessageFormats._
       val request = Post(getURI("updatepassword"), newCredential) // cambiare request
-      dispatcher.serverRequest(request).onComplete(_ => result.success() )
+      dispatcher.serverRequest(request).onComplete{
+        case Success(t) => t.status match {
+          case StatusCodes.Accepted => result.success(ResponceCode.Success)
+          case StatusCodes.NotFound => result.success(ResponceCode.NotFound)
+          case StatusCodes.BadRequest => result.success(ResponceCode.DbError)
+        }
+        case Failure(_) => result.success(ResponceCode.UnknownError)
+      }
       result.future
     }
   }
