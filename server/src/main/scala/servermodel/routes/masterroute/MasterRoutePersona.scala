@@ -40,6 +40,9 @@ object MasterRoutePersona {
       },
       path("addabsence") {          //TODO add absence
           addAbsence()
-      }
+      },
+      /*path("getnewpassword") {            //TODO update password
+        getNewPassword()
+      }*/
     )
 }

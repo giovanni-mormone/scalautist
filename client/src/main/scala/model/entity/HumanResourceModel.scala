@@ -5,7 +5,7 @@ import model.ModelDispatcher
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
-import akka.http.scaladsl.client.RequestBuilding.Post
+import akka.http.scaladsl.client.RequestBuilding.{Post, Get}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
 import java.sql.Date
 
@@ -79,7 +79,7 @@ trait HumanResourceModel extends Model {
    * @return
    * Future of new Login data (only new password)
    */
-  def passwordRecovery(user: String): Future[Login]
+  def passwordRecovery(user: Int): Future[Login]
 }
 
 /**
@@ -108,9 +108,9 @@ object HumanResourceModel {
     override def fires(ids: Set[Int]): Future[Unit] = {
       val result = Promise[Unit]
       var list: List[Persona] = List()
-      ids.foreach(x => list = Persona("","",new Date(1),"",1,None,Some(x))::list) //TODO
+      ids.foreach(x => list = Persona("","","",None,1,false,"",None,Some(x))::list)
       val request = Post(getURI("deleteallpersona"), list)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Unit))
+      dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
     }
 
@@ -127,9 +127,9 @@ object HumanResourceModel {
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, true)
-      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+      val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(Unit)
+        case Success(_) => result.success()
         case Failure(exception) => result.failure(exception)
       }
       result.future
@@ -139,20 +139,20 @@ object HumanResourceModel {
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, false)
-      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+      val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(Unit)
+        case Success(_) => result.success()
         case Failure(exception) => result.failure(exception)
       }
       result.future
     }
 
-    override def passwordRecovery(user: String): Future[Login] = {
+    override def passwordRecovery(user: Int): Future[Login] = {
       val result = Promise[Login]
-      val user = Login(user, ModelUtils.generatePassword)
-      val request = Post(getURI("updatepassword"), user)
+      val request = Get(getURI("getnewpassword" + "?user=" + user.toString))
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(user)
+        case Success(newCredential) =>
+          Unmarshal(newCredential).to[Login].onComplete(t => result.success(t.get))
       }
       result.future
     }

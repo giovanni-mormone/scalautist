@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.Risultato
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB  //TODO
+import dbfactory.operation.RisultatoOperation
 
 import scala.util.Success
 
@@ -14,8 +14,7 @@ object RisultatoRoute {
 
   def getRisultato(id: Int): Route =
     get {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(RisultatoOperation.select(id)) {
+      onComplete(RisultatoOperation.select(id)) {
         case Success(t) =>    complete((StatusCodes.Found,t))
         //case Success(None) => complete(StatusCodes.NotFound)
       }
@@ -23,8 +22,7 @@ object RisultatoRoute {
 
   def getAllRisultato: Route =
     get {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(RisultatoOperation.selectAll) {
+      onComplete(RisultatoOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
       }
     }
@@ -32,8 +30,7 @@ object RisultatoRoute {
   def createRisultato(): Route =
     post {
       entity(as[Risultato]) { risultato =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(RisultatoOperation.insert(risultato)) {
+        onComplete(RisultatoOperation.insert(risultato)) {
           case Success(t) =>  complete(StatusCodes.Created)
         }
       }
