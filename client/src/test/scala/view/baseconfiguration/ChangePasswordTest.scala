@@ -12,18 +12,18 @@ import view.mainviewoperations.ChangePasswordOperations
 @RunWith(classOf[JUnitParamsRunner])
 class ChangePasswordTest extends BaseTest {
   private val VALID_PASS = "mammaMia1"
-  private val OLD_PASS = "valida"
+  private val OLD_PASS = "root"
   private val INVALID_PASS = "mammamama1"
 
   private var changeView: ChangePasswordOperations = _
 
   @Before
   def beforeEachTest(): Unit = {
-    LoginController().login("user","pass")
+    LoginController().login("root","root")
     setUp(classOf[ChangePasswordLaunch])
     changeView = ChangePasswordOperations(this)
   }
-/*
+
   @Test
   def goodChange(): Unit = {
     changeView.changePassword(OLD_PASS,VALID_PASS,VALID_PASS)
@@ -32,15 +32,15 @@ class ChangePasswordTest extends BaseTest {
     val msgLabel:Label = find("#messageLabel")
     assert(msgLabel.getText.equals("Password Cambiata con successo!"))
     changeView.clickModalButton()
-  }*/
+  }
 
-  /*@Test
+  @Test
   def displayLoading(): Unit = {
     changeView.changePassword(OLD_PASS, VALID_PASS, VALID_PASS)
     ensureEventQueueComplete()
     val loadBox: VBox = find("#loadingBox")
     assert(loadBox.isVisible)
-  }*/
+  }
 
   @Test
   def noOldPasswordMessage():Unit = {

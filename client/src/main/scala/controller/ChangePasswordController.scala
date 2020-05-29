@@ -35,7 +35,7 @@ object ChangePasswordController{
   private class ChangePasswordControllerImpl extends ChangePasswordController{
     override def changePassword(oldPassword: String, newPassword: String): Unit = newPassword match{
       case x if PasswordHelper.passwordRegex().matches(x) =>
-        myModel.changePassword(Utils.username,oldPassword,newPassword).onComplete{
+        myModel.changePassword(Utils.userId,oldPassword,newPassword).onComplete{
           case Success(_) => myView.okChange()
           case _ => myView.errorChange()
         }

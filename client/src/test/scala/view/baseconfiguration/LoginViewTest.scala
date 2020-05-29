@@ -11,8 +11,8 @@ import view.mainviewoperations.LoginOperations
 @RunWith(classOf[JUnitParamsRunner])
 class LoginViewTest extends BaseTest {
 
-  private val NEW_USER:String = "newUser"
-  private val NEW_USER_PASS:String = "passNewUser"
+  private val NEW_USER:String = "root"
+  private val NEW_USER_PASS:String = "root"
 
   private var loginView:LoginOperations = _
 
@@ -22,7 +22,7 @@ class LoginViewTest extends BaseTest {
     loginView = LoginOperations(this)
   }
 
-  /*@Test
+  @Test
   def newUserLogin(): Unit ={
     loginView.login(NEW_USER,NEW_USER_PASS)
     Thread.sleep(25000)
@@ -31,14 +31,15 @@ class LoginViewTest extends BaseTest {
     val titleRes: Label = find("#title")
     assert(titleRes.getText.equals("Cambia Password"))
   }
-*/
+
 
   @Test
   def newUserLoginModal(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
-    Thread.sleep(25000)
+    Thread.sleep(12000)
     val msgLabel: Label = find("#messageLabel")
     assert(msgLabel.getText.equals("È il tuo primo login! Cambia password per poter accedere al programma!"))
+    loginView.clickModalButton()
   }
 
   @Test

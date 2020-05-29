@@ -43,7 +43,10 @@ object LoginController {
     }
 
     private val checkLoginResult:Option[Persona] => Unit = {
-      case Some(user) if user.isNew => myView.firstUserAccess()
+      case Some(user) if user.isNew =>
+        Utils.userId = user.matricola.head //da vedere
+        Utils.username = user.userName
+        myView.firstUserAccess()
       case Some(user) if user.ruolo == 1 => println("ADMIN")//admin
       case Some(user) if user.ruolo == 2 => println("RISORSE UMANE")//risorse umane
       case Some(user) if user.ruolo == 3 => println("CONDUCENTE")//conducente
