@@ -1,12 +1,13 @@
 package model.entity
 
-import model.{Model, ResponceCode}
+import model.Model
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.StatusCodes
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.ChangePassword
+import model.utils.ResponceCode
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
