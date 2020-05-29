@@ -20,7 +20,6 @@ trait ModelDispatcher {
   implicit val system = ActorSystem(actorSystemName)
   implicit val materializer = SystemMaterializer(system)
   implicit val ex = system.dispatchers
-
   /**
    * Http server request
    * @param request: Http request to send to server

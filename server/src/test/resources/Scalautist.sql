@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/28/2020 17:07:12
+-- Date Created: 05/29/2020 18:39:14
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\DataBasePPS.edmx
 -- --------------------------------------------------
 
@@ -77,6 +77,12 @@ ALTER TABLE [dbo].[SettimaneSet] DROP CONSTRAINT [FK_ParametriSetSettimane];
 IF OBJECT_ID(N'[dbo].[FK_SettimaneSettimanaSet]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimaneSettimanaSet];
 
+IF OBJECT_ID(N'[dbo].[FK_AssenzaPersoneSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[AssenzaSet] DROP CONSTRAINT [FK_AssenzaPersoneSet];
+
+IF OBJECT_ID(N'[dbo].[FK_StipendioPersoneSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[StipendioSet] DROP CONSTRAINT [FK_StipendioPersoneSet];
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -138,6 +144,9 @@ IF OBJECT_ID(N'[dbo].[SettimaneSet]', 'U') IS NOT NULL
 
 IF OBJECT_ID(N'[dbo].[AssenzaSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[AssenzaSet];
+
+IF OBJECT_ID(N'[dbo].[StipendioSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[StipendioSet];
 
 
 -- --------------------------------------------------
@@ -309,9 +318,19 @@ CREATE TABLE [dbo].[SettimaneSet] (
 -- Creating table 'AssenzaSet'
 CREATE TABLE [dbo].[AssenzaSet] (
                                     [IdAssenza] int IDENTITY(1,1) NOT NULL,
-                                    [DataInizio] nvarchar(max)  NOT NULL,
-                                    [DataFine] nvarchar(max)  NOT NULL,
-                                    [IsMalattia] nvarchar(max)  NOT NULL
+                                    [DataInizio] datetime  NOT NULL,
+                                    [DataFine] datetime  NOT NULL,
+                                    [IsMalattia] bit  NOT NULL,
+                                    [PersoneSet_Matricola] int  NOT NULL
+);
+
+
+-- Creating table 'StipendioSet'
+CREATE TABLE [dbo].[StipendioSet] (
+                                      [IdStipendio] int IDENTITY(1,1) NOT NULL,
+                                      [Data] datetime  NOT NULL,
+                                      [Valore] float  NOT NULL,
+                                      [PersoneSet_Matricola] int  NOT NULL
 );
 
 
@@ -431,6 +450,12 @@ ALTER TABLE [dbo].[SettimaneSet]
 ALTER TABLE [dbo].[AssenzaSet]
     ADD CONSTRAINT [PK_AssenzaSet]
         PRIMARY KEY CLUSTERED ([IdAssenza] ASC);
+
+
+-- Creating primary key on [IdStipendio] in table 'StipendioSet'
+ALTER TABLE [dbo].[StipendioSet]
+    ADD CONSTRAINT [PK_StipendioSet]
+        PRIMARY KEY CLUSTERED ([IdStipendio] ASC);
 
 
 -- --------------------------------------------------
@@ -735,6 +760,36 @@ ALTER TABLE [dbo].[GiornoInSettimanaSets]
 CREATE INDEX [IX_FK_SettimaneSettimanaSet]
     ON [dbo].[GiornoInSettimanaSets]
         ([SettimaneIdSettimane]);
+
+
+-- Creating foreign key on [PersoneSet_Matricola] in table 'AssenzaSet'
+ALTER TABLE [dbo].[AssenzaSet]
+    ADD CONSTRAINT [FK_AssenzaPersoneSet]
+        FOREIGN KEY ([PersoneSet_Matricola])
+            REFERENCES [dbo].[PersoneSets]
+                ([Matricola])
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_AssenzaPersoneSet'
+CREATE INDEX [IX_FK_AssenzaPersoneSet]
+    ON [dbo].[AssenzaSet]
+        ([PersoneSet_Matricola]);
+
+
+-- Creating foreign key on [PersoneSet_Matricola] in table 'StipendioSet'
+ALTER TABLE [dbo].[StipendioSet]
+    ADD CONSTRAINT [FK_StipendioPersoneSet]
+        FOREIGN KEY ([PersoneSet_Matricola])
+            REFERENCES [dbo].[PersoneSets]
+                ([Matricola])
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_StipendioPersoneSet'
+CREATE INDEX [IX_FK_StipendioPersoneSet]
+    ON [dbo].[StipendioSet]
+        ([PersoneSet_Matricola]);
 
 
 -- --------------------------------------------------

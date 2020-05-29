@@ -27,7 +27,7 @@ trait HttpRequest {
   implicit val materializer = SystemMaterializer(system)
   implicit val ex = system.dispatchers
 
-  StartServer.startServer()
+  StartServer
 }
 
 class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
