@@ -15,7 +15,7 @@ trait Init{
   protected var listNewPerson:List[Persona] = _
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
-  val result: Int =1// Await.result(runScript(),Duration.Inf)
+  val result: Int = Await.result(runScript(),Duration.Inf)
   require(result==1)
 }
 
