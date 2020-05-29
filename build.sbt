@@ -13,6 +13,8 @@ lazy val client = project.settings(
     libraries.akkaActor,
     libraries.akkaStream,
     libraries.sprayJson,
+    librariesTest.scalatest,
+    librariesTest.scalaCheck,
     librariesTest.testFXTest,
     librariesTest.junit,
     librariesTest.monocle,
