@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.Parametro
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB  //TODO
+import dbfactory.operation.ParametroOperation
 
 import scala.util.Success
 
@@ -14,17 +14,15 @@ object ParametroRoute {
 
   def getParametro(id: Int): Route =
     get {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(ParametroOperation.select(id)) {
+      onComplete(ParametroOperation.select(id)) {
         case Success(t) =>    complete((StatusCodes.Found,t))
-        //case Success(None) => complete(StatusCodes.NotFound)
+        case Success(None) => complete(StatusCodes.NotFound)
       }
     }
 
   def getAllParametro: Route =
     post {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(ParametroOperation.selectAll) {
+      onComplete(ParametroOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
       }
     }
@@ -32,8 +30,7 @@ object ParametroRoute {
   def createParametro(): Route =
     post {
       entity(as[Parametro]) { parametro =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(ParametroOperation.insert(parametro)) {
+        onComplete(ParametroOperation.insert(parametro)) {
           case Success(t)  =>  complete(StatusCodes.Created)
         }
       }

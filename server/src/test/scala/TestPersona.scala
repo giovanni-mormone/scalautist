@@ -6,6 +6,7 @@ import caseclass.CaseClassHttpMessage.ChangePassword
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+
 trait Init{
   protected var persona:Persona = _
   protected var persona2:Persona = _
@@ -17,6 +18,7 @@ trait Init{
   val result: Int =1// Await.result(runScript(),Duration.Inf)
   require(result==1)
 }
+
 class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
 
   override def beforeEach(): Unit = {

@@ -8,6 +8,9 @@ object MasterRouteTurni{
 
   val routeTurni: Route =
     concat(
+      path("dummyTurno") {
+        methodDummy()
+      },
       path("getturno" / IntNumber) {
         id => getTurno(id)
       },

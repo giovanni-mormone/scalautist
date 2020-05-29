@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.RichiestaTeorica
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB  //TODO
+import dbfactory.operation.RichiestaTeoricaOperation
 
 import scala.util.Success
 
@@ -14,17 +14,15 @@ object RichiestaTeoricaRoute {
 
   def getZona(id: Int): Route =
     get {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(RichiestaTeoricaOperation.select(id)) {
+      onComplete(RichiestaTeoricaOperation.select(id)) {
         case Success(t) =>    complete((StatusCodes.Found,t))
-        //case Success(None) => complete(StatusCodes.NotFound)
+        case Success(None) => complete(StatusCodes.NotFound)
       }
     }
 
   def getAllZona: Route =
     post {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(RichiestaTeoricaOperation.selectAll) {
+      onComplete(RichiestaTeoricaOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
       }
     }
@@ -32,8 +30,7 @@ object RichiestaTeoricaRoute {
   def createZona(): Route =
     post {
       entity(as[RichiestaTeorica]) { richiestaTeorica =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(RichiestaTeoricaOperation.insert(richiestaTeorica)) {
+        onComplete(RichiestaTeoricaOperation.insert(richiestaTeorica)) {
           case Success(t) =>  complete(StatusCodes.Created)
         }
       }
