@@ -7,10 +7,11 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassHttpMessage.ChangePassword
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 /**
  * PersonaModel extends [[model.Model]].
@@ -42,9 +43,8 @@ trait PersonaModel extends Model {
    * @return
    * future
    */
-  def changePassword(user: String, oldPassword: String, newPassword: String): Future[Unit]
+  def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Unit]
 
-  //def addUser(User: String, password: String): Future[Unit]
 }
 
 /**
@@ -71,22 +71,13 @@ object PersonaModel {
       person.future
     }
 
-    override def changePassword(user: String, oldPassword: String, newPassword: String): Future[Unit] = {
+    override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Unit] = {
       val result = Promise[Unit]
-      val oldCredential = login(user, oldPassword) //TODO case class con 2 password
-      val newCredential = Login(user, newPassword)
+      val newCredential = ChangePassword(user, oldPassword, newPassword)
+      import jsonmessages.JsonMessageFormats._
       val request = Post(getURI("updatepassword"), newCredential) // cambiare request
-
-      oldCredential.onComplete{
-        case Success(Some(_)) => dispatcher.serverRequest(request).onComplete{
-          case Success(_) => result.success()
-          case Failure(exception) => result.failure(exception)
-        }
-        //case Success(None) => result.failure(new C)
-      }
+      dispatcher.serverRequest(request).onComplete(_ => result.success() )
       result.future
     }
-
-}
-
+  }
 }

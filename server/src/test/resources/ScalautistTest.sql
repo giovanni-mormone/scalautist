@@ -54,6 +54,31 @@ SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 
 --//PERSONA
 
+--ASSENZA
+
+SET IDENTITY_INSERT [dbo].[AssenzaSet] ON
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (1,N'20200622',N'20200822',1,1)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (2,N'20200619',N'20201019',0,1)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (3,N'20200530',N'20210530',1,3)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (4,N'20200622',N'20200822',0,3)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (5,N'20200619',N'20201019',0,2)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (6,N'20200530',N'20210530',1,2)
+SET IDENTITY_INSERT [dbo].[AssenzaSet] OFF
+
+--//ASSENZA
+
+--STIPENDIO
+
+SET IDENTITY_INSERT [dbo].[StipendioSet] ON
+INSERT INTO [dbo].[StipendioSet] ([IdStipendio], [Data],[Valore],[PersoneSet_Matricola]) VALUES (1,N'20200622',30000.95,1)
+INSERT INTO [dbo].[StipendioSet] ([IdStipendio], [Data],[Valore],[PersoneSet_Matricola]) VALUES (2,N'20200619',31000.96,1)
+INSERT INTO [dbo].[StipendioSet] ([IdStipendio], [Data],[Valore],[PersoneSet_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[StipendioSet] ([IdStipendio], [Data],[Valore],[PersoneSet_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[StipendioSet] ([IdStipendio], [Data],[Valore],[PersoneSet_Matricola]) VALUES (5,N'20200619',34000.99,2)
+SET IDENTITY_INSERT [dbo].[StipendioSet] OFF
+
+--//STIPENDIO
+
 --CONTRATTO
 
 SET IDENTITY_INSERT [dbo].[ContratoeSets] ON

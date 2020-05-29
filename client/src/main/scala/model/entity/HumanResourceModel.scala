@@ -5,7 +5,7 @@ import model.ModelDispatcher
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
-import akka.http.scaladsl.client.RequestBuilding.Post
+import akka.http.scaladsl.client.RequestBuilding.{Post, Get}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
 import java.sql.Date
 
@@ -27,7 +27,7 @@ trait HumanResourceModel extends Model {
    * @return
    * Future
    */
-  def recruit(persona:Persona):Future[Unit]
+  def recruit(persona:Persona):Future[Login]
 
   /**
    * Layoff operations, delete a set of people from the database
@@ -79,7 +79,7 @@ trait HumanResourceModel extends Model {
    * @return
    * Future of new Login data (only new password)
    */
-  def passwordRecovery(user: String): Future[Login]
+  def passwordRecovery(user: Int): Future[Login]
 }
 
 /**
@@ -94,19 +94,25 @@ object HumanResourceModel {
 
   private class HumanResourceHttp extends HumanResourceModel{
 
-    override def recruit(persona: Persona): Future[Unit] = {
-      val result = Promise[Unit]
+
+    override def recruit(persona: Persona): Future[Login] = {
+      val credential = Promise[Login]
       val request = Post(getURI("createpersona"), persona)
-      dispatcher.serverRequest(request).onComplete(_ => result.success(Login))//TODO
-      result.future
+      dispatcher.serverRequest(request).onComplete{
+        case Success(result) =>
+          Unmarshal(result).to[Login].onComplete(data => credential.success(data.get))
+        case Failure(exception) => credential.failure(exception)
+      }
+      credential.future
     }
 
     override def fires(ids: Set[Int]): Future[Unit] = {
       val result = Promise[Unit]
       var list: List[Persona] = List()
-      /*ids.foreach(x => list = Persona("","",new Date(1),"",1,None,Some(x))::list)
+
+      ids.foreach(x => list = Persona("","","",None,1,false,"",None,Some(x))::list)
       val request = Post(getURI("deleteallpersona"), list)
-      dispatcher.serverRequest(request).onComplete(_ => result.success())*/
+      dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
     }
 
@@ -123,33 +129,35 @@ object HumanResourceModel {
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, true)
-      /*val request = Post(getURI("addabsence"), absence) //TODO creare la route
+
+      val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(Unit)
+        case Success(_) => result.success()
         case Failure(exception) => result.failure(exception)
-      }*/
+      }
       result.future
     }
 
 
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
-      /*val absence = Assenza(idPersona, startDate, endDate, false)
-      val request = Post(getURI("addabsence"), absence) //TODO creare la route
+
+      val absence = Assenza(idPersona, startDate, endDate, false)
+      val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(Unit)
+        case Success(_) => result.success()
         case Failure(exception) => result.failure(exception)
-      }*/
+      }
       result.future
     }
 
-    override def passwordRecovery(user: String): Future[Login] = {
+    override def passwordRecovery(user: Int): Future[Login] = {
       val result = Promise[Login]
-      /*val user = Login(user, ModelUtils.generatePassword)
-      val request = Post(getURI("updatepassword"), user)
+      val request = Get(getURI("getnewpassword" + "?user=" + user.toString))
       dispatcher.serverRequest(request).onComplete{
-        case Success(_) => result.success(user)
-      }*/
+        case Success(newCredential) =>
+          Unmarshal(newCredential).to[Login].onComplete(t => result.success(t.get))
+      }
       result.future
     }
   }

@@ -47,9 +47,7 @@ object LoginController {
       case Some(user) if user.ruolo == 1 => println("ADMIN")//admin
       case Some(user) if user.ruolo == 2 => println("RISORSE UMANE")//risorse umane
       case Some(user) if user.ruolo == 3 => println("CONDUCENTE")//conducente
-      case _ =>
-        myView.firstUserAccess()
-        //myView.badLogin
+      case _ => myView.badLogin
     }
   }
 }

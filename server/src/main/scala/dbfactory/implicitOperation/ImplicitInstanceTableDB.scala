@@ -21,8 +21,26 @@ import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 
+/**
+ *  Trait which enable obtain a instance of the case class [[dbfactory.setting.GenericCRUD.Brands]] initializate with the
+ *  table we want use for make operation
+ * @tparam A Is a case class that represent instance of the table in database [[caseclass.CaseClassDB]]
+ * @tparam B class that represent the table in database, allow make query in database [[dbfactory.table]]
+ */
 trait ImplicitInstanceTableDB[A,B<:GenericTable[A]] {
+  /**
+   * operation private enable only enable in the package implicitOperation, this create a instance of
+   * Brands [[dbfactory.setting.GenericCRUD.Brands]], which enable make generic operation in the database
+   * @return A instance of Brands which enables operation in database
+   */
   private[implicitOperation] def typeDB():Brands[A,B]
+
+  /**
+   * method which enable obtain the instance of Operation [[dbfactory.setting.GenericOperation]],
+   * this method is used for [[dbfactory.operation]] for make the another operation in the system
+   * e.g ExecQuery,ExecQueryFilter, etc.
+   * @return A instance of Operation which enables operation in database
+   */
   def operation():Operation[A,B]
 }
 object ImplicitInstanceTableDB {
