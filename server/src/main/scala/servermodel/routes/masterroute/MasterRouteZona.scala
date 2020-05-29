@@ -8,6 +8,9 @@ object MasterRouteZona {
 
   val routeZona: Route =
     concat(
+      path("dummyZona") {
+        methodDummy()
+      },
       path("getzona" / IntNumber) {
         id => getZona(id)
       },

@@ -6,25 +6,32 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.Turno
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB  //TODO
+import dbfactory.DummyDB
+import dbfactory.operation.TurnoOperation
 import jsonmessages.JsonFormats._
+
 import scala.util.Success
 
 object TurnoRoute {
 
+  def methodDummy(): Route =
+    post {
+      onComplete(DummyDB.dummyReq()) {
+        case t => complete(StatusCodes.Accepted,t)
+      }
+    }
+
   def getTurno(id: Int): Route =
     get {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(TurnoOperation.select(id)) {
+      onComplete(TurnoOperation.select(id)) {
         case Success(t) =>    complete((StatusCodes.Found,t))
-        //case Success(None) => complete(StatusCodes.NotFound)
+        case Success(None) => complete(StatusCodes.NotFound)
       }
     }
 
   def getAllTurno: Route =
     post {
-      onComplete(DummyDB.dummyReq()) {
-        //onComplete(TurnoOperation.selectAll) {
+      onComplete(TurnoOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
       }
     }
@@ -32,8 +39,7 @@ object TurnoRoute {
   def createTurno(): Route =
     post {
       entity(as[Turno]) { turno =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(TurnoOperation.insert(turno)) {
+        onComplete(TurnoOperation.insert(turno)) {
           case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(1)))
         }
       }
@@ -42,8 +48,7 @@ object TurnoRoute {
   def createAllTurno(): Route =
     post {
       entity(as[List[Turno]]) { turno =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(TurnoOperation.insertAll(turno)) {
+        onComplete(TurnoOperation.insertAll(turno)) {
           case Success(t)  =>  complete(StatusCodes.Created)
         }
       }
@@ -52,8 +57,7 @@ object TurnoRoute {
   def deleteTurno(): Route =
     post {
       entity(as[Turno]) { turno =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(TurnoOperation.delete(turno)) {
+        onComplete(TurnoOperation.delete(turno)) {
           case Success(t)  =>  complete(StatusCodes.OK)
         }
       }
@@ -62,8 +66,7 @@ object TurnoRoute {
   def deleteAllTurno(): Route =
     post {
       entity(as[List[Turno]]) { turno =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(TurnoOperation.deleteAll(turno)) {
+        onComplete(TurnoOperation.deleteAll(turno)) {
           case Success(t)  =>  complete(StatusCodes.OK)
         }
       }
@@ -72,8 +75,7 @@ object TurnoRoute {
   def updateTurno(): Route =
     post {
       entity(as[Turno]) { turno =>
-        onComplete(DummyDB.dummyReq()) {
-          //onComplete(TurnoOperation.update(turno)) {
+        onComplete(TurnoOperation.update(turno)) {
           case Success(t)  =>  complete(StatusCodes.OK)
         }
       }
