@@ -36,6 +36,7 @@ object FXHelperFactory {
     import javafx.scene.layout.VBox
     val pi = new ProgressIndicator
     val box = new VBox(pi)
+    box.setId("loadingBox")
     box.setAlignment(Pos.CENTER)
     box
   }

@@ -7,7 +7,7 @@ import controller.LoginController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.BaseView
-import view.fxview.{AbstractFXView, FXHelperFactory}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.Login.LoginBox
 
 /**
@@ -47,10 +47,9 @@ trait LoginParent{
  */
 object LoginView{
 
-  private class LoginViewFX(stage:Stage) extends AbstractFXView(stage) with LoginView with LoginParent {
+  private class LoginViewFX(stage:Stage) extends AbstractFXDialogView(stage) with LoginView with LoginParent {
     private var myController:LoginController = _
     private var loginBox:LoginBox = _
-    private var firstLoginMessage:String = _
 
     override def close(): Unit =
       myStage close
@@ -58,7 +57,6 @@ object LoginView{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
-      firstLoginMessage = resources.getString("first-login")
       myController = LoginController()
       loginBox = LoginBox()
       myController.setView(this)
@@ -81,7 +79,7 @@ object LoginView{
 
     override def firstUserAccess(): Unit = {
       Platform.runLater(() => {
-        FXHelperFactory.modalWithMessage(myStage, firstLoginMessage).show()
+        showMessage(generalResources.getString("first-login"))
         stopLoading()
         loginBox.resetViewFields()
         ChangePasswordView(myStage,Some(myStage.getScene))

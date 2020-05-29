@@ -8,7 +8,7 @@ import javafx.scene.Scene
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, StackPane}
 import javafx.stage.Stage
-import view.{BaseView, GoBackView}
+import view.{BaseView, DialogView, GoBackView}
 import view.fxview.loader.FXLoader
 
 /**
@@ -17,12 +17,13 @@ import view.fxview.loader.FXLoader
  * @param myStage
  *                The [[javafx.stage.Stage]] where the view is Shown.
  */
-abstract class AbstractFXView(val myStage:Stage) extends Initializable with BaseView{
+abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable with DialogView{
   /**
    * The base pane of the fxView where the components are added.
    */
   @FXML
   protected var pane: StackPane = _
+  protected var generalResources: ResourceBundle = _
   /**
    * Stage of this view.
    */
@@ -30,6 +31,7 @@ abstract class AbstractFXView(val myStage:Stage) extends Initializable with Base
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
     myStage.setTitle(resources.getString("nome"))
+    generalResources = resources
   }
 
   override def show(): Unit =
@@ -38,6 +40,8 @@ abstract class AbstractFXView(val myStage:Stage) extends Initializable with Base
   override def hide(): Unit =
     myStage hide
 
+  override def showMessage(message: String): Unit =
+    FXHelperFactory.modalWithMessage(myStage,message).show()
 }
 
 /**
@@ -48,7 +52,7 @@ abstract class AbstractFXView(val myStage:Stage) extends Initializable with Base
  * @param oldScene
  *                 The Scene to show if go back is called.
  */
-abstract class AbstractFXViewWithBack(override val myStage:Stage, oldScene: Option[Scene]) extends AbstractFXView(myStage) with GoBackView{
+abstract class AbstractFXViewWithBack(override val myStage:Stage, oldScene: Option[Scene]) extends AbstractFXDialogView(myStage) with GoBackView{
   override def back(): Unit =
     myStage.setScene(oldScene.getOrElse(myStage.getScene))
 }

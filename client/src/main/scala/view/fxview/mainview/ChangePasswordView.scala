@@ -44,13 +44,9 @@ object ChangePasswordView{
   private class ChangePasswordViewFX(stage:Stage, scene:Option[Scene]) extends AbstractFXViewWithBack(stage,scene) with ChangePasswordView with ChangePasswordParent{
     private var myController: ChangePasswordController = _
     private var changePasswordBox: ChangePasswordBox= _
-    private var errorMsg: String = _
-    private var goodChangeMsg: String = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      errorMsg = resources.getString("error-change-pass")
-      goodChangeMsg = resources.getString("good-change-pass")
       myController = ChangePasswordController()
       changePasswordBox = ChangePasswordBox()
       myController.setView(this)
@@ -72,14 +68,14 @@ object ChangePasswordView{
     override def errorChange(): Unit ={
       Platform.runLater(() =>{
         stopLoading()
-        FXHelperFactory.modalWithMessage(myStage,errorMsg)
+        showMessage(generalResources.getString("error-change-pass"))
       })
     }
 
     override def okChange(): Unit = {
       Platform.runLater(() => {
         stopLoading()
-        FXHelperFactory.modalWithMessage(myStage,goodChangeMsg)
+        showMessage(generalResources.getString("good-change-pass"))
         back()
       })
     }

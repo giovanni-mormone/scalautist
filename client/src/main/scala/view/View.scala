@@ -19,12 +19,24 @@ trait BaseView {
    * Closes the view.
    */
   def close(): Unit
+
 }
 
 /**
- * Extension of [[BaseView]]. Adds the functionality to go back to the previous view.
+ * Extension of [[BaseView]]. Adds the functionality to show a dialog with a message.
  */
-trait GoBackView extends BaseView{
+trait DialogView extends BaseView{
+  /**
+   * Shows the provided message to the user.
+   * @param message
+   */
+  def showMessage(message:String): Unit
+}
+
+/**
+ * Extension of [[DialogView]]. Adds the functionality to go back to the previous view.
+ */
+trait GoBackView extends DialogView {
 
   /**
    * Goes back to the previous view, if present;
