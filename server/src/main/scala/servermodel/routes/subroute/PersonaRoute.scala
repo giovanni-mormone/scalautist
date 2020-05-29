@@ -12,7 +12,7 @@ import servermodel.routes.exception.RouteException
 import dbfactory.DummyDB
 import dbfactory.operation.PersonaOperation
 
-import scala.util.Success
+import scala.util.{Success, Failure}
 
 object PersonaRoute {
 
@@ -87,7 +87,9 @@ object PersonaRoute {
     post {
       entity(as[Login]) { login =>
         onComplete(PersonaOperation.login(login)) {
-          case Success(t)  =>  complete((StatusCodes.Created,t.head))
+          case Success(Some(t))  =>  complete((StatusCodes.Created,t))
+          case Success(None) => complete(StatusCodes.NotFound)
+          case Failure(_) => complete(StatusCodes.BadRequest)
         }
       }
     }
@@ -97,7 +99,9 @@ object PersonaRoute {
       import jsonmessages.JsonMessageFormats._
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){
-          case Success(t)  =>  complete(StatusCodes.Accepted)
+          case Success(Some(1))  =>  complete(StatusCodes.Accepted)
+          case Success(Some(_))  =>  complete(StatusCodes.NotFound)
+          case Failure(_)        =>  complete(StatusCodes.BadRequest)
         }
       }
     }

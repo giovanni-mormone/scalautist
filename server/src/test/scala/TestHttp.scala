@@ -80,5 +80,14 @@ class TestHttpOnlinedb extends  AsyncFlatSpec with BeforeAndAfterEach with HttpR
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + requestRoute, changePassword)), Duration.Inf)
     assert(request.status == StatusCodes.Accepted)
   }
+
+  it should "return not found code on login if credential are worng" in {
+    val user: String = "aladin"
+    val password: String = "admin2"
+    val requestRoute: String = "loginpersona"
+    val login: Login = Login(user, password)
+    val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + requestRoute, login)), Duration.Inf)
+    assert(request.status == StatusCodes.NotFound)
+  }
 }
 
