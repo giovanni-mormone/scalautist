@@ -15,13 +15,15 @@ trait Init{
   protected var listNewPerson:List[Persona] = _
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
+  val result: Int =1// Await.result(runScript(),Duration.Inf)
+  require(result==1)
 }
 
 class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
+
   override def beforeEach(): Unit = {
-    val result = 1//Await.result(runScript(),Duration.Inf)
-    require(result==1)
-    login = Login("Fabian","admin")
+
+    login = Login("admin","admin")
     changePassword = ChangePassword(1,"admin","admin")
     persona=Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,Some(1))
     persona2=Persona("Fabian","Aspee","569918598",Some(""),1,isNew = false,"admin",None,Some(1))
@@ -42,9 +44,13 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     val futureSecondLogin: Future[Option[Persona]] = PersonaOperation.login(login)
     futureSecondLogin map { login => assert(!login.head.isNew) }
   }
-  it should "eventually return None" in {
+  it should "eventually return None whit login error" in {
     val futureLogin: Future[Option[Persona]] = PersonaOperation.login(Login("persona","persona"))
     futureLogin map { login => assert(login.isEmpty) }
+  }
+  it should "eventually return Login with new password" in {
+    val futureRecoveryPassword: Future[Login] = PersonaOperation.recoveryPassword(1)
+    futureRecoveryPassword map { recoveryPassword => assert(recoveryPassword.password.length == 10) }
   }
   behavior of "CRUD"
   it should "return a int when insert into database" in {
@@ -56,8 +62,8 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     insertAllPersona map { insertAll => assert(insertAll.length == 2) }
   }
   it should "return a person when select for id" in {
-    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona2.matricola.get)
-    selectPersona map {persona =>  assert(persona.get == this.persona2) }
+    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona.matricola.get)
+    selectPersona map {persona =>  assert(persona.get == this.persona) }
   }
   it should "return a List of Person when selectAll" in {
     val selectAllPersona: Future[List[Persona]] = PersonaOperation.selectAll

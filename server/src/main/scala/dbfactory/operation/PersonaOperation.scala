@@ -1,7 +1,7 @@
 package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassDB.{Login, Persona, Straordinario}
 import caseclass.CaseClassHttpMessage.ChangePassword
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
 import dbfactory.implicitOperation.OperationCrud
@@ -49,8 +49,16 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @return Option of Int that represent status of the operation
    */
   def changePassword(changePassword: ChangePassword):Future[Option[Int]]
+
+  /**
+   * Method which enable recovery password when you forget this
+   * @param idUser represent identificator of user in table Persona
+   * @return case class Login with new password and user = [[EMPTY_STRING]]
+   */
+  def recoveryPassword(idUser:Int):Future[Login]
 }
 object PersonaOperation extends PersonaOperation {
+
   private val generator = scala.util.Random.alphanumeric
 
   override def filterByName(name: String): Future[Option[List[Persona]]] = {
@@ -71,15 +79,15 @@ object PersonaOperation extends PersonaOperation {
     }
   }
   override def insert(element: Persona): Future[Int] ={
-    val persona = Persona(element.nome,element.cognome,element.numTelefono,createString(""),element.ruolo,element.isNew,createString("").head)
+    val persona = Persona(element.nome,element.cognome,element.numTelefono,createString,element.ruolo,element.isNew,createString.head)
     super.insert(persona)
   }
-  private val createString:String=>Option[String]=t => Some(generator.take(10).map(c => t.concat(c.toString)).mkString)
+  private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
 
   override def login(login: Login): Future[Option[Persona]] = {
     val promiseLogin = Promise[Option[Persona]]
     InstancePersona.operation().
-      execQueryFilter(personaSelect, x => x.nome === login.user && x.password === login.password)
+      execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
       .onComplete{
       case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head)))
       case Success(_) =>promiseLogin.success(None)
@@ -87,7 +95,6 @@ object PersonaOperation extends PersonaOperation {
     }
     promiseLogin.future
   }
-
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]={
     val changePasswordP = Promise[Option[Int]]
     InstancePersona.operation().
@@ -99,6 +106,18 @@ object PersonaOperation extends PersonaOperation {
       }
     changePasswordP.future
   }
+  override def recoveryPassword(idUser: Int): Future[Login] = {
+    val recoveryPasswordP = Promise[Login]
+    val newPassword = createString
+    InstancePersona.operation().
+      execQueryUpdate(f =>(f.password,f.isNew), x => x.id===idUser,(newPassword.head,true))
+      .onComplete{
+        case Success(value) if value==1 => recoveryPasswordP.success(Login(EMPTY_STRING,newPassword.head))
+        case Failure(exception) => recoveryPasswordP.failure(exception)
+      }
+    recoveryPasswordP.future
+  }
+
   override def monadicInnerJoin(): Unit = {
     val monadicInnerJoin = for {
       c <- PersonaTableQuery.tableQuery()
@@ -110,4 +129,5 @@ object PersonaOperation extends PersonaOperation {
       println(t)
     })
   }
+
 }
