@@ -16,6 +16,8 @@ import scala.concurrent.{Await, Future}
 
 trait HttpRequest {
 
+  Await.result(DatabaseHelper.runScript(), Duration.Inf)
+
   protected val uri = "http://localhost:8080/"
   protected val personaDummyRequest = "dummyPerson"
   protected val terminalDummyRequest = "dummyTerminal"

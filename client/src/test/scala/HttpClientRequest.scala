@@ -1,3 +1,4 @@
+import caseclass.CaseClassDB.Persona
 import model.entity.PersonaModel
 import model.utils.ResponceCode
 import org.scalatest.BeforeAndAfterEach
@@ -7,18 +8,18 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 trait HttpClientRequest {
-
+  //Await.result(DatabaseHelper.runScript(), Duration.Inf)
 }
 
-object TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with HttpClientRequest {
+class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with HttpClientRequest {
 
   behavior of "ClientHttpRequestLogin"
   it should "return Persona instance on login request" in {
-    val user: String = "Francesco"
+    val user: String = "admin2"
     val password: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.login(user, password), Duration.Inf)
-    assert(result.head.isInstanceOf[PersonaModel])
+    assert(result.head.isInstanceOf[Persona])
   }
 
   it should "return None with wrong credential" in {
