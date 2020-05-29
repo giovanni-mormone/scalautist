@@ -94,6 +94,7 @@ object HumanResourceModel {
 
   private class HumanResourceHttp extends HumanResourceModel{
 
+
     override def recruit(persona: Persona): Future[Login] = {
       val credential = Promise[Login]
       val request = Post(getURI("createpersona"), persona)
@@ -108,6 +109,7 @@ object HumanResourceModel {
     override def fires(ids: Set[Int]): Future[Unit] = {
       val result = Promise[Unit]
       var list: List[Persona] = List()
+
       ids.foreach(x => list = Persona("","","",None,1,false,"",None,Some(x))::list)
       val request = Post(getURI("deleteallpersona"), list)
       dispatcher.serverRequest(request).onComplete(_ => result.success())
@@ -127,6 +129,7 @@ object HumanResourceModel {
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, true)
+
       val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success()
@@ -138,6 +141,7 @@ object HumanResourceModel {
 
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
+
       val absence = Assenza(idPersona, startDate, endDate, false)
       val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{

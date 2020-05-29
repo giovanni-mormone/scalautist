@@ -3,9 +3,7 @@ package servermodel
 import akka.actor.typed.ActorSystem
 import servermodel.ServerConf.StartServer
 
-object StartServer {
-
-  def startServer(): Unit = {
+object StartServer extends App{
     ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
-  }
+  
 }
