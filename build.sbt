@@ -34,7 +34,9 @@ lazy val server = project.settings(
     libraries.scalaReflect,
     libraries.mssql,
     libraries.logBack,
-    librariesTest.scalatest
+    librariesTest.scalatest,
+    librariesTest.scalaCheck,
+    librariesTest.junit
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
@@ -95,13 +97,20 @@ lazy val libraries = new {
 }
 
 lazy val librariesTest = new {
-  val scalatestVersion = "3.3.0-SNAP2"
-  val scalatestOrg = "org.scalatest"
-  val scalatest =  "org.scalatest" %% "scalatest" % scalatestVersion % Test
+  val scalatestVersion = "3.1.2"
+  val junitVersion     = "0.11"
+  val scalaCheckVersion= "1.14.0"
+  val scalatestOrg     = "org.scalatest"
+  val junitCom         = "com.novocode"
+  val scalaCheckOrg    = "org.scalacheck"
+  val scalatest        = "org.scalatest" % "scalatest_2.13"   % scalatestVersion % Test
+  val junitInterface   = "com.novocode"   % "junit-interface" % junitVersion % Test
+  val junit            = "com.novocode"   % "junit-interface" % junitVersion % Test
+  val scalaCheck       = "org.scalacheck" %% "scalacheck"     % scalaCheckVersion % Test
 
 }
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
-  excludeDependencies ++= Seq(librariesTest.scalatestOrg)
+  excludeDependencies ++= Seq(librariesTest.scalatestOrg,librariesTest.junitCom,librariesTest.scalaCheckOrg)
 )

@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.GiornoInSettimana
 import servermodel.routes.exception.RouteException
 import dbfactory.DummyDB //TODO
-
+import jsonmessages.JsonFormats._
 import scala.util.Success
 
 object GiornoInSettimanaRoute {

@@ -7,7 +7,7 @@ import caseclass.CaseClassDB.Turno
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.DummyDB  //TODO
-
+import jsonmessages.JsonFormats._
 import scala.util.Success
 
 object TurnoRoute {
@@ -34,7 +34,7 @@ object TurnoRoute {
       entity(as[Turno]) { turno =>
         onComplete(DummyDB.dummyReq()) {
           //onComplete(TurnoOperation.insert(turno)) {
-          case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(2/*t*/)))
+          case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(1)))
         }
       }
     }
