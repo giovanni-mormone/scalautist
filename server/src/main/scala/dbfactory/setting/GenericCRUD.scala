@@ -4,7 +4,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 
-/** @author Fabian Aspée Encina
+/**
+ * @author Fabian Aspée Encina
  * Generic Crud is a trait which enables operation generic in all tables
  * @tparam T case class that represent instance in database [[caseclass.CaseClassDB]]
  * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
@@ -79,3 +80,4 @@ object GenericCRUD{
     override def update(elem: T): Future[Int] = super.run(tableDB().insertOrUpdate(elem))
   }
 }
+

@@ -4,18 +4,22 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, onComplete, post}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.GruppoTerminale
+import caseclass.CaseClassHttpMessage.Id
 import dbfactory.operation.GruppoTerminaleOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
+import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
 
 object GruppoTerminaleRoute {
-  def getGruppoTerminale(id: Int): Route =
-    get {
-      onComplete(GruppoTerminaleOperation.select(id)) {
-        case Success(t) =>    complete((StatusCodes.Found,t))
-        case Success(None) => complete(StatusCodes.NotFound)
+  def getGruppoTerminale: Route =
+    post {
+      entity(as[Id]) { id =>
+        onComplete(GruppoTerminaleOperation.select(id.id)) {
+          case Success(t) => complete((StatusCodes.Found, t))
+          case t => anotherSuccessAndFailure(t)
+        }
       }
     }
 
@@ -23,6 +27,7 @@ object GruppoTerminaleRoute {
     post {
       onComplete(GruppoTerminaleOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
+        case t => anotherSuccessAndFailure(t)
       }
     }
 
@@ -31,6 +36,7 @@ object GruppoTerminaleRoute {
       entity(as[GruppoTerminale]) { gruppoTerminale =>
         onComplete(GruppoTerminaleOperation.insert(gruppoTerminale)) {
           case Success(t)  =>  complete(StatusCodes.Created)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }

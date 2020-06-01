@@ -8,15 +8,12 @@ import servermodel.routes.subroute.TurnoRoute._
  * @author Francesco Cassano
  * This object manage routes that act on the Turni entity and its related entities
  */
-object MasterRouteTurni{
+object MasterRouteTurno{
 
-  val routeTurni: Route =
+  val routeTurno: Route =
     concat(
-      path("dummyTurno") {
-        methodDummy()
-      },
-      path("getturno" / IntNumber) {
-        id => getTurno(id)
+      path("getturno") {
+        getTurno
       },
       path("getallturno") {
         getAllTurno
