@@ -25,7 +25,7 @@ trait HumanResourceModel extends Model {
    * @param persona
    * Instance of Persona to save
    * @return
-   * Future
+   * Future of type Login that contains username and password
    */
   def recruit(persona:Persona):Future[Login]
 
@@ -34,7 +34,7 @@ trait HumanResourceModel extends Model {
    * @param ids
    * Set of Persona ids
    * @return
-   * Future
+   * Future of type Unit
    */
   def fires(ids:Set[Int]): Future[Unit]
 
@@ -55,7 +55,7 @@ trait HumanResourceModel extends Model {
    * @param endDate
    * Date of end of illness period
    * @return
-   * Future
+   * Future of type Unit
    */
   def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
 
@@ -68,7 +68,7 @@ trait HumanResourceModel extends Model {
    * @param endDate
    * Date of end of holiday period
    * @return
-   * Future
+   * Future of type Unit
    */
   def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
 
@@ -77,7 +77,7 @@ trait HumanResourceModel extends Model {
    * @param user
    * User that lost password
    * @return
-   * Future of new Login data (only new password)
+   * Future of type Login data (only new password)
    */
   def passwordRecovery(user: Int): Future[Login]
 }
@@ -110,7 +110,7 @@ object HumanResourceModel {
       val result = Promise[Unit]
       var list: List[Persona] = List()
 
-      ids.foreach(x => list = Persona("","","",None,1,false,"",None,Some(x))::list)
+      ids.foreach(x => list = Persona("","","",None,1,isNew = false,"",None,Some(x))::list)
       val request = Post(getURI("deleteallpersona"), list)
       dispatcher.serverRequest(request).onComplete(_ => result.success())
       result.future
@@ -128,8 +128,7 @@ object HumanResourceModel {
 
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
-      val absence = Assenza(idPersona, startDate, endDate, true)
-
+      val absence = Assenza(idPersona, startDate, endDate, malattia = true)
       val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success()
@@ -141,8 +140,7 @@ object HumanResourceModel {
 
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
       val result = Promise[Unit]
-
-      val absence = Assenza(idPersona, startDate, endDate, false)
+      val absence = Assenza(idPersona, startDate, endDate, malattia = false)
       val request = Post(getURI("addabsence"), absence)
       dispatcher.serverRequest(request).onComplete{
         case Success(_) => result.success()

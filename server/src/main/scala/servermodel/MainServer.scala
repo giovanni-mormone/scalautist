@@ -6,7 +6,7 @@ import servermodel.ServerConf.StartServer
 /**
  * Main server
  */
-object StartServer extends App{
+object MainServer extends App{
 
     ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
 

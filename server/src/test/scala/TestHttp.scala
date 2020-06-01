@@ -5,7 +5,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.SystemMaterializer
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import servermodel.StartServer
+import servermodel.MainServer
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.ChangePassword
@@ -29,7 +29,7 @@ trait HttpRequest {
   implicit val materializer = SystemMaterializer(system)
   implicit val ex = system.dispatchers
 
-  StartServer
+  MainServer
 }
 
 class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
@@ -80,7 +80,6 @@ class TestHttpOnlinedb extends  AsyncFlatSpec with BeforeAndAfterEach with HttpR
     val newPassword: String = "admin2"
     val requestRoute: String = "updatepassword"
     val changePassword = ChangePassword(user, oldPassword, newPassword)
-    import jsonmessages.JsonMessageFormats._
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + requestRoute, changePassword)), Duration.Inf)
     assert(request.status == StatusCodes.Accepted)
   }

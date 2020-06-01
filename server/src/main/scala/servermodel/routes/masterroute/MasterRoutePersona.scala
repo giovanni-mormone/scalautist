@@ -12,11 +12,8 @@ object MasterRoutePersona {
 
   val routePersona: Route =
     concat(
-      path("dummyPerson") {
-        methodDummy()
-      },
-      path("getpersona" / IntNumber) {
-        id => getPersona(id)
+      path("getpersona" ) {
+        getPersona
       },
       path("getallpersona") {
         getAllPersona
@@ -42,9 +39,12 @@ object MasterRoutePersona {
       path("updatepassword") {            //TODO update password
         updatePassword()
       },
-      path("addabsence") {          //TODO add absence
+      path("getstipendio"){
+        getStipendio()
+      }
+     /* path("addabsence") {          //TODO add absence
           addAbsence()
-      },
+      },*/
       /*path("getnewpassword") {            //TODO update password
         getNewPassword()
       }*/

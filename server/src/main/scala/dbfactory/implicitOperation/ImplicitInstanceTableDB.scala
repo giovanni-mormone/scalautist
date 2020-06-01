@@ -21,7 +21,8 @@ import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 
-/** @author Fabian Aspee Encina
+/**
+ * @author Fabian Aspee Encina
  *  Trait which enable obtain a instance of the case class [[dbfactory.setting.GenericCRUD.GenericOperationCRUD]] initializate with the
  *  table we want use for make operation
  * @tparam A Is a case class that represent instance of the table in database [[caseclass.CaseClassDB]]

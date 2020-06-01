@@ -12,11 +12,8 @@ object MasterRouteTerminale {
 
   val routeTerminale: Route =
     concat(
-      path("dummyTerminal") {
-        methodDummy()
-      },
-      path("getterminale" / IntNumber) {
-        id => getTerminale(id)
+      path("getterminale") {
+        getTerminale
       },
       path("getallterminale") {
         getAllTerminale

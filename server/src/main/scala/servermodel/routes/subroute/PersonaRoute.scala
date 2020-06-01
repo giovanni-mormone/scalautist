@@ -4,41 +4,35 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
 import jsonmessages.JsonFormats._
-
-
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB
 import dbfactory.operation.PersonaOperation
+import servermodel.routes.exception.SuccessAndFailure._
 
-import scala.util.{Success, Failure}
+import scala.concurrent.Future
+import scala.util.Success
 
 /**
  * @author Francesco Cassano
  * PersonaRoute is an object that manage methods that act on the persona entity
  */
-object PersonaRoute {
+object PersonaRoute{
 
-  def methodDummy(): Route =
+  def getPersona: Route =
     post {
-      onComplete(DummyDB.dummyReq()) {
-        case t => complete(StatusCodes.Accepted,t)
+      entity(as[Id]) { id =>
+        onComplete(PersonaOperation.select(id.id)) {
+          case Success(t) => complete((StatusCodes.Found, t))
+          case t => anotherSuccessAndFailure(t)
+        }
       }
     }
-
-  def getPersona(id: Int): Route =
-    get {
-      onComplete(PersonaOperation.select(id)) {
-        case Success(t) =>    complete((StatusCodes.Found,t))
-        case Success(None) => complete(StatusCodes.NotFound)
-      }
-    }
-
   def getAllPersona: Route =
     post {
       onComplete(PersonaOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
+        case t => anotherSuccessAndFailure(t)
       }
     }
 
@@ -46,7 +40,8 @@ object PersonaRoute {
     post {
       entity(as[Persona]) { order =>
         onComplete(PersonaOperation.insert(order)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Created)
+          case Success(t) =>  complete(StatusCodes.Created)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -55,7 +50,8 @@ object PersonaRoute {
     post {
       entity(as[List[Persona]]) { order =>
         onComplete(PersonaOperation.insertAll(order)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Created)
+          case Success(t) if t.nonEmpty =>  complete(StatusCodes.Created)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -64,7 +60,8 @@ object PersonaRoute {
     post {
       entity(as[Persona]) { order =>
         onComplete(PersonaOperation.delete(order)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Created)
+          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -73,7 +70,8 @@ object PersonaRoute {
     post {
       entity(as[List[Persona]]) { order =>
         onComplete(PersonaOperation.deleteAll(order)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Created)
+          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -82,7 +80,8 @@ object PersonaRoute {
     post {
       entity(as[Persona]) { persona =>
         onComplete(PersonaOperation.update(persona)) {
-          case Success(t)  =>  complete(StatusCodes.Created)
+          case Success(t)  =>  complete(StatusCodes.OK)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -92,35 +91,38 @@ object PersonaRoute {
       entity(as[Login]) { login =>
         onComplete(PersonaOperation.login(login)) {
           case Success(Some(t))  =>  complete((StatusCodes.Created,t))
-          case Success(None) => complete(StatusCodes.NotFound)
-          case Failure(_) => complete(StatusCodes.BadRequest)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
 
   def updatePassword(): Route =
     post {
-      import jsonmessages.JsonMessageFormats._
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){
           case Success(Some(1))  =>  complete(StatusCodes.Accepted)
-          case Success(Some(_))  =>  complete(StatusCodes.NotFound)
-          case Failure(_)        =>  complete(StatusCodes.BadRequest)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
 
-  def addAbsence(): Route =
+  def getStipendio(): Route =
+    post{
+      entity(as[Id]) {
+        id => onComplete(stipendio(id.id)){
+          case Success(t)  =>  complete((StatusCodes.Found,t))
+          case t => anotherSuccessAndFailure(t)
+        }
+      }
+    }
+  import scala.concurrent.ExecutionContext.Implicits.global
+  private def stipendio(id:Int) =Future{Id(id)}
+ /* def addAbsence(): Route =
     post {
       entity(as[Assenza]){
         absence => onComplete(dbfactory.DummyDB.dummyReq()){     //TODO new request
           case Success(_) => complete(StatusCodes.Created)
         }
       }
-    }
-
-  /*def getNewPassword(): Route =
-    post{
-      //TODO call dbmethod PersonaOperation
     }*/
 }

@@ -7,7 +7,8 @@ import slick.lifted.{FlatShapeLevel, Shape}
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 
-/** @author Fabian Aspée Encina
+/**
+ * @author Fabian Aspée Encina
  *  Trait which allow extra operation for any table in database, this trait it's like a extension of [[dbfactory.setting.GenericCRUD]]
  * @tparam T case class that represent instance in database [[caseclass.CaseClassDB]]
  * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
