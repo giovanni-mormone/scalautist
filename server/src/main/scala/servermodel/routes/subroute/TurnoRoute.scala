@@ -55,8 +55,8 @@ object TurnoRoute {
 
   def deleteTurno(): Route =
     post {
-      entity(as[Turno]) { turno =>
-        onComplete(TurnoOperation.delete(turno)) {
+      entity(as[Id]) { turno =>
+        onComplete(TurnoOperation.delete(turno.id)) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
@@ -65,7 +65,7 @@ object TurnoRoute {
 
   def deleteAllTurno(): Route =
     post {
-      entity(as[List[Turno]]) { turno =>
+      entity(as[List[Id]]) { turno =>
         onComplete(TurnoOperation.deleteAll(turno)) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
