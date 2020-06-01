@@ -3,7 +3,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.SystemMaterializer
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import servermodel.StartServer
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
@@ -15,11 +16,14 @@ import scala.concurrent.{Await, Future}
 
 trait HttpRequest {
 
-  protected var uri = "http://localhost:8080/"
-  protected var personaDummyRequest = "dummyPerson"
-  protected var terminalDummyRequest = "dummyTerminal"
-  protected var zoneDummyRequest = "dummyZona"
-  protected var shiftDummyRequest = "dummyTurno"
+  Await.result(DatabaseHelper.runScript(), Duration.Inf)
+
+  protected val uri = "http://localhost:8080/"
+  protected val personaDummyRequest = "dummyPerson"
+  protected val terminalDummyRequest = "dummyTerminal"
+  protected val zoneDummyRequest = "dummyZona"
+  protected val shiftDummyRequest = "dummyTurno"
+  protected val dummyString = "ACAB: All Cannelloni Are Buoni"
 
   implicit val system = ActorSystem("test")
   implicit val materializer = SystemMaterializer(system)
@@ -28,31 +32,31 @@ trait HttpRequest {
   StartServer
 }
 
-class TestHttpDummydb extends  AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
+class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
 
   behavior of "dummyRequest"
   it should "return some String from MasterRoutePersona" in {
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + personaDummyRequest)), Duration.Inf)
     val string = Unmarshal(request).to[String]
-    string map (s => assert(s.equals("ACAB: All Cannelloni Are Buoni")))
+    string map (s => assert(s.equals(dummyString)))
   }
 
   it should "return some String from MasterRouteTerminale" in {
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + terminalDummyRequest)), Duration.Inf)
     val string = Unmarshal(request).to[String]
-    string map (s => assert(s.equals("ACAB: All Cannelloni Are Buoni")))
+    string map (s => assert(s.equals(dummyString)))
   }
 
   it should "return some String from MasterRouteTurni" in {
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + shiftDummyRequest)), Duration.Inf)
     val string = Unmarshal(request).to[String]
-    string map (s => assert(s.equals("ACAB: All Cannelloni Are Buoni")))
+    string map (s => assert(s.equals(dummyString)))
   }
 
   it should "return some String from MasterRouteZona" in {
     val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + zoneDummyRequest)), Duration.Inf)
     val string = Unmarshal(request).to[String]
-    string map (s => assert(s.equals("ACAB: All Cannelloni Are Buoni")))
+    string map (s => assert(s.equals(dummyString)))
   }
 
 }

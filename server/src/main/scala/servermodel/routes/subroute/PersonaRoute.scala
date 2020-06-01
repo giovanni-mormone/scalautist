@@ -14,6 +14,10 @@ import dbfactory.operation.PersonaOperation
 
 import scala.util.{Success, Failure}
 
+/**
+ * @author Francesco Cassano
+ * PersonaRoute is an object that manage methods that act on the persona entity
+ */
 object PersonaRoute {
 
   def methodDummy(): Route =

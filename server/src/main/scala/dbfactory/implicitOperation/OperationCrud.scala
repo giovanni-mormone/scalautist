@@ -3,7 +3,7 @@ package dbfactory.implicitOperation
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
-
+ 
 /** @author Fabian Aspée Encina
  * Generic abstract class which enable make operations in any table in database
  * every class in the package [[dbfactory.operation]] must extend this abstract class

@@ -1,6 +1,7 @@
 package model.utils
 
 /**
+ * @author Francesco Cassano
  * Some utility function
  */
 object ModelUtils {
@@ -13,7 +14,7 @@ object ModelUtils {
    * Long string 10 random alphanumeric characters
    */
   def generatePassword = {
-    var password: String = ""
+    val password: String = ""
     generator take 10 foreach(c => password.concat(c.toString))
     password
   }

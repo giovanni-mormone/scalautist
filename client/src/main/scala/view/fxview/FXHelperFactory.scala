@@ -10,7 +10,10 @@ import view.BaseView
 import view.fxview.loader.FXLoader
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Object to create Common view parts to utilize when needed
+ *
  */
 object FXHelperFactory {
 
@@ -77,6 +80,8 @@ object FXHelperFactory {
       messageLabel.setText(message)
       confirmationButton.setText(resources.getString("confirm-button"))
       confirmationButton.setOnAction(_ => close)
+
+      myStage.setOnCloseRequest(e => e.consume())
     }
   }
 
