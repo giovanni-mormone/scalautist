@@ -38,12 +38,15 @@ trait HumanResourceModel extends Model {
    */
   def fires(ids:Set[Int]): Future[Unit]
 
+  def getPersone(id:Int): Future[Option[Persona]]
+
   /**
    * Return employee list, list of Persona in the database
    * @return
    * Future of List of Persona
    */
-  def getAllPersone(): Future[List[Persona]]
+  def getAllPersone: Future[List[Persona]]
+
 
   /**
    * Assign an illness to an employee
@@ -116,7 +119,7 @@ object HumanResourceModel {
       result.future
     }
 
-    override def getAllPersone(): Future[List[Persona]] = {
+    override def getAllPersone: Future[List[Persona]] = {
       val list = Promise[List[Persona]]
       val request = Post(getURI("getallpersona"))
       dispatcher.serverRequest(request).onComplete{
@@ -158,6 +161,8 @@ object HumanResourceModel {
       }
       result.future
     }
+
+    override def getPersone(id: Int): Future[Option[Persona]] = ???
   }
 
 }

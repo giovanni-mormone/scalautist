@@ -54,8 +54,8 @@ object TerminaleRoute  {
 
   def deleteTerminale(): Route =
     post {
-      entity(as[Terminale]) { terminale =>
-        onComplete(TerminaleOperation.delete(terminale)) {
+      entity(as[Id]) { terminale =>
+        onComplete(TerminaleOperation.delete(terminale.id)) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
@@ -64,7 +64,7 @@ object TerminaleRoute  {
 
   def deleteAllTerminale(): Route =
     post {
-      entity(as[List[Terminale]]) { terminale =>
+      entity(as[List[Id]]) { terminale =>
         onComplete(TerminaleOperation.deleteAll(terminale)) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
