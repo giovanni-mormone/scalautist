@@ -1,7 +1,7 @@
 package dbfactory.setting
 
 import caseclass.CaseClassDB._
-import dbfactory.setting.GenericCRUD.Brands
+import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
@@ -20,12 +20,12 @@ import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 
-/**
+/** @author Fabian Aspée Encina
  * Trait which allow obtain the instance of table of the database this allow create join and another operation
  * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
  * @tparam A case class that represent instance in database [[caseclass.CaseClassDB]]
  */
-trait Table[C,A<:GenericTable[C]] extends Brands[C,A]{
+trait Table[C,A<:GenericTable[C]] extends GenericOperationCRUD[C,A]{
   /**
    * method which call [[dbfactory.setting.GenericTableQuery.tableDB]] for generate instance of a table
    * @return instance of a table of the database
