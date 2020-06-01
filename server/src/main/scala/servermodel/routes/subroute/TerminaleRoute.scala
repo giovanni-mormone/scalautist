@@ -65,7 +65,7 @@ object TerminaleRoute  {
   def deleteAllTerminale(): Route =
     post {
       entity(as[List[Id]]) { terminale =>
-        onComplete(TerminaleOperation.deleteAll(terminale)) {
+        onComplete(TerminaleOperation.deleteAll(terminale.map(_.id))) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }

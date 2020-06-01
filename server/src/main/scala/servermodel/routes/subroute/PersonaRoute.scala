@@ -58,8 +58,8 @@ object PersonaRoute{
 
   def deletePersona(): Route =
     post {
-      entity(as[Persona]) { order =>
-        onComplete(PersonaOperation.delete(order)) {
+      entity(as[Id]) { order =>
+        onComplete(PersonaOperation.delete(order.id)) {
           case Success(t) if t==1 =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
@@ -68,8 +68,8 @@ object PersonaRoute{
 
   def deleteAllPersona(): Route =
     post {
-      entity(as[List[Persona]]) { order =>
-        onComplete(PersonaOperation.deleteAll(order)) {
+      entity(as[List[Id]]) { order =>
+        onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
           case Success(t) if t==1 =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }

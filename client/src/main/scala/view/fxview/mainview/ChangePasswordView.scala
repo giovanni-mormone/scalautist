@@ -20,7 +20,7 @@ import view.fxview.component.Login.ChangePasswordBox
  */
 trait ChangePasswordView extends GoBackView{
 
-  def   errorChange()
+  def errorChange()
 
   def okChange()
 }

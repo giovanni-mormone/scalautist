@@ -32,7 +32,7 @@ trait ImplicitInstanceTableDB[A,B<:GenericTable[A]] {
   /**
    * operation private enable only enable in the package implicitOperation, this create a instance of
    * Brands [[dbfactory.setting.GenericCRUD.GenericOperationCRUD]], which enable make generic operation in the database
-   * @return A instance of Brands which enables operation in database
+   * @return A instance of GenericOperationCRUD which enables operation in database
    */
   private[implicitOperation] def typeDB():GenericOperationCRUD[A,B]
 

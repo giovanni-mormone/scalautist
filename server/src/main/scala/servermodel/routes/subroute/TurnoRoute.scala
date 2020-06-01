@@ -66,7 +66,7 @@ object TurnoRoute {
   def deleteAllTurno(): Route =
     post {
       entity(as[List[Id]]) { turno =>
-        onComplete(TurnoOperation.deleteAll(turno)) {
+        onComplete(TurnoOperation.deleteAll(turno.map(_.id))) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }

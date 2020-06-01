@@ -64,7 +64,7 @@ object ZonaRoute {
   def deleteAllZona(): Route =
     post {
       entity(as[List[Id]]) { zona =>
-        onComplete(ZonaOperation.deleteAll(zona)) {
+        onComplete(ZonaOperation.deleteAll(zona.map(_.id))) {
           case Success(t) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
