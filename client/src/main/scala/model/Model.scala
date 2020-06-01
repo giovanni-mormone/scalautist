@@ -1,6 +1,7 @@
 package model
 
 /**
+ * @author Francesco Cassano
  * Generic definition of model
  */
 trait Model {

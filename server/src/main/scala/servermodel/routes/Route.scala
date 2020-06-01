@@ -7,6 +7,9 @@ import servermodel.routes.masterroute.MasterRouteTurni._
 import servermodel.routes.masterroute.MasterRouteTerminale._
 import servermodel.routes.masterroute.MasterRouteZona._
 
+/**
+ * Object to manage routes
+ */
 object Route {
   
   val route: Route = concat(routePersona, routeTurni, routeZona, routeTerminale)

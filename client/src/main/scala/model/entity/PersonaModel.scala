@@ -14,6 +14,7 @@ import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 /**
+ * @author Francesco Cassano
  * PersonaModel extends [[model.Model]].
  * Interface for Persona Entity operation
  */

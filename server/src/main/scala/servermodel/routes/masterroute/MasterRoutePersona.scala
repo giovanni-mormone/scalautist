@@ -4,6 +4,10 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import servermodel.routes.subroute.PersonaRoute._
 
+/**
+ * @author Francesco Cassano
+ * This object manage routes that act on the persona entity and its related entities
+ */
 object MasterRoutePersona {
 
   val routePersona: Route =
