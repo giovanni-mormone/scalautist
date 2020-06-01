@@ -5,6 +5,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server._
 import Directives._
 
+/**
+ * Exception Handler
+ */
 object RouteException {
 
   implicit def myExceptionHandler: ExceptionHandler =

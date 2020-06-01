@@ -8,7 +8,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import routes.Route._
 
-
+/**
+ * @author Francesco Cassano
+ * Object to configure and start Http server
+ */
 object ServerConf {
   final case class StartServer()
 

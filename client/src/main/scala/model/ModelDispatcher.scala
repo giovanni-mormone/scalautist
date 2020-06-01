@@ -8,6 +8,7 @@ import akka.stream.SystemMaterializer
 import scala.concurrent.Future
 
 /**
+ * @author Francesco Cassano
  * Generic definition of model dispatcher. It contains the server's address and the actor system information.
  */
 trait ModelDispatcher {

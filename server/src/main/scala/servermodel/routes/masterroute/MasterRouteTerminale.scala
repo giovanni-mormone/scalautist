@@ -4,6 +4,10 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import servermodel.routes.subroute.TerminaleRoute._
 
+/**
+ * @author Francesco Cassano
+ * This object manage routes that act on the terminale entity and its related entities
+ */
 object MasterRouteTerminale {
 
   val routeTerminale: Route =
