@@ -53,8 +53,8 @@ object ZonaRoute {
 
   def deleteZona(): Route =
     post {
-      entity(as[Zona]) { zona =>
-        onComplete(ZonaOperation.delete(zona)) {
+      entity(as[Id]) { zona =>
+        onComplete(ZonaOperation.delete(zona.id)) {
           case Success(t)  =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
@@ -63,7 +63,7 @@ object ZonaRoute {
 
   def deleteAllZona(): Route =
     post {
-      entity(as[List[Zona]]) { zona =>
+      entity(as[List[Id]]) { zona =>
         onComplete(ZonaOperation.deleteAll(zona)) {
           case Success(t) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)

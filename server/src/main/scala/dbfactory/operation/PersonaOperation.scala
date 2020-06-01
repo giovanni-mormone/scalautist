@@ -122,7 +122,7 @@ object PersonaOperation extends PersonaOperation {
     val monadicInnerJoin = for {
       c <- PersonaTableQuery.tableQuery()
       s <- TerminaleTableQuery.tableQuery()
-      if c.id===s.id
+      if c.terminaleId===s.id
     } yield (c.nome,s.nomeTerminale)
 
     InstancePersona.operation().execJoin(monadicInnerJoin)  onComplete(t=>{
