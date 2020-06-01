@@ -69,7 +69,7 @@ sealed trait GenericCRUD[T,C <: GenericTable[T]] extends GenericTableQuery[T,C] 
 
 }
 object GenericCRUD{
-  case class Brands[T,C<: GenericTable[T]:runtime.TypeTag]() extends GenericCRUD[T,C] {
+  case class GenericOperationCRUD[T,C<: GenericTable[T]:runtime.TypeTag]() extends GenericCRUD[T,C] {
     override def selectAll: Future[List[T]] = super.run(tableDB().result).map(_.toList)
     override def select(id: Int): Future[Option[T]] = super.run(queryById(id).result.headOption)
     override def insert(elem: T): Future[Int]= super.run((tableDB() returning tableDB().map(_.id)) += elem)

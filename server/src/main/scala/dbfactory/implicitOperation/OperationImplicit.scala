@@ -1,6 +1,6 @@
 package dbfactory.implicitOperation
 
-import dbfactory.setting.GenericCRUD.Brands
+import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.setting.GenericTable
 
 /**
@@ -17,5 +17,5 @@ abstract class OperationImplicit[A,B<:GenericTable[A]](implicit dbInstance:Impli
    * Method which enable select a instance operation, which enable make operation into database
    * @return instance for make operation into database [[dbfactory.implicitOperation.ImplicitInstanceTableDB]]
    */
-  private[implicitOperation] def typeDB(): Brands[A, B] = dbInstance.typeDB()
+  private[implicitOperation] def typeDB(): GenericOperationCRUD[A, B] = dbInstance.typeDB()
 }
