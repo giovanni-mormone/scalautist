@@ -4,7 +4,7 @@ import slick.jdbc.SQLServerProfile.api._
 import slick.lifted.{AbstractTable, TableQuery}
 import scala.reflect.runtime.{universe => runtime}
 
-/**
+/** @author Fabian Aspée Encina
  *  object which allow create a instance of table in real-time, avoiding generating more code
  */
 object Reflection {
@@ -23,7 +23,7 @@ object Reflection {
         .asMethod)(args: _*).asInstanceOf[C]
 }
 
-/**
+/** @author Fabian Aspée Encina
  * Abstract Class which extend [[dbfactory.setting.Table]] table is instance of [[https://scala-slick.org/doc/3.2.3/ Slick]], all table defined in this project extends
  * GenericTable
  * @param tag it's like a SQL alias. It distinguishes different instances of the same table within a query.
@@ -35,7 +35,7 @@ abstract class GenericTable[T](tag: Tag, name: String,nameId:String) extends Tab
   def id: Rep[Int] = column[Int](nameId, O.PrimaryKey, O.AutoInc)
 }
 
-/**
+/** @author Fabian Aspée Encina
  *  This Abstract Class allows us generate instance of table in database in real-time
  * @tparam T case class that represent table in this system
  * @tparam C class which represent instance table in database

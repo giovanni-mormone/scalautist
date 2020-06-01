@@ -5,7 +5,16 @@ import dbfactory.table.TerminaleTable.TerminaleTableRep
 import slick.lifted.{ForeignKeyQuery, ProvenShape}
 import caseclass.CaseClassDB.{Persona, Terminale}
 
+/** @author Fabian Aspée Encina
+ *  Object which encapsulates a instance of person in database
+ */
 object PersonaTable{
+
+  /**
+   * Class which represent a instance of person in database, this class define all field into table
+   * person and yours relations with another tables if exists
+   * @param tag it's like a SQL alias. It distinguishes different instances of the same table within a query.
+   */
   class PersonaTableRep(tag: Tag) extends GenericTable[Persona](tag, "PersoneSets","Matricola") {
     def terminaleId:Rep[Option[Int]] = column[Int]("Terminale_IdTerminale").?
     def nome: Rep[String] = column[String]("Nome")

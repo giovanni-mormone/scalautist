@@ -20,7 +20,7 @@ import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 
-/**
+/** @author Fabian Aspée Encina
  * Trait which allow obtain the instance of table of the database this allow create join and another operation
  * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
  * @tparam A case class that represent instance in database [[caseclass.CaseClassDB]]

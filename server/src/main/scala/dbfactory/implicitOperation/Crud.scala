@@ -23,7 +23,7 @@ import scala.concurrent.Future
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-/**
+/** @author Fabian Aspee Encina
  * Trait which enables operation generic in all tables [[caseclass.CaseClassDB]]
  * @tparam A Is a case class that represent instance of the table in database
  */

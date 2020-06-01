@@ -12,7 +12,7 @@ import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 import dbfactory.util.Helper._
 
-/**
+/** @author Fabian Aspée Encina
  *  Trait which allows to perform operations on the person table,
  *  this trait have methods that represent monadic join
  */
