@@ -83,7 +83,7 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def delete(element:A):Future[Int]= {
+  def delete(element:Int):Future[Int]= {
     val promiseInsert = Promise[Int]
     Future {
       crud.delete(element) onComplete {
@@ -101,7 +101,7 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element list of case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def deleteAll(element:List[A]): Future[Int]= {
+  def deleteAll(element:List[Int]): Future[Int]= {
     val promiseInsert = Promise[Int]
     Future {
       crud.deleteAll(element) onComplete {

@@ -1,7 +1,7 @@
 package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Login, Persona, Straordinario}
+import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.ChangePassword
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
 import dbfactory.implicitOperation.OperationCrud
