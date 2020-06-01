@@ -12,12 +12,16 @@ import view.fxview.mainview.ChangePasswordParent
 
 /**
  * Component for the ChangePasswordBox contained in a [[view.fxview.mainview.ChangePasswordParent]]
+ *
+ *  @author Giovanni Mormone.
  */
 trait ChangePasswordBox extends Component[ChangePasswordParent]{
 }
 
 /**
  * Companion object of the [[view.fxview.component.Login.ChangePasswordBox]]
+ *
+ *  @author Giovanni Mormone.
  */
 object ChangePasswordBox{
 

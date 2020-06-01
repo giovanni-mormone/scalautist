@@ -5,10 +5,13 @@ import javafx.scene.layout.Pane
 import view.fxview.loader.FXLoader
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Generic component of the view. It should be inside some [[view.BaseView]]
  *
  * @tparam A
  *           The parent/container of the component.
+ *
  */
 trait Component[A] {
 
@@ -38,6 +41,8 @@ trait Component[A] {
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  *Abstract implementation of the [[view.fxview.component.Component]] trait, provides the basic functionalities of the
  * component, such as loading a fxml file and set an fx controller
  *
@@ -45,6 +50,7 @@ trait Component[A] {
  *             The path of the fxml to load.
  * @tparam A
  *           The parent/container of the component.
+ *
  */
 abstract class AbstractComponent[A](val path:String) extends Component[A] with Initializable{
   /**

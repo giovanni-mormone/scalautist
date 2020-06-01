@@ -3,6 +3,7 @@ package dbfactory.implicitOperation
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
+
 abstract class OperationCrud[A](implicit crud:Crud[A]) {
   def select (element:Int):Future[Option[A]]= {
     val promiseInsert = Promise[Option[A]]

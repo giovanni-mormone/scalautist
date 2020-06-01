@@ -11,8 +11,11 @@ import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.Login.LoginBox
 
 /**
+ * @author Giovanni Mormone.
+ *
  * A view to manage login functionalities.
  * It extends [[view.BaseView]]
+ *
  */
 trait LoginView extends BaseView{
   /**
@@ -29,7 +32,10 @@ trait LoginView extends BaseView{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * A LoginParent is the container of a [[view.fxview.component.Login.LoginBox]] [[view.fxview.component.Component]]
+ *
  */
 trait LoginParent{
   /**
@@ -43,7 +49,10 @@ trait LoginParent{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Companion object of [[view.fxview.mainview.LoginView]]
+ *
  */
 object LoginView{
 
