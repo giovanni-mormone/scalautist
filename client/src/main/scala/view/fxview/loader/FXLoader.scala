@@ -11,7 +11,10 @@ import view.BaseView
 import view.fxview.component.Component
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Helper per caricare una scena da file FXML.
+ *
  */
 object FXLoader {
   private val SCENE_PATH = "/javafx/fxml/"

@@ -1,7 +1,10 @@
 package view
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Basic definition of view functionalities.
+ *
  */
 trait BaseView {
 
@@ -23,6 +26,8 @@ trait BaseView {
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Extension of [[BaseView]]. Adds the functionality to show a dialog with a message.
  */
 trait DialogView extends BaseView{
@@ -34,8 +39,11 @@ trait DialogView extends BaseView{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Extension of [[DialogView]]. Adds the functionality to go back to the previous view.
- */
+ *
+ * */
 trait GoBackView extends DialogView {
 
   /**

@@ -8,6 +8,8 @@ import view.fxview.mainview.LoginView
 import scala.util.{Failure, Success}
 
 /**
+ * @author Giovanni Mormone.
+ *
  * A login controller for a view of type [[view.fxview.mainview.LoginView]]
  */
 trait LoginController extends AbstractController[LoginView]{
@@ -23,7 +25,10 @@ trait LoginController extends AbstractController[LoginView]{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Companion object of [[controller.LoginController]]
+ *
  */
 object LoginController {
   private val instance = new LoginControllerImpl()

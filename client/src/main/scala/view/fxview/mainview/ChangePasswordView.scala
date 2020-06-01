@@ -12,19 +12,24 @@ import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.Login.ChangePasswordBox
 
 /**
+ * @author Giovanni Mormone.
+ *
  * A view to manage the change of the password functionality.
  * It should be [[view.GoBackView]] to return to the previous view
  * once the password is changed.
  */
 trait ChangePasswordView extends GoBackView{
 
-  def errorChange()
+  def   errorChange()
 
   def okChange()
 }
 
 /**
- * A ChangePasswordParent is the container of a
+ * @author Giovanni Mormone.
+ *
+ * A ChangePasswordParent is the container of a [[view.fxview.component.Login.ChangePasswordBox]]
+ *
  */
 trait ChangePasswordParent{
   /**
@@ -37,6 +42,12 @@ trait ChangePasswordParent{
   def changePass(oldPassword:String, newPassword: String)
 }
 
+/**
+ * @author Giovanni Mormone.
+ *
+ * Companion object of [[view.fxview.mainview.ChangePasswordView]]
+ *
+ */
 object ChangePasswordView{
 
   def apply(stage:Stage, scene:Option[Scene]): ChangePasswordView = new ChangePasswordViewFX(stage,scene)
@@ -59,9 +70,6 @@ object ChangePasswordView{
       myController.changePassword(oldPassword,newPassword)
     }
 
-    /**
-     * Closes the view.
-     */
     override def close(): Unit =
       myStage close
 

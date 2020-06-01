@@ -10,7 +10,10 @@ import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.mainview.LoginParent
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Component for the LoginBox contained in a [[view.fxview.mainview.LoginParent]]
+ *
  */
 trait LoginBox extends Component[LoginParent]{
   /**
@@ -25,7 +28,10 @@ trait LoginBox extends Component[LoginParent]{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Companion object of the [[view.fxview.component.Login.LoginBox]]
+ *
  */
 object LoginBox{
 

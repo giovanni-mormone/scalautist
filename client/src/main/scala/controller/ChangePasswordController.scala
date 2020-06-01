@@ -7,7 +7,10 @@ import view.fxview.mainview.ChangePasswordView
 import scala.util.Success
 
 /**
+ * @author Giovanni Mormone.
+ *
  * A change password controller for a view of type [[view.fxview.mainview.ChangePasswordView]]
+ *
  */
 trait ChangePasswordController extends AbstractController[ChangePasswordView]{
   /**
@@ -24,7 +27,10 @@ trait ChangePasswordController extends AbstractController[ChangePasswordView]{
 }
 
 /**
+ * @author Giovanni Mormone.
+ *
  * Companion object of [[controller.ChangePasswordController]]
+ *
  */
 object ChangePasswordController{
   private val instance = new ChangePasswordControllerImpl
