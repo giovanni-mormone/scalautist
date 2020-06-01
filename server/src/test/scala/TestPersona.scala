@@ -1,8 +1,8 @@
 import caseclass.CaseClassDB.{Login, Persona}
 import dbfactory.operation.PersonaOperation
 import org.scalatest._
-import DatabaseHelper._
 import caseclass.CaseClassHttpMessage.ChangePassword
+import utils.StartServer
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -15,11 +15,9 @@ trait Init{
   protected var listNewPerson:List[Persona] = _
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
-  val result: Int = Await.result(runScript(),Duration.Inf)
-  require(result==1)
 }
 
-class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
+class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with StartServer{
 
   override def beforeEach(): Unit = {
 

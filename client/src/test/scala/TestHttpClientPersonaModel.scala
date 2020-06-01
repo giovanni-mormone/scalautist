@@ -1,4 +1,5 @@
 import caseclass.CaseClassDB.Persona
+import model.Model
 import model.entity.PersonaModel
 import model.utils.ResponceCode
 import org.scalatest.BeforeAndAfterEach
@@ -7,11 +8,8 @@ import org.scalatest.flatspec.AsyncFlatSpec
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-trait HttpClientRequest {
-  //Await.result(DatabaseHelper.runScript(), Duration.Inf)
-}
 
-class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with HttpClientRequest {
+class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with Model{
 
   behavior of "ClientHttpRequestLogin"
   it should "return Persona instance on login request" in {
@@ -27,7 +25,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val password: String = "admi"
     val http = PersonaModel.apply()
     val result = Await.result(http.login(user, password), Duration.Inf)
-    assert(!result.isDefined)
+    assert(result.isEmpty)
   }
 
   it should "Success code when it try to change password" in {

@@ -81,4 +81,13 @@ object TerminaleRoute  {
         }
       }
     }
+  def getTerminaleByZona: Route =
+    post {
+      entity(as[Id]) { idZona =>
+        onComplete(TerminaleOperation.getTermininaliInZona(idZona.id)) {
+          case Success(terminale)  =>  complete(StatusCodes.Found,terminale)
+          case t => anotherSuccessAndFailure(t)
+        }
+      }
+    }
 }

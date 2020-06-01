@@ -1,19 +1,17 @@
 package model.entity
 
 import model.Model
-import model.ModelDispatcher
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
-import akka.http.scaladsl.client.RequestBuilding.{Post, Get}
-import caseclass.CaseClassDB.{Assenza, Login, Persona}
+import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
+import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Terminale, Turno, Zona}
 import java.sql.Date
 
-import model.utils.ModelUtils
+import caseclass.CaseClassHttpMessage.Id
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 /**
  * RisorseUmaneModel extends [[model.Model]].
@@ -83,6 +81,11 @@ trait HumanResourceModel extends Model {
    * Future of type Login data (only new password)
    */
   def passwordRecovery(user: Int): Future[Login]
+
+  def getTerminalByZone(id:Int): Future[Option[List[Terminale]]]
+  def getZone(id:Int):Future[Option[Zona]]
+  def getAllContract:Future[Option[List[Contratto]]]
+  def getAllShift:Future[Option[List[Turno]]]
 }
 
 /**
@@ -162,7 +165,76 @@ object HumanResourceModel {
       result.future
     }
 
-    override def getPersone(id: Int): Future[Option[Persona]] = ???
+    override def getPersone(id: Int): Future[Option[Persona]] = {
+      val promise = Promise[Option[Persona]]
+      val idPersona = Id(id)
+      val request = Post(getURI("getpersona"), idPersona)
+      dispatcher.serverRequest(request).onComplete{
+        case Success(persona) =>
+          Unmarshal(persona).to[Option[Persona]].onComplete{
+            result=>genericSuccess(promise,result)
+          }
+      }
+      promise.future
+    }
+
+    override def getTerminalByZone(id: Int): Future[Option[List[Terminale]]] = {
+      val promise = Promise[Option[List[Terminale]]]
+      val idZona = Id(id)
+      val request = Post(getURI("getterminalebyzona"), idZona)
+      dispatcher.serverRequest(request).onComplete{
+        case Success(terminale) =>
+          Unmarshal(terminale).to[Option[List[Terminale]]].onComplete{
+            result=>genericSuccess(promise,result)
+          }
+      }
+      promise.future
+    }
+
+    override def getZone(id: Int): Future[Option[Zona]] = {
+      val promise = Promise[Option[Zona]]
+      val idZona = Id(id)
+      val request = Post(getURI("getzona"), idZona)
+      dispatcher.serverRequest(request).onComplete{
+        case Success(zona) =>
+          Unmarshal(zona).to[Option[Zona]].onComplete{
+            result=>genericSuccess(promise,result)
+          }
+      }
+      promise.future
+
+    }
+
+    override def getAllContract: Future[Option[List[Contratto]]] = {
+      val promise = Promise[Option[List[Contratto]]]
+      val request = Post(getURI("getallcontratto"))
+      dispatcher.serverRequest(request).onComplete{
+        case Success(zona) =>
+          Unmarshal(zona).to[Option[List[Contratto]]].onComplete{
+            result=>genericSuccess(promise,result)
+          }
+      }
+      promise.future
+
+    }
+
+    override def getAllShift: Future[Option[List[Turno]]] = {
+      val promise = Promise[Option[List[Turno]]]
+      val request = Post(getURI("getallturno"))
+      dispatcher.serverRequest(request).onComplete{
+        case Success(zona) =>
+          Unmarshal(zona).to[Option[List[Turno]]].onComplete{
+            result=>genericSuccess(promise,result)
+          }
+      }
+      promise.future
+
+    }
+    private val none=None
+    def genericSuccess[A](promise:Promise[Option[A]],function:Try[Option[A]]): Unit =function match {
+      case Success(value) => promise.success(value)
+      case Failure(exception) => promise.failure(exception)
+    }
   }
 
 }

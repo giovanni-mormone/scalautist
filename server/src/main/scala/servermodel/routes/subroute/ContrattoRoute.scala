@@ -42,4 +42,13 @@ object ContrattoRoute {
         }
       }
     }
+  def updateContratto(): Route =
+    post {
+      entity(as[Contratto]) { contratto =>
+        onComplete(ContrattoOperation.update(contratto)) {
+          case Success(t) =>  complete(StatusCodes.OK)
+          case t => anotherSuccessAndFailure(t)
+        }
+      }
+    }
 }
