@@ -39,7 +39,7 @@ object PersonaRoute{
     post {
       entity(as[Assumi]) { order =>
         onComplete(PersonaOperation.assumi(order)) {
-          case Success(t) =>  complete(StatusCodes.Created)
+          case Success(t) =>  complete((StatusCodes.Created,t))
           case t => anotherSuccessAndFailure(t)
         }
       }

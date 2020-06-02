@@ -8,7 +8,7 @@ import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Terminale, Tur
 import java.sql.Date
 import akka.http.scaladsl.model.HttpRequest
 import caseclass.CaseClassHttpMessage.{Assumi, Id}
-
+import model.utils.ModelUtils._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -130,14 +130,12 @@ object HumanResourceModel {
 
 
     override def recruit(assumi: Assumi): Future[Option[Login]] = {
-      implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
       val request = Post(getURI("hirePerson"), assumi)
       loginCase(request)
       promise.future
     }
 
     override def passwordRecovery(idUser: Id): Future[Option[Login]] = {
-      implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
       val request = Post(getURI("recoverypassword"),idUser)
       loginCase(request)
       promise.future
@@ -146,8 +144,8 @@ object HumanResourceModel {
     private def loginCase(request:HttpRequest)(implicit credential: Promise[Option[Login]]): Unit={
       doHttp(request).onComplete{
         case Success(result) =>
-          Unmarshal(result).to[Option[Login]].onComplete{result=>success(result)}
-        case t => failure(t.failed)
+          Unmarshal(result).to[Option[Login]].onComplete{result=>success(result,credential)}
+        case t => failure(t.failed,credential)
       }
     }
 
@@ -169,18 +167,16 @@ object HumanResourceModel {
     }
 
     override def getAllPersone: Future[Option[List[Persona]]] = {
-      implicit val list: Promise[Option[List[Persona]]] = Promise[Option[List[Persona]]]
       val request = Post(getURI("getallpersona"))
       doHttp(request).onComplete{
         case Success(result) =>
-          Unmarshal(result).to[Option[List[Persona]]].onComplete(result => success(result))
-        case t => failure(t.failed)
+          Unmarshal(result).to[Option[List[Persona]]].onComplete(result => success(result,list))
+        case t => failure(t.failed,list)
       }
       list.future
     }
 
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
-      implicit val result: Promise[Unit] = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, malattia = true)
       val request = Post(getURI("addabsence"), absence)
       unitFuture(request)
@@ -193,7 +189,6 @@ object HumanResourceModel {
       }
     }
     override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
-      implicit val result: Promise[Unit] = Promise[Unit]
       val absence = Assenza(idPersona, startDate, endDate, malattia = false)
       val request = Post(getURI("addabsence"), absence)
       unitFuture(request)
@@ -201,57 +196,54 @@ object HumanResourceModel {
     }
 
     override def getTerminalByZone(id: Id): Future[Option[List[Terminale]]] = {
-      implicit val promise: Promise[Option[List[Terminale]]] = Promise[Option[List[Terminale]]]
+
       val request = Post(getURI("getterminalebyzona"), id)
       doHttp(request).onComplete{
         case Success(terminale) =>
           Unmarshal(terminale).to[Option[List[Terminale]]].onComplete{
-            result=>success(result)
+            result=>success(result,promiseTer)
           }
-        case t => failure(t.failed)
+        case t => failure(t.failed,promiseTer)
       }
-      promise.future
+      promiseTer.future
     }
 
     override def getZone(id: Id): Future[Option[Zona]] = {
-      implicit val promise: Promise[Option[Zona]] = Promise[Option[Zona]]
       val request = Post(getURI("getzona"), id)
       doHttp(request).onComplete{
         case Success(zona) =>
           Unmarshal(zona).to[Option[Zona]].onComplete{
-            result=>success(result)
+            result=>success(result,promiseZona)
           }
-        case t => failure(t.failed)
+        case t => failure(t.failed,promiseZona)
       }
-      promise.future
+      promiseZona.future
 
     }
 
     override def getAllContract: Future[Option[List[Contratto]]] = {
-      implicit val promise: Promise[Option[List[Contratto]]] = Promise[Option[List[Contratto]]]
       val request = Post(getURI("getallcontratto"))
       doHttp(request).onComplete{
         case Success(zona) =>
           Unmarshal(zona).to[Option[List[Contratto]]].onComplete{
-            result=>success(result)
+            result=>success(result,promiseCont)
           }
-        case t => failure(t.failed)
+        case t => failure(t.failed,promiseCont)
       }
-      promise.future
+      promiseCont.future
 
     }
 
     override def getAllShift: Future[Option[List[Turno]]] = {
-      implicit val promise: Promise[Option[List[Turno]]] = Promise[Option[List[Turno]]]
       val request = Post(getURI("getallturno"))
       doHttp(request).onComplete{
         case Success(zona) =>
           Unmarshal(zona).to[Option[List[Turno]]].onComplete{
-            result=>success(result)
+            result=>success(result,promiseTurn)
           }
-        case t => failure(t.failed)
+        case t => failure(t.failed,promiseTurn)
       }
-      promise.future
+      promiseTurn.future
 
     }
 

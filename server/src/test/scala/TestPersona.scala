@@ -16,8 +16,7 @@ trait Init{
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
   protected var insertPersona: Assumi = _
-  val result: Int = 1//Await.result(runScript(),Duration.Inf)
-  require(result==1)
+
 }
 
 class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with StartServer{

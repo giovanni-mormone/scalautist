@@ -1,7 +1,10 @@
 
+import java.sql.Date
+
 import akka.Done
 import akka.actor.Terminated
-import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Contratto, Disponibilita, Login, Persona, StoricoContratto, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.Assumi
 import model.utils.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
@@ -12,11 +15,20 @@ import scala.concurrent.Future
 
 class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
   var terminale:HumanResourceModel=_
+  protected var insertPersona: Assumi = _
   override def beforeEach(): Unit = {
-      terminale = HumanResourceModel()
+    terminale = HumanResourceModel()
+    val daAssumere:Persona = Persona("JuanitoS","PerezS","569918598",Some(""),3,isNew = true,"")
+    val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(1),Some(2))
+    val disp:Disponibilita = Disponibilita("Lunes","Sabato")
+    insertPersona = Assumi(daAssumere,contratto,Some(disp))
   }
 
   behavior of "contract"
+  it should "return login with credential of a person" in {
+    val futureRecruit:Future[Option[Login]]=terminale.recruit(insertPersona)
+    futureRecruit map { recruit => assert(recruit.isDefined)}
+  }
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)
     futureTerminale map { terminale => assert(terminale.head.length==2)}

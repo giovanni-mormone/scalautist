@@ -1,5 +1,5 @@
-import caseclass.CaseClassDB.Terminale
-import dbfactory.operation.TerminaleOperation
+import caseclass.CaseClassDB.{Contratto, Terminale}
+import dbfactory.operation.{ContrattoOperation, TerminaleOperation}
 import org.scalatest._
 import utils.StartServer
 

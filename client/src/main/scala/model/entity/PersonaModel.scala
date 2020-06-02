@@ -80,9 +80,9 @@ object PersonaModel {
       doHttp(request).onComplete{
         case Success(persona) =>
           Unmarshal(persona).to[Option[Persona]].onComplete{
-            result=>success(result)
+            result=>success(result,promise)
           }
-        case t => failure(t.failed)
+        case t => failure(t.failed,promise)
       }
     }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {

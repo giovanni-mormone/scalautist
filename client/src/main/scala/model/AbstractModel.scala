@@ -12,13 +12,13 @@ abstract class AbstractModel extends Model{
   protected implicit val system: ActorSystem = dispatcher.system
   override def getURI(request: String): String = dispatcher.address + "/" + request
 
-  override def success[A,B](function:Try[Option[A]])(implicit promise:Promise[Option[A]]): Unit =function match {
+  override def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit =function match {
     case Success(value) => promise.success(value)
-    case t => failure(t.failed)
+    case t => failure(t.failed,promise)
   }
 
   @nowarn
-  override def failure[A](function:Try[Throwable])(implicit promise:Promise[Option[A]]): Unit = function match {
+  override def failure[A](function:Try[Throwable], promise:Promise[Option[A]]): Unit = function match {
     case Failure(exception) => promise.failure(exception)
   }
 
