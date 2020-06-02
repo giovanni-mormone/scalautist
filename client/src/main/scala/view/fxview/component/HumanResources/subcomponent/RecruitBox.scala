@@ -77,6 +77,8 @@ object RecruitBox{
     var save: Button = _
 
     private var terminalList = List[Terminale]()
+    private val fixedString = "-Fisso"
+    private val rotateString = "-Rotazione"
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       fillComboBox
@@ -94,7 +96,8 @@ object RecruitBox{
 
     private def fillComboBox: Unit = {
       //default values
-      contractList.foreach(contract => contractTypes.getItems.add(contract.tipoContratto))
+      contractList.foreach(contract =>
+        contractTypes.getItems.add(contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
       shiftList.foreach(shift => shift1.getItems.add(shift.fasciaOraria))
       shiftList.foreach(shift => shift2.getItems.add(shift.fasciaOraria))
       zoneList.foreach(zone => zones.getItems.add(zone.zones))
@@ -118,7 +121,7 @@ object RecruitBox{
           notDrive(false)
       })
 
-      //contractTypes.setOnAction(_ => )
+      contractTypes.setOnAction(_ => contractControl(getComboSelected(contractTypes)))
 
       day1.setOnAction(_ => {
         if (getComboSelected(day1).equals(getComboSelected(day2)))
@@ -165,10 +168,16 @@ object RecruitBox{
       save.setText(resources.getString("save"))
     }
 
-    private def contractControl(contract: String): (Boolean, Boolean, Boolean) = {
-      val workWeek: String = "5x2"
-      val typeWork: String = "Full"
-      (true, true, true)
+    def getContract(contract: String): Unit = {
+      contractList.filter(contractE => contractE.tipoContratto.equals(contract)).head
+    }
+
+    private def contractControl(contract: String): Unit = {
+      val workWeek: String = "5x2"    //tutti i 5x2 da lunedi a venerdi
+      val typeWork: String = "Full"   //tutti i 6x1 da lunedi a sabato
+
+      getContract(contract)
+
     }
 
     private def controlMainFields(): Boolean = {
@@ -198,7 +207,7 @@ object RecruitBox{
         terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
     }
 
-    private def notDrive(value: Boolean) = {
+    private def notDrive(value: Boolean): Unit = {
       day1.setDisable(value)
       day2.setDisable(value)
       shift1.setDisable(value)
@@ -206,9 +215,15 @@ object RecruitBox{
       resetComboBox(terminals)
       resetComboBox(day1)
       resetComboBox(day2)
+      resetComboBox(zones)
+      if(value)
+        notFixed(value)
+    }
+
+    private def notFixed(value: Boolean): Unit = {
+      shift1.setDisable(value)
       resetComboBox(shift1)
       resetComboBox(shift2)
-      resetComboBox(zones)
     }
 
     private def resetComboBox(component: ComboBox[String]): Unit =
