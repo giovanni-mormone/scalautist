@@ -1,17 +1,21 @@
 
+import akka.Done
+import akka.actor.Terminated
 import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
-import model.Model
+import model.ModelDispatcher
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import model.entity.HumanResourceModel
+import utils.ClientAkkaHttp
 
 import scala.concurrent.Future
 
-class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Model {
+class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
   var terminale:HumanResourceModel=_
   override def beforeEach(): Unit = {
       terminale = HumanResourceModel()
   }
+
   behavior of "contract"
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)
@@ -28,5 +32,9 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Model
   it should "return all shift with length 6" in {
     val futureshift:Future[Option[List[Turno]]]=terminale.getAllShift
     futureshift map { shift => assert(shift.head.length==6)}
+  }
+  it should "shutdown System" in {
+    val futureTerminated:Future[Terminated]=terminale.shutdownActorSystem()
+    futureTerminated map { terminated => assert(true)}
   }
 }

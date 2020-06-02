@@ -18,8 +18,8 @@ object MasterRoutePersona {
       path("getallpersona") {
         getAllPersona
       },
-      path("createpersona" ) {
-        createPersona()
+      path("hirePerson" ) {
+        hirePerson
       },
       path("createallpersona") {
         createAllPersona()
@@ -36,8 +36,11 @@ object MasterRoutePersona {
       path("loginpersona") {
         loginPersona()
       },
-      path("updatepassword") {            //TODO update password
-        updatePassword()
+      path("changepassword") {            //TODO update password
+        changePassword()
+      },
+      path("recoverypassword"){
+        recoveryPassword()
       },
       path("getstipendio"){
         getStipendio()

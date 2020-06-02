@@ -1,6 +1,6 @@
 package model.entity
 
-import model.Model
+import model.{AbstractModel, Model}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
  * PersonaModel extends [[model.Model]].
  * Interface for Persona Entity operation
  */
-trait PersonaModel extends Model {
+trait PersonaModel extends AbstractModel {
 
   /**
    * Check credential on the database, if the result is positive it returns personal data, else empty.
@@ -64,7 +64,7 @@ object PersonaModel {
       val person = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-      dispatcher.serverRequest(request).onComplete{
+      doHttp(request).onComplete{
         case Success(result) =>
           Unmarshal(result).to[Persona].onComplete(dbPerson => person.success(dbPerson.toOption) )
       }
@@ -74,8 +74,8 @@ object PersonaModel {
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
-      val request = Post(getURI("updatepassword"), newCredential) // cambiare request
-      dispatcher.serverRequest(request).onComplete{
+      val request = Post(getURI("changepassword"), newCredential) // cambiare request
+      doHttp(request).onComplete{
         case Success(t) => t.status match {
           case StatusCodes.Accepted => result.success(ResponceCode.Success)
           case StatusCodes.NotFound => result.success(ResponceCode.NotFound)

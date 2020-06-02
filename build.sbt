@@ -29,7 +29,7 @@ lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
-  mainClass  in Compile := Some("servermodel.StartServer"),
+  mainClass  in Compile := Some("servermodel.MainServer"),
   name := "scalautist-server-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,

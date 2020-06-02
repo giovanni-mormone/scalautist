@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
-import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.PersonaOperation
@@ -35,11 +35,10 @@ object PersonaRoute{
         case t => anotherSuccessAndFailure(t)
       }
     }
-
-  def createPersona(): Route =
+  def hirePerson: Route =
     post {
-      entity(as[Persona]) { order =>
-        onComplete(PersonaOperation.insert(order)) {
+      entity(as[Assumi]) { order =>
+        onComplete(PersonaOperation.assumi(order)) {
           case Success(t) =>  complete(StatusCodes.Created)
           case t => anotherSuccessAndFailure(t)
         }
@@ -95,8 +94,17 @@ object PersonaRoute{
         }
       }
     }
+  def recoveryPassword(): Route =
+    post {
+      entity(as[Id]) {
+        idUser => onComplete(PersonaOperation.recoveryPassword(idUser.id)){
+          case Success(login)  =>  complete((StatusCodes.OK,login))
+          case t => anotherSuccessAndFailure(t)
+        }
+      }
+    }
 
-  def updatePassword(): Route =
+  def changePassword(): Route =
     post {
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){

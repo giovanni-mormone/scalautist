@@ -1,15 +1,15 @@
 import caseclass.CaseClassDB.Persona
-import model.Model
 import model.entity.PersonaModel
 import model.utils.ResponceCode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
+import utils.ClientAkkaHttp
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 
-class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with Model{
+class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp{
 
   behavior of "ClientHttpRequestLogin"
   it should "return Persona instance on login request" in {
