@@ -15,7 +15,7 @@ import scala.language.postfixOps
 import scala.util.matching.Regex
 
 trait RecruitBox extends Component[HRViewParent]{
-  def setTerminals(l:List[Terminale])
+  def setTerminals(l:List[Terminale]): Unit
 }
 
 object RecruitBox{
@@ -93,7 +93,7 @@ object RecruitBox{
           notDrive(false)
       })
 
-      contractTypes.setOnAction()
+      //contractTypes.setOnAction(_ => )
 
       day1.setOnAction(_ => {
         if (getComboSelected(day1).equals(getComboSelected(day2)))
@@ -140,6 +140,12 @@ object RecruitBox{
       save.setText(resources.getString("save"))
     }
 
+    private def contractCompose(contract: String): (Boolean, Boolean, Boolean) = {
+      val workWeek: String = "5x2"
+      val typeWork: String = "Full"
+      (true, true, true)
+    }
+
     private def controlMainFields(): Boolean = {
       //val pattern: Pattern = Pattern.compile("-?\\d{10}?") //TODO controllo su tel
       !name.getText.equals("") && !surname.getText.equals("") && !contractTypes.getSelectionModel.isEmpty
@@ -150,7 +156,7 @@ object RecruitBox{
       true
     }
 
-    private def noEmptyField = {
+    private def noEmptyField: Boolean = {
       if(role.getSelectionModel.isEmpty)
         false
       else if(getComboSelected(role).equals("risorseUmane") || getComboSelected(role).equals("manager"))

@@ -6,6 +6,10 @@ import caseclass.CaseClassDB.Persona
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
 
+/**
+ * @author Francesco Cassano
+ *
+ */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
 
   def recruit(persona:Persona): Unit

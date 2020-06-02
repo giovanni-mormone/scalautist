@@ -13,9 +13,17 @@ import view.BaseView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.HumanResources.{HRHome, HRViewParent}
 
+/**
+ * @author Francesco Cassano
+ *
+ * A view to manage human resource Views functionalities.
+ * It extends [[view.BaseView]]
+ *
+ */
 trait HumanResourceView extends BaseView {
   def drawRecruit()
 }
+
 
 object HumanResourceView {
 
@@ -51,7 +59,8 @@ object HumanResourceView {
     override def drawRecruit(): Unit = {  //TODO fare tutto in chiamate al controller
       Platform.runLater(() =>{
         val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-        val contratti = List(Contratto("6x1-Fisso",Byte.MaxValue), Contratto("6x1-gira",Byte.MinValue))
+        val contratti = List(Contratto("Full-Time-5x2",Byte.MaxValue), Contratto("Part-Time-5x2",Byte.MaxValue),
+          Contratto("Part-Time-6x1",Byte.MinValue), Contratto("Full-Time-6x1",Byte.MinValue))
         val turni = List(Turno("mattina","04-08"), Turno("mattina2","08-14"),
           Turno("pomer","14-19"), Turno("sera","19-23"), Turno("notte","23-04"))
         hrHome.drawRecruit(zone, contratti, turni)
