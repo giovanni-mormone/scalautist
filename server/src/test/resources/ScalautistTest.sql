@@ -42,6 +42,19 @@ SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
 
+--DISPONIBILITA
+
+SET IDENTITY_INSERT [dbo].[DisponibilitaStraordinarioSets] ON
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (1, N'Lunes', N'Sabato')
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (2, N'Martes', N'Venerdi')
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (3, N'Miercoles', N'Giovedi')
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (4, N'Jueves', N'Mercoledi')
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (5, N'Viernes Serata',N'Martedi')
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2]) VALUES (6, N'Sabado',N'Lunedi')
+SET IDENTITY_INSERT [dbo].[DisponibilitaStraordinarioSets] OFF
+
+--//DISPONIBILITA
+
 --PERSONA
 
 SET IDENTITY_INSERT [dbo].[PersoneSets] ON
@@ -50,6 +63,7 @@ INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], 
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (3, N'Giovanni', N'Mormone',N'394562358',2, null,  N'root',1,  N'root')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (4, N'Luciano',  N'Fuentes',N'365478962',3,2,  N'yoyo',1,  N'yoyo')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (5, N'Valerio', N'Vigliano',N'91485236',3,3,  N'tutu',1,  N'tutu')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (6, N'Conducente', N'Maestro',N'91485236',3,3,  N'tutu',1,  N'tutu',1)
 SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 
 --//PERSONA
@@ -117,3 +131,4 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO
+select * from PersoneSets

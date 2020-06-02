@@ -1,19 +1,15 @@
-import DatabaseHelper.runScript
-import caseclass.CaseClassDB.{Persona, Terminale}
-import dbfactory.operation.{PersonaOperation, TerminaleOperation}
+import caseclass.CaseClassDB.{Contratto, Terminale}
+import dbfactory.operation.{ContrattoOperation, TerminaleOperation}
 import org.scalatest._
+import utils.StartServer
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 trait Init2{
   protected var terminale: List[Terminale] = _
-
-  val result: Int = Await.result(runScript(),Duration.Inf)
-  require(result==1)
 }
 
-class TestTerminale extends  AsyncFlatSpec with BeforeAndAfterEach with Init2{
+class TestTerminale extends  AsyncFlatSpec with BeforeAndAfterEach with Init2 with StartServer{
 
   override def beforeEach(): Unit = {
     terminale = List(Terminale("Cansas",1,Some(1)),Terminale("Pajaritos",1,Some(5)))
