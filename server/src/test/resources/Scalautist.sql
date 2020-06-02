@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/02/2020 17:54:44
+-- Date Created: 06/02/2020 18:03:31
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\DataBasePPS.edmx
 -- --------------------------------------------------
 
@@ -819,7 +819,7 @@ ALTER TABLE [dbo].[PersoneSets]
         FOREIGN KEY ([DisponibilitaStraordinarioSetIdDisponibilitaStraordinario])
             REFERENCES [dbo].[DisponibilitaStraordinarioSets]
                 ([IdDisponibilitaStraordinario])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_DisponibilitaStraordinarioPersoneSet'

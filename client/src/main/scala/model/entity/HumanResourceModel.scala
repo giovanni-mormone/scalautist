@@ -150,13 +150,11 @@ object HumanResourceModel {
     }
 
     override def fires(ids: Id): Future[Unit] = {
-      val result = Promise[Unit]
       val request = Post(getURI("deletepersona"), ids)
       callRequest(request,result)
     }
 
     override def firesAll(ids: Set[Int]): Future[Unit] = {
-      val result = Promise[Unit]
       val request = Post(getURI("deleteallpersona"), ids.map(id=>Id(id)).toList)
       callRequest(request,result)
     }

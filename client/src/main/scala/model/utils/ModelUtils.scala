@@ -1,5 +1,8 @@
 package model.utils
 
+
+import akka.http.scaladsl.client.RequestBuilding.Post
+import akka.http.scaladsl.model.HttpRequest
 import caseclass.CaseClassDB.{Contratto, Login, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Id
 
