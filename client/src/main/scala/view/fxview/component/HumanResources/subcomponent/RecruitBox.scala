@@ -14,15 +14,40 @@ import view.fxview.component.{AbstractComponent, Component}
 import scala.language.postfixOps
 import scala.util.matching.Regex
 
+/**
+ * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
+ * of [[view.fxview.component.HumanResources.HRViewParent]]
+ */
 trait RecruitBox extends Component[HRViewParent]{
+
+  /**
+   * Set a list of terminal in the view before the zone is chosen.
+   *
+   * @param l
+   *          list of terminale to show
+   */
   def setTerminals(l:List[Terminale]): Unit
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.RecruitBox]]
+ *
+ */
 object RecruitBox{
 
   def apply(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona]): RecruitBox =
     new RecruitBoxImpl(contractList, shiftList, zoneList)
 
+  /**
+   * RecruitBox Fx implementation. It shows Humane resource Recruit panel in home view
+   *
+   * @param contractList
+   *                     list of type of contratto
+   * @param shiftList
+   *                  list of type of turno
+   * @param zoneList
+   *                 list of zona
+   */
   private class RecruitBoxImpl(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona])
     extends AbstractComponent[HRViewParent]("humanresources/subcomponent/RecruitBox") with RecruitBox {
 
@@ -140,7 +165,7 @@ object RecruitBox{
       save.setText(resources.getString("save"))
     }
 
-    private def contractCompose(contract: String): (Boolean, Boolean, Boolean) = {
+    private def contractControl(contract: String): (Boolean, Boolean, Boolean) = {
       val workWeek: String = "5x2"
       val typeWork: String = "Full"
       (true, true, true)

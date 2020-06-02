@@ -21,14 +21,30 @@ import view.fxview.component.HumanResources.{HRHome, HRViewParent}
  *
  */
 trait HumanResourceView extends BaseView {
+
+  /**
+   * It asks is children to show Recruit view
+   *
+   */
   def drawRecruit()
 }
 
-
+/**
+ * @author Francesco Cassano
+ *
+ * Companion object of [[view.fxview.mainview.HumanResourceView]]
+ *
+ */
 object HumanResourceView {
 
   def apply(stage: Stage): HumanResourceView = new HumanResourceViewFX(stage)
 
+  /**
+   * HumanResourceView FX implementation
+   *
+   * @param stage
+   *              Stage that load view
+   */
   private class HumanResourceViewFX(stage: Stage) extends AbstractFXDialogView(stage) with HumanResourceView with HRViewParent{
 
     private var myController: HumanResourceController = _
@@ -59,8 +75,8 @@ object HumanResourceView {
     override def drawRecruit(): Unit = {  //TODO fare tutto in chiamate al controller
       Platform.runLater(() =>{
         val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-        val contratti = List(Contratto("Full-Time-5x2",Byte.MaxValue), Contratto("Part-Time-5x2",Byte.MaxValue),
-          Contratto("Part-Time-6x1",Byte.MinValue), Contratto("Full-Time-6x1",Byte.MinValue))
+        val contratti = List(Contratto("Full-Time-5x2", true), Contratto("Part-Time-5x2", false),
+          Contratto("Part-Time-6x1", false), Contratto("Full-Time-6x1", true))
         val turni = List(Turno("mattina","04-08"), Turno("mattina2","08-14"),
           Turno("pomer","14-19"), Turno("sera","19-23"), Turno("notte","23-04"))
         hrHome.drawRecruit(zone, contratti, turni)
