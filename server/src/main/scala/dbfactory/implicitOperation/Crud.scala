@@ -2,6 +2,7 @@ package dbfactory.implicitOperation
 
 import caseclass.CaseClassDB._
 import dbfactory.setting.GenericOperation.Operation
+import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
@@ -253,4 +254,16 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Disponibilita]): Future[List[Int]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Int]       = typeDB().deleteAll(element)
 
-  }}
+  }
+
+  implicit object CrudAssenza extends OperationImplicit[Assenza,AssenzaTableRep] with Crud[Assenza] {
+    override private[implicitOperation] def insert(element: Assenza):Future[Int]                 = typeDB().insert(element)
+    override private[implicitOperation] def select(element: Int): Future[Option[Assenza]]        = typeDB().select(element)
+    override private[implicitOperation] def delete(element: Int): Future[Int]                = typeDB().delete(element)
+    override private[implicitOperation] def update(element: Assenza): Future[Int]                = typeDB().update(element)
+    override private[implicitOperation] def selectAll: Future[List[Assenza]]                     = typeDB().selectAll
+    override private[implicitOperation] def insertAll(element: List[Assenza]): Future[List[Int]] = typeDB().insertAll(element)
+    override private[implicitOperation] def deleteAll(element: List[Int]): Future[Int]       = typeDB().deleteAll(element)
+
+  }
+}
