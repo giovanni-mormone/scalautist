@@ -6,7 +6,7 @@ import caseclass.CaseClassDB.Contratto
 object ContrattoTable {
   class ContrattoTableRep(tag: Tag) extends GenericTable[Contratto](tag, "ContratoeSets","IdContratto") {
     def tipoContratto: Rep[String] = column[String]("TipoContratto")
-    def turnoFisso: Rep[Byte] = column[Byte]("TurnoFisso")
+    def turnoFisso: Rep[Boolean] = column[Boolean]("TurnoFisso")
     override def * : ProvenShape[Contratto] = (tipoContratto,turnoFisso,id.?).mapTo[Contratto]
 
   }

@@ -24,7 +24,7 @@ object CaseClassDB{
    * @param turnoFisso represent the type shift that persona can have
    * @param idContratto identifies type shift into database (for insert operation this is not mandatory)
    */
-  final case class Contratto(tipoContratto:String,turnoFisso:Byte,idContratto:Option[Int]=None)
+  final case class Contratto(tipoContratto:String,turnoFisso:Boolean,idContratto:Option[Int]=None)
 
   /**
    * Giorno is a case class that represent a instance of table into database that contains
