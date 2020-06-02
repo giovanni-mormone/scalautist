@@ -9,13 +9,28 @@ import slick.jdbc.SQLServerProfile.api._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
+
+/**
+ * @author Giovanni Mormone
+ *
+ * Abstraction of the operations tha one can do on the Terminale Table in DB.
+ *
+ */
 trait TerminaleOperation extends OperationCrud[Terminale]{
 
+  /**
+   * Returns all the terminale within one given zone.
+   * @param zonaId
+   *               The zone of the id
+   * @return
+   *         A list of the terminali in the zone.
+   */
   def getTermininaliInZona(zonaId: Int): Future[Option[List[Terminale]]]
 }
 
 
 object TerminaleOperation extends TerminaleOperation {
+
   override def getTermininaliInZona(zonaId: Int): Future[Option[List[Terminale]]] = {
 
     val promiseTerminaliInZona = Promise[Option[List[Terminale]]]

@@ -3,7 +3,8 @@ import slick.jdbc.SQLServerProfile.api._
 import dbfactory.setting.GenericTable
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import slick.lifted.{ForeignKeyQuery, ProvenShape}
-import caseclass.CaseClassDB.{Persona, Terminale}
+import caseclass.CaseClassDB.{Disponibilita, Persona, Terminale}
+import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 
 /** @author Fabian Aspée Encina
  *  Object which encapsulates a instance of person in database
@@ -24,7 +25,10 @@ object PersonaTable{
     def ruolo: Rep[Int] = column[Int]("Ruolo")
     def isNew:Rep[Boolean] = column[Boolean]("IsNew")
     def userName:Rep[String]= column[String]("UserName")
-    override def * : ProvenShape[Persona] = (nome,cognome,numTelefono,password.?,ruolo,isNew,userName,terminaleId,id.?).mapTo[Persona]
+    def disponibilitaId:Rep[Option[Int]]= column[Int]("DisponibilitaStraordinarioSetIdDisponibilitaStraordinario").?
+    override def * : ProvenShape[Persona] = (nome,cognome,numTelefono,password.?,ruolo,isNew,userName,terminaleId,disponibilitaId,id.?).mapTo[Persona]
     def terminale: ForeignKeyQuery[TerminaleTableRep, Terminale] = foreignKey("Terminale_IdTerminale", terminaleId, TableQuery[TerminaleTableRep])(_.id.?, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
+    def disponibilta: ForeignKeyQuery[DisponibilitaTableRep, Disponibilita] = foreignKey("DisponibilitaStraordinarioSetIdDisponibilitaStraordinario", disponibilitaId, TableQuery[DisponibilitaTableRep])(_.id.?, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
+
   }
 }

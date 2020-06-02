@@ -5,6 +5,7 @@ import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.setting.GenericOperation.Operation
 import dbfactory.setting.GenericTable
 import dbfactory.table.ContrattoTable.ContrattoTableRep
+import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
 import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
@@ -123,5 +124,11 @@ object ImplicitInstanceTableDB {
     override private[implicitOperation] def typeDB(): GenericOperationCRUD[Zona, ZonaTableRep] = GenericOperationCRUD[Zona,ZonaTableRep]
 
     override def operation(): Operation[Zona, ZonaTableRep] = Operation[Zona, ZonaTableRep]
+  }
+
+  implicit object InstanceDisponibilita extends ImplicitInstanceTableDB[Disponibilita,DisponibilitaTableRep] {
+    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Disponibilita, DisponibilitaTableRep] = GenericOperationCRUD[Disponibilita,DisponibilitaTableRep]
+
+    override def operation(): Operation[Disponibilita, DisponibilitaTableRep] = Operation[Disponibilita, DisponibilitaTableRep]
   }
 }

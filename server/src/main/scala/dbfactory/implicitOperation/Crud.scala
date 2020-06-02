@@ -3,6 +3,7 @@ package dbfactory.implicitOperation
 import caseclass.CaseClassDB._
 import dbfactory.setting.GenericOperation.Operation
 import dbfactory.table.ContrattoTable.ContrattoTableRep
+import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
 import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
@@ -19,8 +20,8 @@ import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 import dbfactory.util.Helper._
-import scala.concurrent.Future
 
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 /** @author Fabian Aspee Encina
  * Trait which enables operation generic in all tables [[caseclass.CaseClassDB]]
@@ -242,4 +243,14 @@ object Crud {
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Int]       = typeDB().deleteAll(element)
 
   }
-}
+
+  implicit object CrudDisponibilita extends OperationImplicit[Disponibilita,DisponibilitaTableRep] with Crud[Disponibilita] {
+    override private[implicitOperation] def insert(element: Disponibilita):Future[Int]                 = typeDB().insert(element)
+    override private[implicitOperation] def select(element: Int): Future[Option[Disponibilita]]        = typeDB().select(element)
+    override private[implicitOperation] def delete(element: Int): Future[Int]                = typeDB().delete(element)
+    override private[implicitOperation] def update(element: Disponibilita): Future[Int]                = typeDB().update(element)
+    override private[implicitOperation] def selectAll: Future[List[Disponibilita]]                     = typeDB().selectAll
+    override private[implicitOperation] def insertAll(element: List[Disponibilita]): Future[List[Int]] = typeDB().insertAll(element)
+    override private[implicitOperation] def deleteAll(element: List[Int]): Future[Int]       = typeDB().deleteAll(element)
+
+  }}
