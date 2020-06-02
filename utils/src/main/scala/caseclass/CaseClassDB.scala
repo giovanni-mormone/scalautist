@@ -3,6 +3,7 @@ package caseclass
 import java.sql.Date
 
 /**
+ * @author Fabian Aspee Encina, Franceso Cassano, Giovanni Mormone
  * Object that encapsulates all case class that required both the server and client,
  * this is util because [[spray.json]] required this for make serialization of the objects
  */
@@ -71,7 +72,7 @@ object CaseClassDB{
    * @param idTerminale represent terminal with which a driver is associated
    * @param matricola identification univocal for every persona (for insert operation this is not mandatory)
    */
-  final case class Persona(nome:String,cognome:String,numTelefono:String,password:Option[String],ruolo:Int,isNew:Boolean,userName:String,idTerminale:Option[Int]=None,matricola:Option[Int]=None)
+  final case class Persona(nome:String,cognome:String,numTelefono:String,password:Option[String],ruolo:Int,isNew:Boolean,userName:String,idTerminale:Option[Int]=None,disponibilita:Option[Int]=None,matricola:Option[Int]=None)
 
   /**
    * Presenza is a case class that represent a instance of table into database that contains all presence
@@ -142,7 +143,7 @@ object CaseClassDB{
    * @param turnoId1 identifies another shift if exist
    * @param idStoricoContratto represent unambiguous for every contract story (for insert operation this is not mandatory)
    */
-  final case class StoricoContratto(dataInizio:Date,dataFine:Option[Date],personaId:Int,contrattoId:Int,turnoId:Option[Int],turnoId1:Option[Int],idStoricoContratto:Option[Int]=None)
+  final case class StoricoContratto(dataInizio:Date,dataFine:Option[Date],personaId:Option[Int],contrattoId:Int,turnoId:Option[Int],turnoId1:Option[Int],idStoricoContratto:Option[Int]=None)
 
   /**
    * Straordinario is a case class that represent a instance of table into database that contains
@@ -214,5 +215,17 @@ object CaseClassDB{
    * @param idAssenza represent unambiguous for every absence (for insert operation this is not mandatory)
    */
   final case class Assenza(perosnaId: Int, dataInizio: Date, dataFine: Date, malattia: Boolean, idAssenza: Option[Int] = None)
+
+  /**
+   * Representation of an instance of table Disponibilità in the DB
+   * @param giorno1
+   *                first day of disponibilita
+   * @param giorno2
+   *                second day of disponibilita
+   * @param idDisponibilita
+   *                        represent unambiguous for every disponibilita (for insert operation this is not mandatory)
+   */
+  final case class Disponibilita(giorno1: String, giorno2: String, idDisponibilita: Option[Int] = None)
+
 }
 

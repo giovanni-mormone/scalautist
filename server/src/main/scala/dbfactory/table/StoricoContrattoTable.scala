@@ -17,7 +17,7 @@ object StoricoContrattoTable {
     def contrattoId: Rep[Int] = column[Int]("Contrato_IdContratto")
     def turnoId: Rep[Int] = column[Int]("Turno_IdTurno")
     def turnoId1: Rep[Int] = column[Int]("Turno1_IdTurno")
-    override def * : ProvenShape[StoricoContratto] = (dataInizio,dataFine.?,personaId,contrattoId,turnoId.?,turnoId1.?,id.?).mapTo[StoricoContratto]
+    override def * : ProvenShape[StoricoContratto] = (dataInizio,dataFine.?,personaId.?,contrattoId,turnoId.?,turnoId1.?,id.?).mapTo[StoricoContratto]
     def persona: ForeignKeyQuery[PersonaTableRep, Persona] = foreignKey("Persone_Matricola", personaId, TableQuery[PersonaTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
     def turno: ForeignKeyQuery[TurnoTableRep, Turno] = foreignKey("Turno_IdTurno", turnoId, TableQuery[TurnoTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
     def contratto: ForeignKeyQuery[ContrattoTableRep, Contratto] = foreignKey("Contrato_IdContratto", personaId, TableQuery[ContrattoTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.SetNull)
