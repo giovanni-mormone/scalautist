@@ -1,7 +1,7 @@
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
-import dbfactory.operation.PersonaOperation
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, StoricoContratto}
+import dbfactory.operation.{AssenzaOperation, PersonaOperation}
 import org.scalatest._
 import utils.StartServer
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
@@ -16,6 +16,7 @@ trait Init{
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
   protected var insertPersona: Assumi = _
+  protected var assenza:Assenza = _
 
 }
 
@@ -31,10 +32,14 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     newPersona=Persona("Juanito","Perez","569918598",Some(""),1,isNew = true,"adminF")
     listNewPerson=List(newPersona,Persona("Juanito","Perez","569918598",Some(""),1,isNew = true,"adminF"))
 
-    val daAssumere:Persona = Persona("Mattia","Mommo","1234567789",None,3,true,"",Some(2))
+    val daAssumere:Persona = Persona("Mattia","Mommo","1234567789",None,3,isNew = true,"",Some(2))
     val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(3),Some(4))
     val disp:Disponibilita = Disponibilita("Lunes","Martes")
     insertPersona = Assumi(daAssumere,contratto,Some(disp))
+
+    assenza = Assenza(2,new Date(System.currentTimeMillis()),new Date(System.currentTimeMillis()*2),malattia = false)
+
+
   }
   behavior of "Login"
   it should "eventually return a person" in {
@@ -78,12 +83,25 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val updatePersonaP: Future[Int] = PersonaOperation.update(updatePersona)
     updatePersonaP map {update => assert(update == 1) }
   }
-  behavior of "assumi"
+  behavior of "PersoneManagment"
   it should "return a login with credential of user" in {
     val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
     assumi map {login => assert(login.isDefined)}
   }
+  it should "return a login with credential of user2" in {
+    val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
+    assumi map {login => assert(login.isDefined)}
+  }
+  it should "return a valid int when removed from db" in {
+    val fire: Future[Int] = PersonaOperation.delete(7)
+    fire map {login => assert(login.isValidInt)}
+  }
 
+  behavior of "assenza"
+  it should "return an int id for the assenza" in {
+    val assence: Future[Int] = AssenzaOperation.insert(assenza)
+    assence map {assence => assert(assence.isValidInt)}
+  }
  /* it should "return a int when delete a person for id" in {
     val deletePersona: Future[Int] = PersonaOperation.delete(persona)
     deletePersona map {delete=>  assert(delete == 1) }
