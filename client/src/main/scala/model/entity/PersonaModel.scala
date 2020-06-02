@@ -1,12 +1,12 @@
 package model.entity
 
-import model.Model
+import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
 import model.utils.ResponceCode
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
  * PersonaModel extends [[model.Model]].
  * Interface for Persona Entity operation
  */
-trait PersonaModel extends Model {
+trait PersonaModel extends AbstractModel {
 
   /**
    * Check credential on the database, if the result is positive it returns personal data, else empty.
@@ -45,7 +45,7 @@ trait PersonaModel extends Model {
    * future
    */
   def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
-
+  def getPersone(id:Int): Future[Option[Persona]]
 }
 
 /**
@@ -61,21 +61,35 @@ object PersonaModel {
   private class PersonaModelHttp extends PersonaModel{
 
     override def login(user: String, password: String): Future[Option[Persona]] = {
-      val person = Promise[Option[Persona]]
+      implicit val person: Promise[Option[Persona]] = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-      dispatcher.serverRequest(request).onComplete{
-        case Success(result) =>
-          Unmarshal(result).to[Persona].onComplete(dbPerson => person.success(dbPerson.toOption) )
-      }
+      callHtpp(request)
       person.future
     }
 
+    override def getPersone(id: Int): Future[Option[Persona]] = {
+      implicit val promise: Promise[Option[Persona]] = Promise[Option[Persona]]
+      val idPersona = Id(id)
+      val request = Post(getURI("getpersona"), idPersona)
+      callHtpp(request)
+      promise.future
+    }
+
+    private def callHtpp(request: HttpRequest)(implicit promise: Promise[Option[Persona]]): Unit ={
+      doHttp(request).onComplete{
+        case Success(persona) =>
+          Unmarshal(persona).to[Option[Persona]].onComplete{
+            result=>success(result,promise)
+          }
+        case t => failure(t.failed,promise)
+      }
+    }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
-      val request = Post(getURI("updatepassword"), newCredential) // cambiare request
-      dispatcher.serverRequest(request).onComplete{
+      val request = Post(getURI("changepassword"), newCredential) // cambiare request
+      doHttp(request).onComplete{
         case Success(t) => t.status match {
           case StatusCodes.Accepted => result.success(ResponceCode.Success)
           case StatusCodes.NotFound => result.success(ResponceCode.NotFound)

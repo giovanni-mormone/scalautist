@@ -3,13 +3,17 @@ package view.fxview
 import java.net.URL
 import java.util.ResourceBundle
 
+import javafx.application.Platform
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.Scene
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, StackPane}
 import javafx.stage.Stage
+import model.entity.HumanResourceModel
 import view.{BaseView, DialogView, GoBackView}
 import view.fxview.loader.FXLoader
+
+import scala.util.Success
 
 /**
  * @author Giovanni Mormone.

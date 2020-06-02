@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/29/2020 18:39:14
+-- Date Created: 06/02/2020 17:54:44
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\DataBasePPS.edmx
 -- --------------------------------------------------
 
@@ -83,6 +83,9 @@ ALTER TABLE [dbo].[AssenzaSet] DROP CONSTRAINT [FK_AssenzaPersoneSet];
 IF OBJECT_ID(N'[dbo].[FK_StipendioPersoneSet]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StipendioSet] DROP CONSTRAINT [FK_StipendioPersoneSet];
 
+IF OBJECT_ID(N'[dbo].[FK_DisponibilitaStraordinarioPersoneSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[PersoneSets] DROP CONSTRAINT [FK_DisponibilitaStraordinarioPersoneSet];
+
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -148,6 +151,9 @@ IF OBJECT_ID(N'[dbo].[AssenzaSet]', 'U') IS NOT NULL
 IF OBJECT_ID(N'[dbo].[StipendioSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[StipendioSet];
 
+IF OBJECT_ID(N'[dbo].[DisponibilitaStraordinarioSets]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[DisponibilitaStraordinarioSets];
+
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -194,7 +200,8 @@ CREATE TABLE [dbo].[PersoneSets] (
                                      [Terminale_IdTerminale] int  NULL,
                                      [Password] nvarchar(max)  NOT NULL,
                                      [IsNew] bit  NOT NULL,
-                                     [UserName] nvarchar(max)  NOT NULL
+                                     [UserName] nvarchar(max)  NOT NULL,
+                                     [DisponibilitaStraordinarioSetIdDisponibilitaStraordinario] int  NULL
 );
 
 
@@ -334,6 +341,14 @@ CREATE TABLE [dbo].[StipendioSet] (
 );
 
 
+-- Creating table 'DisponibilitaStraordinarioSets'
+CREATE TABLE [dbo].[DisponibilitaStraordinarioSets] (
+                                                        [IdDisponibilitaStraordinario] int IDENTITY(1,1) NOT NULL,
+                                                        [Giorno1] nvarchar(max)  NOT NULL,
+                                                        [Giorno2] nvarchar(max)  NOT NULL
+);
+
+
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
 -- --------------------------------------------------
@@ -456,6 +471,12 @@ ALTER TABLE [dbo].[AssenzaSet]
 ALTER TABLE [dbo].[StipendioSet]
     ADD CONSTRAINT [PK_StipendioSet]
         PRIMARY KEY CLUSTERED ([IdStipendio] ASC);
+
+
+-- Creating primary key on [IdDisponibilitaStraordinario] in table 'DisponibilitaStraordinarioSets'
+ALTER TABLE [dbo].[DisponibilitaStraordinarioSets]
+    ADD CONSTRAINT [PK_DisponibilitaStraordinarioSets]
+        PRIMARY KEY CLUSTERED ([IdDisponibilitaStraordinario] ASC);
 
 
 -- --------------------------------------------------
@@ -790,6 +811,21 @@ ALTER TABLE [dbo].[StipendioSet]
 CREATE INDEX [IX_FK_StipendioPersoneSet]
     ON [dbo].[StipendioSet]
         ([PersoneSet_Matricola]);
+
+
+-- Creating foreign key on [DisponibilitaStraordinarioSetIdDisponibilitaStraordinario] in table 'PersoneSets'
+ALTER TABLE [dbo].[PersoneSets]
+    ADD CONSTRAINT [FK_DisponibilitaStraordinarioPersoneSet]
+        FOREIGN KEY ([DisponibilitaStraordinarioSetIdDisponibilitaStraordinario])
+            REFERENCES [dbo].[DisponibilitaStraordinarioSets]
+                ([IdDisponibilitaStraordinario])
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_DisponibilitaStraordinarioPersoneSet'
+CREATE INDEX [IX_FK_DisponibilitaStraordinarioPersoneSet]
+    ON [dbo].[PersoneSets]
+        ([DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]);
 
 
 -- --------------------------------------------------

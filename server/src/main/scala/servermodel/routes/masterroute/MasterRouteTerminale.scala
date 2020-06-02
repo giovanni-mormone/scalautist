@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{path, _}
 import servermodel.routes.subroute.TerminaleRoute._
 
 /**
@@ -32,6 +32,9 @@ object MasterRouteTerminale {
       },
       path("updateterminale") {
         updateTerminale()
+      },
+      path("getterminalebyzona") {
+        getTerminaleByZona
       }
     )
 

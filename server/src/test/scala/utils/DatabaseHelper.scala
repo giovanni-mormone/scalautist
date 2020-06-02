@@ -1,3 +1,4 @@
+package utils
 import dbfactory.setting.DBS
 import slick.basic.StaticDatabaseConfig
 import slick.jdbc.SQLServerProfile.api._
@@ -6,6 +7,7 @@ import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
+
 @StaticDatabaseConfig("#tsql")
 object DatabaseHelper extends DBS{
   private val clean_DB: String = Source.fromResource("Scalautist.sql").mkString
