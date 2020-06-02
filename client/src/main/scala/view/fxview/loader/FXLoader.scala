@@ -62,4 +62,5 @@ object FXLoader {
     loader.setResources(bundle)
     loader.load()
   }
+
 }
