@@ -3,8 +3,9 @@ package dbfactory.implicitOperation
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
- 
-/** @author Fabian Aspée Encina
+
+/**
+ * @author Fabian Aspée Encina
  * Generic abstract class which enable make operations in any table in database
  * every class in the package [[dbfactory.operation]] must extend this abstract class
  * @param crud Interface [[dbfactory.implicitOperation.Crud]] which enable make call operation of type
@@ -82,7 +83,7 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def delete(element:A):Future[Int]= {
+  def delete(element:Int):Future[Int]= {
     val promiseInsert = Promise[Int]
     Future {
       crud.delete(element) onComplete {
@@ -100,7 +101,7 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element list of case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def deleteAll(element:List[A]): Future[Int]= {
+  def deleteAll(element:List[Int]): Future[Int]= {
     val promiseInsert = Promise[Int]
     Future {
       crud.deleteAll(element) onComplete {

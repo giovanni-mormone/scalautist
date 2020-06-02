@@ -4,34 +4,30 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.Terminale
+import caseclass.CaseClassHttpMessage.Id
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
-import dbfactory.DummyDB
 import dbfactory.operation.TerminaleOperation
+import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
 
 object TerminaleRoute  {
 
-  def methodDummy(): Route =
+  def getTerminale: Route =
     post {
-      onComplete(DummyDB.dummyReq()) {
-        case t => complete(StatusCodes.Accepted,t)
+      entity(as[Id]) { id =>
+        onComplete(TerminaleOperation.select(id.id)) {
+          case Success(t) => complete((StatusCodes.Found, t))
+          case t => anotherSuccessAndFailure(t)
+        }
       }
     }
-
-  def getTerminale(id: Int): Route =
-    get {
-      onComplete(TerminaleOperation.select(id)) {
-        case Success(t) =>    complete((StatusCodes.Found,t))
-        //case Success(None) => complete(StatusCodes.NotFound)
-      }
-    }
-
   def getAllTerminale: Route =
     post {
       onComplete(TerminaleOperation.selectAll) {
         case Success(t) =>  complete((StatusCodes.Found,t))
+        case t => anotherSuccessAndFailure(t)
       }
     }
 
@@ -41,6 +37,7 @@ object TerminaleRoute  {
         onComplete(TerminaleOperation.insert(terminale)) {
           case Success(t) =>  complete(StatusCodes.Created,
                                       Terminale(terminale.nomeTerminale,terminale.idZona,Some(t)))
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -50,24 +47,27 @@ object TerminaleRoute  {
       entity(as[List[Terminale]]) { terminale =>
         onComplete(TerminaleOperation.insertAll(terminale)) {
           case Success(t)  =>  complete(StatusCodes.Created)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
 
   def deleteTerminale(): Route =
     post {
-      entity(as[Terminale]) { terminale =>
-        onComplete(TerminaleOperation.delete(terminale)) {
-          case Success(t)  =>  complete(StatusCodes.OK)
+      entity(as[Id]) { terminale =>
+        onComplete(TerminaleOperation.delete(terminale.id)) {
+          case Success(t)  =>  complete(StatusCodes.Gone)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
 
   def deleteAllTerminale(): Route =
     post {
-      entity(as[List[Terminale]]) { terminale =>
-        onComplete(TerminaleOperation.deleteAll(terminale)) {
-          case Success(t)  =>  complete(StatusCodes.OK)
+      entity(as[List[Id]]) { terminale =>
+        onComplete(TerminaleOperation.deleteAll(terminale.map(_.id))) {
+          case Success(t)  =>  complete(StatusCodes.Gone)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }
@@ -77,6 +77,7 @@ object TerminaleRoute  {
       entity(as[Terminale]) { terminale =>
         onComplete(TerminaleOperation.update(terminale)) {
           case Success(t)  =>  complete(StatusCodes.OK)
+          case t => anotherSuccessAndFailure(t)
         }
       }
     }

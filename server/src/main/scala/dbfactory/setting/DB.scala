@@ -5,7 +5,8 @@ import slick.dbio.{DBIOAction, NoStream}
 import slick.jdbc.JdbcProfile
 import scala.concurrent.Future
 
-/**  @author Fabian Aspée Encina
+/**
+ * @author Fabian Aspée Encina
  *   trait which enable make conection with database in remote
  */
 trait DBS{
@@ -17,12 +18,13 @@ trait DBS{
   protected val database = dbCo.db
 }
 
-/**@author Fabian Aspée Encina
+/**
+ * @author Fabian Aspée Encina
  * This trait allow run any operation that should make in database
- * @tparam C class that represent the table in database, allow make query in database [[dbfactory.table]]
- * @tparam T case class that represent instance in database [[caseclass.CaseClassDB]]
+ * @tparam T class that represent the table in database, allow make query in database [[dbfactory.table]]
+ * @tparam C case class that represent instance in database [[caseclass.CaseClassDB]]
  */
-trait DB[C <: GenericTable[T], T] extends DBS{
+trait DB[C, T<: GenericTable[C]] extends DBS{
   /**
    * Generic operation that run any operation into database
    * @param a A Database I/O Action that can be executed on a database.

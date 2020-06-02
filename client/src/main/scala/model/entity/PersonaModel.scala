@@ -74,7 +74,6 @@ object PersonaModel {
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
-      import jsonmessages.JsonMessageFormats._
       val request = Post(getURI("updatepassword"), newCredential) // cambiare request
       dispatcher.serverRequest(request).onComplete{
         case Success(t) => t.status match {

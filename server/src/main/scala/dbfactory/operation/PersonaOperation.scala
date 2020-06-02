@@ -1,8 +1,8 @@
 package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Login, Persona, Straordinario}
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
@@ -56,6 +56,17 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @return case class Login with new password and user = [[EMPTY_STRING]]
    */
   def recoveryPassword(idUser:Int):Future[Login]
+
+  /**
+   * Method to hire a person, it can differentiate beetween roles of the person to hire and
+   * generate the relative dependences in the db, e.g. assuming a driver add in the db the
+   * type of contract and eventually the disponibility of the driver to do extra work.
+   * @param personaDaAssumere
+   *                          The data of the person to hire
+   * @return
+   *         An option with the login data of the hired person
+   */
+  def assumi(personaDaAssumere: Assumi): Future[Option[Login]]
 }
 object PersonaOperation extends PersonaOperation {
 
@@ -78,10 +89,7 @@ object PersonaOperation extends PersonaOperation {
       case Failure(_)=>promiseFilterBySurname.success(None)
     }
   }
-  override def insert(element: Persona): Future[Int] ={
-    val persona = Persona(element.nome,element.cognome,element.numTelefono,createString,element.ruolo,element.isNew,createString.head)
-    super.insert(persona)
-  }
+
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
 
   override def login(login: Login): Future[Option[Persona]] = {
@@ -122,7 +130,7 @@ object PersonaOperation extends PersonaOperation {
     val monadicInnerJoin = for {
       c <- PersonaTableQuery.tableQuery()
       s <- TerminaleTableQuery.tableQuery()
-      if c.id===s.id
+      if c.terminaleId===s.id
     } yield (c.nome,s.nomeTerminale)
 
     InstancePersona.operation().execJoin(monadicInnerJoin)  onComplete(t=>{
@@ -130,4 +138,35 @@ object PersonaOperation extends PersonaOperation {
     })
   }
 
+  override def assumi(personaDaAssumere: Assumi): Future[Option[Login]] = {
+    implicit val promiseLogin: Promise[Option[Login]] = Promise[Option[Login]]
+    if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
+      DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head).onComplete{
+        case Success(disponibilita) =>
+          assumiPriv(constructPersona(personaDaAssumere.persona,Some(disponibilita)),personaDaAssumere.storicoContratto)
+        case Failure(exception) => promiseLogin.failure(exception)
+      }
+    } else {
+      assumiPriv(constructPersona(personaDaAssumere.persona,None),personaDaAssumere.storicoContratto)
+    }
+    promiseLogin.future
+  }
+
+  private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
+    insert(persona).onComplete{
+      case Success(personaId) =>
+        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,Some(personaId),contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
+        StoricoContrattoOperation.insert(contrattoToIns).onComplete{
+          case Success(_) => promise.success(Option(Login(persona.userName,persona.password.head)))
+          case Failure(exception) =>
+            delete(personaId)
+            promise.failure(exception)
+        }
+      case Failure(exception) => promise.failure(exception)
+    }
+  }
+
+  private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
+    Persona(origin.nome,origin.cognome,origin.numTelefono,
+      createString,origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
 }

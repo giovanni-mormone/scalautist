@@ -5,6 +5,7 @@ import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.setting.GenericOperation.Operation
 import dbfactory.setting.GenericTable
 import dbfactory.table.ContrattoTable.ContrattoTableRep
+import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
 import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
@@ -21,7 +22,8 @@ import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
 
-/** @author Fabian Aspee Encina
+/**
+ * @author Fabian Aspee Encina
  *  Trait which enable obtain a instance of the case class [[dbfactory.setting.GenericCRUD.GenericOperationCRUD]] initializate with the
  *  table we want use for make operation
  * @tparam A Is a case class that represent instance of the table in database [[caseclass.CaseClassDB]]
@@ -31,7 +33,7 @@ trait ImplicitInstanceTableDB[A,B<:GenericTable[A]] {
   /**
    * operation private enable only enable in the package implicitOperation, this create a instance of
    * Brands [[dbfactory.setting.GenericCRUD.GenericOperationCRUD]], which enable make generic operation in the database
-   * @return A instance of Brands which enables operation in database
+   * @return A instance of GenericOperationCRUD which enables operation in database
    */
   private[implicitOperation] def typeDB():GenericOperationCRUD[A,B]
 
@@ -122,5 +124,11 @@ object ImplicitInstanceTableDB {
     override private[implicitOperation] def typeDB(): GenericOperationCRUD[Zona, ZonaTableRep] = GenericOperationCRUD[Zona,ZonaTableRep]
 
     override def operation(): Operation[Zona, ZonaTableRep] = Operation[Zona, ZonaTableRep]
+  }
+
+  implicit object InstanceDisponibilita extends ImplicitInstanceTableDB[Disponibilita,DisponibilitaTableRep] {
+    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Disponibilita, DisponibilitaTableRep] = GenericOperationCRUD[Disponibilita,DisponibilitaTableRep]
+
+    override def operation(): Operation[Disponibilita, DisponibilitaTableRep] = Operation[Disponibilita, DisponibilitaTableRep]
   }
 }

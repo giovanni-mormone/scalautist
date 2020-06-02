@@ -6,7 +6,7 @@ import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
-import routes.Route._
+import routes.RouteServer._
 
 /**
  * @author Francesco Cassano
@@ -14,7 +14,6 @@ import routes.Route._
  */
 object ServerConf {
   final case class StartServer()
-
   private val interface = "0.0.0.0"
   private val port = 8080
 
