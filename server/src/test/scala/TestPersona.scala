@@ -3,11 +3,9 @@ import java.sql.Date
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import dbfactory.operation.PersonaOperation
 import org.scalatest._
-import DatabaseHelper._
+import utils.StartServer
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 trait Init{
   protected var persona:Persona = _
@@ -18,11 +16,10 @@ trait Init{
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
   protected var insertPersona: Assumi = _
-  val result: Int = 1//Await.result(runScript(),Duration.Inf)
-  require(result==1)
+
 }
 
-class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
+class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with StartServer{
 
   override def beforeEach(): Unit = {
 

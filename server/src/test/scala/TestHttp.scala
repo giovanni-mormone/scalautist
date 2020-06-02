@@ -10,13 +10,12 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.ChangePassword
 import jsonmessages.JsonFormats._
+import utils.StartServer
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 trait HttpRequest {
-
-  Await.result(DatabaseHelper.runScript(), Duration.Inf)
 
   protected val uri = "http://localhost:8080/"
   protected val personaDummyRequest = "dummyPerson"
@@ -32,7 +31,7 @@ trait HttpRequest {
   MainServer
 }
 
-class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {
+class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest with StartServer{
 
   behavior of "dummyRequest"
   it should "return some String from MasterRoutePersona" in {
