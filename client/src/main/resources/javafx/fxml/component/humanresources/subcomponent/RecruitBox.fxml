@@ -11,15 +11,15 @@
    <children>
       <TextField fx:id="name" promptText="Nome" />
       <TextField fx:id="surname" promptText="Cognome" />
+      <TextField fx:id="tel" />
+      <ComboBox fx:id="role" prefWidth="150.0" />
       <ComboBox fx:id="contractTypes" prefHeight="25.0" prefWidth="140.0" />
       <ComboBox fx:id="shift1" prefWidth="150.0" />
       <ComboBox fx:id="shift2" prefWidth="150.0" />
-      <ComboBox fx:id="role" prefWidth="150.0" />
       <ComboBox fx:id="day1" prefWidth="150.0" />
       <ComboBox fx:id="day2" prefWidth="150.0" />
       <ComboBox fx:id="zones" prefWidth="150.0" />
       <ComboBox fx:id="terminals" prefWidth="150.0" />
-      <TextField fx:id="tel" />
       <Button fx:id="save" mnemonicParsing="false" text="Salva" />
    </children>
    <padding>

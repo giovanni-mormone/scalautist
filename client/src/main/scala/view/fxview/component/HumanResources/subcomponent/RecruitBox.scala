@@ -3,14 +3,16 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.util
 import java.util.ResourceBundle
+import java.util.regex.Pattern
 
 import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, TextField}
+import javafx.scene.control.{Button, ComboBox, TextField, TextFormatter}
 import view.fxview.component.HumanResources.HRViewParent
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
+import scala.util.matching.Regex
 
 trait RecruitBox extends Component[HRViewParent]{
   def setTerminals(l:List[Terminale])
@@ -59,7 +61,7 @@ object RecruitBox{
 
     override def setTerminals(l: List[Terminale]): Unit = {
       terminalList = l
-      terminals.getSelectionModel.clearSelection
+      resetComboBox(terminals)
       terminals.getItems.clear()
       l.flatMap(t=>List(t.nomeTerminale)).foreach(t => terminals.getItems.add(t))
       terminals.setDisable(false)
@@ -73,7 +75,8 @@ object RecruitBox{
       zoneList.foreach(zone => zones.getItems.add(zone.zones))
       day1.getItems.addAll("Lun","Mar","Mer","Gio","Ven")  //TODO da rivedere
       day2.getItems.addAll("Lun","Mar","Mer","Gio","Ven")  //TODO da rivedere
-      role.getItems.addAll("risorseUmane", "manager", "autista") //TODO da rivedere
+      role.getItems.addAll("risorseUmane", "manager", "autista") //TODO da rivedere le stringhe
+      notDrive(true)
       shift2.setDisable(true)
       terminals.setDisable(true)
     }
@@ -81,18 +84,43 @@ object RecruitBox{
     private def setActions: Unit = {
       //default action
       zones.setOnAction(_ => parent.loadTerminals(getIdZone))
+
+      role.setOnAction(_ => {
+        if(getComboSelected(role).equals("risorseUmane") || getComboSelected(role).equals("manager")) { //TODO da rivedere no alle stringhe
+          notDrive(true)
+          terminals.setDisable(true)
+        } else
+          notDrive(false)
+      })
+
+      contractTypes.setOnAction()
+
       day1.setOnAction(_ => {
         if (getComboSelected(day1).equals(getComboSelected(day2)))
           day1.getSelectionModel.clearSelection
       })
-      day2.setOnAction(_ =>{
+
+      day2.setOnAction(_ => {
         if (getComboSelected(day1).equals(getComboSelected(day2)))
           day2.getSelectionModel.clearSelection
       })
+
+      shift1.setOnAction(_ => {
+        val itemSelected: Int = getComboSelectedIndex(shift1)
+        if( itemSelected == shift1.getItems.size - 1)
+          shift2.getSelectionModel.selectFirst()
+        else
+          shift2.getSelectionModel.select(itemSelected + 1)
+      })
+
       save.setOnAction(event => {
         if(noEmptyField)  //TODO
-          parent.recruitClicked( Persona(name.getText, surname.getText(), tel.getText(), None, //TODO creare entità assumi
-            role.getSelectionModel.getSelectedIndex, true, "", getIdTerminal()))
+          /*parent.recruitClicked*//*println( Persona(name.getText, surname.getText(), tel.getText(), None, //TODO creare entità assumi
+            getComboSelectedIndex(role) + 1, true, "", getIdTerminal()))*/
+          println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " +
+            tel.getText() + " " + getComboSelectedIndex(role) + 1)
+        else
+          println("holy shit man!! You can't fill a simple form? Are you an asshole?")
       })
     }
 
@@ -112,20 +140,54 @@ object RecruitBox{
       save.setText(resources.getString("save"))
     }
 
-    private def getComboSelected(component: ComboBox[String]): String =
-      component.getSelectionModel.getSelectedItem
+    private def controlMainFields(): Boolean = {
+      //val pattern: Pattern = Pattern.compile("-?\\d{10}?") //TODO controllo su tel
+      !name.getText.equals("") && !surname.getText.equals("") && !contractTypes.getSelectionModel.isEmpty
+        //pattern.matcher(tel.getText()).matches &&
+    }
 
-    private def noEmptyField: Boolean = {
+    private def controlDriverFields(): Boolean = {
       true
     }
 
+    private def noEmptyField = {
+      if(role.getSelectionModel.isEmpty)
+        false
+      else if(getComboSelected(role).equals("risorseUmane") || getComboSelected(role).equals("manager"))
+        controlMainFields()
+      else
+        controlMainFields() && controlDriverFields()
+    }
+
     private def getIdZone: Zona =
-      zoneList.filter(zone => zone.zones.equals(zones.getSelectionModel.getSelectedItem)).head
+      zoneList.filter(zone => zone.zones.equals(getComboSelected(zones))).head
 
     private def getIdTerminal(): Option[Int] ={
       terminalList.filter(terminal =>
-        terminal.nomeTerminale.equals(terminals.getSelectionModel.getSelectedItem)).head.idTerminale
+        terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
     }
+
+    private def notDrive(value: Boolean) = {
+      day1.setDisable(value)
+      day2.setDisable(value)
+      shift1.setDisable(value)
+      zones.setDisable(value)
+      resetComboBox(terminals)
+      resetComboBox(day1)
+      resetComboBox(day2)
+      resetComboBox(shift1)
+      resetComboBox(shift2)
+      resetComboBox(zones)
+    }
+
+    private def resetComboBox(component: ComboBox[String]): Unit =
+      component.getSelectionModel.clearSelection
+
+    private def getComboSelected(component: ComboBox[String]): String =
+      component.getSelectionModel.getSelectedItem
+
+    private def getComboSelectedIndex(component: ComboBox[String]): Int =
+      component.getSelectionModel.getSelectedIndex
 
   }
 }
