@@ -2,7 +2,7 @@
 import akka.Done
 import akka.actor.Terminated
 import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
-import model.ModelDispatcher
+import model.utils.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import model.entity.HumanResourceModel

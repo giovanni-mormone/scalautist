@@ -6,9 +6,8 @@ import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Terminale, Turno, Zona}
 import java.sql.Date
-
 import akka.http.scaladsl.model.HttpRequest
-import caseclass.CaseClassHttpMessage.Id
+import caseclass.CaseClassHttpMessage.{Assumi, Id}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -29,15 +28,22 @@ trait HumanResourceModel extends AbstractModel{
   def recruit(persona:Assumi):Future[Option[Login]]
 
   /**
+   * Layoff operations, delete one people from the database
+   * @param ids
+   *  id of the persona
+   * @return
+   * Future of type Unit
+   */
+  def fires(ids:Id): Future[Unit]
+  /**
    * Layoff operations, delete a set of people from the database
    * @param ids
    * Set of Persona ids
    * @return
    * Future of type Unit
    */
-  def fires(ids:Set[Int]): Future[Unit]
+  def firesAll(ids: Set[Int]): Future[Unit]
 
-  def getPersone(id:Int): Future[Option[Persona]]
 
   /**
    * Return employee list, list of Persona in the database
@@ -81,10 +87,32 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Login data (only new password)
    */
-  def passwordRecovery(user: Int): Future[Option[Login]]
-  def getTerminalByZone(id:Int): Future[Option[List[Terminale]]]
-  def getZone(id:Int):Future[Option[Zona]]
+  def passwordRecovery(user: Id): Future[Option[Login]]
+
+  /**
+   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * @param id identifies a zone into database, then select all terminale associate to id
+   * @return Option of list of terminal that can be empty
+   */
+  def getTerminalByZone(id:Id): Future[Option[List[Terminale]]]
+
+  /**
+   * method that return Option of zone if exists
+   * @param id identifies one zone into database
+   * @return Option of zone if exists
+   */
+  def getZone(id:Id):Future[Option[Zona]]
+
+  /**
+   * method that return all contract in database
+   * @return Option of list with all contract existing into database
+   */
   def getAllContract:Future[Option[List[Contratto]]]
+
+  /**
+   * method that return all shift in database
+   * @return Option of list with all shift existing into database
+   */
   def getAllShift:Future[Option[List[Turno]]]
 }
 
@@ -102,11 +130,19 @@ object HumanResourceModel {
 
 
     override def recruit(assumi: Assumi): Future[Option[Login]] = {
-      implicit val credential: Promise[Option[Login]] = Promise[Option[Login]]
+      implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
       val request = Post(getURI("hirePerson"), assumi)
       loginCase(request)
-      credential.future
+      promise.future
     }
+
+    override def passwordRecovery(idUser: Id): Future[Option[Login]] = {
+      implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
+      val request = Post(getURI("recoverypassword"),idUser)
+      loginCase(request)
+      promise.future
+    }
+
     private def loginCase(request:HttpRequest)(implicit credential: Promise[Option[Login]]): Unit={
       doHttp(request).onComplete{
         case Success(result) =>
@@ -114,14 +150,22 @@ object HumanResourceModel {
         case t => failure(t.failed)
       }
     }
-    override def fires(ids: Set[Int]): Future[Unit] = {
-      val result = Promise[Unit]
-      var list: List[Persona] = List()
 
-      ids.foreach(x => list = Persona("","","",None,1,isNew = false,"",None,Some(x))::list)
-      val request = Post(getURI("deleteallpersona"), list)
-      doHttp(request).onComplete(_ => result.success())
-      result.future
+    override def fires(ids: Id): Future[Unit] = {
+      val result = Promise[Unit]
+      val request = Post(getURI("deletepersona"), ids)
+      callRequest(request,result)
+    }
+
+    override def firesAll(ids: Set[Int]): Future[Unit] = {
+      val result = Promise[Unit]
+      val request = Post(getURI("deleteallpersona"), ids.map(id=>Id(id)).toList)
+      callRequest(request,result)
+    }
+
+    private def callRequest(request: HttpRequest, promise:Promise[Unit]): Future[Unit] ={
+      doHttp(request).onComplete(_ => promise.success(():Unit))
+      promise.future
     }
 
     override def getAllPersone: Future[Option[List[Persona]]] = {
@@ -144,7 +188,7 @@ object HumanResourceModel {
     }
     private def unitFuture(request:HttpRequest)(implicit result: Promise[Unit]):Unit ={
       doHttp(request).onComplete{
-        case Success(_) => result.success()
+        case Success(_) => result.success(():Unit)
         case Failure(exception) => result.failure(exception)
       }
     }
@@ -156,32 +200,9 @@ object HumanResourceModel {
       result.future
     }
 
-    override def passwordRecovery(idUser: Int): Future[Option[Login]] = {
-      implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
-      val idPersona = Id(idUser)
-      val request = Post(getURI("recoverypassword"),idPersona)
-      loginCase(request)
-      promise.future
-    }
-
-    override def getPersone(id: Int): Future[Option[Persona]] = {
-      implicit val promise: Promise[Option[Persona]] = Promise[Option[Persona]]
-      val idPersona = Id(id)
-      val request = Post(getURI("getpersona"), idPersona)
-      doHttp(request).onComplete{
-        case Success(persona) =>
-          Unmarshal(persona).to[Option[Persona]].onComplete{
-            result=>success(result)
-          }
-        case t => failure(t.failed)
-      }
-      promise.future
-    }
-
-    override def getTerminalByZone(id: Int): Future[Option[List[Terminale]]] = {
+    override def getTerminalByZone(id: Id): Future[Option[List[Terminale]]] = {
       implicit val promise: Promise[Option[List[Terminale]]] = Promise[Option[List[Terminale]]]
-      val idZona = Id(id)
-      val request = Post(getURI("getterminalebyzona"), idZona)
+      val request = Post(getURI("getterminalebyzona"), id)
       doHttp(request).onComplete{
         case Success(terminale) =>
           Unmarshal(terminale).to[Option[List[Terminale]]].onComplete{
@@ -192,10 +213,9 @@ object HumanResourceModel {
       promise.future
     }
 
-    override def getZone(id: Int): Future[Option[Zona]] = {
+    override def getZone(id: Id): Future[Option[Zona]] = {
       implicit val promise: Promise[Option[Zona]] = Promise[Option[Zona]]
-      val idZona = Id(id)
-      val request = Post(getURI("getzona"), idZona)
+      val request = Post(getURI("getzona"), id)
       doHttp(request).onComplete{
         case Success(zona) =>
           Unmarshal(zona).to[Option[Zona]].onComplete{

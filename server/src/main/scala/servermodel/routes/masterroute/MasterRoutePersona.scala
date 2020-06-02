@@ -21,9 +21,6 @@ object MasterRoutePersona {
       path("hirePerson" ) {
         hirePerson
       },
-      path("createallpersona") {
-        createAllPersona()
-      },
       path("deletepersona") {
         deletePersona()
       },

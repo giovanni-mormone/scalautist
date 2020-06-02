@@ -1,12 +1,9 @@
 package model
 
-import java.util.concurrent.TimeUnit
-
 import akka.actor.{ActorSystem, Terminated}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 
 import scala.annotation.nowarn
-import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, Promise}
 import scala.util.{Failure, Success, Try}
 

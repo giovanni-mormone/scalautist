@@ -1,11 +1,16 @@
 package model.utils
 
+import caseclass.CaseClassDB.{Contratto, Login, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.Id
+
+import scala.concurrent.{Future, Promise}
+
 /**
  * @author Francesco Cassano
  * Some utility function
  */
 object ModelUtils {
-
+  implicit def id(id:Int):Id = Id(id)
   private val generator = scala.util.Random.alphanumeric
 
   /**

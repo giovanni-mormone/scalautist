@@ -1,12 +1,12 @@
 package model.entity
 
-import model.{AbstractModel, Model}
+import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
 import model.utils.ResponceCode
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,7 +45,7 @@ trait PersonaModel extends AbstractModel {
    * future
    */
   def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
-
+  def getPersone(id:Int): Future[Option[Persona]]
 }
 
 /**
@@ -61,16 +61,30 @@ object PersonaModel {
   private class PersonaModelHttp extends PersonaModel{
 
     override def login(user: String, password: String): Future[Option[Persona]] = {
-      val person = Promise[Option[Persona]]
+      implicit val person: Promise[Option[Persona]] = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-      doHttp(request).onComplete{
-        case Success(result) =>
-          Unmarshal(result).to[Persona].onComplete(dbPerson => person.success(dbPerson.toOption) )
-      }
+      callHtpp(request)
       person.future
     }
 
+    override def getPersone(id: Int): Future[Option[Persona]] = {
+      implicit val promise: Promise[Option[Persona]] = Promise[Option[Persona]]
+      val idPersona = Id(id)
+      val request = Post(getURI("getpersona"), idPersona)
+      callHtpp(request)
+      promise.future
+    }
+
+    private def callHtpp(request: HttpRequest)(implicit promise: Promise[Option[Persona]]): Unit ={
+      doHttp(request).onComplete{
+        case Success(persona) =>
+          Unmarshal(persona).to[Option[Persona]].onComplete{
+            result=>success(result)
+          }
+        case t => failure(t.failed)
+      }
+    }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)

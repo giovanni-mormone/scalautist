@@ -45,16 +45,6 @@ object PersonaRoute{
       }
     }
 
-  def createAllPersona(): Route =
-    post {
-      entity(as[List[Persona]]) { order =>
-        onComplete(PersonaOperation.insertAll(order)) {
-          case Success(t) if t.nonEmpty =>  complete(StatusCodes.Created)
-          case t => anotherSuccessAndFailure(t)
-        }
-      }
-    }
-
   def deletePersona(): Route =
     post {
       entity(as[Id]) { order =>
