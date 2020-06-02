@@ -1,8 +1,10 @@
-import caseclass.CaseClassDB.{Login, Persona}
+import java.sql.Date
+
+import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import dbfactory.operation.PersonaOperation
 import org.scalatest._
 import DatabaseHelper._
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -15,7 +17,8 @@ trait Init{
   protected var listNewPerson:List[Persona] = _
   protected var login:Login =_
   protected var changePassword:ChangePassword =_
-  val result: Int = Await.result(runScript(),Duration.Inf)
+  protected var insertPersona: Assumi = _
+  val result: Int = 1//Await.result(runScript(),Duration.Inf)
   require(result==1)
 }
 
@@ -30,6 +33,11 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     updatePersona=Persona("Fabian Andres","Aspee Encina","59613026",Some(""),1,isNew = false,"admin",None,Some(1))
     newPersona=Persona("Juanito","Perez","569918598",Some(""),1,isNew = true,"adminF")
     listNewPerson=List(newPersona,Persona("Juanito","Perez","569918598",Some(""),1,isNew = true,"adminF"))
+
+    val daAssumere:Persona = Persona("Mattia","Mommo","1234567789",None,3,true,"",Some(2))
+    val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(3),Some(4))
+    val disp:Disponibilita = Disponibilita("Lunes","Martes")
+    insertPersona = Assumi(daAssumere,contratto,Some(disp))
   }
   behavior of "Login"
   it should "eventually return a person" in {
@@ -73,6 +81,12 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init{
     val updatePersonaP: Future[Int] = PersonaOperation.update(updatePersona)
     updatePersonaP map {update => assert(update == 1) }
   }
+  behavior of "assumi"
+  it should "return a login with credential of user" in {
+    val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
+    assumi map {login => assert(login.isDefined)}
+  }
+
  /* it should "return a int when delete a person for id" in {
     val deletePersona: Future[Int] = PersonaOperation.delete(persona)
     deletePersona map {delete=>  assert(delete == 1) }
