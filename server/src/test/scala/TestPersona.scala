@@ -17,8 +17,6 @@ trait Init{
   protected var changePassword:ChangePassword =_
   protected var insertPersona: Assumi = _
   protected var assenza:Assenza = _
-  val result: Int = 1//Await.result(runScript(),Duration.Inf)
-  require(result==1)
 
 }
 
@@ -85,10 +83,18 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val updatePersonaP: Future[Int] = PersonaOperation.update(updatePersona)
     updatePersonaP map {update => assert(update == 1) }
   }
-  behavior of "assumi"
+  behavior of "PersoneManagment"
   it should "return a login with credential of user" in {
     val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
     assumi map {login => assert(login.isDefined)}
+  }
+  it should "return a login with credential of user2" in {
+    val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
+    assumi map {login => assert(login.isDefined)}
+  }
+  it should "return a valid int when removed from db" in {
+    val fire: Future[Int] = PersonaOperation.delete(7)
+    fire map {login => assert(login.isValidInt)}
   }
 
   behavior of "assenza"

@@ -3,7 +3,7 @@ import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
 
@@ -150,6 +150,22 @@ object PersonaOperation extends PersonaOperation {
       assumiPriv(constructPersona(personaDaAssumere.persona,None),personaDaAssumere.storicoContratto)
     }
     promiseLogin.future
+  }
+
+  override def delete(element: Int): Future[Int] = {
+    val promise:Promise[Int] = Promise[Int]
+    removeStorici(element,promise)
+    promise.future
+  }
+
+  private def removeStorici(idPersona:Int,promise: Promise[Int]):Unit = {
+    StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
+      case Success(_) => super.delete(idPersona).onComplete{
+        case Success(value) => promise.success(value)
+        case Failure(exception) => promise.failure(exception)
+      }
+      case Failure(exception) => promise.failure(exception)
+    }
   }
 
   private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
