@@ -3,8 +3,10 @@ package controller
 import java.sql.Date
 
 import caseclass.CaseClassDB.Persona
+import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
+import model.utils.ModelUtils.id
 
 /**
  * @author Francesco Cassano
@@ -19,7 +21,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * @param persona
    *                instance of the employee to save. It's [[Persona]] instance //todo
    */
-  def recruit(persona:Persona): Unit
+  def recruit(persona: Assumi): Unit
 
   /**
    * Fires deletes one or more employee from the db
@@ -83,9 +85,13 @@ object HumanResourceController {
    */
   private class HumanResourceControllerImpl extends HumanResourceController {
 
-    override def recruit(persona: Persona): Unit = model.recruit(persona)
+    override def recruit(persona: Assumi): Unit = model.recruit(persona)
 
-    override def fires(ids: Set[Int]): Unit = model.fires(ids)
+    override def fires(ids: Set[Int]): Unit =
+      if(ids.size > 1)
+        model.firesAll(ids)
+      else
+        model.fires(ids.head)
 
     override def getAllPersona: Unit = model.getAllPersone
 
@@ -95,6 +101,7 @@ object HumanResourceController {
     override def holiday(idPersona: Int, startDate: Date, endDate: Date): Unit =
       model.holidays(idPersona, startDate, endDate)
 
-    override def passwordRecovery(user: Int): Unit = model.passwordRecovery(user)
+    override def passwordRecovery(user: Int): Unit =
+       model.passwordRecovery(user)
   }
 }

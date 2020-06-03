@@ -5,6 +5,7 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
 import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.scene.layout.Pane
@@ -64,7 +65,7 @@ object HumanResourceView {
       pane.getChildren.add(hrHome.pane)
     }
 
-    override def recruitClicked(persona: Persona): Unit = myController.recruit(persona)
+    override def recruitClicked(persona: Assumi): Unit = myController.recruit(persona)
 
     override def loadTerminals(zona: CaseClassDB.Zona): Unit = {  //TODO fare tutto in chiamate al controller
       val terminale = List(Terminale("termos", 3, Some(18)), Terminale("mentos", 10, Some(1)),

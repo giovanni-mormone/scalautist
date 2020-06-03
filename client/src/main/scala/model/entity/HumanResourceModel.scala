@@ -34,7 +34,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def fires(ids:Id): Future[Unit]
+  def fires(ids: Id): Future[Unit]
   /**
    * Layoff operations, delete a set of people from the database
    * @param ids

@@ -79,6 +79,7 @@ object RecruitBox{
     private var terminalList = List[Terminale]()
     private val fixedString = "-Fisso"
     private val rotateString = "-Rotazione"
+    private var contractType: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       fillComboBox
@@ -96,17 +97,15 @@ object RecruitBox{
 
     private def fillComboBox: Unit = {
       //default values
-      contractList.foreach(contract =>
-        contractTypes.getItems.add(contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
+      //contractList.foreach(contract => contractTypes.getItems.add(contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
       shiftList.foreach(shift => shift1.getItems.add(shift.fasciaOraria))
       shiftList.foreach(shift => shift2.getItems.add(shift.fasciaOraria))
       zoneList.foreach(zone => zones.getItems.add(zone.zones))
-      day1.getItems.addAll("Lun","Mar","Mer","Gio","Ven")  //TODO da rivedere
-      day2.getItems.addAll("Lun","Mar","Mer","Gio","Ven")  //TODO da rivedere
       role.getItems.addAll("risorseUmane", "manager", "autista") //TODO da rivedere le stringhe
-      notDrive(true)
+      //notDrive(true)
       shift2.setDisable(true)
       terminals.setDisable(true)
+      contractTypes.setDisable(true)
     }
 
     private def setActions: Unit = {
@@ -135,10 +134,11 @@ object RecruitBox{
 
       shift1.setOnAction(_ => {
         val itemSelected: Int = getComboSelectedIndex(shift1)
-        if( itemSelected == shift1.getItems.size - 1)
-          shift2.getSelectionModel.selectFirst()
-        else
-          shift2.getSelectionModel.select(itemSelected + 1)
+        if(contractType._3)
+          if( itemSelected == shift1.getItems.size - 1)
+            shift2.getSelectionModel.selectFirst()
+          else
+            shift2.getSelectionModel.select(itemSelected + 1)
       })
 
       save.setOnAction(event => {
@@ -168,16 +168,26 @@ object RecruitBox{
       save.setText(resources.getString("save"))
     }
 
-    def getContract(contract: String): Unit = {
-      contractList.filter(contractE => contractE.tipoContratto.equals(contract)).head
-    }
+    /////////////////////////////////////////////////////////////////////////////             METODI DI CONTROLLO
 
     private def contractControl(contract: String): Unit = {
       val workWeek: String = "5x2"    //tutti i 5x2 da lunedi a venerdi
       val typeWork: String = "Full"   //tutti i 6x1 da lunedi a sabato
+      var fisso: Boolean = false
+      var settimana5x2: Boolean = false
+      var full: Boolean = false
 
-      getContract(contract)
+      if(contract.contains(fixedString))
+        fisso = true
+      if(contract.contains(workWeek))
+        settimana5x2 = true
+      if(contract.contains(typeWork))
+        full = true
 
+      contractType = (fisso, settimana5x2, full)
+
+      notFixed(contractType._1)
+      refillDays
     }
 
     private def controlMainFields(): Boolean = {
@@ -199,6 +209,8 @@ object RecruitBox{
         controlMainFields() && controlDriverFields()
     }
 
+    /////////////////////////////////////////////////////////////////////////////             METODI DI GET
+
     private def getIdZone: Zona =
       zoneList.filter(zone => zone.zones.equals(getComboSelected(zones))).head
 
@@ -207,24 +219,48 @@ object RecruitBox{
         terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
     }
 
+    /////////////////////////////////////////////////////////////////////////////             METODI DI BLOCCO COMPONENTI
+
+    private def refillDays: Unit = {
+      val baseDays  = List("lun", "Lun","Mar","Mer","Gio","Ven")   //TODO da rivedere
+      if(!contractType._2)
+        baseDays.appended("sab")
+      refillComponent(day2, baseDays)
+      refillComponent(day1, baseDays)
+    }
+
     private def notDrive(value: Boolean): Unit = {
-      day1.setDisable(value)
-      day2.setDisable(value)
+      if(getComboSelected(role).equals("autista"))
+        refillComponent(contractTypes, contractList.map(contract =>
+          contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
+      else
+        refillComponent(contractTypes, List(getComboSelected(role)))
       shift1.setDisable(value)
       zones.setDisable(value)
       resetComboBox(terminals)
       resetComboBox(day1)
       resetComboBox(day2)
       resetComboBox(zones)
-      if(value)
-        notFixed(value)
     }
 
     private def notFixed(value: Boolean): Unit = {
       shift1.setDisable(value)
+      day1.setDisable(value)
+      day2.setDisable(value)
       resetComboBox(shift1)
       resetComboBox(shift2)
     }
+
+    /////////////////////////////////////////////////////////////////////////////             METODI DI UTILS
+
+    private def refillComponent(component: ComboBox[String], list: List[String]): Unit = {
+      emptyComboBox(component)
+      list.foreach(day => component.getItems.add(day))
+      component.setDisable(false)
+    }
+
+    private def emptyComboBox(component: ComboBox[String]): Unit =
+      component.getItems.clear
 
     private def resetComboBox(component: ComboBox[String]): Unit =
       component.getSelectionModel.clearSelection
