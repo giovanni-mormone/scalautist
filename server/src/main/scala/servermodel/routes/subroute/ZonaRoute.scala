@@ -35,7 +35,7 @@ object ZonaRoute {
     post {
       entity(as[Zona]) { zona =>
         onComplete(ZonaOperation.insert(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,Some(t))) //TODO
+          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,t)) //TODO
           case t => anotherSuccessAndFailure(t)
         }
       }

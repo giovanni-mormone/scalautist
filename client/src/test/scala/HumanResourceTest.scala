@@ -29,6 +29,10 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureRecruit:Future[Option[Login]]=terminale.recruit(insertPersona)
     futureRecruit map { recruit => assert(recruit.isDefined)}
   }
+  it should "return ok when delete person" in {
+    val futureDelete:Future[Unit]=terminale.fires(6)
+    futureDelete map { recruit => assert(recruit==())}
+  }
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)
     futureTerminale map { terminale => assert(terminale.head.length==2)}

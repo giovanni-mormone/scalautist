@@ -4,11 +4,13 @@ import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Stipendio, Terminale, Turno, Zona}
 import java.sql.Date
+
 import akka.http.scaladsl.model.HttpRequest
 import caseclass.CaseClassHttpMessage.{Assumi, Id}
 import model.utils.ModelUtils._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -114,6 +116,8 @@ trait HumanResourceModel extends AbstractModel{
    * @return Option of list with all shift existing into database
    */
   def getAllShift:Future[Option[List[Turno]]]
+
+  def salaryCalculation():Future[Option[List[Stipendio]]]
 }
 
 /**
@@ -150,13 +154,11 @@ object HumanResourceModel {
     }
 
     override def fires(ids: Id): Future[Unit] = {
-      val result = Promise[Unit]
       val request = Post(getURI("deletepersona"), ids)
       callRequest(request,result)
     }
 
     override def firesAll(ids: Set[Int]): Future[Unit] = {
-      val result = Promise[Unit]
       val request = Post(getURI("deleteallpersona"), ids.map(id=>Id(id)).toList)
       callRequest(request,result)
     }
@@ -247,6 +249,17 @@ object HumanResourceModel {
 
     }
 
+    override def salaryCalculation():Future[Option[List[Stipendio]]] = {
+      val request = Post(getURI("calcolostipendio"))
+      doHttp(request).onComplete{
+        case Success(stipendio) =>
+          Unmarshal(stipendio).to[Option[List[Stipendio]]].onComplete{
+            result=>success(result,promiseStipendio)
+          }
+        case t => failure(t.failed,promiseStipendio)
+      }
+      promiseStipendio.future
+    }
   }
 
 }
