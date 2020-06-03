@@ -4,7 +4,7 @@ import akka.actor.{ActorSystem, Terminated}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 
 import scala.annotation.nowarn
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.{ Future, Promise}
 import scala.util.{Failure, Success, Try}
 
 abstract class AbstractModel extends Model{
@@ -13,7 +13,8 @@ abstract class AbstractModel extends Model{
   override def getURI(request: String): String = dispatcher.address + "/" + request
 
   override def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit =function match {
-    case Success(value) => promise.success(value)
+    case Success(Some(List())) => promise.success(None)
+    case Success(Some(value)) => promise.success(Some(value))
     case t => failure(t.failed,promise)
   }
 

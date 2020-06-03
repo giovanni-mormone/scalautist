@@ -4,6 +4,7 @@ import caseclass.CaseClassDB._
 import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.setting.GenericOperation.Operation
 import dbfactory.setting.GenericTable
+import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
@@ -130,5 +131,11 @@ object ImplicitInstanceTableDB {
     override private[implicitOperation] def typeDB(): GenericOperationCRUD[Disponibilita, DisponibilitaTableRep] = GenericOperationCRUD[Disponibilita,DisponibilitaTableRep]
 
     override def operation(): Operation[Disponibilita, DisponibilitaTableRep] = Operation[Disponibilita, DisponibilitaTableRep]
+  }
+
+  implicit object InstanceAssenza extends ImplicitInstanceTableDB[Assenza,AssenzaTableRep] {
+    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Assenza, AssenzaTableRep] = GenericOperationCRUD[Assenza,AssenzaTableRep]
+
+    override def operation(): Operation[Assenza, AssenzaTableRep] = Operation[Assenza, AssenzaTableRep]
   }
 }

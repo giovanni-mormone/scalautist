@@ -3,7 +3,7 @@ import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
 
@@ -55,7 +55,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @param idUser represent identificator of user in table Persona
    * @return case class Login with new password and user = [[EMPTY_STRING]]
    */
-  def recoveryPassword(idUser:Int):Future[Login]
+  def recoveryPassword(idUser:Int):Future[Option[Login]]
 
   /**
    * Method to hire a person, it can differentiate beetween roles of the person to hire and
@@ -84,7 +84,7 @@ object PersonaOperation extends PersonaOperation {
   }
   private def execFilter(promiseFilterBySurname: Promise[Option[List[Persona]]],f:PersonaTableRep=>Rep[Boolean]): Future[Unit] = Future {
     InstancePersona.operation().selectFilter(f) onComplete {
-      case Success(value) if value.nonEmpty=>promiseFilterBySurname.success(Some(value))
+      case Success(value) if value.nonEmpty=>promiseFilterBySurname.success(value)
       case Success(_) =>promiseFilterBySurname.success(None)
       case Failure(_)=>promiseFilterBySurname.success(None)
     }
@@ -97,8 +97,8 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
       execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
       .onComplete{
-      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head)))
-      case Success(_) =>promiseLogin.success(None)
+      case Success(Some(List())) => promiseLogin.success(None)
+      case Success(value) =>promiseLogin.success(convertTupleToPerson(Some(value.head.head)))
       case Failure(exception) => promiseLogin.failure(exception)
     }
     promiseLogin.future
@@ -108,19 +108,19 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
       execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
       .onComplete{
-        case Success(value) if value==1 => changePasswordP.success(Some(value))
-        case Success(value) =>changePasswordP.success(Some(value))
+        case Success(value) => changePasswordP.success(value)
         case Failure(exception) => changePasswordP.failure(exception)
       }
     changePasswordP.future
   }
-  override def recoveryPassword(idUser: Int): Future[Login] = {
-    val recoveryPasswordP = Promise[Login]
+  override def recoveryPassword(idUser: Int): Future[Option[Login]] = {
+    val recoveryPasswordP = Promise[Option[Login]]
     val newPassword = createString
     InstancePersona.operation().
       execQueryUpdate(f =>(f.password,f.isNew), x => x.id===idUser,(newPassword.head,true))
       .onComplete{
-        case Success(value) if value==1 => recoveryPasswordP.success(Login(EMPTY_STRING,newPassword.head))
+        case Success(Some(1))  => recoveryPasswordP.success(Some(Login(EMPTY_STRING,newPassword.head)))
+        case Success(_)  => recoveryPasswordP.success(None)
         case Failure(exception) => recoveryPasswordP.failure(exception)
       }
     recoveryPasswordP.future
@@ -136,14 +136,14 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().execJoin(monadicInnerJoin)  onComplete(t=>{
       println(t)
     })
-  }
+  } 
 
   override def assumi(personaDaAssumere: Assumi): Future[Option[Login]] = {
     implicit val promiseLogin: Promise[Option[Login]] = Promise[Option[Login]]
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
       DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head).onComplete{
         case Success(disponibilita) =>
-          assumiPriv(constructPersona(personaDaAssumere.persona,Some(disponibilita)),personaDaAssumere.storicoContratto)
+          assumiPriv(constructPersona(personaDaAssumere.persona,disponibilita),personaDaAssumere.storicoContratto)
         case Failure(exception) => promiseLogin.failure(exception)
       }
     } else {
@@ -152,14 +152,30 @@ object PersonaOperation extends PersonaOperation {
     promiseLogin.future
   }
 
+  override def delete(element: Int): Future[Option[Int]] = {
+    val promise:Promise[Option[Int]] = Promise[Option[Int]]
+    removeStorici(element,promise)
+    promise.future
+  }
+
+  private def removeStorici(idPersona:Int,promise: Promise[Option[Int]]):Unit = {
+    StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
+      case Success(_) => super.delete(idPersona).onComplete{
+        case Success(value) => promise.success(value)
+        case Failure(exception) => promise.failure(exception)
+      }
+      case Failure(exception) => promise.failure(exception)
+    }
+  }
+
   private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
     insert(persona).onComplete{
       case Success(personaId) =>
-        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,Some(personaId),contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
+        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
         StoricoContrattoOperation.insert(contrattoToIns).onComplete{
           case Success(_) => promise.success(Option(Login(persona.userName,persona.password.head)))
           case Failure(exception) =>
-            delete(personaId)
+            delete(personaId.head)
             promise.failure(exception)
         }
       case Failure(exception) => promise.failure(exception)
@@ -169,4 +185,6 @@ object PersonaOperation extends PersonaOperation {
   private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
     Persona(origin.nome,origin.cognome,origin.numTelefono,
       createString,origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
+
+
 }

@@ -2,7 +2,7 @@ package servermodel.routes.subroute
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
+import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Zona
 import caseclass.CaseClassHttpMessage.Id
 import jsonmessages.JsonFormats._
@@ -13,16 +13,6 @@ import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 import scala.util.Success
 
 object ZonaRoute {
-
-  def getZona: Route =
-    post {
-      entity(as[Id]) { id =>
-        onComplete(ZonaOperation.select(id.id)) {
-          case Success(t) => complete((StatusCodes.Found, t))
-          case t => anotherSuccessAndFailure(t)
-        }
-      }
-    }
   def getAllZona: Route =
     post {
       onComplete(ZonaOperation.selectAll) {
@@ -35,7 +25,7 @@ object ZonaRoute {
     post {
       entity(as[Zona]) { zona =>
         onComplete(ZonaOperation.insert(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,Some(t))) //TODO
+          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,t)) //TODO
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -75,7 +65,8 @@ object ZonaRoute {
     post {
       entity(as[Zona]) { zona =>
         onComplete(ZonaOperation.update(zona)) {
-          case Success(t) =>  complete(StatusCodes.OK)
+          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
+          case Success(None) =>complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }

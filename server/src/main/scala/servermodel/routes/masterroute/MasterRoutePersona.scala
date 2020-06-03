@@ -10,6 +10,8 @@ import servermodel.routes.subroute.PersonaRoute._
  */
 object MasterRoutePersona {
 
+
+
   val routePersona: Route =
     concat(
       path("getpersona" ) {
@@ -39,8 +41,11 @@ object MasterRoutePersona {
       path("recoverypassword"){
         recoveryPassword()
       },
+      path("calcolostipendio"){
+        salaryCalculus()
+      },
       path("getstipendio"){
-        getStipendio()
+        getStipendio
       }
      /* path("addabsence") {          //TODO add absence
           addAbsence()

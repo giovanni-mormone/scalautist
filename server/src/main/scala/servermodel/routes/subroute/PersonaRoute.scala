@@ -2,7 +2,7 @@ package servermodel.routes.subroute
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
+import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
 import jsonmessages.JsonFormats._
@@ -23,7 +23,7 @@ object PersonaRoute{
     post {
       entity(as[Id]) { id =>
         onComplete(PersonaOperation.select(id.id)) {
-          case Success(t) => complete((StatusCodes.Found, t))
+          case Success(Some(t)) => complete((StatusCodes.Found, t))
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -39,7 +39,7 @@ object PersonaRoute{
     post {
       entity(as[Assumi]) { order =>
         onComplete(PersonaOperation.assumi(order)) {
-          case Success(t) =>  complete((StatusCodes.Created,t))
+          case Success(Some(t)) =>  complete((StatusCodes.Created,t))
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -49,7 +49,7 @@ object PersonaRoute{
     post {
       entity(as[Id]) { order =>
         onComplete(PersonaOperation.delete(order.id)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -59,7 +59,7 @@ object PersonaRoute{
     post {
       entity(as[List[Id]]) { order =>
         onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -69,7 +69,8 @@ object PersonaRoute{
     post {
       entity(as[Persona]) { persona =>
         onComplete(PersonaOperation.update(persona)) {
-          case Success(t)  =>  complete(StatusCodes.OK)
+          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
+          case Success(None) =>complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -98,13 +99,13 @@ object PersonaRoute{
     post {
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){
-          case Success(Some(1))  =>  complete(StatusCodes.Accepted)
+          case Success(Some(1))  =>  complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }
     }
 
-  def getStipendio(): Route =
+  def getStipendio: Route =
     post{
       entity(as[Id]) {
         id => onComplete(stipendio(id.id)){
@@ -113,6 +114,7 @@ object PersonaRoute{
         }
       }
     }
+  def salaryCalculus(): Route = ???
   import scala.concurrent.ExecutionContext.Implicits.global
   private def stipendio(id:Int) =Future{Id(id)}
  /* def addAbsence(): Route =

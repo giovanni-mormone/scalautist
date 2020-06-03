@@ -208,13 +208,13 @@ object CaseClassDB{
   /**
    * Assenza is a case class that represent a instance of table into database that contains
    *
-   * @param perosnaId identifies a persona in the system
+   * @param personaId identifies a persona in the system
    * @param dataInizio init date of the absence
    * @param dataFine finish date that represent when absence finished
    * @param malattia identifies if absence is for illness or vacation
    * @param idAssenza represent unambiguous for every absence (for insert operation this is not mandatory)
    */
-  final case class Assenza(perosnaId: Int, dataInizio: Date, dataFine: Date, malattia: Boolean, idAssenza: Option[Int] = None)
+  final case class Assenza(personaId: Int, dataInizio: Date, dataFine: Date, malattia: Boolean, idAssenza: Option[Int] = None)
 
   /**
    * Representation of an instance of table Disponibilità in the DB

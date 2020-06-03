@@ -41,7 +41,7 @@ object TerminaleOperation extends TerminaleOperation {
 
   private def execFilter(promise: Promise[Option[List[Terminale]]],f:TerminaleTableRep=>Rep[Boolean]): Future[Unit] = Future {
     InstanceTerminale.operation().selectFilter(f) onComplete {
-      case Success(value) if value.nonEmpty=>promise.success(Some(value))
+      case Success(value) if value.nonEmpty=>promise.success(value)
       case Success(_) =>promise.success(None)
       case Failure(_)=>promise.success(None)
     }
