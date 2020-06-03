@@ -127,7 +127,7 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (2, N'20200619',N'20201019',2,2,2,3 )
 INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (3, N'20200530',N'20210530',3,3,3, null)
 INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (4, N'20200531',N'20220531',4,4,4, null)
-INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (5, N'20200602',N'20201222',5,5,5,6)
+INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (5, N'20200602',N'20201222',6,5,5,6)
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO

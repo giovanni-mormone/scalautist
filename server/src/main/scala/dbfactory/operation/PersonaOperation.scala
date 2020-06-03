@@ -136,7 +136,7 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().execJoin(monadicInnerJoin)  onComplete(t=>{
       println(t)
     })
-  }
+  } 
 
   override def assumi(personaDaAssumere: Assumi): Future[Option[Login]] = {
     implicit val promiseLogin: Promise[Option[Login]] = Promise[Option[Login]]

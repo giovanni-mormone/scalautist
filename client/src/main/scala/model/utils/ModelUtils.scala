@@ -3,7 +3,7 @@ package model.utils
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
-import caseclass.CaseClassDB.{Contratto, Login, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Contratto, Login, Persona, Stipendio, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Id
 
 import scala.concurrent.Promise
@@ -13,7 +13,7 @@ import scala.concurrent.Promise
  * Some utility function
  */
 object ModelUtils {
-
+  val promiseStipendio: Promise[Option[List[Stipendio]]] = Promise[Option[List[Stipendio]]]
   val promiseZona: Promise[Option[Zona]] = Promise[Option[Zona]]
   val promiseTurn: Promise[Option[List[Turno]]] = Promise[Option[List[Turno]]]
   val promiseCont: Promise[Option[List[Contratto]]] = Promise[Option[List[Contratto]]]

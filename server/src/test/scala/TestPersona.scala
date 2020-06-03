@@ -93,7 +93,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     assumi map {login => assert(login.isDefined)}
   }
   it should "return a valid int when removed from db" in {
-    val fire: Future[Int] = PersonaOperation.delete(7)
+    val fire: Future[Int] = PersonaOperation.delete(6)
     fire map {login => assert(login.isValidInt)}
   }
 

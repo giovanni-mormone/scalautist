@@ -13,7 +13,7 @@ abstract class AbstractModel extends Model{
   override def getURI(request: String): String = dispatcher.address + "/" + request
 
   override def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit =function match {
-    case Success(value) => promise.success(value)
+    case Success(Some(value)) => promise.success(Some(value))
     case t => failure(t.failed,promise)
   }
 

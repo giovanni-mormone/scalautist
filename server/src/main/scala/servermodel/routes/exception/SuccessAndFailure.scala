@@ -12,10 +12,10 @@ object SuccessAndFailure {
   def anotherSuccessAndFailure[A](result:Try[A]): StandardRoute =result match {
     case Success(None) => complete(StatusCodes.NotFound)
     case Success(_) =>    complete(StatusCodes.NotFound)
-    case t => failure(t)
+    case t => failure(t.failed)
   }
   @nowarn
-  private def failure[A](result:Try[A]): StandardRoute =result match {
+  private def failure(result:Try[Throwable]): StandardRoute =result match {
     case Failure(Error) => complete(StatusCodes.InternalServerError)
   }
 }

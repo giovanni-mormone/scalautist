@@ -1,5 +1,6 @@
 package dbfactory.setting
 import slick.jdbc.SQLServerProfile.api._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
@@ -71,7 +72,7 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
 }
 object GenericCRUD{
   case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T] {
-    override def selectAll: Future[List[C]] = super.run(tableDB().result).map(_.toList)
+    override def selectAll: Future[List[C]] = super.run(tableDB().result.headOption).map(_.toList)
     override def select(id: Int): Future[Option[C]] = super.run(queryById(id).result.headOption)
     override def insert(element: C): Future[Int]= super.run((tableDB() returning tableDB().map(_.id)) += element)
     override def insertAll(element: List[C]): Future[List[Int]] =  super.run((tableDB returning tableDB().map(_.id)) ++= element).map(_.toList)

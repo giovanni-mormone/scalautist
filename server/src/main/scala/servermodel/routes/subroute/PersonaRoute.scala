@@ -2,7 +2,7 @@ package servermodel.routes.subroute
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
+import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
 import jsonmessages.JsonFormats._
@@ -23,7 +23,7 @@ object PersonaRoute{
     post {
       entity(as[Id]) { id =>
         onComplete(PersonaOperation.select(id.id)) {
-          case Success(t) => complete((StatusCodes.Found, t))
+          case Success(Some(t)) => complete((StatusCodes.Found, t))
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -39,7 +39,7 @@ object PersonaRoute{
     post {
       entity(as[Assumi]) { order =>
         onComplete(PersonaOperation.assumi(order)) {
-          case Success(t) =>  complete((StatusCodes.Created,t))
+          case Success(Some(t)) =>  complete((StatusCodes.Created,t))
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -113,6 +113,7 @@ object PersonaRoute{
         }
       }
     }
+  def salaryCalculus(): Route = ???
   import scala.concurrent.ExecutionContext.Implicits.global
   private def stipendio(id:Int) =Future{Id(id)}
  /* def addAbsence(): Route =
