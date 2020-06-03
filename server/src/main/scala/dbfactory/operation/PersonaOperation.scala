@@ -9,10 +9,11 @@ import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 import dbfactory.util.Helper._
+import promise.PromiseFactory
 
-/** @author Fabian Aspée Encina
+/** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
  *  this trait have methods that represent monadic join
  */
@@ -139,15 +140,15 @@ object PersonaOperation extends PersonaOperation {
   } 
 
   override def assumi(personaDaAssumere: Assumi): Future[Option[Login]] = {
-    implicit val promiseLogin: Promise[Option[Login]] = Promise[Option[Login]]
+    val promiseLogin = PromiseFactory.loginPromise()
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
       DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head).onComplete{
         case Success(disponibilita) =>
-          assumiPriv(constructPersona(personaDaAssumere.persona,disponibilita),personaDaAssumere.storicoContratto)
+          assumiPriv(constructPersona(personaDaAssumere.persona,disponibilita),personaDaAssumere.storicoContratto,promiseLogin)
         case Failure(exception) => promiseLogin.failure(exception)
       }
     } else {
-      assumiPriv(constructPersona(personaDaAssumere.persona,None),personaDaAssumere.storicoContratto)
+      assumiPriv(constructPersona(personaDaAssumere.persona,None),personaDaAssumere.storicoContratto,promiseLogin)
     }
     promiseLogin.future
   }
@@ -158,22 +159,37 @@ object PersonaOperation extends PersonaOperation {
     promise.future
   }
 
-  private def removeStorici(idPersona:Int,promise: Promise[Option[Int]]):Unit = {
-    StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
-      case Success(_) => super.delete(idPersona).onComplete{
-        case Success(value) => promise.success(value)
-        case Failure(exception) => promise.failure(exception)
-      }
+  override def deleteAll(element: List[Int]): Future[Option[Int]] = {
+    val promise:Promise[Option[Int]] = Promise[Option[Int]]
+    removeAllStorici(element,promise)
+    promise.future
+  }
+
+  private def removeAllStorici(idPersonaList:List[Int],promise: Promise[Option[Int]]):Unit = {
+    StoricoContrattoOperation.deleteAllStoricoForPersonList(idPersonaList).onComplete{
+      case Success(_) => super.deleteAll(idPersonaList).onComplete(t => checkOption(t,promise))
       case Failure(exception) => promise.failure(exception)
     }
   }
 
-  private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
+  private def removeStorici(idPersona:Int,promise: Promise[Option[Int]]):Unit = {
+    StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
+      case Success(_) => super.delete(idPersona).onComplete(t => checkOption(t,promise))
+      case Failure(exception) => promise.failure(exception)
+    }
+  }
+
+  private def checkOption(option: Try[Option[Int]],promise: Promise[Option[Int]]) = option match{
+    case Success(value) => promise.success(value)
+    case Failure(exception) => promise.failure(exception)
+  }
+
+  private def assumiPriv(persona:Persona,contratto:StoricoContratto, promise: Promise[Option[Login]]):Unit={
     insert(persona).onComplete{
       case Success(personaId) =>
         val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
         StoricoContrattoOperation.insert(contrattoToIns).onComplete{
-          case Success(_) => promise.success(Option(Login(persona.userName,persona.password.head)))
+          case Success(_) => promise.success(Some(Login(persona.userName,persona.password.head)))
           case Failure(exception) =>
             delete(personaId.head)
             promise.failure(exception)

@@ -77,7 +77,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
   }
   it should "return a List of Person when selectAll" in {
     val selectAllPersona: Future[Option[List[Persona]]] = PersonaOperation.selectAll
-    selectAllPersona map { selectAll => assert(selectAll.head.length == 9) }
+    selectAllPersona map { selectAll => assert(selectAll.head.length == 11) }
   }
   it should "return a int when update a person for id" in {
     val updatePersonaP: Future[Option[Int]] = PersonaOperation.update(updatePersona)
@@ -94,6 +94,10 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
   }
   it should "return a valid int when removed from db" in {
     val fire: Future[Option[Int]] = PersonaOperation.delete(6)
+    fire map {login => assert(login.head.isValidInt)}
+  }
+  it should "return a valid int when removes a list of persons from db" in {
+    val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(7,8))
     fire map {login => assert(login.head.isValidInt)}
   }
 

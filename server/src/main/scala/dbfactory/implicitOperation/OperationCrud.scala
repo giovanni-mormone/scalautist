@@ -66,10 +66,5 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    */
   def update(element:A):Future[Option[Int]]= crud.update(element)
 
-  def checkOption[M](list:Try[Option[M]],promise: Promise[Option[M]]):Unit = list match{
-    case Success(Some(List())) =>promise.success(None)
-    case Success(value) =>promise.success(value)
-    case Failure(exception) => promise.failure(exception)
-  }
 
 }
