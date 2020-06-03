@@ -84,7 +84,7 @@ object PersonaOperation extends PersonaOperation {
   }
   private def execFilter(promiseFilterBySurname: Promise[Option[List[Persona]]],f:PersonaTableRep=>Rep[Boolean]): Future[Unit] = Future {
     InstancePersona.operation().selectFilter(f) onComplete {
-      case Success(value) if value.nonEmpty=>promiseFilterBySurname.success(Some(value))
+      case Success(value) if value.nonEmpty=>promiseFilterBySurname.success(value)
       case Success(_) =>promiseFilterBySurname.success(None)
       case Failure(_)=>promiseFilterBySurname.success(None)
     }
@@ -97,7 +97,7 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
       execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
       .onComplete{
-      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head)))
+      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head.head)))
       case Success(_) =>promiseLogin.success(None)
       case Failure(exception) => promiseLogin.failure(exception)
     }
@@ -108,8 +108,7 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
       execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
       .onComplete{
-        case Success(value) if value==1 => changePasswordP.success(Some(value))
-        case Success(value) =>changePasswordP.success(Some(value))
+        case Success(value) => changePasswordP.success(value)
         case Failure(exception) => changePasswordP.failure(exception)
       }
     changePasswordP.future
@@ -143,7 +142,7 @@ object PersonaOperation extends PersonaOperation {
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
       DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head).onComplete{
         case Success(disponibilita) =>
-          assumiPriv(constructPersona(personaDaAssumere.persona,Some(disponibilita)),personaDaAssumere.storicoContratto)
+          assumiPriv(constructPersona(personaDaAssumere.persona,disponibilita),personaDaAssumere.storicoContratto)
         case Failure(exception) => promiseLogin.failure(exception)
       }
     } else {
@@ -152,13 +151,13 @@ object PersonaOperation extends PersonaOperation {
     promiseLogin.future
   }
 
-  override def delete(element: Int): Future[Int] = {
-    val promise:Promise[Int] = Promise[Int]
+  override def delete(element: Int): Future[Option[Int]] = {
+    val promise:Promise[Option[Int]] = Promise[Option[Int]]
     removeStorici(element,promise)
     promise.future
   }
 
-  private def removeStorici(idPersona:Int,promise: Promise[Int]):Unit = {
+  private def removeStorici(idPersona:Int,promise: Promise[Option[Int]]):Unit = {
     StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
       case Success(_) => super.delete(idPersona).onComplete{
         case Success(value) => promise.success(value)
@@ -168,8 +167,9 @@ object PersonaOperation extends PersonaOperation {
     }
   }
 
-  private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
-    insert(persona).onComplete{
+  private def assumiPriv(persona:Persona,contratto:StoricoContratto,promise: Promise[Option[Login]]):Unit={
+    insert(persona,promise)
+      promise.future.onComplete{
       case Success(personaId) =>
         val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,Some(personaId),contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
         StoricoContrattoOperation.insert(contrattoToIns).onComplete{

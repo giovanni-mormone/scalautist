@@ -2,7 +2,7 @@ package dbfactory.implicitOperation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 /**
  * @author Fabian Aspée Encina
@@ -21,10 +21,7 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
   def select (element:Int):Future[Option[A]]= {
     val promiseInsert = Promise[Option[A]]
     Future {
-      crud.select(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.select(element) onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
   }
@@ -33,13 +30,10 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * Select all element in a table in the database
    * @return List of all element in the table of the database that we have selected
    */
-  def selectAll : Future[List[A]] = {
-    val promiseInsert = Promise[List[A]]
+  def selectAll : Future[Option[List[A]]] = {
+    val promiseInsert = Promise[Option[List[A]]]
     Future {
-      crud.selectAll onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.selectAll onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
   }
@@ -49,15 +43,10 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element case class that represent instance of the table in database
    * @return Future of Int that represent status of operation
    */
-  def insert(element:A):Future[Int] = {
-    val promiseInsert = Promise[Int]
+  def insert[B](element:A, promiseInsert: Promise[Option[B]]): Unit = {
     Future {
-      crud.insert(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.insert(element) onComplete(t => checkOption(t,promiseInsert))
     }
-    promiseInsert.future
   }
 
   /**
@@ -65,16 +54,12 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element List of case class that represent instance of the table in database
    * @return Future of List of Int that represent status of operation
    */
-  def insertAll (element:List[A]):Future[List[Int]]= {
-    val promiseInsert = Promise[List[Int]]
+  def insertAll (element:List[A]):Future[Option[List[Int]]]= {
+    val promiseInsert = Promise[Option[List[Int]]]
     Future {
-      crud.insertAll(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.insertAll(element) onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
-
   }
 
   /**
@@ -83,13 +68,10 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def delete(element:Int):Future[Int]= {
-    val promiseInsert = Promise[Int]
+  def delete(element:Int):Future[Option[Int]]= {
+    val promiseInsert = Promise[Option[Int]]
     Future {
-      crud.delete(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.delete(element) onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
 
@@ -101,13 +83,10 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element list of case class that represent instance of database  [[caseclass.CaseClassDB]]
    * @return Future of Int that represent status of operation
    */
-  def deleteAll(element:List[Int]): Future[Int]= {
-    val promiseInsert = Promise[Int]
+  def deleteAll(element:List[Int]): Future[Option[Int]]= {
+    val promiseInsert = Promise[Option[Int]]
     Future {
-      crud.deleteAll(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.deleteAll(element) onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
 
@@ -118,15 +97,18 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    * @param element case class that represent instance into database we want update
    * @return Future of Int that represent status of operation
    */
-  def update(element:A):Future[Int]= {
-    val promiseInsert = Promise[Int]
+  def update(element:A):Future[Option[Int]]= {
+    val promiseInsert = Promise[Option[Int]]
     Future {
-      crud.update(element) onComplete {
-        case Success(value) =>promiseInsert.success(value)
-        case Failure(exception) => promiseInsert.failure(exception)
-      }
+      crud.update(element) onComplete(t => checkOption(t,promiseInsert))
     }
     promiseInsert.future
-
   }
+
+  private def checkOption[M](list:Try[Option[M]],promise: Promise[Option[M]]):Unit = list match{
+    case Success(Some(List())) =>promise.success(None)
+    case Success(value) =>promise.success(value)
+    case Failure(exception) => promise.failure(exception)
+  }
+
 }
