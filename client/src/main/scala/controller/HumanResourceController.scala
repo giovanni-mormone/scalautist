@@ -2,7 +2,7 @@ package controller
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.Persona
+import caseclass.CaseClassDB.{Contratto, Persona, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
@@ -66,6 +66,9 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *             User's id
    */
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
+
+  def getData: (List[Zona], List[Contratto], List[Turno])
+
 }
 
 /**
@@ -103,5 +106,17 @@ object HumanResourceController {
 
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
+
+    def getZone = model.getAllZone
+
+    def getTurni = model.getAllShift
+
+    def getContratti = model.getAllContract
+
+    override def getData: (List[Zona], List[Contratto], List[Turno]) = {
+      getTurni
+      getContratti
+      getZone
+    }
   }
 }
