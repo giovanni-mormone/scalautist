@@ -1,6 +1,5 @@
 import caseclass.CaseClassDB.Persona
 import model.entity.PersonaModel
-import model.utils.ResponceCode
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import utils.ClientAkkaHttp
@@ -34,7 +33,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.equals(ResponceCode.Success))
+    assert(result.equals(ResponseCode.Success))
   }
 
   it should "Not Found code when it try to change password with wrong" in {
@@ -43,6 +42,6 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.equals(ResponceCode.NotFound))
+    assert(result.equals(ResponseCode.NotFound))
   }
 }

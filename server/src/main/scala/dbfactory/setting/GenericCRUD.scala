@@ -26,12 +26,13 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
 object GenericCRUD{
   case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T] {
     override def selectAll: Future[Option[List[C]]] = super.run(tableDB().result).map(t => Option(t.toList))
+    def toOption[(t)
     override def select(id: Int): Future[Option[C]] = super.run(queryById(id).result.headOption)
     override def insert(element: C): Future[Option[Int]]= super.run((tableDB() returning tableDB().map(_.id)) += element).map(t => Option(t))
     override def insertAll(element: List[C]): Future[Option[List[Int]]] =  super.run((tableDB returning tableDB().map(_.id)) ++= element).map(t =>Option(t.toList))
     override def delete(id: Int): Future[Option[Int]] = super.run(queryById(id).delete).map(t=> Option(t))
     override def deleteAll(id: List[Int]): Future[Option[Int]] = super. run(queryByIdPlus(id).delete).map(t => Option(t))
-    override def update(element: C): Future[Option[Int]] = super.run(tableDB().insertOrUpdate(element)).map(t => Option(t))
+    override def update(element: C): Future[Option[Int]] = super.run((tableDB() returning tableDB().map(_.id)).insertOrUpdate(element))
   }
 }
 

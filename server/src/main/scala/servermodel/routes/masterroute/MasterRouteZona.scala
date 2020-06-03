@@ -12,9 +12,6 @@ object MasterRouteZona {
 
   val routeZona: Route =
     concat(
-      path("getzona") {
-        getZona
-      },
       path("getallzona") {
         getAllZona
       },

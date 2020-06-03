@@ -1,10 +1,11 @@
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, StoricoContratto}
-import dbfactory.operation.{AssenzaOperation, PersonaOperation}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, StoricoContratto, Zona}
+import dbfactory.operation.{AssenzaOperation, PersonaOperation, ZonaOperation}
 import org.scalatest._
 import utils.StartServer
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
+
 import scala.concurrent.Future
 
 trait Init{
@@ -61,6 +62,10 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
   it should "eventually return Login with new password" in {
     val futureRecoveryPassword: Future[Option[Login]] = PersonaOperation.recoveryPassword(1)
     futureRecoveryPassword map { recoveryPassword => assert(recoveryPassword.head.password.length == 10) }
+  }
+  it should "eventually  Login with new password" in {
+    val futureZone: Future[Option[Int]] = ZonaOperation.update(Zona("Cesena2",Some(5)))
+    futureZone map { zone => assert(zone.isDefined) }
   }
   behavior of "CRUD"
   it should "return a int when insert into database" in {
