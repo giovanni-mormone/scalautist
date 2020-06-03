@@ -76,10 +76,10 @@ object HumanResourceView {
     override def drawRecruit(): Unit = {  //TODO fare tutto in chiamate al controller
       Platform.runLater(() =>{
         val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-        val contratti = List(Contratto("Full-Time-5x2", true), Contratto("Part-Time-5x2", true),
-          Contratto("Part-Time-6x1", false), Contratto("Full-Time-6x1", true))
-        val turni = List(Turno("mattina","04-08"), Turno("mattina2","08-14"),
-          Turno("pomer","14-19"), Turno("sera","19-23"), Turno("notte","23-04"))
+        val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
+          Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
+        val turni = List(Turno("mattina","04-08",Some(1)), Turno("mattina2","08-14",Some(2)),
+          Turno("pomer","14-19",Some(3)), Turno("sera","19-23",Some(4)), Turno("notte","23-04",Some(5)))
         hrHome.drawRecruit(zone, contratti, turni)
       })
     }

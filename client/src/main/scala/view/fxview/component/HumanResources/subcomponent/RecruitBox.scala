@@ -1,13 +1,16 @@
 package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
-import java.util.ResourceBundle
+import java.sql
+import java.sql.Date
+import java.util.{Calendar, ResourceBundle}
 
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Contratto, Disponibilita, Persona, StoricoContratto, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, TextField, TextFormatter}
+import javafx.scene.control.{Button, ComboBox, TextField}
 import regularexpressionutilities.{NameChecker, NumberChecker}
+import utils.UserType._
 import view.fxview.component.HumanResources.HRViewParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -78,7 +81,7 @@ object RecruitBox{
     private var terminalList = List[Terminale]()
     private val fixedString = "-Fisso"
     private val rotateString = "-Rotazione"
-    private var contractType: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
+    private var contractTypeFI5FU: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       initializeComboBox
@@ -94,30 +97,33 @@ object RecruitBox{
       terminals.setDisable(false)
     }
 
-    private def initializeComboBox: Unit = {
+    private def initializeComboBox(): Unit = {
       //default values
       shiftList.foreach(shift => shift1.getItems.add(shift.fasciaOraria))
       shiftList.foreach(shift => shift2.getItems.add(shift.fasciaOraria))
       zoneList.foreach(zone => zones.getItems.add(zone.zones))
-      role.getItems.addAll("risorseUmane", "manager", "autista") //TODO da rivedere le stringhe
+      getUserType.foreach(user => role.getItems.add(user))
       initialBlockComponent
     }
 
     private def setActions: Unit = {
       //default action
-      name.textProperty().addListener((_,oldS,word) => {
-        if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
-          name.setText(oldS)
-      })
+      def setNameStringControl(component: TextField) = {
+        component.textProperty().addListener((_, oldS, word) => {
+          if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
+            component.setText(oldS)
+          ableSave
+        })
+      }
 
-      surname.textProperty().addListener((_,oldS,word) => {
-        if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
-          surname.setText(oldS)
-      })
+      setNameStringControl(name)
+
+      setNameStringControl(surname)
 
       tel.textProperty().addListener((_,oldS,word) => {
         if (!NumberChecker.numberRegex.matches(word.substring(word.size - 1)) || word.size > 10)
           tel.setText(oldS)
+        ableSave
       })
 
       zones.setOnAction(_ => {
@@ -126,7 +132,7 @@ object RecruitBox{
       })
 
       role.setOnAction(_ => {
-        if(getComboSelected(role).equals("risorseUmane") || getComboSelected(role).equals("manager"))  //TODO da rivedere no alle stringhe
+        if(!isDriver)
           notDrive(true)
         else
           notDrive(false)
@@ -138,21 +144,13 @@ object RecruitBox{
         ableSave
       })
 
-      day1.setOnAction(_ => {
-        if (getComboSelected(day1).equals(getComboSelected(day2)))
-          day1.getSelectionModel.clearSelection
-        ableSave
-      })
+      setDaysAction(day1, day2)
 
-      day2.setOnAction(_ => {
-        if (getComboSelected(day1).equals(getComboSelected(day2)))
-          day2.getSelectionModel.clearSelection
-        ableSave
-      })
+      setDaysAction(day2, day1)
 
       shift1.setOnAction(_ => {
         val itemSelected: Int = getComboSelectedIndex(shift1)
-        if(contractType._3)
+        if(contractTypeFI5FU._3)
           if( itemSelected == shift1.getItems.size - 1)
             shift2.getSelectionModel.selectFirst()
           else
@@ -163,13 +161,28 @@ object RecruitBox{
       terminals.setOnAction(_ => ableSave)
 
       save.setOnAction(event => {
-        if(noEmptyField)  //TODO
-          /*parent.recruitClicked*//*println( Persona(name.getText, surname.getText(), tel.getText(), None, //TODO creare entità assumi
-            getComboSelectedIndex(role) + 1, true, "", getIdTerminal()))*/
-          println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " +
-            tel.getText() + " " + getComboSelectedIndex(role) + 1)
+        if(noEmptyField) {
+          val hasShift1: Boolean = chosenSomething(shift1)
+          val hasShift2: Boolean = chosenSomething(shift2)
+          //parent.recruitClicked(
+          println(Assumi(
+            Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, true, "", getIdTerminal, None),
+            StoricoContratto(new Date(System.currentTimeMillis()), None, None,
+                getContrattoId, getIdTurno(hasShift1, shift1), getIdTurno(hasShift2, shift2)),
+            getDisponibilita
+          ))
+        }
+          //println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " + tel.getText() + " " + getComboSelectedIndex(role) + 1)
         else
           println("holy shit man!! You can't fill a simple form? Are you an asshole?")
+      })
+    }
+
+    private def setDaysAction(component1: ComboBox[String], component2: ComboBox[String]): Unit = {
+      component1.setOnAction(_ => {
+        if (getComboSelected(component1).equals(getComboSelected(component2)))
+          component1.getSelectionModel.clearSelection
+        ableSave
       })
     }
 
@@ -192,7 +205,7 @@ object RecruitBox{
     /////////////////////////////////////////////////////////////////////////////             METODI DI CONTROLLO
 
     private def contractControl(contract: String): Unit = {
-      if(getComboSelected(role).equals("autista")){
+      if(isDriver){
         val workWeek: String = "5x2"    //tutti i 5x2 da lunedi a venerdi
         val typeWork: String = "Full"   //tutti i 6x1 da lunedi a sabato
         var fisso: Boolean = false
@@ -208,24 +221,24 @@ object RecruitBox{
             full = true
         }
 
-        contractType = (fisso, settimana5x2, full)
+        contractTypeFI5FU = (fisso, settimana5x2, full)
 
-        fixedShift(contractType._1)
-        if(contractType._1)
+        fixedShift(contractTypeFI5FU._1)
+        if(contractTypeFI5FU._1)
           refillDays
       }
     }
 
     private def controlMainFields(): Boolean = {
-      !name.getText.equals("") && !surname.getText.equals("") &&
-        !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("")
+      !name.getText.equals("") && !surname.getText.equals("") && !contractTypes.getSelectionModel.isEmpty &&
+        !tel.getText.equals("") && tel.getText.size == 10
     }
 
     private def controlDriverFields(): Boolean = {
       var terminalChosen: Boolean = chosenSomething(terminals)
-      if(contractType._1 && terminalChosen){
+      if(contractTypeFI5FU._1 && terminalChosen){
         terminalChosen = chosenSomething(shift1) && chosenSomething(day2) && chosenSomething(day1)
-        if(contractType._3 && terminalChosen)
+        if(contractTypeFI5FU._3 && terminalChosen)
           terminalChosen = chosenSomething(shift2)
       }
       terminalChosen
@@ -234,10 +247,14 @@ object RecruitBox{
     private def noEmptyField: Boolean = {
       if(role.getSelectionModel.isEmpty)
         false
-      else if(getComboSelected(role).equals("risorseUmane") || getComboSelected(role).equals("manager"))
+      else if(!isDriver)
         controlMainFields()
       else
         controlMainFields() && controlDriverFields()
+    }
+
+    private def isDriver: Boolean = {
+      getComboSelected(role).equals(driver)
     }
 
     /////////////////////////////////////////////////////////////////////////////             METODI DI GET
@@ -245,11 +262,42 @@ object RecruitBox{
     private def getIdZone: Zona =
       zoneList.filter(zone => zone.zones.equals(getComboSelected(zones))).head
 
-    private def getIdTerminal(): Option[Int] ={
-      terminalList.filter(terminal =>
-        terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
+    private def getIdTerminal: Option[Int] ={
+      if(isDriver)
+        terminalList.filter(terminal =>
+          terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
+      else
+        None
     }
 
+    private def getIdRuolo: Int =
+      getComboSelectedIndex(role) + 1
+
+    private def getContrattoId: Int = {
+      if(isDriver) {
+        val contract: String = getComboSelected(contractTypes)
+        val fixedShift: Boolean = contract.contains(fixedString)
+        contractList.filter(contr => {
+          contract.contains(contr.tipoContratto) && contr.turnoFisso == fixedShift
+        })
+          .head.idContratto.get
+      }
+      else
+        0 //todo quando aggiungiamo gli altri contratti
+    }
+
+    private def getIdTurno(search: Boolean, component: ComboBox[String]): Option[Int] = {
+      if(search)
+        shiftList.filter(shift => shift.fasciaOraria.equals(getComboSelected(component))).head.id
+      else None
+    }
+
+    def getDisponibilita: Option[Disponibilita] = {
+      if(isDriver && contractTypeFI5FU._1)
+        Some(Disponibilita(getComboSelected(day1), getComboSelected(day2)))
+      else
+        None
+    }
     /////////////////////////////////////////////////////////////////////////////             METODI DI BLOCCO COMPONENTI
 
     private def ableSave: Unit = {
@@ -268,8 +316,8 @@ object RecruitBox{
     }
 
     private def refillDays: Unit = {
-      var baseDays  = List("Lun","Mar","Mer","Gio","Ven")   //TODO da rivedere
-      if(!contractType._2)
+      var baseDays  = List("Lun","Mar","Mer","Gio","Ven")
+      if(!contractTypeFI5FU._2)
         baseDays = baseDays.appended("Sab")
       refillComponent(day2, baseDays)
       refillComponent(day1, baseDays)
