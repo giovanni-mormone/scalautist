@@ -19,7 +19,7 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @param filter function that define filter operation e.g: x=>x.nome=="Fran" && x.cognome=="roma" where x is PersonaTableRep
    * @return all record that satisfies  filter operation
    */
-  def selectFilter(filter:T=>Rep[Boolean]): Future[List[C]]
+  def selectFilter(filter:T=>Rep[Boolean]): Future[Option[List[C]]]
 
   /**
    *  Generic method por execute any join created in this system
@@ -28,7 +28,7 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @tparam B represent the field we want return in mod Tuple(Int,String,etc)
    * @return Tuple the all field that we have first selected
    */
-  def execJoin[A,B](join:Query[A,B,Seq]): Future[List[B]]
+  def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]]
 
   /**
    *  Generic method which allow execute the any query in the database in the following mode Select [any field] from table
@@ -42,7 +42,7 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @tparam A  Represent the element unpacked which are a tuple
    * @return  List the type A which the tuple lenght C
    */
-  def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[List[A]]
+  def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[List[A]]]
 
   /**
    * Generic Operation which enable make operation of type select, in this method you have send field that you want
@@ -72,7 +72,7 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @tparam A  Represent the element unpacked which are a tuple
    * @return    List of case class that satisfies condition f
    */
-  def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[List[A]]
+  def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
 
   /**
    * Generic Operation which enable make operation of type update, in this method you have send field that you want
@@ -88,16 +88,16 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @tparam A  Represent the element unpacked which are a tuple
    * @return Future of Int that represent status operation, if status is == 1 so ok
    */
-  def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Int]
+  def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]]
 }
 object GenericOperation{
   case class Operation[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericOperation[C,T] {
-    override def selectFilter(filter:T=>Rep[Boolean]): Future[List[C]] = super.run(tableDB().withFilter(filter).result).map(_.toList)
-    override def execJoin[A,B](join:Query[A,B,Seq]): Future[List[B]] = super.run(join.result).map(_.toList)
-    override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[List[A]] =super.run(tableDB().map(selectField).result).map(_.toList)
+    override def selectFilter(filter:T=>Rep[Boolean]): Future[Option[List[C]]] = super.run(tableDB().withFilter(filter).result).map(t => Option(t.toList))
+    override def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]] = super.run(join.result).map(t => Option(t.toList))
+    override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] =super.run(tableDB().map(selectField).result).map(t => Option(t.toList))
     override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption)
-    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[List[A]] = super.run(tableDB().withFilter(filter).map(selectField).result).map(_.toList)
-    override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Int] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate))
+    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).result).map(t => Option(t.toList))
+    override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate)).map(t => Option(t))
 
   }
 }
