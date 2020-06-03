@@ -31,7 +31,7 @@ object GenericCRUD{
     override def insertAll(element: List[C]): Future[Option[List[Int]]] =  super.run((tableDB returning tableDB().map(_.id)) ++= element).map(t =>Option(t.toList))
     override def delete(id: Int): Future[Option[Int]] = super.run(queryById(id).delete).map(t=> Option(t))
     override def deleteAll(id: List[Int]): Future[Option[Int]] = super. run(queryByIdPlus(id).delete).map(t => Option(t))
-    override def update(element: C): Future[Option[Int]] = super.run(tableDB().insertOrUpdate(element)).map(t => Option(t))
+    override def update(element: C): Future[Option[Int]] = super.run((tableDB() returning tableDB().map(_.id)).insertOrUpdate(element))
   }
 }
 

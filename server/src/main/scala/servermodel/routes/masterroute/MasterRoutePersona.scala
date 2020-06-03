@@ -45,7 +45,7 @@ object MasterRoutePersona {
         salaryCalculus()
       },
       path("getstipendio"){
-        getStipendio()
+        getStipendio
       }
      /* path("addabsence") {          //TODO add absence
           addAbsence()
