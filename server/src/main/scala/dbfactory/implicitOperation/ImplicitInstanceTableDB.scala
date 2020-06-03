@@ -17,6 +17,7 @@ import dbfactory.table.RichiestaTable.RichiestaTableRep
 import dbfactory.table.RichiestaTeoricaTable.RichiestaTeoricaTableRep
 import dbfactory.table.RisultatoTable.RisultatoTableRep
 import dbfactory.table.SettimanaTable.SettimanaTableRep
+import dbfactory.table.StipendioTable.StipendioTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.StraordinarioTable.StraordinarioTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
@@ -137,5 +138,11 @@ object ImplicitInstanceTableDB {
     override private[implicitOperation] def typeDB(): GenericOperationCRUD[Assenza, AssenzaTableRep] = GenericOperationCRUD[Assenza,AssenzaTableRep]
 
     override def operation(): Operation[Assenza, AssenzaTableRep] = Operation[Assenza, AssenzaTableRep]
+  }
+
+  implicit object InstanceStipendio extends ImplicitInstanceTableDB[Stipendio,StipendioTableRep] {
+    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Stipendio, StipendioTableRep] = GenericOperationCRUD[Stipendio,StipendioTableRep]
+
+    override def operation(): Operation[Stipendio, StipendioTableRep] = Operation[Stipendio, StipendioTableRep]
   }
 }
