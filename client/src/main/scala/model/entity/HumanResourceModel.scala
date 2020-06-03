@@ -177,21 +177,26 @@ object HumanResourceModel {
 
     override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
       val absence = Assenza(idPersona, startDate, endDate, malattia = true)
-      val request = Post(getURI("addabsence"), absence)
-      callRequest(request)
+      createRequest(absence)
       result.future
     }
+
+    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
+      val absence = Assenza(idPersona, startDate, endDate, malattia = false)
+      createRequest(absence)
+      result.future
+    }
+
+    private def createRequest(absence: Assenza):Unit = {
+      val request = Post(getURI("addabsence"), absence)
+      callRequest(request)
+    }
+
     private def callRequest(request:HttpRequest)(implicit promise:Promise[Option[Int]]):Unit ={
       doHttp(request).onComplete{
         case Success(value) => promise.success(Some(value.status.intValue()))
         case Failure(_) => promise.success(None)
       }
-    }
-    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
-      val absence = Assenza(idPersona, startDate, endDate, malattia = false)
-      val request = Post(getURI("addabsence"), absence)
-      callRequest(request)
-      result.future
     }
 
     override def getTerminalByZone(id: Id): Future[Option[List[Terminale]]] = {
@@ -217,7 +222,6 @@ object HumanResourceModel {
         case t => failure(t.failed,promiseZona)
       }
       promiseZona.future
-
     }
 
     override def getAllContract: Future[Option[List[Contratto]]] = {
@@ -230,7 +234,6 @@ object HumanResourceModel {
         case t => failure(t.failed,promiseCont)
       }
       promiseCont.future
-
     }
 
     override def getAllShift: Future[Option[List[Turno]]] = {
@@ -243,7 +246,6 @@ object HumanResourceModel {
         case t => failure(t.failed,promiseTurn)
       }
       promiseTurn.future
-
     }
 
     override def salaryCalculation():Future[Option[List[Stipendio]]] = {
