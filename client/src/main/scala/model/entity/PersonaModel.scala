@@ -1,5 +1,4 @@
 package model.entity
-
 import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
@@ -7,7 +6,6 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
-import model.utils.ResponceCode
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -88,16 +86,20 @@ object PersonaModel {
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
+      changePassword(result,newCredential)
+      result.future
+    }
+    private def changePassword(result: Promise[Int],newCredential:ChangePassword): Unit ={
       val request = Post(getURI("changepassword"), newCredential) // cambiare request
       doHttp(request).onComplete{
         case Success(t) => t.status match {
-          case StatusCodes.Accepted => result.success(ResponceCode.Success)
-          case StatusCodes.NotFound => result.success(ResponceCode.NotFound)
-          case StatusCodes.BadRequest => result.success(ResponceCode.DbError)
+          case StatusCodes.OK => result.success(StatusCodes.OK.intValue)
+          case StatusCodes.NotFound => result.success(StatusCodes.NotFound.intValue)
+          case StatusCodes.InternalServerError => result.success(StatusCodes.InternalServerError.intValue)
         }
-        case Failure(_) => result.success(ResponceCode.UnknownError)
+        case Failure(_) => result.success(StatusCodes.InternalServerError.intValue)
       }
-      result.future
     }
   }
+
 }

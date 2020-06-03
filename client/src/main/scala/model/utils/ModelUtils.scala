@@ -18,7 +18,7 @@ object ModelUtils {
   val promiseTurn: Promise[Option[List[Turno]]] = Promise[Option[List[Turno]]]
   val promiseCont: Promise[Option[List[Contratto]]] = Promise[Option[List[Contratto]]]
   val promiseTer: Promise[Option[List[Terminale]]] = Promise[Option[List[Terminale]]]
-  implicit val result: Promise[Unit] = Promise[Unit]
+  implicit val result: Promise[Option[Int]] = Promise[Option[Int]]
   val list: Promise[Option[List[Persona]]] = Promise[Option[List[Persona]]]
   implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
   implicit def id(id:Int):Id = Id(id)
