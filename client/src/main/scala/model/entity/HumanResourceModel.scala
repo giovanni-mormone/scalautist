@@ -36,7 +36,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def fires(ids:Id): Future[Unit]
+  def fires(ids:Id): Future[Option[Int]]
   /**
    * Layoff operations, delete a set of people from the database
    * @param ids
@@ -44,7 +44,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def firesAll(ids: Set[Int]): Future[Unit]
+  def firesAll(ids: Set[Int]): Future[Option[Int]]
 
 
   /**
@@ -67,7 +67,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
+  def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]]
 
   /**
    * Assign a holiday period to an employee
@@ -80,7 +80,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit]
+  def holidays(idPersona: Int, startDate: Date, endDate: Date):Future[Option[Int]]
 
   /**
    * Recover an employee's password
@@ -117,6 +117,7 @@ trait HumanResourceModel extends AbstractModel{
   def getAllShift:Future[Option[List[Turno]]]
 
   def salaryCalculation():Future[Option[List[Stipendio]]]
+
 }
 
 /**
@@ -152,19 +153,16 @@ object HumanResourceModel {
       }
     }
 
-    override def fires(ids: Id): Future[Unit] = {
+    override def fires(ids: Id): Future[Option[Int]] = {
       val request = Post(getURI("deletepersona"), ids)
-      callRequest(request,result)
+      callRequest(request)
+      result.future
     }
 
-    override def firesAll(ids: Set[Int]): Future[Unit] = {
+    override def firesAll(ids: Set[Int]): Future[Option[Int]] = {
       val request = Post(getURI("deleteallpersona"), ids.map(id=>Id(id)).toList)
-      callRequest(request,result)
-    }
-
-    private def callRequest(request: HttpRequest, promise:Promise[Unit]): Future[Unit] ={
-      doHttp(request).onComplete(_ => promise.success(():Unit))
-      promise.future
+      callRequest(request)
+      result.future
     }
 
     override def getAllPersone: Future[Option[List[Persona]]] = {
@@ -177,22 +175,22 @@ object HumanResourceModel {
       list.future
     }
 
-    override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
+    override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
       val absence = Assenza(idPersona, startDate, endDate, malattia = true)
       val request = Post(getURI("addabsence"), absence)
-      unitFuture(request)
+      callRequest(request)
       result.future
     }
-    private def unitFuture(request:HttpRequest)(implicit result: Promise[Unit]):Unit ={
+    private def callRequest(request:HttpRequest)(implicit promise:Promise[Option[Int]]):Unit ={
       doHttp(request).onComplete{
-        case Success(_) => result.success(():Unit)
-        case Failure(exception) => result.failure(exception)
+        case Success(value) => promise.success(Some(value.status.intValue()))
+        case Failure(_) => promise.success(None)
       }
     }
-    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Unit] = {
+    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
       val absence = Assenza(idPersona, startDate, endDate, malattia = false)
       val request = Post(getURI("addabsence"), absence)
-      unitFuture(request)
+      callRequest(request)
       result.future
     }
 

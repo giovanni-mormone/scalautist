@@ -99,7 +99,7 @@ object PersonaRoute{
     post {
       entity(as[ChangePassword]) {
         change => onComplete(PersonaOperation.changePassword(change)){
-          case Success(Some(1))  =>  complete(StatusCodes.Accepted)
+          case Success(Some(1))  =>  complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }

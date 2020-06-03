@@ -2,7 +2,7 @@ package servermodel.routes.subroute
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
+import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Zona
 import caseclass.CaseClassHttpMessage.Id
 import jsonmessages.JsonFormats._
