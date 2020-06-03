@@ -55,7 +55,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @param idUser represent identificator of user in table Persona
    * @return case class Login with new password and user = [[EMPTY_STRING]]
    */
-  def recoveryPassword(idUser:Int):Future[Login]
+  def recoveryPassword(idUser:Int):Future[Option[Login]]
 
   /**
    * Method to hire a person, it can differentiate beetween roles of the person to hire and
@@ -97,8 +97,8 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
       execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
       .onComplete{
-      case Success(value) if value.nonEmpty => promiseLogin.success(convertTupleToPerson(Some(value.head.head)))
-      case Success(_) =>promiseLogin.success(None)
+      case Success(Some(List())) => promiseLogin.success(None)
+      case Success(value) =>promiseLogin.success(convertTupleToPerson(Some(value.head.head)))
       case Failure(exception) => promiseLogin.failure(exception)
     }
     promiseLogin.future
@@ -113,13 +113,14 @@ object PersonaOperation extends PersonaOperation {
       }
     changePasswordP.future
   }
-  override def recoveryPassword(idUser: Int): Future[Login] = {
-    val recoveryPasswordP = Promise[Login]
+  override def recoveryPassword(idUser: Int): Future[Option[Login]] = {
+    val recoveryPasswordP = Promise[Option[Login]]
     val newPassword = createString
     InstancePersona.operation().
       execQueryUpdate(f =>(f.password,f.isNew), x => x.id===idUser,(newPassword.head,true))
       .onComplete{
-        case Success(value) if value==1 => recoveryPasswordP.success(Login(EMPTY_STRING,newPassword.head))
+        case Success(Some(1))  => recoveryPasswordP.success(Some(Login(EMPTY_STRING,newPassword.head)))
+        case Success(_)  => recoveryPasswordP.success(None)
         case Failure(exception) => recoveryPasswordP.failure(exception)
       }
     recoveryPasswordP.future
@@ -167,15 +168,14 @@ object PersonaOperation extends PersonaOperation {
     }
   }
 
-  private def assumiPriv(persona:Persona,contratto:StoricoContratto,promise: Promise[Option[Login]]):Unit={
-    insert(persona,promise)
-      promise.future.onComplete{
+  private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
+    insert(persona).onComplete{
       case Success(personaId) =>
-        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,Some(personaId),contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
+        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
         StoricoContrattoOperation.insert(contrattoToIns).onComplete{
           case Success(_) => promise.success(Option(Login(persona.userName,persona.password.head)))
           case Failure(exception) =>
-            delete(personaId)
+            delete(personaId.head)
             promise.failure(exception)
         }
       case Failure(exception) => promise.failure(exception)

@@ -36,7 +36,7 @@ object TerminaleRoute  {
       entity(as[Terminale]) { terminale =>
         onComplete(TerminaleOperation.insert(terminale)) {
           case Success(t) =>  complete(StatusCodes.Created,
-                                      Terminale(terminale.nomeTerminale,terminale.idZona,Some(t)))
+                                      Terminale(terminale.nomeTerminale,terminale.idZona,t))
           case t => anotherSuccessAndFailure(t)
         }
       }
