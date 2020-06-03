@@ -20,3 +20,12 @@ object PasswordHelper {
     regex
 
 }
+
+/**
+ * @author fra
+ */
+object NumberChecker {
+  private val regex: Regex = "^(?=\\d){10}$".r
+
+  def numberRegex: Regex = regex
+}
