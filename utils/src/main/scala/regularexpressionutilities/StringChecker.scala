@@ -1,4 +1,4 @@
-package passwordutilities
+package regularexpressionutilities
 
 import scala.util.matching.Regex
 
@@ -22,17 +22,36 @@ object PasswordHelper {
 }
 
 /**
- * @author fra
+ * @author Francesco Cassano
+ *
+ * Number utilities object, such as regex to check passwords or functions to hash the password.
  */
 object NumberChecker {
   private val regex: Regex = "^\\d$".r
 
+  /**
+   * Stores the regex to validate a number.
+   *
+   * @return
+   *        The regex needed to validate a number.
+   */
   def numberRegex: Regex = regex
 }
 
+/**
+ * @author Francesco Cassano
+ *
+ * Name or surname utilities object, such as regex to check passwords or functions to hash the password.
+ */
 object NameChecker {
   private val regex: Regex = "^[A-Za-z ']$".r
 
+  /**
+   * Stores the regex to validate a name.
+   *
+   * @return
+   *        The regex needed to validate a name.
+   */
   def nameRegex: Regex = regex
 }
 

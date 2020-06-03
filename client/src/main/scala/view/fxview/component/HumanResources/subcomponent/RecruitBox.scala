@@ -1,19 +1,17 @@
 package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
-import java.util
 import java.util.ResourceBundle
-import java.util.regex.Pattern
 
 import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TextField, TextFormatter}
-import passwordutilities.{NameChecker, NumberChecker}
+import regularexpressionutilities.{NameChecker, NumberChecker}
 import view.fxview.component.HumanResources.HRViewParent
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
-import scala.util.matching.Regex
 
 /**
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
@@ -201,12 +199,14 @@ object RecruitBox{
         var settimana5x2: Boolean = false
         var full: Boolean = false
 
-        if(contract.contains(fixedString))
-          fisso = true
-        if(contract.contains(workWeek))
-          settimana5x2 = true
-        if(contract.contains(typeWork))
-          full = true
+        if(chosenSomething(contractTypes)) {
+          if (contract.contains(fixedString))
+            fisso = true
+          if (contract.contains(workWeek))
+            settimana5x2 = true
+          if (contract.contains(typeWork))
+            full = true
+        }
 
         contractType = (fisso, settimana5x2, full)
 
@@ -217,9 +217,8 @@ object RecruitBox{
     }
 
     private def controlMainFields(): Boolean = {
-      //val pattern: Pattern = Pattern.compile("-?\\d{10}?") //TODO controllo su tel
-      !name.getText.equals("") && !surname.getText.equals("") && !contractTypes.getSelectionModel.isEmpty &&  !tel.getText.equals("")
-        //pattern.matcher(tel.getText()).matches &&
+      !name.getText.equals("") && !surname.getText.equals("") &&
+        !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("")
     }
 
     private def controlDriverFields(): Boolean = {
@@ -283,9 +282,11 @@ object RecruitBox{
           contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
       else {
         refillComponent(contractTypes, List(getComboSelected(role)))
+        contractTypes.getSelectionModel.selectFirst()
         shift1.setDisable(value)
         day1.setDisable(value)
         day2.setDisable(value)
+        terminals.setDisable(value)
         resetComboBox(day1)
         resetComboBox(day2)
       }

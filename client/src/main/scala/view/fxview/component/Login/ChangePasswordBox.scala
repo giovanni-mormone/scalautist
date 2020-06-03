@@ -5,7 +5,7 @@ import java.util.ResourceBundle
 
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, PasswordField, TextField}
-import passwordutilities.PasswordHelper
+import regularexpressionutilities.PasswordHelper
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.mainview.ChangePasswordParent
 

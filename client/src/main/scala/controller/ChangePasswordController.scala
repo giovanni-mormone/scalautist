@@ -1,7 +1,7 @@
 package controller
 
 import model.entity.PersonaModel
-import passwordutilities.PasswordHelper
+import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.ChangePasswordView
 
 import scala.util.Success
