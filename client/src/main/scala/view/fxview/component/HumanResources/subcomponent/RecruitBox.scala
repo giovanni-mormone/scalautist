@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TextField, TextFormatter}
-import passwordutilities.NumberChecker
+import passwordutilities.{NameChecker, NumberChecker}
 import view.fxview.component.HumanResources.HRViewParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -107,22 +107,20 @@ object RecruitBox{
 
     private def setActions: Unit = {
       //default action
-      /*name.setOnAction(_ => {
-        ableSave
+      name.textProperty().addListener((_,oldS,word) => {
+        if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
+          name.setText(oldS)
       })
 
-      surname.setOnAction(_ => {
-        ableSave
+      surname.textProperty().addListener((_,oldS,word) => {
+        if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
+          surname.setText(oldS)
       })
 
-      tel.setOnAction(_ => {
-        try{
-          tel.getText.toInt
-        } catch {
-          case _ => tel.setText("")
-        }
-        ableSave
-      })*/
+      tel.textProperty().addListener((_,oldS,word) => {
+        if (!NumberChecker.numberRegex.matches(word.substring(word.size - 1)) || word.size > 10)
+          tel.setText(oldS)
+      })
 
       zones.setOnAction(_ => {
         parent.loadTerminals(getIdZone)

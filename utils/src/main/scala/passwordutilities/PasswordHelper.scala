@@ -25,7 +25,15 @@ object PasswordHelper {
  * @author fra
  */
 object NumberChecker {
-  private val regex: Regex = "^(?=\\d){10}$".r
+  private val regex: Regex = "^\\d$".r
 
   def numberRegex: Regex = regex
 }
+
+object NameChecker {
+  private val regex: Regex = "^[A-Za-z ']$".r
+
+  def nameRegex: Regex = regex
+}
+
+
