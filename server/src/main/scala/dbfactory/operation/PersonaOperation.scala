@@ -185,4 +185,6 @@ object PersonaOperation extends PersonaOperation {
   private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
     Persona(origin.nome,origin.cognome,origin.numTelefono,
       createString,origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
+
+
 }

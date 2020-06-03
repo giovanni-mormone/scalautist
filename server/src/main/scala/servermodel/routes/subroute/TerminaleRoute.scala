@@ -76,7 +76,8 @@ object TerminaleRoute  {
     post {
       entity(as[Terminale]) { terminale =>
         onComplete(TerminaleOperation.update(terminale)) {
-          case Success(t)  =>  complete(StatusCodes.OK)
+          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
+          case Success(None)  =>  complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }

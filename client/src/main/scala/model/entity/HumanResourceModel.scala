@@ -99,11 +99,10 @@ trait HumanResourceModel extends AbstractModel{
   def getTerminalByZone(id:Id): Future[Option[List[Terminale]]]
 
   /**
-   * method that return Option of zone if exists
-   * @param id identifies one zone into database
+   * method that return Option of List of zone if exists
    * @return Option of zone if exists
    */
-  def getZone(id:Id):Future[Option[Zona]]
+  def getAllZone:Future[Option[List[Zona]]]
 
   /**
    * method that return all contract in database
@@ -210,11 +209,11 @@ object HumanResourceModel {
       promiseTer.future
     }
 
-    override def getZone(id: Id): Future[Option[Zona]] = {
-      val request = Post(getURI("getzona"), id)
+    override def getAllZone: Future[Option[List[Zona]]] = {
+      val request = Post(getURI("getallzona"))
       doHttp(request).onComplete{
         case Success(zona) =>
-          Unmarshal(zona).to[Option[Zona]].onComplete{
+          Unmarshal(zona).to[Option[List[Zona]]].onComplete{
             result=>success(result,promiseZona)
           }
         case t => failure(t.failed,promiseZona)

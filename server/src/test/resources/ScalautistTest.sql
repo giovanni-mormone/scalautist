@@ -81,6 +81,74 @@ SET IDENTITY_INSERT [dbo].[AssenzaSet] OFF
 
 --//ASSENZA
 
+--PRESENZA
+
+SET IDENTITY_INSERT [dbo].[PresenzaSets] ON
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (1,N'20200622',30000.95,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (2,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (1,N'20200622',30000.95,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (2,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (3,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (4,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (5,N'20200619',34000.99,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (6,N'20200619',31000.96,1)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (7,N'20200530',32000.97,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (8,N'20200622',33000.98,2)
+INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola]) VALUES (9,N'20200619',34000.99,2)
+
+SET IDENTITY_INSERT [dbo].[PresenzaSets] OFF
+
+--//PRESENZA
+
 --STIPENDIO
 
 SET IDENTITY_INSERT [dbo].[StipendioSet] ON
@@ -131,4 +199,4 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO
-select * from PersoneSets
+select * from ZonaSets

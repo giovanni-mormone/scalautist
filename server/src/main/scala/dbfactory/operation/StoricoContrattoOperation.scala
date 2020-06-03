@@ -24,4 +24,5 @@ object StoricoContrattoOperation extends StoricoContrattoOperation {
     }
     promise.future
   }
+
 }

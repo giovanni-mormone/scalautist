@@ -49,7 +49,7 @@ object PersonaRoute{
     post {
       entity(as[Id]) { order =>
         onComplete(PersonaOperation.delete(order.id)) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -59,7 +59,7 @@ object PersonaRoute{
     post {
       entity(as[List[Id]]) { order =>
         onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
-          case Success(t) if t==1 =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -69,7 +69,8 @@ object PersonaRoute{
     post {
       entity(as[Persona]) { persona =>
         onComplete(PersonaOperation.update(persona)) {
-          case Success(t)  =>  complete(StatusCodes.OK)
+          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
+          case Success(None) =>complete(StatusCodes.OK)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -104,7 +105,7 @@ object PersonaRoute{
       }
     }
 
-  def getStipendio(): Route =
+  def getStipendio: Route =
     post{
       entity(as[Id]) {
         id => onComplete(stipendio(id.id)){
