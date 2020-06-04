@@ -3,7 +3,7 @@ package controller
 import java.sql.Date
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
@@ -33,11 +33,6 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *            Set of integer that represent employees' ids
    */
   def fires(ids:Set[Int]): Unit
-
-  /**
-   * getAllPersona asks model for the employees list
-   */
-  def getAllPersona: Unit //TODO quando i dati arrivano li faccio disegnare
 
   /**
    * illness saves on the db an employee's absence for a period of time
@@ -84,6 +79,12 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def getTerminals(zona: Zona): Unit
 
+  /**
+   * getAllPersona asks model for the employees list
+   *
+   */
+  def getAllPersona(callingView: String): Unit //TODO quando i dati arrivano li faccio disegnare
+
 }
 
 /**
@@ -111,7 +112,16 @@ object HumanResourceController {
       else
         model.fires(ids.head)
 
-    override def getAllPersona: Unit = model.getAllPersone
+    override def getAllPersona(callingView: String): Unit = {
+      /*model.getAllPersone.onComplete(employees =>
+              myView.drawEmployeeView(employees.get.head, callingView))*/
+      val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
+        Persona("ajeje","brazorf","123", None, 3, false, "gne", Some(2), matricola = Some(16)),
+        Persona("samir","kebab","123", None, 3, false, "gne", Some(2), matricola = Some(18)),
+        Persona("mangiapane","atradimento","123", None, 3, false, "gne", Some(2), matricola = Some(32)),
+      )
+      myView.drawEmployeeView(perosne, callingView)
+    }
 
     override def illness(idPersona: Int, startDate: Date, endDate: Date): Unit =
       model.illnessPeriod(idPersona, startDate,endDate)

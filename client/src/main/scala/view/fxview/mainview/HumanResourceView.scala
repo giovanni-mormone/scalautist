@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import view.BaseView
 import view.fxview.AbstractFXDialogView
+import view.fxview.component.HumanResources.subcomponent.EmployeeView
 import view.fxview.component.HumanResources.{HRHome, HRViewParent}
 
 /**
@@ -27,13 +28,19 @@ trait HumanResourceView extends BaseView {
    * Show child's recruit view
    *
    */
-  def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno])
+  def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit
 
   /**
    * Show terminals into child's recruit view
    *
    */
-  def drawTerminal(terminals: List[Terminale])
+  def drawTerminal(terminals: List[Terminale]): Unit
+
+  /**
+   * Show the view that requested the list of employees
+   *
+   */
+  def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
 }
 
 /**
@@ -72,7 +79,10 @@ object HumanResourceView {
       pane.getChildren.add(hrHome.pane)
     }
 
-    override def recruitClicked(persona: Assumi): Unit = myController.recruit(persona)
+    ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
+
+    override def recruitClicked(persona: Assumi): Unit =
+      myController.recruit(persona)
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
@@ -80,20 +90,20 @@ object HumanResourceView {
     override def drawRecruitPanel: Unit =
       myController.getRecruitData
 
+    override def drawEmployeePanel(viewToDraw: String): Unit =
+      myController.getAllPersona(viewToDraw)
+
+    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
+
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       hrHome.drawRecruit(zones, contracts, shifts)
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
       hrHome.drawRecruitTerminals(terminals)
+
+    override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
+      case EmployeeView.fire => hrHome.drawFire(employeesList)
+    }
+
   }
 }
-/*override def drawRecruit(): Unit = {
-      Platform.runLater(() =>{
-        /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-        val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
-          Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
-        val turni = List(Turno("mattina","04-08",Some(1)), Turno("mattina2","08-14",Some(2)),
-          Turno("pomer","14-19",Some(3)), Turno("sera","19-23",Some(4)), Turno("notte","23-04",Some(5)))*/
-
-      })
-    }*/

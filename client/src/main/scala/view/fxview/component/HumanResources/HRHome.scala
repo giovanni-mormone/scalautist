@@ -3,12 +3,13 @@ package view.fxview.component.HumanResources
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.BorderPane
-import view.fxview.component.HumanResources.subcomponent.RecruitBox
+import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, RecruitBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -40,6 +41,12 @@ trait HRViewParent {
    */
   def drawRecruitPanel: Unit
 
+  /**
+   * It notify parent that an employees View must be shown
+   *
+   */
+  def drawEmployeePanel(viewToDraw: String): Unit
+
 }
 
 /**
@@ -67,9 +74,18 @@ trait HRHome extends Component[HRViewParent]{
    *
    * @param terminali
    */
-  def drawRecruitTerminals(terminali: List[Terminale])
+  def drawRecruitTerminals(terminali: List[Terminale]): Unit
+
+  /**
+   * Initialize Fire view before show
+   *
+   * @param employees
+   */
+  def drawFire(employees: List[Persona]): Unit
 }
 
+
+/////////////////////////////////////////////////////////////////// Companion object
 /**
  * @author Francesco Cassano
  *
@@ -90,27 +106,45 @@ object HRHome{
     @FXML
     var recruitButton: Button = _
     @FXML
+    var firesButton: Button = _
+    @FXML
     var nameLabel: Label = _
 
     var recruitView: RecruitBox = _
+    var fireView: FireBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("Buongiorno Stronzo")
-      recruitButton.setText(resources.getString("recuit-button"))
-      recruitButton.setOnAction(_ => parent.drawRecruitPanel)
-    }
 
-    private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]) = {
-      recruitView = RecruitBox(contracts, shifts, zones)
-      recruitView.setParent(parent)
-      recruitView.pane
+      recruitButton.setText(resources.getString("recuit-button"))
+      firesButton.setText(resources.getString("fire-button"))
+
+      recruitButton.setOnAction(_ => parent.drawRecruitPanel)
+      firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
     }
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit = {
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
     }
 
-    override def drawRecruitTerminals(terminali: List[Terminale]): Unit =
-      recruitView.setTerminals(terminali)
+    override def drawRecruitTerminals(terminals: List[Terminale]): Unit =
+      recruitView.setTerminals(terminals)
+
+    override def drawFire(employees: List[Persona]): Unit =
+      baseHR.setCenter(fireBox(employees))
+
+    ////////////////////////////////////////////////////////////////////////////////////// View Initializer
+
+    private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
+      recruitView = RecruitBox(contracts, shifts, zones)
+      recruitView.setParent(parent)
+      recruitView.pane
+    }
+
+    private def fireBox(employees: List[Persona]): Pane = {
+      fireView = FireBox(employees)
+      fireView.setParent(parent)
+      fireView.pane
+    }
   }
 }

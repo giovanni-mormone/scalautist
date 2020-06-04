@@ -17,6 +17,8 @@ import view.fxview.component.{AbstractComponent, Component}
 import scala.language.postfixOps
 
 /**
+ * @author Francesco Cassano
+ *
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
  * of [[view.fxview.component.HumanResources.HRViewParent]]
  */
@@ -35,13 +37,13 @@ trait RecruitBox extends Component[HRViewParent]{
  * Companion object of [[view.fxview.component.HumanResources.subcomponent.RecruitBox]]
  *
  */
-object RecruitBox{
+object RecruitBox {
 
   def apply(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona]): RecruitBox =
     new RecruitBoxImpl(contractList, shiftList, zoneList)
 
   /**
-   * RecruitBox Fx implementation. It shows Humane resource Recruit panel in home view
+   * RecruitBox Fx implementation. It shows Human resource Recruit panel in home view
    *
    * @param contractList
    *                     list of type of contratto
