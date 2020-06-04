@@ -1,26 +1,27 @@
 package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
-import java.sql
 import java.sql.Date
-import java.util.{Calendar, ResourceBundle}
+import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Contratto, Disponibilita, Persona, StoricoContratto, Terminale, Turno, Zona}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TextField}
-import regularexpressionutilities.{NameChecker, NumberChecker}
+import regularexpressionutilities.{Checker, NameChecker, NumberChecker}
 import utils.UserType._
-import view.fxview.component.HumanResources.HRViewParent
+import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
 
 /**
+ * @author Francesco Cassano
+ *
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.HRViewParent]]
+ * of [[view.fxview.component.HumanResources.subcomponent.parent.RecruitParent]]
  */
-trait RecruitBox extends Component[HRViewParent]{
+trait RecruitBox extends Component[RecruitParent]{
 
   /**
    * Set a list of terminal in the view before the zone is chosen.
@@ -35,13 +36,13 @@ trait RecruitBox extends Component[HRViewParent]{
  * Companion object of [[view.fxview.component.HumanResources.subcomponent.RecruitBox]]
  *
  */
-object RecruitBox{
+object RecruitBox {
 
   def apply(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona]): RecruitBox =
     new RecruitBoxImpl(contractList, shiftList, zoneList)
 
   /**
-   * RecruitBox Fx implementation. It shows Humane resource Recruit panel in home view
+   * RecruitBox Fx implementation. It shows Human resource Recruit panel in home view
    *
    * @param contractList
    *                     list of type of contratto
@@ -51,7 +52,7 @@ object RecruitBox{
    *                 list of zona
    */
   private class RecruitBoxImpl(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona])
-    extends AbstractComponent[HRViewParent]("humanresources/subcomponent/RecruitBox") with RecruitBox {
+    extends AbstractComponent[RecruitParent]("humanresources/subcomponent/RecruitBox") with RecruitBox {
 
     @FXML
     var name: TextField = _
@@ -110,7 +111,7 @@ object RecruitBox{
       //default action
       def setNameStringControl(component: TextField) = {
         component.textProperty().addListener((_, oldS, word) => {
-          if (!NameChecker.nameRegex.matches(word.substring(word.size - 1)))
+          if ( !controlString(word, NameChecker) )
             component.setText(oldS)
           ableSave
         })
@@ -120,8 +121,8 @@ object RecruitBox{
 
       setNameStringControl(surname)
 
-      tel.textProperty().addListener((_,oldS,word) => {
-        if (!NumberChecker.numberRegex.matches(word.substring(word.size - 1)) || word.size > 10)
+      tel.textProperty().addListener((_, oldS, word) => {
+        if (!controlString(word, NumberChecker) || word.size > 10)
           tel.setText(oldS)
         ableSave
       })
@@ -172,13 +173,14 @@ object RecruitBox{
         if(noEmptyField) {
           val hasShift1: Boolean = chosenSomething(shift1)
           val hasShift2: Boolean = chosenSomething(shift2)
-          //parent.recruitClicked(
-          println(Assumi(
-            Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, true, "", getIdTerminal, None),
-            StoricoContratto(new Date(System.currentTimeMillis()), None, None,
-                getContrattoId, getIdTurno(hasShift1, shift1), getIdTurno(hasShift2, shift2)),
-            getDisponibilita
-          ))
+          parent.recruitClicked(
+            Assumi(
+              Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, true, "", getIdTerminal, None),
+              StoricoContratto(new Date(System.currentTimeMillis()), None, None,
+                  getContrattoId, getIdTurno(hasShift1, shift1), getIdTurno(hasShift2, shift2)),
+              getDisponibilita
+            )
+          )
         }
           //println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " + tel.getText() + " " + getComboSelectedIndex(role) + 1)
         else
@@ -227,6 +229,10 @@ object RecruitBox{
         if(contractTypeFI5FU._1)
           refillDays
       }
+    }
+
+    private def controlString(string: String, checker: Checker): Boolean = {
+      checker.checkRegex.matches("" + string.last )
     }
 
     private def controlMainFields(): Boolean = {
@@ -298,6 +304,7 @@ object RecruitBox{
       else
         None
     }
+
     /////////////////////////////////////////////////////////////////////////////             METODI DI BLOCCO COMPONENTI
 
     private def ableSave: Unit = {
