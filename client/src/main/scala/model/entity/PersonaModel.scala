@@ -6,7 +6,6 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -43,7 +42,7 @@ trait PersonaModel extends AbstractModel {
    * future
    */
   def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
-  def getPersone(id:Int): Future[Option[Persona]]
+  def getPersone(id:Id): Future[Option[Persona]]
 }
 
 /**
@@ -59,30 +58,25 @@ object PersonaModel {
   private class PersonaModelHttp extends PersonaModel{
 
     override def login(user: String, password: String): Future[Option[Persona]] = {
-      implicit val person: Promise[Option[Persona]] = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
       callHtpp(request)
-      person.future
     }
 
-    override def getPersone(id: Int): Future[Option[Persona]] = {
-      implicit val promise: Promise[Option[Persona]] = Promise[Option[Persona]]
-      val idPersona = Id(id)
-      val request = Post(getURI("getpersona"), idPersona)
+    override def getPersone(id: Id): Future[Option[Persona]] = {
+      val request = Post(getURI("getpersona"), id)
       callHtpp(request)
-      promise.future
     }
 
-    private def callHtpp(request: HttpRequest)(implicit promise: Promise[Option[Persona]]): Unit ={
-      doHttp(request).onComplete{
-        case Success(persona) =>
-          Unmarshal(persona).to[Option[Persona]].onComplete{
-            result=>success(result,promise)
-          }
-        case t => failure(t.failed,promise)
-      }
-    }
+    private def callHtpp(request: HttpRequest):Future[Option[Persona]] =
+      for{
+        resultRequest<-doHttp(request)
+        persona<-if(resultRequest.status!=StatusCodes.NotFound)
+          for(opPersona<-Unmarshal(resultRequest).to[Option[Persona]]) yield opPersona
+                else
+          Future.successful(None)
+      }yield persona
+
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)

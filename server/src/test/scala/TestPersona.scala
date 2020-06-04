@@ -84,7 +84,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val selectAllPersona: Future[Option[List[Persona]]] = PersonaOperation.selectAll
     selectAllPersona map { selectAll => assert(selectAll.head.length == 11) }
   }
-  it should "return a int when update a person for id" in {
+  it should "return a None when update a person for id" in {
     val updatePersonaP: Future[Option[Int]] = PersonaOperation.update(updatePersona)
     updatePersonaP map {update => assert(update.isEmpty) }
   }

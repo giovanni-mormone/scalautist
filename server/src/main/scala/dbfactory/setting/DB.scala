@@ -3,6 +3,8 @@ package dbfactory.setting
 import slick.basic.DatabaseConfig
 import slick.dbio.{DBIOAction, NoStream}
 import slick.jdbc.JdbcProfile
+import slick.jdbc.meta.MBestRowIdentifierColumn.Scope.Session
+
 import scala.concurrent.Future
 
 /**
@@ -16,6 +18,9 @@ trait DBS{
    * It is instantiated lazily when this method is called for the first time, and must be closed after use.
    */
   protected val database = dbCo.db
+  def close() {
+    dbCo.db.close
+  }
 }
 
 /**
@@ -34,5 +39,6 @@ trait DB[C, T<: GenericTable[C]] extends DBS{
    * @return Future of type R, in this case represent a case class that is defined in [[caseclass.CaseClassDB]]
    *         for more details view [[slick.dbio.DBIOAction]]
    */
-  protected def run[R](a: DBIOAction[R, NoStream, Nothing]): Future[R] = database.run(a)
+  protected def run[R](a: DBIOAction[R, NoStream, Nothing]): Future[R] =database.run(a)
+
 }

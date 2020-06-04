@@ -1,6 +1,8 @@
 package dbfactory.setting
 import dbfactory.implicitOperation.Crud
+import dbfactory.setting.Table.ZonaTableQuery
 import slick.jdbc.SQLServerProfile.api._
+import slick.lifted.{FlatShapeLevel, Shape}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,7 +26,7 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
 
 }
 object GenericCRUD{
-  case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T] {
+  case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T]{
     override def selectAll: Future[Option[List[C]]] = super.run(tableDB().result).map(t => Option(t.toList))
     override def select(id: Int): Future[Option[C]] = super.run(queryById(id).result.headOption)
     override def insert(element: C): Future[Option[Int]]= super.run((tableDB() returning tableDB().map(_.id)) += element).map(t => Option(t))
@@ -32,6 +34,5 @@ object GenericCRUD{
     override def delete(id: Int): Future[Option[Int]] = super.run(queryById(id).delete).map(t=> Option(t))
     override def deleteAll(id: List[Int]): Future[Option[Int]] = super. run(queryByIdPlus(id).delete).map(t => Option(t))
     override def update(element: C): Future[Option[Int]] = super.run((tableDB() returning tableDB().map(_.id)).insertOrUpdate(element))
-  }
+    }
 }
-

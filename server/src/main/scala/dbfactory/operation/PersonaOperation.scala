@@ -1,17 +1,14 @@
 package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
+import caseclass.CaseClassDB.{Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Future
 import dbfactory.util.Helper._
-import promise.PromiseFactory
 
 /** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
@@ -71,7 +68,6 @@ object PersonaOperation extends PersonaOperation {
     filter =>  InstancePersona.operation().selectFilter(filter)
 
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
-
 
   override def filterByName(name: String): Future[Option[List[Persona]]] = {
     for {
