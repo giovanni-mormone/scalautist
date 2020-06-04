@@ -51,6 +51,10 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)
     futureTerminale map { terminale => assert(terminale.head.length==2)}
   }
+  it should "return None of terminal" in {
+    val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(20)
+    futureTerminale map { terminale => assert(terminale.isEmpty)}
+  }
   it should "return type contract with length 8" in {
     val futureContract:Future[Option[List[Contratto]]]=terminale.getAllContract
     futureContract map { contract => assert(contract.head.length==8)}

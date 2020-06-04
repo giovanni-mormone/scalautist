@@ -69,40 +69,34 @@ object PersonaOperation extends PersonaOperation {
 
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
 
-  override def filterByName(name: String): Future[Option[List[Persona]]] = {
-    for {
-      list <- selectPersone(x => x.nome === name).collect(collectCheck(_))
-    } yield list
-  }
+  override def filterByName(name: String): Future[Option[List[Persona]]] =
+    selectPersone(x => x.nome === name).collect(collectCheck(_))
 
-  override def filterBySurname(surname: String): Future[Option[List[Persona]]] = {
-    for {
-      list <- selectPersone(x => x.cognome === surname).collect(collectCheck(_))
-    } yield list
-  }
+  override def filterBySurname(surname: String): Future[Option[List[Persona]]] =
+    selectPersone(x => x.cognome === surname).collect(collectCheck(_))
 
   override def login(login: Login): Future[Option[Persona]] =
-    for {
-      loginUser <- InstancePersona.operation().
-        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password).collect{
+    InstancePersona.operation().
+        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
+      .collect{
         case Some(value) if value.nonEmpty=> convertTupleToPerson(Some(value.head))
         case Some(List()) => None
       }
-    }yield loginUser
 
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]=
-    for{
-      change <-  InstancePersona.operation().
+    InstancePersona.operation().
         execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
-    }yield change
 
   override def recoveryPassword(idUser: Int): Future[Option[Login]] =
-    for {
-      _ <- InstancePersona.operation().
-        execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
-    }yield Some(Login(EMPTY_STRING,createString.head))
+    InstancePersona.operation().
+      execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
+      .collect{collectCheck(_)}.collect {
+      case Some(_) => Some(Login(EMPTY_STRING,createString.head))
+      case None => None
+    }
 
   override def assumi(personaDaAssumere:Assumi): Future[Option[Login]] = {
+
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
       DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head)
         .flatMap(dispId => {

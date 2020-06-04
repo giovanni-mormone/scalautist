@@ -54,33 +54,19 @@ trait HumanResourceModel extends AbstractModel{
    */
   def getAllPersone: Future[Option[List[Persona]]]
 
+  /**
+   *  Assign an illness to an employee
+   * @param assenza case class that represent absence
+   * @return Future of type Int
+   */
+  def illnessPeriod(assenza: Assenza): Future[Option[Int]]
 
   /**
-   * Assign an illness to an employee
-   *
-   * @param idPersona
-   * Employee id
-   * @param startDate
-   * Date of start of illness period
-   * @param endDate
-   * Date of end of illness period
-   * @return
-   * Future of type Unit
+   *  Assign an illness to an employee
+   * @param assenza case class that represent absence
+   * @return Future of type Int
    */
-  def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]]
-
-  /**
-   * Assign a holiday period to an employee
-   * @param idPersona
-   * Employee id
-   * @param startDate
-   * Date of start of holiday period
-   * @param endDate
-   * Date of end of holiday period
-   * @return
-   * Future of type Unit
-   */
-  def holidays(idPersona: Int, startDate: Date, endDate: Date):Future[Option[Int]]
+  def holidays(assenza: Assenza):Future[Option[Int]]
 
   /**
    * Recover an employee's password
@@ -117,7 +103,7 @@ trait HumanResourceModel extends AbstractModel{
   def getAllShift:Future[Option[List[Turno]]]
 
   def salaryCalculation():Future[Option[List[Stipendio]]]
-
+  def getSalary(id:Id):Future[Option[List[Stipendio]]]
 }
 
 /**
@@ -144,15 +130,10 @@ object HumanResourceModel {
     private def callServer(request: HttpRequest) =
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Login]])
 
-    override def illnessPeriod(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
-      val absence = Assenza(idPersona, startDate, endDate, malattia = true)
-      createRequest(absence)
-    }
+    override def illnessPeriod(assenza: Assenza): Future[Option[Int]] = createRequest(assenza)
 
-    override def holidays(idPersona: Int, startDate: Date, endDate: Date): Future[Option[Int]] = {
-      val absence = Assenza(idPersona, startDate, endDate, malattia = false)
-      createRequest(absence)
-    }
+    override def holidays(assenza: Assenza): Future[Option[Int]] = createRequest(assenza)
+
 
     override def fires(ids: Id): Future[Option[Int]] = {
       val request = Post(getURI("deletepersona"), ids)
@@ -174,7 +155,7 @@ object HumanResourceModel {
 
     override def getTerminalByZone(id: Id): Future[Option[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getterminalebyzona"), id)
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest.head).to[Option[List[Terminale]]])
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[List[Terminale]]])
     }
 
     override def getAllZone: Future[Option[List[Zona]]] = {
@@ -199,9 +180,15 @@ object HumanResourceModel {
 
     override def salaryCalculation():Future[Option[List[Stipendio]]] = {
       val request = Post(getURI("calcolostipendio"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
+      callServerSalary(request)
     }
 
+    override def getSalary(id: Id): Future[Option[List[Stipendio]]] = {
+      val request = Post(getURI("getstipendio"))
+      callServerSalary(request)
+    }
+    private def callServerSalary(request: HttpRequest)=
+        callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
   }
 
 }

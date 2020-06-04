@@ -8,7 +8,7 @@ import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
-import view.fxview.component.HumanResources.subcomponent.RecruitBox
+import view.fxview.component.HumanResources.subcomponent.{IllBoxParent, RecruitBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -17,7 +17,7 @@ import view.fxview.component.{AbstractComponent, Component}
  * It is the interface of the methods used by views to make requests to controller
  *
  */
-trait HRViewParent {
+trait HRViewParent  extends IllBoxParent {
 
   /**
    * If recruit button is clicked the controller is asked to save the instance of persona

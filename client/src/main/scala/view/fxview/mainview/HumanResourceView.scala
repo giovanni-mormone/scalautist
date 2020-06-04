@@ -4,14 +4,15 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Assenza, Contratto, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
-import view.BaseView
-import view.fxview.AbstractFXDialogView
+import view.{BaseView, DialogView}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
+import view.fxview.component.HumanResources.subcomponent.IllBoxParent
 import view.fxview.component.HumanResources.{HRHome, HRViewParent}
 
 /**
@@ -21,7 +22,7 @@ import view.fxview.component.HumanResources.{HRHome, HRViewParent}
  * It extends [[view.BaseView]]
  *
  */
-trait HumanResourceView extends BaseView {
+trait HumanResourceView extends DialogView {
 
   /**
    * Show child's recruit view
@@ -70,6 +71,7 @@ object HumanResourceView {
       hrHome = HRHome()
       hrHome.setParent(this)
       pane.getChildren.add(hrHome.pane)
+      FXHelperFactory.modalWithMessage(myStage,"Strunz").show()
     }
 
     override def recruitClicked(persona: Assumi): Unit = myController.recruit(persona)
@@ -80,11 +82,14 @@ object HumanResourceView {
     override def drawRecruitPanel: Unit =
       myController.getRecruitData
 
-    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
+    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit = {
       hrHome.drawRecruit(zones, contracts, shifts)
+    }
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
       hrHome.drawRecruitTerminals(terminals)
+
+    override def saveAbsence(absence: Assenza): Unit = myController.saveAbsence(absence)
   }
 }
 /*override def drawRecruit(): Unit = {
