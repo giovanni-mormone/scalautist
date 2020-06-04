@@ -2,7 +2,7 @@ package controller
 
 import caseclass.CaseClassDB.Persona
 import model.entity.PersonaModel
-import passwordutilities.PasswordHelper
+import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.LoginView
 
 import scala.util.{Failure, Success}
