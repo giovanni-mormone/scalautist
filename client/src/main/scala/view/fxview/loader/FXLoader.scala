@@ -58,7 +58,6 @@ object FXLoader {
   def loadComponent(controller: Component[_], layoutPath: String): Pane = {
     val loader = new FXMLLoader(getClass.getResource(COMPONENT_PATH + layoutPath + EXTENSION))
     val bundle = ResourceBundle.getBundle(COMPONENT_BUNDLE_PATH + layoutPath.replace("/",".") ,new Locale("it","IT"))
-    println(System.getProperty("user.dir"))
     loader.setController(controller)
     loader.setResources(bundle)
     loader.load()
