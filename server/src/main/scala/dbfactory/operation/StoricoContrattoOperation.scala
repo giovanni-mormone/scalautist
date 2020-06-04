@@ -3,26 +3,59 @@ package dbfactory.operation
 import caseclass.CaseClassDB.StoricoContratto
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceStoricoContratto
 import dbfactory.implicitOperation.OperationCrud
+import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
+import promise.PromiseFactory
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
+
+/**
+ * @author Giovanni Mormone
+ * Trait which allows to perform operations on the StoricoContratto table.
+ *
+ */
 trait StoricoContrattoOperation extends OperationCrud[StoricoContratto]{
+  /**
+   * Deletes all StoricoContratto associate to a specific Persona.
+   *
+   * @param idPerson
+   *                 The id of the Persona's StoricoContratto group to delete.
+   * @return
+   *         A Future Option containing the number of deleted StoriciContratti or None
+   *         if no storico was deleted.
+   */
   def deleteAllStoricoForPerson(idPerson: Int): Future[Option[Int]]
+
+  /**
+   * Deletes all StoricoContratto associate to a List of Persone.
+   *
+   * @param idList
+   *               The ids of the StoriciContratti's Personas to delete
+   * @return
+   *         A Future Option containing the number of deleted StoriciContratti or None
+   *          if no storico was deleted.
+   */
+  def deleteAllStoricoForPersonList(idList: List[Int]): Future[Option[Int]]
+
 }
 object StoricoContrattoOperation extends StoricoContrattoOperation {
-  override def deleteAllStoricoForPerson(idPerson: Int): Future[Option[Int]] = {
-    val promise:  Promise[Option[Int]] = Promise[Option[Int]]
-    InstanceStoricoContratto.operation().selectFilter(f => f.personaId === idPerson).onComplete{
-      case Success(value) if value.nonEmpty =>
-        StoricoContrattoOperation.deleteAll(value.head.flatMap(storico => storico.idStoricoContratto)).onComplete{
-          case Success(value) => promise.success(value)
-          case Failure(exception) => promise.failure(exception)
-        }
-      case Failure(exception) => promise.failure(exception)
-    }
-    promise.future
+
+  override def deleteAllStoricoForPerson(idPerson: Int): Future[Option[Int]] ={
+   selectStorico(f => f.personaId === idPerson).flatMap(checkStorici)
   }
 
+  override def deleteAllStoricoForPersonList(idList: List[Int]): Future[Option[Int]] = {
+    selectStorico(f => f.personaId.inSet(idList)).flatMap(checkStorici)
+  }
+
+  private val selectStorico: (StoricoContrattoTableRep => Rep[Boolean]) => Future[Option[List[StoricoContratto]]] =
+    filter => InstanceStoricoContratto.operation().selectFilter(filter)
+
+
+  private def checkStorici(storici: Option[List[StoricoContratto]]) : Future[Option[Int]] = storici match{
+    case Some(List()) => Future.successful(None)
+    case _ => StoricoContrattoOperation.deleteAll(storici.head.flatMap(storico => storico.idStoricoContratto))
+  }
 }

@@ -1,18 +1,16 @@
 package dbfactory.operation
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
+import caseclass.CaseClassDB.{Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{PersonaTableQuery, TerminaleTableQuery}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 import dbfactory.util.Helper._
 
-/** @author Fabian Aspée Encina
+/** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
  *  this trait have methods that represent monadic join
  */
@@ -30,11 +28,6 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @return Option of List of Persona with all fields full, only password is empty
    */
   def filterBySurname(surname: String): Future[Option[List[Persona]]]
-
-  /**
-   *
-   */
-  def monadicInnerJoin():Unit
 
   /**
    * Method which allow login a user in the system
@@ -69,28 +62,24 @@ trait PersonaOperation extends OperationCrud[Persona]{
   def assumi(personaDaAssumere: Assumi): Future[Option[Login]]
 }
 object PersonaOperation extends PersonaOperation {
-
   private val generator = scala.util.Random.alphanumeric
 
-  override def filterByName(name: String): Future[Option[List[Persona]]] = {
-    val promiseFilterByName = Promise[Option[List[Persona]]]
-    execFilter(promiseFilterByName,x => x.nome===name)
-    promiseFilterByName.future
-  }
-  override def filterBySurname(surname: String): Future[Option[List[Persona]]] = {
-    val promiseFilterBySurname = Promise[Option[List[Persona]]]
-    execFilter(promiseFilterBySurname,x => x.cognome===surname)
-    promiseFilterBySurname.future
-  }
-  private def execFilter(promiseFilterBySurname: Promise[Option[List[Persona]]],f:PersonaTableRep=>Rep[Boolean]): Future[Unit] = Future {
-    InstancePersona.operation().selectFilter(f) onComplete {
-      case Success(value) if value.nonEmpty=>promiseFilterBySurname.success(value)
-      case Success(_) =>promiseFilterBySurname.success(None)
-      case Failure(_)=>promiseFilterBySurname.success(None)
-    }
-  }
+  private val selectPersone: (PersonaTableRep => Rep[Boolean]) => Future[Option[List[Persona]]] =
+    filter =>  InstancePersona.operation().selectFilter(filter)
 
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
+
+  override def filterByName(name: String): Future[Option[List[Persona]]] = {
+    for {
+      list <- selectPersone(x => x.nome === name).collect(collectCheck(_))
+    } yield list
+  }
+
+  override def filterBySurname(surname: String): Future[Option[List[Persona]]] = {
+    for {
+      list <- selectPersone(x => x.cognome === surname).collect(collectCheck(_))
+    } yield list
+  }
 
   override def login(login: Login): Future[Option[Persona]] =
     for {
@@ -110,69 +99,43 @@ object PersonaOperation extends PersonaOperation {
   override def recoveryPassword(idUser: Int): Future[Option[Login]] =
     for {
       _ <- InstancePersona.operation().
-      execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
-      }yield Some(Login(EMPTY_STRING,createString.head))
+        execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
+    }yield Some(Login(EMPTY_STRING,createString.head))
 
-
-  override def monadicInnerJoin(): Unit = {
-    val monadicInnerJoin = for {
-      c <- PersonaTableQuery.tableQuery()
-      s <- TerminaleTableQuery.tableQuery()
-      if c.terminaleId===s.id
-    } yield (c.nome,s.nomeTerminale)
-
-    InstancePersona.operation().execJoin(monadicInnerJoin)  onComplete(t=>{
-      println(t)
-    })
-  } 
-
-  override def assumi(personaDaAssumere: Assumi): Future[Option[Login]] = {
-    implicit val promiseLogin: Promise[Option[Login]] = Promise[Option[Login]]
+  override def assumi(personaDaAssumere:Assumi): Future[Option[Login]] = {
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
-      DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head).onComplete{
-        case Success(disponibilita) =>
-          assumiPriv(constructPersona(personaDaAssumere.persona,disponibilita),personaDaAssumere.storicoContratto)
-        case Failure(exception) => promiseLogin.failure(exception)
-      }
-    } else {
-      assumiPriv(constructPersona(personaDaAssumere.persona,None),personaDaAssumere.storicoContratto)
-    }
-    promiseLogin.future
-  }
-
-  override def delete(element: Int): Future[Option[Int]] = {
-    val promise:Promise[Option[Int]] = Promise[Option[Int]]
-    removeStorici(element,promise)
-    promise.future
-  }
-
-  private def removeStorici(idPersona:Int,promise: Promise[Option[Int]]):Unit = {
-    StoricoContrattoOperation.deleteAllStoricoForPerson(idPersona).onComplete{
-      case Success(_) => super.delete(idPersona).onComplete{
-        case Success(value) => promise.success(value)
-        case Failure(exception) => promise.failure(exception)
-      }
-      case Failure(exception) => promise.failure(exception)
-    }
-  }
-
-  private def assumiPriv(persona:Persona,contratto:StoricoContratto)(implicit promise: Promise[Option[Login]]):Unit={
-    insert(persona).onComplete{
-      case Success(personaId) =>
-        val contrattoToIns:StoricoContratto = StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
-        StoricoContrattoOperation.insert(contrattoToIns).onComplete{
-          case Success(_) => promise.success(Option(Login(persona.userName,persona.password.head)))
-          case Failure(exception) =>
-            delete(personaId.head)
-            promise.failure(exception)
+      DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head)
+        .flatMap(dispId => {
+          val persona = constructPersona(personaDaAssumere.persona,dispId)
+          insertPersona(persona,personaDaAssumere.storicoContratto)
         }
-      case Failure(exception) => promise.failure(exception)
+      )
+    } else {
+      val persona = constructPersona(personaDaAssumere.persona,None)
+      insertPersona(persona,personaDaAssumere.storicoContratto)
     }
+  }
+
+  override def delete(element:Int): Future[Option[Int]] = {
+    StoricoContrattoOperation.deleteAllStoricoForPerson(element).flatMap(_ => super.delete(element).collect(collectCheck(_)))
+  }
+
+  override def deleteAll(element: List[Int]): Future[Option[Int]] = {
+    StoricoContrattoOperation.deleteAllStoricoForPersonList(element).flatMap(_ => super.deleteAll(element).collect(collectCheck(_)))
+  }
+
+  private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Login]] = {
+    insert(persona)
+      .flatMap(idPersona => StoricoContrattoOperation.insert(constructContratto(contratto,idPersona))).collect{
+      case _ => Some(Login(persona.userName,persona.password.head))
+    }
+  }
+
+  private def constructContratto(contratto:StoricoContratto, personaId:Option[Int]): StoricoContratto = {
+    StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
   }
 
   private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
     Persona(origin.nome,origin.cognome,origin.numTelefono,
       createString,origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
-
-
 }
