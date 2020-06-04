@@ -1,12 +1,11 @@
 package model.utils
 
 
-import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.HttpRequest
+import scala.concurrent.ExecutionContext.Implicits.global
 import caseclass.CaseClassDB.{Contratto, Login, Persona, Stipendio, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Id
 
-import scala.concurrent.Promise
+import scala.concurrent.{Future, Promise}
 
 /**
  * @author Francesco Cassano
@@ -22,5 +21,4 @@ object ModelUtils {
   val list: Promise[Option[List[Persona]]] = Promise[Option[List[Persona]]]
   implicit val promise: Promise[Option[Login]] = Promise[Option[Login]]
   implicit def id(id:Int):Id = Id(id)
-
 }

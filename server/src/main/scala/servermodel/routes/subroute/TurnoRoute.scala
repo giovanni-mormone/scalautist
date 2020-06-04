@@ -57,7 +57,7 @@ object TurnoRoute {
     post {
       entity(as[Id]) { turno =>
         onComplete(TurnoOperation.delete(turno.id)) {
-          case Success(t)  =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -67,7 +67,7 @@ object TurnoRoute {
     post {
       entity(as[List[Id]]) { turno =>
         onComplete(TurnoOperation.deleteAll(turno.map(_.id))) {
-          case Success(t)  =>  complete(StatusCodes.Gone)
+          case Success(Some(_)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }

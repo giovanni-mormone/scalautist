@@ -15,12 +15,13 @@ abstract class AbstractModel extends Model{
   override def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit =function match {
     case Success(Some(List())) => promise.success(None)
     case Success(Some(value)) => promise.success(Some(value))
+    case Success(_) => promise.success(None)
     case t => failure(t.failed,promise)
   }
 
   @nowarn
   override def failure[A](function:Try[Throwable], promise:Promise[Option[A]]): Unit = function match {
-    case Failure(exception) => promise.failure(exception)
+    case Failure(_) => promise.success(None)
   }
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)
