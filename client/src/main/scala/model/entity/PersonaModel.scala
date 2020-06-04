@@ -3,9 +3,10 @@ import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -57,26 +58,19 @@ object PersonaModel {
 
   private class PersonaModelHttp extends PersonaModel{
 
+
     override def login(user: String, password: String): Future[Option[Persona]] = {
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-      callHtpp(request)
+      tranformMarshal(request)
     }
-
     override def getPersone(id: Id): Future[Option[Persona]] = {
       val request = Post(getURI("getpersona"), id)
-      callHtpp(request)
+      tranformMarshal(request)
     }
-
-    private def callHtpp(request: HttpRequest):Future[Option[Persona]] =
-      for{
-        resultRequest<-doHttp(request)
-        persona<-if(resultRequest.status!=StatusCodes.NotFound)
-          for(opPersona<-Unmarshal(resultRequest).to[Option[Persona]]) yield opPersona
-                else
-          Future.successful(None)
-      }yield persona
-
+    private def tranformMarshal(request: HttpRequest):Future[Option[Persona]]={
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Persona]])
+    }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
