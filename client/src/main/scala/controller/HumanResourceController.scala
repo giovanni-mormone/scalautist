@@ -104,7 +104,9 @@ object HumanResourceController {
    */
   private class HumanResourceControllerImpl extends HumanResourceController {
 
-    override def recruit(persona: Assumi): Unit = model.recruit(persona)
+    override def recruit(persona: Assumi): Unit =
+      println(persona)
+      //model.recruit(persona)
 
     override def fires(ids: Set[Int]): Unit =
       if(ids.size > 1)

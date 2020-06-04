@@ -21,12 +21,17 @@ object PasswordHelper {
 
 }
 
+trait Checker{
+
+  def checkRegex: Regex
+}
+
 /**
  * @author Francesco Cassano
  *
  * Number utilities object, such as regex to check passwords or functions to hash the password.
  */
-object NumberChecker {
+object NumberChecker extends Checker {
   private val regex: Regex = "^\\d$".r
 
   /**
@@ -35,7 +40,7 @@ object NumberChecker {
    * @return
    *        The regex needed to validate a number.
    */
-  def numberRegex: Regex = regex
+  override def checkRegex: Regex = regex
 }
 
 /**
@@ -43,7 +48,7 @@ object NumberChecker {
  *
  * Name or surname utilities object, such as regex to check passwords or functions to hash the password.
  */
-object NameChecker {
+object NameChecker extends Checker {
   private val regex: Regex = "^[A-Za-z ']$".r
 
   /**
@@ -52,7 +57,7 @@ object NameChecker {
    * @return
    *        The regex needed to validate a name.
    */
-  def nameRegex: Regex = regex
+  override def checkRegex: Regex = regex
 }
 
 

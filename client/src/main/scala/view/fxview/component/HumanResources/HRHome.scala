@@ -3,59 +3,21 @@ package view.fxview.component.HumanResources
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.Assumi
+import caseclass.CaseClassDB._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, RecruitBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
  * @author Francesco Cassano
  *
- * It is the interface of the methods used by views to make requests to controller
- *
- */
-trait HRViewParent {
-
-  /**
-   * If recruit button is clicked the controller is asked to save the instance of persona
-   *
-   * @param persona
-   *                instance of assumi. It's the employee to save
-   */
-  def recruitClicked(persona: Assumi): Unit
-
-  /**
-   * If the Zona was choosen the controller is asked the list of terminale
-   *
-   * @param zona
-   *             instance of terminale's Zona to return
-   */
-  def loadRecruitTerminals(zona: Zona): Unit
-
-  /**
-   * It notify parent that recruitView must be shown
-   */
-  def drawRecruitPanel: Unit
-
-  /**
-   * It notify parent that an employees View must be shown
-   *
-   */
-  def drawEmployeePanel(viewToDraw: String): Unit
-
-}
-
-/**
- * @author Francesco Cassano
- *
  * Interface allows to communicate with the internal view. It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.HRViewParent]]
+ * of [[view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent]]
  */
-trait HRHome extends Component[HRViewParent]{
+trait HRHome extends Component[HRHomeParent]{
 
   /**
    * Initialize Recruit view before show
@@ -99,7 +61,8 @@ object HRHome{
   /**
    * HRHome Fx implementation. It shows Humane resource home view
    */
-  private class HomeFX() extends AbstractComponent[HRViewParent] ("humanresources/BaseHumanResource") with HRHome {
+  private class HomeFX() extends AbstractComponent[HRHomeParent] ("humanresources/BaseHumanResource")
+    with HRHome {
 
     @FXML
     var baseHR: BorderPane = _

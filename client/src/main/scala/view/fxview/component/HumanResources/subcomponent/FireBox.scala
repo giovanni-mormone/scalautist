@@ -3,23 +3,23 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 import java.util.stream.Collectors
-import caseclass.CaseClassDB.{Persona, Terminale}
-import javafx.beans.property.SimpleStringProperty
-import javafx.collections.{FXCollections, ObservableList}
+
+import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.{Button, CheckBox, TableColumn, TableView}
+import javafx.scene.control.{Button, TableColumn, TableView}
+import view.fxview.component.HumanResources.subcomponent.parent.FiresParent
 import view.fxview.component.{AbstractComponent, Component}
-import view.fxview.component.HumanResources.HRViewParent
+
 import scala.language.postfixOps
 
 /**
  * @author Francesco Cassano
  *
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.HRViewParent]]
+ * of [[view.fxview.component.HumanResources.subcomponent.parent.FiresParent]]
  */
-trait FireBox extends Component[HRViewParent]{
+trait FireBox extends Component[FiresParent]{
 
 }
 
@@ -38,7 +38,7 @@ object FireBox {
    *                  list of employees in db
    */
   private class FireBoxFX(employees: List[Persona])
-    extends AbstractComponent[HRViewParent]("humanresources/subcomponent/FiresBox") with FireBox {
+    extends AbstractComponent[FiresParent]("humanresources/subcomponent/FiresBox") with FireBox {
 
     @FXML
     var fireButton: Button = _
@@ -55,15 +55,12 @@ object FireBox {
     }
 
     private def elementSelected(): Unit = {
-      /*val indici: LazyList[Int] = employeeTable.getItems.filtered(person => person.isSelected)
-        .stream().map[Int](person => person.getId.toInt)*/
-      val t = List()
 
       println(employeeTable.getItems.filtered(person => person.isSelected)
         .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int]))
     }
 
-    private def insertIntoTable(guy: Persona) = {
+    private def insertIntoTable(guy: Persona): Unit = {
       employeeTable.getItems.add(new PersonaTable(guy.matricola.head.toString, guy.nome, guy.cognome))
     }
 

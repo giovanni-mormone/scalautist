@@ -3,17 +3,15 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
-import javafx.application.Platform
-import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import view.BaseView
 import view.fxview.AbstractFXDialogView
+import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.EmployeeView
-import view.fxview.component.HumanResources.{HRHome, HRViewParent}
+import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 
 /**
  * @author Francesco Cassano
@@ -51,7 +49,7 @@ trait HumanResourceView extends BaseView {
  */
 object HumanResourceView {
 
-  def apply(stage: Stage): HumanResourceView = new HumanResourceViewFX(stage)
+  def apply(stage: Stage): HumanResourceView = new HumanResourceHomeFX(stage)
 
   /**
    * HumanResourceView FX implementation
@@ -59,8 +57,8 @@ object HumanResourceView {
    * @param stage
    *              Stage that load view
    */
-  private class HumanResourceViewFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with HumanResourceView with HRViewParent {
+  private class HumanResourceHomeFX(stage: Stage) extends AbstractFXDialogView(stage)
+    with HumanResourceView with HRHomeParent {
 
     private var myController: HumanResourceController = _
     private var hrHome: HRHome = _
@@ -83,6 +81,9 @@ object HumanResourceView {
 
     override def recruitClicked(persona: Assumi): Unit =
       myController.recruit(persona)
+
+    override def fireClicked(employees: Seq[Int]): Unit = println("ciao")
+      //myController.fires()
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
