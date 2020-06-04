@@ -16,7 +16,7 @@ import view.fxview.loader.FXLoader
 trait Component[A] {
 
   /**
-   *  Gets the pane of the component.
+   * Gets the pane of the component.
    * @return
    *        The pane where the component is contained, loaded from fxml.
    */
@@ -43,7 +43,7 @@ trait Component[A] {
 /**
  * @author Giovanni Mormone.
  *
- *Abstract implementation of the [[view.fxview.component.Component]] trait, provides the basic functionalities of the
+ * Abstract implementation of the [[view.fxview.component.Component]] trait, provides the basic functionalities of the
  * component, such as loading a fxml file and set an fx controller
  *
  * @param path
@@ -58,7 +58,9 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
    */
   protected var parent:A = _
 
-  val pane:Pane = FXLoader.loadComponent(this,path)
+  val pane:Pane = {
+    FXLoader.loadComponent(this,path)
+  }
 
   override def setParent(parent: A): Unit =
     this.parent = parent
@@ -69,3 +71,4 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
   override def enable(): Unit =
     pane.setDisable(false)
 }
+
