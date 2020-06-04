@@ -56,7 +56,7 @@ object TerminaleRoute  {
     post {
       entity(as[Id]) { terminale =>
         onComplete(TerminaleOperation.delete(terminale.id)) {
-          case Success(t)  =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -66,7 +66,7 @@ object TerminaleRoute  {
     post {
       entity(as[List[Id]]) { terminale =>
         onComplete(TerminaleOperation.deleteAll(terminale.map(_.id))) {
-          case Success(t)  =>  complete(StatusCodes.Gone)
+          case Success(Some(_)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }

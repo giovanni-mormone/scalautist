@@ -3,6 +3,7 @@ package dbfactory.operation
 import caseclass.CaseClassDB.Disponibilita
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceDisponibilita
 import dbfactory.implicitOperation.OperationCrud
+import promise.PromiseFactory
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,15 +21,10 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
 
 object DisponibilitaOperation extends DisponibilitaOperation{
 
-  override def insert(element: Disponibilita): Future[Option[Int]] = {
-    val promiseInsertDisp = Promise[Option[Int]]
-    InstanceDisponibilita.operation()
-      .execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
-      .onComplete {
-        case Success(value) if value.nonEmpty => promiseInsertDisp.success(Some(value.head.head))
-        case Success(_) => super.insert(element)
-        case Failure(exception) => promiseInsertDisp.failure(exception)
-      }
-    promiseInsertDisp.future
+  override def insert(element:Disponibilita): Future[Option[Int]] = {
+    for{
+      disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
+      result <- if (disponibilita.head.isEmpty) for( newDisp <- super.insert(element)) yield newDisp else Future.successful(disponibilita.head.headOption)
+    } yield result
   }
 }

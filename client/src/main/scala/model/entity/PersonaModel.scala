@@ -3,7 +3,7 @@ import model.AbstractModel
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
 
@@ -43,7 +43,7 @@ trait PersonaModel extends AbstractModel {
    * future
    */
   def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
-  def getPersone(id:Int): Future[Option[Persona]]
+  def getPersone(id:Id): Future[Option[Persona]]
 }
 
 /**
@@ -58,30 +58,18 @@ object PersonaModel {
 
   private class PersonaModelHttp extends PersonaModel{
 
+
     override def login(user: String, password: String): Future[Option[Persona]] = {
-      implicit val person: Promise[Option[Persona]] = Promise[Option[Persona]]
       val credential = Login(user, password)
       val request = Post(getURI("loginpersona"), credential)
-      callHtpp(request)
-      person.future
+      tranformMarshal(request)
     }
-
-    override def getPersone(id: Int): Future[Option[Persona]] = {
-      implicit val promise: Promise[Option[Persona]] = Promise[Option[Persona]]
-      val idPersona = Id(id)
-      val request = Post(getURI("getpersona"), idPersona)
-      callHtpp(request)
-      promise.future
+    override def getPersone(id: Id): Future[Option[Persona]] = {
+      val request = Post(getURI("getpersona"), id)
+      tranformMarshal(request)
     }
-
-    private def callHtpp(request: HttpRequest)(implicit promise: Promise[Option[Persona]]): Unit ={
-      doHttp(request).onComplete{
-        case Success(persona) =>
-          Unmarshal(persona).to[Option[Persona]].onComplete{
-            result=>success(result,promise)
-          }
-        case t => failure(t.failed,promise)
-      }
+    private def tranformMarshal(request: HttpRequest):Future[Option[Persona]]={
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Persona]])
     }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
       val result = Promise[Int]

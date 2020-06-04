@@ -549,7 +549,7 @@ ALTER TABLE [dbo].[PresenzaSets]
         FOREIGN KEY ([Persone_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_PresenzaPersone'
