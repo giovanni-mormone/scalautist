@@ -92,39 +92,27 @@ object PersonaOperation extends PersonaOperation {
 
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
 
-  override def login(login: Login): Future[Option[Persona]] = {
-    val promiseLogin = Promise[Option[Persona]]
-    InstancePersona.operation().
-      execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
-      .onComplete{
-      case Success(Some(List())) => promiseLogin.success(None)
-      case Success(value) =>promiseLogin.success(convertTupleToPerson(Some(value.head.head)))
-      case Failure(exception) => promiseLogin.failure(exception)
-    }
-    promiseLogin.future
-  }
-  override def changePassword(changePassword: ChangePassword):Future[Option[Int]]={
-    val changePasswordP = Promise[Option[Int]]
-    InstancePersona.operation().
-      execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
-      .onComplete{
-        case Success(value) => changePasswordP.success(value)
-        case Failure(exception) => changePasswordP.failure(exception)
+  override def login(login: Login): Future[Option[Persona]] =
+    for {
+      loginUser <- InstancePersona.operation().
+        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password).collect{
+        case Some(value) if value.nonEmpty=> convertTupleToPerson(Some(value.head))
+        case Some(List()) => None
       }
-    changePasswordP.future
-  }
-  override def recoveryPassword(idUser: Int): Future[Option[Login]] = {
-    val recoveryPasswordP = Promise[Option[Login]]
-    val newPassword = createString
-    InstancePersona.operation().
-      execQueryUpdate(f =>(f.password,f.isNew), x => x.id===idUser,(newPassword.head,true))
-      .onComplete{
-        case Success(Some(1))  => recoveryPasswordP.success(Some(Login(EMPTY_STRING,newPassword.head)))
-        case Success(_)  => recoveryPasswordP.success(None)
-        case Failure(exception) => recoveryPasswordP.failure(exception)
-      }
-    recoveryPasswordP.future
-  }
+    }yield loginUser
+
+  override def changePassword(changePassword: ChangePassword):Future[Option[Int]]=
+    for{
+      change <-  InstancePersona.operation().
+        execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
+    }yield change
+
+  override def recoveryPassword(idUser: Int): Future[Option[Login]] =
+    for {
+      _ <- InstancePersona.operation().
+      execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
+      }yield Some(Login(EMPTY_STRING,createString.head))
+
 
   override def monadicInnerJoin(): Unit = {
     val monadicInnerJoin = for {

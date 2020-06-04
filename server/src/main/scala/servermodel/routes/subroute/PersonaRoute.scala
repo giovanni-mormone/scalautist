@@ -59,7 +59,7 @@ object PersonaRoute{
     post {
       entity(as[List[Id]]) { order =>
         onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
-          case Success(Some(1)) =>  complete(StatusCodes.Gone)
+          case Success(Some(_)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -80,7 +80,7 @@ object PersonaRoute{
     post {
       entity(as[Login]) { login =>
         onComplete(PersonaOperation.login(login)) {
-          case Success(Some(t))  =>  complete((StatusCodes.Created,t))
+          case Success(Some(t))  =>  complete((StatusCodes.Found,t))
           case t => anotherSuccessAndFailure(t)
         }
       }

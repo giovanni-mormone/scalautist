@@ -7,17 +7,20 @@ import caseclass.CaseClassHttpMessage.Assumi
 import model.utils.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import model.entity.HumanResourceModel
+import model.entity.{HumanResourceModel, PersonaModel}
 import utils.ClientAkkaHttp
 
 import scala.concurrent.Future
 
 class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
   var terminale:HumanResourceModel=_
+  var persona:PersonaModel=_
   protected var insertPersona: Assumi = _
   val zona:Zona = Zona("Cesena",Some(1))
+  val personaC: Persona =Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,None,Some(1))
   override def beforeEach(): Unit = {
     terminale = HumanResourceModel()
+    persona = PersonaModel()
     //val persona:Persona = Persona("Conducente","Maestro","91485236",Some(""),3,isNew = true,"tutu2",Some(3),Some(1),Some(6))
 
     val daAssumere:Persona = Persona("JuanitoS","PerezS","569918598",Some(""),3,isNew = true,"")
@@ -31,9 +34,18 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureRecruit:Future[Option[Login]]=terminale.recruit(insertPersona)
     futureRecruit map { recruit => assert(recruit.isDefined)}
   }
+  it should "return  a person" in {
+    val futureSecondLogin: Future[Option[Persona]] = persona.login("admin","admin")
+    futureSecondLogin map { login => assert(login.contains(personaC)) }
+  }
+  it should "eventually return None whit login error" in {
+    val futureLogin: Future[Option[Persona]] = persona.login("persona","prsona")
+    futureLogin map { login => assert(login.isEmpty) }
+  }
   it should "return ok when delete person" in {
-    val futureDelete:Future[Option[Int]]=terminale.fires(6)
-    futureDelete map { recruit => assert(recruit==())}
+    val futureDelete:Future[Option[Int]]=terminale.fires(6) 
+    futureDelete map { recruit => assert(recruit.contains(410))}
+
   }
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)

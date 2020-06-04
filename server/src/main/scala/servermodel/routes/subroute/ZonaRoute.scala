@@ -45,7 +45,7 @@ object ZonaRoute {
     post {
       entity(as[Id]) { zona =>
         onComplete(ZonaOperation.delete(zona.id)) {
-          case Success(t)  =>  complete(StatusCodes.Gone)
+          case Success(Some(1)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
@@ -55,7 +55,7 @@ object ZonaRoute {
     post {
       entity(as[List[Id]]) { zona =>
         onComplete(ZonaOperation.deleteAll(zona.map(_.id))) {
-          case Success(t) =>  complete(StatusCodes.Gone)
+          case Success(Some(_)) =>  complete(StatusCodes.Gone)
           case t => anotherSuccessAndFailure(t)
         }
       }
