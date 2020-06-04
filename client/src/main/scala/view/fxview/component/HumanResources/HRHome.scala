@@ -33,7 +33,7 @@ trait HRViewParent {
    * @param zona
    *             instance of terminale's Zona to return
    */
-  def loadTerminals(zona: Zona): Unit
+  def loadRecruitTerminals(zona: Zona): Unit
 
   /**
    * It notify parent that recruitView must be shown

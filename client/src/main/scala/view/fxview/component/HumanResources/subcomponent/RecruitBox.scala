@@ -127,7 +127,7 @@ object RecruitBox{
       })
 
       zones.setOnAction(_ => {
-        parent.loadTerminals(getIdZone)
+        parent.loadRecruitTerminals(getIdZone)
         ableSave
       })
 
@@ -144,9 +144,17 @@ object RecruitBox{
         ableSave
       })
 
-      setDaysAction(day1, day2)
+      day1.setOnAction(_ => {
+        if (getComboSelected(day1).equals(getComboSelected(day2)))
+          day1.getSelectionModel.clearSelection
+        ableSave
+      })
 
-      setDaysAction(day2, day1)
+      day2.setOnAction(_ => {
+        if (getComboSelected(day2).equals(getComboSelected(day1)))
+          day2.getSelectionModel.clearSelection
+        ableSave
+      })
 
       shift1.setOnAction(_ => {
         val itemSelected: Int = getComboSelectedIndex(shift1)
@@ -174,15 +182,7 @@ object RecruitBox{
         }
           //println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " + tel.getText() + " " + getComboSelectedIndex(role) + 1)
         else
-          println("holy shit man!! You can't fill a simple form? Are you an asshole?")
-      })
-    }
-
-    private def setDaysAction(component1: ComboBox[String], component2: ComboBox[String]): Unit = {
-      component1.setOnAction(_ => {
-        if (getComboSelected(component1).equals(getComboSelected(component2)))
-          component1.getSelectionModel.clearSelection
-        ableSave
+          println("holy shit man!! You can't fill a simple form? Are you an asshole?") //TODO
       })
     }
 

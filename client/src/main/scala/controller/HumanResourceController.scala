@@ -2,11 +2,14 @@ package controller
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Contratto, Persona, Turno, Zona}
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Contratto, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
 import model.utils.ModelUtils.id
+
+import scala.concurrent.Future
 
 /**
  * @author Francesco Cassano
@@ -19,7 +22,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * Recruit saves a new employee on the db
    *
    * @param persona
-   *                instance of the employee to save. It's [[Persona]] instance //todo
+   *                instance of the employee to save. It's [[caseclass.CaseClassHttpMessage.Assumi]] instance //todo
    */
   def recruit(persona: Assumi): Unit
 
@@ -67,7 +70,19 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
 
-  def getData: (List[Zona], List[Contratto], List[Turno])
+  /**
+   * getData method recovery all data that are requied to recruit employee
+   *
+   */
+  def getRecruitData: Unit
+
+  /**
+   * Return all terminals in a zone
+   *
+   * @param zona
+   *             The zone of interest
+   */
+  def getTerminals(zona: Zona): Unit
 
 }
 
@@ -107,16 +122,33 @@ object HumanResourceController {
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
 
-    def getZone = model.getAllZone
+    def getZone: Future[Option[List[Zona]]] = model.getAllZone
 
-    def getTurni = model.getAllShift
+    def getTurni: Future[Option[List[Turno]]] = model.getAllShift
 
-    def getContratti = model.getAllContract
+    def getContratti: Future[Option[List[Contratto]]] = model.getAllContract
 
-    override def getData: (List[Zona], List[Contratto], List[Turno]) = {
-      getTurni
-      getContratti
-      getZone
+    override def getRecruitData: Unit = {
+      /*val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
+          turns <- getTurni
+          contracts <- getContratti
+          zones <- getZone
+        } yield (zones.head, contracts.head, turns.head)
+      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))
+       */
+      val turni = List(Turno("bho","0-6",Some(1)), Turno("bho","6-12",Some(2)),
+        Turno("bho","12-18",Some(3)), Turno("bho","18-0",Some(4)))
+      val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
+        Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      myView.drawRecruit(zone, contratti, turni)
+    }
+
+    override def getTerminals(zona: Zona): Unit = {
+     // model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.head))
+      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
+      myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))
     }
   }
 }
