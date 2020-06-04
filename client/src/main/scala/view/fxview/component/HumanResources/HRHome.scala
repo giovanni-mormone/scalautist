@@ -6,6 +6,8 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
+
+import view.fxview.component.HumanResources.subcomponent.{IllBoxParent, RecruitBox}
 import javafx.scene.layout.{BorderPane, Pane}
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, RecruitBox}
@@ -13,7 +15,38 @@ import view.fxview.component.{AbstractComponent, Component}
 
 /**
  * @author Francesco Cassano
+ * 
+ * It is the interface of the methods used by views to make requests to controller
  *
+ */
+trait HRViewParent  extends IllBoxParent {
+
+  /**
+   * If recruit button is clicked the controller is asked to save the instance of persona
+   *
+   * @param persona
+   *                instance of assumi. It's the employee to save
+   */
+  def recruitClicked(persona: Assumi): Unit
+
+  /**
+   * If the Zona was choosen the controller is asked the list of terminale
+   *
+   * @param zona
+   *             instance of terminale's Zona to return
+   */
+  def loadRecruitTerminals(zona: Zona): Unit
+
+  /**
+   * It notify parent that recruitView must be shown
+   */
+  def drawRecruitPanel: Unit
+
+}
+
+/**
+ * @author Francesco Cassano
+ * 
  * Interface allows to communicate with the internal view. It extends [[view.fxview.component.Component]]
  * of [[view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent]]
  */

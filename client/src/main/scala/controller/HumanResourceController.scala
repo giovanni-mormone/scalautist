@@ -2,8 +2,10 @@ package controller
 
 import java.sql.Date
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB 
+import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona,Assenza}
+ 
+ 
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
@@ -17,6 +19,8 @@ import scala.concurrent.Future
  * A HumanResource controller for a view of type [[view.fxview.mainview.HumanResourceView]]
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
+  def saveAbsence(absence: Assenza): Unit
+
 
   /**
    * Recruit saves a new employee on the db
@@ -161,6 +165,11 @@ object HumanResourceController {
       val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
         Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
       myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))
+    }
+
+    override def saveAbsence(absence: Assenza): Unit = {
+       if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
+       myView.showMessage(":)")
     }
   }
 }

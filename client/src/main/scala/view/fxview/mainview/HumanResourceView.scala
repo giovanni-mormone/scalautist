@@ -1,17 +1,20 @@
 package view.fxview.mainview
 
 import java.net.URL
-import java.util.ResourceBundle
-
+import java.util.ResourceBundle 
+ 
 import caseclass.CaseClassDB._
+ 
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
-import javafx.stage.Stage
-import view.BaseView
-import view.fxview.AbstractFXDialogView
-import view.fxview.component.HumanResources.HRHome
+import javafx.stage.Stage 
+import view.{BaseView, DialogView}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
+import view.fxview.component.HumanResources.subcomponent.IllBoxParent
+import view.fxview.component.HumanResources.{HRHome, HRViewParent} 
 import view.fxview.component.HumanResources.subcomponent.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
+ 
 
 /**
  * @author Francesco Cassano
@@ -20,7 +23,7 @@ import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
  * It extends [[view.BaseView]]
  *
  */
-trait HumanResourceView extends BaseView {
+trait HumanResourceView extends DialogView {
 
   /**
    * Show child's recruit view
@@ -75,6 +78,7 @@ object HumanResourceView {
       hrHome = HRHome()
       hrHome.setParent(this)
       pane.getChildren.add(hrHome.pane)
+      FXHelperFactory.modalWithMessage(myStage,"Strunz").show()
     }
 
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
@@ -90,21 +94,23 @@ object HumanResourceView {
 
     override def drawRecruitPanel: Unit =
       myController.getRecruitData
-
+ 
     override def drawEmployeePanel(viewToDraw: String): Unit =
       myController.getAllPersona(viewToDraw)
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
-      hrHome.drawRecruit(zones, contracts, shifts)
+     hrHome.drawRecruit(zones, contracts, shifts)
+    
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
       hrHome.drawRecruitTerminals(terminals)
-
+ 
+    override def saveAbsence(absence: Assenza): Unit = myController.saveAbsence(absence)
+ 
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
       case EmployeeView.fire => hrHome.drawFire(employeesList)
-    }
-
+    } 
   }
 }
