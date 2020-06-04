@@ -34,7 +34,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     listNewPerson=List(newPersona,Persona("Juanito","Perez","569918598",Some(""),1,isNew = true,"adminF"))
 
     val daAssumere:Persona = Persona("Mattia","Mommo","1234567789",None,3,isNew = true,"",Some(2))
-    val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(3),Some(4))
+    val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,2,Some(3),Some(4))
     val disp:Disponibilita = Disponibilita("Lunes","Martes")
     insertPersona = Assumi(daAssumere,contratto,Some(disp))
 
@@ -86,7 +86,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
   }
   it should "return a int when update a person for id" in {
     val updatePersonaP: Future[Option[Int]] = PersonaOperation.update(updatePersona)
-    updatePersonaP map {update => assert(update.contains(1)) }
+    updatePersonaP map {update => assert(update.isEmpty) }
   }
   behavior of "PersoneManagment"
   it should "return a login with credential of user" in {
@@ -97,13 +97,42 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
     assumi map {login => assert(login.isDefined)}
   }
-  it should "return a valid int when removed from db" in {
+  it should "return a 1 int when removed from db" in {
     val fire: Future[Option[Int]] = PersonaOperation.delete(6)
-    fire map {login => assert(login.head.isValidInt)}
+    fire map {login => assert(login.head == 1)}
   }
-  it should "return a valid int when removes a list of persons from db" in {
+
+  it should "return None if not finds the person to delete" in {
+    val fire: Future[Option[Int]] = PersonaOperation.delete(26)
+    fire map {login => assert(login.isEmpty)}
+  }
+  it should "return a List of Persona with length 2 and nome Mattia when searchs in the db with that name" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Mattia")
+    searchName map {list => assert(list.head.length == 2)}
+  }
+  it should "return None when search by name not present in the db" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Gevgvtia")
+    searchName map {list => assert(list.isEmpty)}
+  }
+  it should "return a List of Persona with length 1 and cognome Mattesi when searchs in the db with that surname" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Mattesi")
+    searchName map {list => assert(list.head.length == 1)}
+  }
+  it should "return None when search by surname not present in the db" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Gevgvtia")
+    searchName map {list => assert(list.isEmpty)}
+  }
+  it should "return a 2 when removes a list of 2 persons present db" in {
     val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(7,8))
-    fire map {login => assert(login.head.isValidInt)}
+    fire map {login => assert(login.head == 2)}
+  }
+  it should "return a 1 when removes a list of 2 persons but only 1 present in the db" in {
+    val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(1,80))
+    fire map {login => assert(login.head == 1)}
+  }
+  it should "return None when removes a list of 2 persons not present in the db" in {
+    val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(101,80))
+    fire map {login => assert(login.isEmpty)}
   }
 
   behavior of "assenza"

@@ -21,18 +21,10 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
 
 object DisponibilitaOperation extends DisponibilitaOperation{
 
-  override def insert(element: Disponibilita): Future[Option[Int]] = {
-    val promiseInsertDisp = PromiseFactory.intPromise()
-    InstanceDisponibilita.operation()
-      .execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
-      .onComplete {
-        case Success(Some(List())) => super.insert(element).onComplete{
-          case Success(value) => promiseInsertDisp.success(value)
-          case Failure(exception) => promiseInsertDisp.failure(exception)
-        }
-        case Success(value) if value.nonEmpty => promiseInsertDisp.success(value.head.headOption)
-        case Failure(exception) => promiseInsertDisp.failure(exception)
-      }
-    promiseInsertDisp.future
+  override def insert(element:Disponibilita): Future[Option[Int]] = {
+    for{
+      disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
+      result <- if (disponibilita.head.isEmpty) for( newDisp <- super.insert(element)) yield newDisp else Future.successful(disponibilita.head.headOption)
+    } yield result
   }
 }

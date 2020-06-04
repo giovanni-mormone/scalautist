@@ -19,11 +19,12 @@ import scala.util.{Failure, Success}
 trait TerminaleOperation extends OperationCrud[Terminale]{
 
   /**
-   * Returns all the terminale within one given zone.
+   * Returns all the terminale within one given zone, returning None if no terminale is associated with the zone
    * @param zonaId
    *               The zone of the id
    * @return
-   *         A list of the terminali in the zone.
+   *         A [[scala.concurrent.Future]] [[scala.Option]] list of the terminali in the zone; The value of the Option
+   *         is None if cannot find terminali associated to the zona.
    */
   def getTermininaliInZona(zonaId: Int): Future[Option[List[Terminale]]]
 }
@@ -31,19 +32,7 @@ trait TerminaleOperation extends OperationCrud[Terminale]{
 
 object TerminaleOperation extends TerminaleOperation {
 
-  override def getTermininaliInZona(zonaId: Int): Future[Option[List[Terminale]]] = {
-
-    val promiseTerminaliInZona = Promise[Option[List[Terminale]]]
-    execFilter(promiseTerminaliInZona, x => x.zonaId === zonaId)
-    promiseTerminaliInZona.future
-  }
-
-
-  private def execFilter(promise: Promise[Option[List[Terminale]]],f:TerminaleTableRep=>Rep[Boolean]): Future[Unit] = Future {
-    InstanceTerminale.operation().selectFilter(f) onComplete {
-      case Success(value) if value.nonEmpty=>promise.success(value)
-      case Success(_) =>promise.success(None)
-      case Failure(_)=>promise.success(None)
-    }
+  override def getTermininaliInZona(zonaID:Int): Future[Option[List[Terminale]]] = {
+   InstanceTerminale.operation().selectFilter(x => x.zonaId === zonaID).collect(collectCheck(_))
   }
 }
