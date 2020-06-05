@@ -66,6 +66,8 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
 
+  def saveZona(zone: Zona): Unit
+
   /**
    * getRecruitData method retrieves all data needed to recruit employee
    *
@@ -91,6 +93,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *
    */
   def getZonaData(): Unit
+
 }
 
 /**
@@ -177,6 +180,11 @@ object HumanResourceController {
       //getZone.onComplete(zones => myView.drawZonaView(zones.get.head))
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       myView.drawZonaView(zone)
+    }
+
+    override def saveZona(zone: Zona): Unit = {
+      //model.newZona(zone).onComplete(_ => getZonaData)
+      println(zone)
     }
   }
 }

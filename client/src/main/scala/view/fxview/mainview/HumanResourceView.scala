@@ -97,7 +97,8 @@ object HumanResourceView {
     override def fireClicked(employees: Set[Int]): Unit =
       myController.fires(employees)
 
-    override def newZona(zona: Zona): Unit = ???
+    override def newZona(zona: Zona): Unit =
+      myController.saveZona(zona)
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)

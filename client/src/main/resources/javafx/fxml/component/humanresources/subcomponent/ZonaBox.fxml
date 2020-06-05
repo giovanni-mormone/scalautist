@@ -5,6 +5,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0"
       prefWidth="400.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -18,7 +20,12 @@
       </VBox>
       <VBox prefHeight="10.0" prefWidth="400.0">
          <children>
-            <Button fx:id="zonaButton" mnemonicParsing="false" text="Button" />
+            <HBox>
+               <children>
+                  <TextField fx:id="newNome"></TextField>
+                  <Button fx:id="zonaButton" mnemonicParsing="false" text="Button" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>

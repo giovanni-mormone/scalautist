@@ -29,7 +29,7 @@ trait Checker{
 /**
  * @author Francesco Cassano
  *
- * Number utilities object, such as regex to check passwords or functions to hash the password.
+ * Number utilities object, such as regex to check numbers.
  */
 object NumberChecker extends Checker {
   private val regex: Regex = "^\\d$".r
@@ -46,7 +46,7 @@ object NumberChecker extends Checker {
 /**
  * @author Francesco Cassano
  *
- * Name or surname utilities object, such as regex to check passwords or functions to hash the password.
+ * Name or surname utilities object, such as regex to check Persona's name single character.
  */
 object NameChecker extends Checker {
   private val regex: Regex = "^[A-Za-z ']$".r
@@ -60,4 +60,13 @@ object NameChecker extends Checker {
   override def checkRegex: Regex = regex
 }
 
+/**
+ * @author Francesco Cassano
+ *
+ * Name of Zona utilities object, such as regex to check Zona's name single character.
+ */
+object ZonaChecker extends Checker {
+  private val regex: Regex = "^[A-Za-z0-9]$".r   //"^[A-Za-z].[A-Za-z0-9]$".r
 
+  override def checkRegex: Regex = regex
+}
