@@ -1,6 +1,9 @@
 package servermodel
 
+import java.sql.Date
+
 import akka.actor.typed.ActorSystem
+import dbfactory.operation.StipendioOperation
 import servermodel.ServerConf.StartServer
 
 /**
@@ -8,6 +11,9 @@ import servermodel.ServerConf.StartServer
  */
 object MainServer extends App{
 
-    ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
+    //ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
+    StipendioOperation.calculateStipendi(new Date(System.currentTimeMillis()))
 
+
+    while(true){}
 }
