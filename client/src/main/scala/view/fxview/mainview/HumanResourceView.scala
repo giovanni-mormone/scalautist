@@ -7,12 +7,11 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
 import javafx.stage.Stage
-import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.{BaseView, DialogView}
-import view.fxview.{AbstractFXDialogView, FXHelperFactory}
-import view.fxview.component.HumanResources.subcomponent.IllBoxParent
-import view.fxview.component.HumanResources.{HRHome, HRViewParent, MainModalResource}
+import view.DialogView
 import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
+import view.fxview.component.HumanResources.{HRHome, MainModalResource}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
  
 
 /**

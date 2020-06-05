@@ -1,17 +1,10 @@
 package controller
 
-import java.sql.Date
-
-import caseclass.CaseClassDB 
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona,Assenza}
- 
- 
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
-import view.fxview.mainview.HumanResourceView
 import model.utils.ModelUtils.id
-import utils.UserType
-import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
+import view.fxview.mainview.HumanResourceView
 
 import scala.concurrent.Future
 
@@ -180,6 +173,7 @@ object HumanResourceController {
     override def saveZona(zone: Zona): Unit = {
       //model.newZona(zone).onComplete(_ => getZonaData)
       println(zone)
+    }
       
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
