@@ -2,10 +2,8 @@ package controller
 
 import java.sql.Date
 
-import caseclass.CaseClassDB 
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona,Assenza}
- 
- 
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Assenza, Contratto, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
@@ -14,6 +12,7 @@ import utils.UserType
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 /**
  * @author Francesco Cassano
@@ -182,8 +181,14 @@ object HumanResourceController {
       println(zone)
       
     override def saveAbsence(absence: Assenza): Unit = {
-       if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
-       myView.result(":)")
+       if(absence.malattia) model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)} else model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
+    }
+    private def sendMessageModal(t:Try[Option[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
+      case (Failure(_),true) => myView.result("Error assignando malattia")
+      case (Failure(_),false) => myView.result("Error assignando vacaciones")
+      case (Success(Some(value)),true)  =>myView.result("malattia asignada correctamente")
+      case (Success(Some(value)),false)  =>myView.result("vacaciones asignada correctamente")
+      case (Success(_),_)  => myView.result("utente no encontrado")
     }
   }
 }

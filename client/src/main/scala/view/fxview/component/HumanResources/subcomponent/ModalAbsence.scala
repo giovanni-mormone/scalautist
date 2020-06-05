@@ -21,9 +21,9 @@ trait ModalAbsence extends Component[ModalAbsenceParent]{
 }
 object ModalAbsence{
 
-  def apply(idDriver:Int,name:String,surname:String): ModalAbsence =new ModalAbsenceFX(idDriver,name,surname)
+  def apply(idDriver:Int,name:String,surname:String, isMalattia:Boolean=true): ModalAbsence =new ModalAbsenceFX(idDriver,name,surname,isMalattia)
 
-  private class ModalAbsenceFX(id:Int,name:String,surname:String) extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence") with ModalAbsence {
+  private class ModalAbsenceFX(id:Int,name:String,surname:String, isMalattia:Boolean) extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence") with ModalAbsence {
 
     @FXML
     var nameSurname:TextField = _
@@ -32,18 +32,18 @@ object ModalAbsence{
     @FXML
     var finishDate:DatePicker = _
     @FXML
-    var illness:Button = _
+    var button:Button = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      illness.setText(resources.getString("absence-button"))
+      if(isMalattia)button.setText(resources.getString("absence-button"))else button.setText(resources.getString("holiday-button"))
       nameSurname.setText(s"$name "+s" $surname")
       setInitDate(LocalDate.now())
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
-      illness.setOnAction(_=>saveAbscence())
+      button.setOnAction(_=>saveAbscence())
     }
     private def saveAbscence(): Unit ={
-      parent.saveAbsence(Assenza(id,createDataSql(initDate),createDataSql(finishDate),malattia = true))
+      parent.saveAbsence(Assenza(id,createDataSql(initDate),createDataSql(finishDate),isMalattia))
     }
     private def enableFinishDate(): Unit ={
       val today = initDate.getValue
@@ -66,7 +66,7 @@ object ModalAbsence{
     }
 
     private def enableButton(): Unit ={
-      illness.setDisable(false)
+      button.setDisable(false)
     }
     private def createDataSql(dateP:DatePicker)={
       val localDate: LocalDate = dateP.getValue

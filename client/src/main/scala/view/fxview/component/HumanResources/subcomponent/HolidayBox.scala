@@ -37,7 +37,7 @@ object HolidayBox{
 
       initializeSearch(resources)
       button.setText(resources.getString("holiday"))
-      button.setOnAction(_=>parent.openModal(2,"nome","cognome"))
+      button.setOnAction(_=>parent.openModal(2,"nome","cognome",isMalattia = false))
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {

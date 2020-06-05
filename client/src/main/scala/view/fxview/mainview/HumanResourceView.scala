@@ -6,6 +6,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
+import javafx.application.Platform
 import javafx.stage.Stage
 import view.DialogView
 import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
@@ -132,11 +133,6 @@ object HumanResourceView {
       case EmployeeView.holiday => hrHome.drawHolidayBox(employeesList)
     }
 
-    override def openModal(id: Int,name:String,surname:String): Unit = {
-      modalResource = MainModalResource(id,name,surname,myStage,this)
-      modalResource.show()
-    }
-
     override def drawZonaView(zones: List[Zona]): Unit =
       hrHome.drawZona(zones)
 
@@ -145,7 +141,11 @@ object HumanResourceView {
 
     override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
 
-    override def result(message: String): Unit = modalResource.showMessage(message)
+    override def result(message: String): Unit = Platform.runLater(()=>modalResource.showMessage(message))
 
+    override def openModal(id: Int, name: String, surname: String, isMalattia: Boolean): Unit = {
+      modalResource = MainModalResource(id,name,surname,myStage,this,isMalattia)
+      modalResource.show()
+    }
   }
 }
