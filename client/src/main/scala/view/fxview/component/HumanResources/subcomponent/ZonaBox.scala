@@ -47,8 +47,9 @@ object ZonaBox {
 
       newNome.setPromptText(resources.getString("nametxt"))
       newNome.textProperty().addListener((_, old, word) => {
-        if(!ZonaChecker.checkRegex.matches("" + word.last))
-          newNome.setText(old)
+        if(!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
+            newNome.setText(old)
+
         ableToSave
       })
 
