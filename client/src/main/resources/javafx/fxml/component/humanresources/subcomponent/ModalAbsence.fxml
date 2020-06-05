@@ -5,9 +5,9 @@
 
 <VBox alignment="CENTER" fillWidth="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" spacing="20.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField fx:id="idDriver" editable="false" />
-      <DatePicker fx:id="initDate" showWeekNumbers="true" />
-      <DatePicker fx:id="finishDate" showWeekNumbers="true" />
-      <Button fx:id="illness" mnemonicParsing="false" />
+      <TextField fx:id="nameSurname" disable="true" editable="false" prefWidth="180.0" />
+      <DatePicker fx:id="initDate" editable="false" prefWidth="180.0" showWeekNumbers="true" />
+      <DatePicker fx:id="finishDate" disable="true" editable="false" prefWidth="180.0" showWeekNumbers="true" />
+      <Button fx:id="illness" disable="true" mnemonicParsing="false" prefWidth="150.0" />
    </children>
 </VBox>

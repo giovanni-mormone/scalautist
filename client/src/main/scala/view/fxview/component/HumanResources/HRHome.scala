@@ -4,13 +4,12 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-
-import view.fxview.component.HumanResources.subcomponent.{IllBoxParent, RecruitBox}
+import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, IllBox, IllBoxParent, RecruitBox}
 import javafx.scene.layout.{BorderPane, Pane}
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
-import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, RecruitBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -77,6 +76,8 @@ trait HRHome extends Component[HRHomeParent]{
    * @param employees
    */
   def drawFire(employees: List[Persona]): Unit
+
+  def drawIllBox(employees: List[Persona]): Unit
 }
 
 
@@ -105,10 +106,12 @@ object HRHome{
     var firesButton: Button = _
     @FXML
     var nameLabel: Label = _
+    @FXML
+    var illness:Button = _
 
     var recruitView: RecruitBox = _
     var fireView: FireBox = _
-
+    var illBox:IllBox = _
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("Buongiorno Stronzo")
 
@@ -117,6 +120,7 @@ object HRHome{
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
+      illness.setOnAction(_ => parent.getInfo())
     }
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit = {
@@ -129,6 +133,8 @@ object HRHome{
     override def drawFire(employees: List[Persona]): Unit =
       baseHR.setCenter(fireBox(employees))
 
+    override def drawIllBox(employees: List[Persona]): Unit =
+      baseHR.setCenter(illBox(List()))
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
     private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
@@ -141,6 +147,11 @@ object HRHome{
       fireView = FireBox(employees)
       fireView.setParent(parent)
       fireView.pane
+    }
+    private def illBox(employees: List[Persona]): Pane = {
+      illBox = IllBox(employees)
+      illBox.setParent(parent)
+      illBox.pane
     }
   }
 }

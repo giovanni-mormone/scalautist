@@ -32,12 +32,12 @@ SET IDENTITY_INSERT [dbo].[TerminalSets] OFF
 --TURNO
 
 SET IDENTITY_INSERT [dbo].[TurnoSets] ON
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (1, N'Prima Mattinata', N'6:00 alle 10:00')
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (2, N'Tarda Mattinata', N'10:00 alle 14:00')
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (3, N'Pomeriggio', N'14:00 alle 18:00')
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (4, N'Sera', N'18:00 alle 22:00')
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (5, N'Tarda Serata',N'22:00 alle 2:00')
-INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno], [FasciaOraria]) VALUES (6, N'Notte',N'2:00 alle 6:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (1, N'Prima Mattinata',0, N'6:00 alle 10:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (2, N'Tarda Mattinata',0, N'10:00 alle 14:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (3, N'Pomeriggio',0, N'14:00 alle 18:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (4, N'Sera',0, N'18:00 alle 22:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (5, N'Tarda Serata',1,N'22:00 alle 2:00')
+INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Notturno], [FasciaOraria]) VALUES (6, N'Notte',1,N'2:00 alle 6:00')
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO

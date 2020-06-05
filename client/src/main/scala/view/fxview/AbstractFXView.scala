@@ -8,7 +8,7 @@ import javafx.fxml.{FXML, Initializable}
 import javafx.scene.Scene
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, StackPane}
-import javafx.stage.Stage
+import javafx.stage.{Modality, Stage}
 import model.entity.HumanResourceModel
 import view.{BaseView, DialogView, GoBackView}
 import view.fxview.loader.FXLoader
@@ -42,10 +42,10 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
   }
 
   override def show(): Unit =
-    myStage show
+    myStage.show()
 
   override def hide(): Unit =
-    myStage hide
+    myStage.hide()
 
   override def showMessage(message: String): Unit =
     FXHelperFactory.modalWithMessage(myStage,message).show()
@@ -65,4 +65,43 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
 abstract class AbstractFXViewWithBack(override val myStage:Stage, oldScene: Option[Scene]) extends AbstractFXDialogView(myStage) with GoBackView{
   override def back(): Unit =
     myStage.setScene(oldScene.getOrElse(myStage.getScene))
+}
+
+/**
+ * @author Fabian Aspee, Giovanni Mormone.
+ *
+ * Template class of type [[view.DialogView]] with basic funtionality to show
+ * and hide a view loaded from fxml file.
+ * @param parentStage
+ *                The [[javafx.stage.Stage]] where the view is Shown.
+ *
+ */
+abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable with DialogView{
+  /**
+   * The base pane of the fxView where the components are added.
+   */
+  @FXML
+  protected var pane: StackPane = _
+  protected var generalResources: ResourceBundle = _
+  protected val myStage = new Stage()
+  /**
+   * Stage of this view.
+   */
+  FXLoader.loadScene(myStage,this,"Base")
+
+  override def initialize(location: URL, resources: ResourceBundle): Unit ={
+    myStage.setTitle(resources.getString("nome"))
+    generalResources = resources
+  }
+
+  override def show(): Unit = {
+    myStage.initModality(Modality.APPLICATION_MODAL)
+    myStage initOwner parentStage
+    myStage.showAndWait()
+  }
+  override def hide(): Unit =
+    myStage.hide()
+
+  override def showMessage(message: String): Unit =
+    FXHelperFactory.modalWithMessage(myStage,message).show()
 }

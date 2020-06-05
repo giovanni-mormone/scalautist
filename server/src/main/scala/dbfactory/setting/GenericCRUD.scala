@@ -1,8 +1,6 @@
 package dbfactory.setting
 import dbfactory.implicitOperation.Crud
-import dbfactory.setting.Table.ZonaTableQuery
 import slick.jdbc.SQLServerProfile.api._
-import slick.lifted.{FlatShapeLevel, Shape}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -25,9 +23,10 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
   protected val queryByIdPlus: Seq[Int] => Query[T, C, Seq] = (id: Seq[Int]) => tableDB().filter(_.id.inSet(id))
 
 }
+
 object GenericCRUD{
   case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T]{
-    override def selectAll: Future[Option[List[C]]] = super.run(tableDB().result.transactionally).map(t => Option(t.toList))
+    override def selectAll: Future[Option[List[C]]] = super.run(tableDB().result.transactionally).map(t=>Option(t.toList))
     override def select(id: Int): Future[Option[C]] = super.run(queryById(id).result.headOption.transactionally)
     override def insert(element: C): Future[Option[Int]]= super.run((tableDB() returning tableDB().map(_.id)) += element).map(t => Option(t))
     override def insertAll(element: List[C]): Future[Option[List[Int]]] =  super.run((tableDB returning tableDB().map(_.id)) ++= element).map(t =>Option(t.toList))

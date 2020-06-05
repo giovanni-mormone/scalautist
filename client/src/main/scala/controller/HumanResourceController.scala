@@ -41,26 +41,16 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   /**
    * illness saves on the db an employee's absence for a period of time
    *
-   * @param idPersona
-   *                  It's the employee's id
-   * @param startDate
-   *                  The date the desease starts
-   * @param endDate
-   *                The date the desease ends
+   * @param assenza
    */
-  def illness(idPersona: Int, startDate: Date, endDate: Date): Unit
+  def illness(assenza: Assenza): Unit
 
   /**
    * Holiday saves on the db an employee's absence for a period of time
    *
-   * @param idPersona
-   *                  It's the employee's id
-   * @param startDate
-   *                  The date the desease starts
-   * @param endDate
-   *                The date the desease ends
+   * @param assenza
    */
-  def holiday(idPersona: Int, startDate: Date, endDate: Date): Unit
+  def holiday(assenza: Assenza): Unit
 
   /**
    * PasswordRecovery asks the system for create new credential for a user
@@ -129,11 +119,11 @@ object HumanResourceController {
       myView.drawEmployeeView(perosne, callingView)
     }
 
-    override def illness(idPersona: Int, startDate: Date, endDate: Date): Unit =
-      model.illnessPeriod(idPersona, startDate,endDate)
+    override def illness(assenza: Assenza): Unit =
+      model.illnessPeriod(assenza)
 
-    override def holiday(idPersona: Int, startDate: Date, endDate: Date): Unit =
-      model.holidays(idPersona, startDate, endDate)
+    override def holiday(assenza: Assenza): Unit =
+      model.holidays(assenza)
 
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
@@ -169,7 +159,7 @@ object HumanResourceController {
 
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
-       myView.showMessage(":)")
+       myView.result(":)")
     }
   }
 }

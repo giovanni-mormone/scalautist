@@ -1,19 +1,18 @@
 package view.fxview.mainview
 
 import java.net.URL
-import java.util.ResourceBundle 
- 
+import java.util.ResourceBundle
+
 import caseclass.CaseClassDB._
- 
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
-import javafx.stage.Stage 
+import javafx.stage.Stage
 import view.{BaseView, DialogView}
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.HumanResources.subcomponent.IllBoxParent
-import view.fxview.component.HumanResources.{HRHome, HRViewParent} 
+import view.fxview.component.HumanResources.{HRHome, HRViewParent, MainModalResource}
 import view.fxview.component.HumanResources.subcomponent.EmployeeView
-import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
+import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
  
 
 /**
@@ -42,6 +41,8 @@ trait HumanResourceView extends DialogView {
    *
    */
   def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
+
+  def result(message:String):Unit
 }
 
 /**
@@ -61,9 +62,10 @@ object HumanResourceView {
    *              Stage that load view
    */
   private class HumanResourceHomeFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with HumanResourceView with HRHomeParent {
+    with HumanResourceView with HRHomeParent with ModalTrait{
 
     private var myController: HumanResourceController = _
+    private var modalResource: MainModalResource = _
     private var hrHome: HRHome = _
 
     /**
@@ -106,11 +108,22 @@ object HumanResourceView {
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
       hrHome.drawRecruitTerminals(terminals)
- 
-    override def saveAbsence(absence: Assenza): Unit = myController.saveAbsence(absence)
+
  
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
       case EmployeeView.fire => hrHome.drawFire(employeesList)
-    } 
+      case EmployeeView.ill => hrHome.drawIllBox(employeesList)
+    }
+
+    override def openModal(id: Int,name:String,surname:String): Unit = {
+      modalResource = MainModalResource(id,name,surname,myStage,this)
+      modalResource.show()
+    }
+
+    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
+
+    override def result(message: String): Unit = modalResource.showMessage(message)
+
+    override def getInfo(): Unit = myController.getAllPersona(EmployeeView.ill)
   }
 }
