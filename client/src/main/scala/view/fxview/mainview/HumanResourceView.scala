@@ -106,5 +106,7 @@ object HumanResourceView {
       case EmployeeView.fire => hrHome.drawFire(employeesList)
     }
 
+    override def drawChangePassword: Unit =
+      ChangePasswordView(stage, Some(stage.getScene))
   }
 }

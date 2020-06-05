@@ -66,26 +66,32 @@ object HRHome{
     with HRHome {
 
     @FXML
+    var nameLabel: Label = _
+    @FXML
     var baseHR: BorderPane = _
     @FXML
     var recruitButton: Button = _
     @FXML
     var firesButton: Button = _
     @FXML
-    var nameLabel: Label = _
+    var changePassword: Button = _
 
     var recruitView: RecruitBox = _
     var fireView: FireBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      nameLabel.setText("Buongiorno Stronzo")
+      nameLabel.setText("sono una persona delle risorse umane")
 
       recruitButton.setText(resources.getString("recuit-button"))
       firesButton.setText(resources.getString("fire-button"))
+      changePassword.setText(resources.getString("changePassword"))
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
+      changePassword.setOnAction(_ => parent.drawChangePassword)
     }
+
+    /////////////////////////////////////////////////////////////////////////////////// draw method
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
