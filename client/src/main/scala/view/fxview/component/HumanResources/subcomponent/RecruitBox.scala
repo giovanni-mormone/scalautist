@@ -109,7 +109,8 @@ object RecruitBox {
 
     private def setActions: Unit = {
       //default action
-      def setNameStringControl(component: TextField) = {
+
+      def setNameStringControl(component: TextField): Unit = {
         component.textProperty().addListener((_, oldS, word) => {
           if ( !controlString(word, NameChecker) )
             component.setText(oldS)

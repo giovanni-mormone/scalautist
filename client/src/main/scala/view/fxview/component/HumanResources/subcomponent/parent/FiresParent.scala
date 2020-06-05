@@ -13,6 +13,6 @@ trait FiresParent {
    * @param employees
    *                  Sequence of employees Ids to delete
    */
-  def fireClicked(employees: Seq[Int])
+  def fireClicked(employees: Set[Int])
 
 }

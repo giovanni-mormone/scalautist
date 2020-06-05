@@ -9,6 +9,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, IllBox, IllBoxParent, RecruitBox}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -123,9 +124,8 @@ object HRHome{
       illness.setOnAction(_ => parent.getInfo())
     }
 
-    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit = {
+    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
-    }
 
     override def drawRecruitTerminals(terminals: List[Terminale]): Unit =
       recruitView.setTerminals(terminals)
