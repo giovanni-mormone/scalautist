@@ -129,6 +129,7 @@ object HumanResourceView {
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
       case EmployeeView.fire => hrHome.drawFire(employeesList)
       case EmployeeView.ill => hrHome.drawIllBox(employeesList)
+      case EmployeeView.holiday => hrHome.drawHolidayBox(employeesList)
     }
 
     override def openModal(id: Int,name:String,surname:String): Unit = {
@@ -146,6 +147,5 @@ object HumanResourceView {
 
     override def result(message: String): Unit = modalResource.showMessage(message)
 
-    override def getInfo(): Unit = myController.getAllPersona(EmployeeView.ill)
   }
 }
