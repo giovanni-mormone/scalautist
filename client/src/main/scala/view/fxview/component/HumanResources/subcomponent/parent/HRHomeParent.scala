@@ -1,5 +1,7 @@
 package view.fxview.component.HumanResources.subcomponent.parent
 
+import view.fxview.component.HumanResources.subcomponent.IllBoxParent
+
 /**
  * @author Francesco Cassano
  *
@@ -7,7 +9,7 @@ package view.fxview.component.HumanResources.subcomponent.parent
  * It extends home view's children parent
  *
  */
-trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent {
+trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent with IllBoxParent {
 
   /**
    * It notify parent that recruitView must be shown

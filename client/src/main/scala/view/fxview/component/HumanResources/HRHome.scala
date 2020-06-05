@@ -4,8 +4,10 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
+import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, IllBox, IllBoxParent, RecruitBox}
 import javafx.scene.layout.{BorderPane, Pane}
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
@@ -14,7 +16,38 @@ import view.fxview.component.{AbstractComponent, Component}
 
 /**
  * @author Francesco Cassano
+ * 
+ * It is the interface of the methods used by views to make requests to controller
  *
+ */
+trait HRViewParent  extends IllBoxParent {
+
+  /**
+   * If recruit button is clicked the controller is asked to save the instance of persona
+   *
+   * @param persona
+   *                instance of assumi. It's the employee to save
+   */
+  def recruitClicked(persona: Assumi): Unit
+
+  /**
+   * If the Zona was choosen the controller is asked the list of terminale
+   *
+   * @param zona
+   *             instance of terminale's Zona to return
+   */
+  def loadRecruitTerminals(zona: Zona): Unit
+
+  /**
+   * It notify parent that recruitView must be shown
+   */
+  def drawRecruitPanel: Unit
+
+}
+
+/**
+ * @author Francesco Cassano
+ * 
  * Interface allows to communicate with the internal view. It extends [[view.fxview.component.Component]]
  * of [[view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent]]
  */
@@ -48,6 +81,7 @@ trait HRHome extends Component[HRHomeParent]{
    */
   def drawFire(employees: List[Persona]): Unit
 
+<<<<<<< HEAD
   /**
    * Initialize zona Manager view before show
    *
@@ -55,6 +89,9 @@ trait HRHome extends Component[HRHomeParent]{
    * *                  List of [[caseclass.CaseClassDB.Zona]]
    */
   def drawZona(zones: List[Zona]):Unit
+=======
+  def drawIllBox(employees: List[Persona]): Unit
+>>>>>>> 71a07648c8502a9c3449e40d7a5b157e1e062411
 }
 
 
@@ -85,6 +122,7 @@ object HRHome{
     @FXML
     var firesButton: Button = _
     @FXML
+<<<<<<< HEAD
     var changePassword: Button = _
     @FXML
     var zonaManage: Button = _
@@ -93,6 +131,15 @@ object HRHome{
     var fireView: FireBox = _
     var zonaView: ZonaBox = _
 
+=======
+    var nameLabel: Label = _
+    @FXML
+    var illness:Button = _
+
+    var recruitView: RecruitBox = _
+    var fireView: FireBox = _
+    var illBox:IllBox = _
+>>>>>>> 71a07648c8502a9c3449e40d7a5b157e1e062411
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("sono il Re delle risorse umane, e ti BENEDICO")
 
@@ -103,8 +150,12 @@ object HRHome{
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
+<<<<<<< HEAD
       zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
+=======
+      illness.setOnAction(_ => parent.getInfo())
+>>>>>>> 71a07648c8502a9c3449e40d7a5b157e1e062411
     }
 
     /////////////////////////////////////////////////////////////////////////////////// panel drawing method
@@ -118,9 +169,14 @@ object HRHome{
     override def drawFire(employees: List[Persona]): Unit =
       baseHR.setCenter(fireBox(employees))
 
+<<<<<<< HEAD
     override def drawZona(zones: List[Zona]): Unit =
       baseHR.setCenter(zonaBox(zones))
 
+=======
+    override def drawIllBox(employees: List[Persona]): Unit =
+      baseHR.setCenter(illBox(List()))
+>>>>>>> 71a07648c8502a9c3449e40d7a5b157e1e062411
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
     private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
@@ -134,6 +190,7 @@ object HRHome{
       fireView.setParent(parent)
       fireView.pane
     }
+<<<<<<< HEAD
 
     private def zonaBox(zones: List[Zona]): Pane = {
       zonaView = ZonaBox(zones)
@@ -141,5 +198,12 @@ object HRHome{
       zonaView.pane
     }
 
+=======
+    private def illBox(employees: List[Persona]): Pane = {
+      illBox = IllBox(employees)
+      illBox.setParent(parent)
+      illBox.pane
+    }
+>>>>>>> 71a07648c8502a9c3449e40d7a5b157e1e062411
   }
 }
