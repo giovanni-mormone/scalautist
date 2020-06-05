@@ -129,7 +129,6 @@ object HRHome{
 
       zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
-
       illness.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.ill))
       holidays.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.holiday))
     }
