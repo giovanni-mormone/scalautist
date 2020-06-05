@@ -7,12 +7,11 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
 import javafx.stage.Stage
-import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.{BaseView, DialogView}
-import view.fxview.{AbstractFXDialogView, FXHelperFactory}
-import view.fxview.component.HumanResources.subcomponent.IllBoxParent
-import view.fxview.component.HumanResources.{HRHome, HRViewParent, MainModalResource}
+import view.DialogView
 import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
+import view.fxview.component.HumanResources.{HRHome, MainModalResource}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
  
 
 /**
@@ -130,6 +129,7 @@ object HumanResourceView {
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
       case EmployeeView.fire => hrHome.drawFire(employeesList)
       case EmployeeView.ill => hrHome.drawIllBox(employeesList)
+      case EmployeeView.holiday => hrHome.drawHolidayBox(employeesList)
     }
 
     override def openModal(id: Int,name:String,surname:String): Unit = {
@@ -147,6 +147,5 @@ object HumanResourceView {
 
     override def result(message: String): Unit = modalResource.showMessage(message)
 
-    override def getInfo(): Unit = myController.getAllPersona(EmployeeView.ill)
   }
 }

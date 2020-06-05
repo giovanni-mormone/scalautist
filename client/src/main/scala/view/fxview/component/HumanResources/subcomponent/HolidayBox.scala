@@ -6,22 +6,22 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
-import view.fxview.component.HumanResources.subcomponent.parent.IllBoxParent
+import view.fxview.component.HumanResources.subcomponent.parent.HolidayBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTable}
 import view.fxview.component.{AbstractComponent, Component}
 
 
 //metodi controller -> view
-trait IllBox extends Component[IllBoxParent]{
+trait HolidayBox extends Component[HolidayBoxParent]{
 
 }
 
-object IllBox{
+object HolidayBox{
 
   //button che chiama openModal setOnAction
-  def apply(persona:List[Persona]): IllBox = new IllBoxFX(persona)
+  def apply(persona:List[Persona]): HolidayBox = new HolidayBoxFX(persona)
 
-  private class IllBoxFX(employees: List[Persona]) extends AbstractComponent[IllBoxParent]("humanresources/subcomponent/AbsenceBox") with IllBox {
+  private class HolidayBoxFX(employees: List[Persona]) extends AbstractComponent[HolidayBoxParent]("humanresources/subcomponent/AbsenceBox") with HolidayBox {
 
     @FXML
     var button:Button = _
@@ -36,7 +36,7 @@ object IllBox{
       CreateTable.fillTable[PersonaTable](employeeTable, employees)
 
       initializeSearch(resources)
-      button.setText(resources.getString("ill"))
+      button.setText(resources.getString("holiday"))
       button.setOnAction(_=>parent.openModal(2,"nome","cognome"))
     }
 

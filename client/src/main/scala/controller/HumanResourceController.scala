@@ -177,7 +177,7 @@ object HumanResourceController {
       myView.drawZonaView(zone)
     }
 
-    override def saveZona(zone: Zona): Unit = {
+    override def saveZona(zone: Zona): Unit =
       //model.newZona(zone).onComplete(_ => getZonaData)
       println(zone)
       
