@@ -107,7 +107,7 @@ object HRHome{
       changePassword.setOnAction(_ => parent.drawChangePassword)
     }
 
-    /////////////////////////////////////////////////////////////////////////////////// draw method
+    /////////////////////////////////////////////////////////////////////////////////// panel drawing method
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
@@ -119,7 +119,7 @@ object HRHome{
       baseHR.setCenter(fireBox(employees))
 
     override def drawZona(zones: List[Zona]): Unit =
-      baseHR.setCenter(zonaBox())
+      baseHR.setCenter(zonaBox(zones))
 
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
@@ -135,8 +135,8 @@ object HRHome{
       fireView.pane
     }
 
-    private def zonaBox(): Pane = {
-      zonaView = ZonaBox()
+    private def zonaBox(zones: List[Zona]): Pane = {
+      zonaView = ZonaBox(zones)
       zonaView.setParent(parent)
       zonaView.pane
     }

@@ -52,7 +52,8 @@ object FireBox {
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       initializeButton(resources)
 
-      CreateTable.createColumns[PersonaTableWithSelection](employeeTable, List("id", "name", "surname", "selected"))
+      val columnFields = List("id", "name", "surname", "selected")
+      CreateTable.createColumns[PersonaTableWithSelection](employeeTable, columnFields)
       CreateTable.fillTable[PersonaTableWithSelection](employeeTable, employees)
 
       initializeSearch(resources)

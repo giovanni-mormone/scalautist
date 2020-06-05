@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty
  * @author Francesco Cassano
  *
  * Class to draw people in table
+ *
  * @param idp
  *            String id
  * @param namep

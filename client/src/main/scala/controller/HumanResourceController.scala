@@ -67,7 +67,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
 
   /**
-   * getData method recovery all data that are requied to recruit employee
+   * getRecruitData method retrieves all data needed to recruit employee
    *
    */
   def getRecruitData: Unit
@@ -86,6 +86,11 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def getAllPersona(callingView: String): Unit //TODO quando i dati arrivano li faccio disegnare
 
+  /**
+   * getZonaData method retrieves all data needed to draw zona view
+   *
+   */
+  def getZonaData(): Unit
 }
 
 /**
@@ -166,6 +171,12 @@ object HumanResourceController {
       val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
         Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
       myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))
+    }
+
+    override def getZonaData(): Unit = {
+      //getZone.onComplete(zones => myView.drawZonaView(zones.get.head))
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      myView.drawZonaView(zone)
     }
   }
 }
