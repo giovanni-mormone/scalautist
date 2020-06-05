@@ -1,8 +1,21 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.HumanResources.subcomponent.employee
 
+import caseclass.CaseClassDB.Persona
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.CheckBox
 
+/**
+ * @author Francesco Cassano
+ *
+ * Class to draw peoplr in table
+ *
+ * @param idp
+ *            String id
+ * @param namep
+ *              String name
+ * @param surnamep
+ *                 String surname
+ */
 class PersonaTable(idp: String, namep: String, surnamep: String){
 
   var id = new SimpleStringProperty(idp)
@@ -22,5 +35,21 @@ class PersonaTable(idp: String, namep: String, surnamep: String){
   def setSurname(v: String) = surname.set(v)
   //def setContract(v: String) = contract.set(v)
   def setSelected(v: CheckBox) = selected = v
+
   def isSelected: Boolean = selected.isSelected
+
+}
+
+/**
+ * @author Francesco Cassano
+ *
+ * Object contains Implicit conversion from persona to persona table
+ */
+object PersonaTable {
+
+  implicit def PersonaToPersonaTable(person: Persona): PersonaTable =
+    new PersonaTable(person.matricola.head.toString, person.nome, person.cognome)
+
+  implicit def ListPersonaToListPersonaTable(peopleList: List[Persona]) =
+    peopleList.map(person => new PersonaTable(person.matricola.head.toString, person.nome, person.cognome))
 }

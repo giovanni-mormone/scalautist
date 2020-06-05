@@ -20,12 +20,7 @@
          <children>
             <TableView fx:id="employeeTable" prefHeight="293.0" prefWidth="400.0">
                 <columns>
-                  <!--<TableColumn fx:id="idColumn" prefWidth="75.0" text="id" />
-                  <TableColumn fx:id="surnameColumn" prefWidth="75.0" text="surname" />
-                  <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
-                  <TableColumn fx:id="contractTypeColumn" prefWidth="75.0" text="contractType" />
-                  <TableColumn fx:id="selectedColumn" prefWidth="75.0" text="selected" />-->
-              </columns>
+                </columns>
             </TableView>
          </children>
       </VBox>

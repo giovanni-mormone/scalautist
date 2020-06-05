@@ -7,8 +7,9 @@ import caseclass.CaseClassDB._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
-import view.fxview.component.HumanResources.subcomponent.{EmployeeView, FireBox, RecruitBox}
+import view.fxview.component.HumanResources.subcomponent.{FireBox, RecruitBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**

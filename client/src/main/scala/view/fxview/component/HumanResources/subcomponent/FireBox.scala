@@ -7,10 +7,12 @@ import java.util.stream.Collectors
 import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.{Button, TableColumn, TableView}
+import javafx.scene.control.{Button, TableColumn, TableView, TextField}
+import view.fxview.component.HumanResources.subcomponent.employee.PersonaTable
 import view.fxview.component.HumanResources.subcomponent.parent.FiresParent
 import view.fxview.component.{AbstractComponent, Component}
 
+import scala.jdk.CollectionConverters
 import scala.language.postfixOps
 
 /**
@@ -44,27 +46,21 @@ object FireBox {
     var fireButton: Button = _
     @FXML
     var employeeTable: TableView[PersonaTable] = _
+    @FXML
+    var searchBox: TextField = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      fireButton.setText(resources.getString("fire"))
-
-      fireButton.setOnAction(_ => parent.fireClicked(selectedElements))
+      initializeButton(resources)
 
       initializeTable
-      employees.foreach(employee => insertIntoTable(employee))
+      fillTable(employees)
 
-
+      initializeSearch(resources)
     }
 
-    private def selectedElements(): Set[Int] = {
-      import scala.jdk.CollectionConverters
-      new CollectionConverters.ListHasAsScala[Int](
-        employeeTable.getItems.filtered(person => person.isSelected)
-        .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet
-    }
-
-    private def insertIntoTable(guy: Persona): Unit = {
-      employeeTable.getItems.add(new PersonaTable(guy.matricola.head.toString, guy.nome, guy.cognome))
+    private def initializeButton(resources: ResourceBundle) = {
+      fireButton.setText(resources.getString("fire"))
+      fireButton.setOnAction(_ => parent.fireClicked(selectedElements))
     }
 
     private def initializeTable: Unit = {
@@ -91,6 +87,32 @@ object FireBox {
 
       employeeTable.getColumns.addAll(id, firstNameCol, secondNameCol, selectCol)
     }
+
+    private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
+      searchBox.setPromptText(resourceBundle.getString("search"))
+
+      searchBox.textProperty().addListener((_, _, word) => {
+        fillTable(employees.filter(person => person.cognome.contains(word) ||
+                                              person.nome.contains(word) ||
+                                              person.matricola.head.toString.contains(word)))
+      })
+    }
+
+    def fillTable(employees: List[PersonaTable]): Unit = {
+      employeeTable.getItems.clear()
+      employees.foreach(employee => insertIntoTable(employee))
+    }
+
+    private def selectedElements(): Set[Int] = {
+      new CollectionConverters.ListHasAsScala[Int](
+        employeeTable.getItems.filtered(person => person.isSelected)
+          .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet
+    }
+
+    private def insertIntoTable(guy: PersonaTable): Unit = {
+      employeeTable.getItems.add(guy)
+    }
+
   }
 
 }

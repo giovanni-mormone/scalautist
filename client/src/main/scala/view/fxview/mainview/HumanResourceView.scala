@@ -10,7 +10,7 @@ import javafx.stage.Stage
 import view.BaseView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.HumanResources.HRHome
-import view.fxview.component.HumanResources.subcomponent.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 
 /**
