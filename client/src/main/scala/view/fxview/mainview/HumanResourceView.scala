@@ -7,11 +7,11 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
 import javafx.stage.Stage
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.{BaseView, DialogView}
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.HumanResources.subcomponent.IllBoxParent
 import view.fxview.component.HumanResources.{HRHome, HRViewParent, MainModalResource}
-import view.fxview.component.HumanResources.subcomponent.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
  
 
@@ -39,9 +39,20 @@ trait HumanResourceView extends DialogView {
   /**
    * Show the view that requested the list of employees
    *
+   * @param employeesList
+   *                      List of [[caseclass.CaseClassDB.Persona]] represent employees
+   * @param viewToDraw
+   *                   The string represent the view code requesting the data
    */
   def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
 
+  /**
+   * Show the zone view
+   *
+   * @param zones
+   *              List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZonaView(zones: List[Zona]): Unit
   def result(message:String):Unit
 }
 
@@ -91,6 +102,9 @@ object HumanResourceView {
     override def fireClicked(employees: Set[Int]): Unit =
       myController.fires(employees)
 
+    override def newZona(zona: Zona): Unit =
+      myController.saveZona(zona)
+
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
 
@@ -99,6 +113,9 @@ object HumanResourceView {
  
     override def drawEmployeePanel(viewToDraw: String): Unit =
       myController.getAllPersona(viewToDraw)
+
+    override def drawZonePanel: Unit =
+      myController.getZonaData()
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
@@ -119,6 +136,12 @@ object HumanResourceView {
       modalResource = MainModalResource(id,name,surname,myStage,this)
       modalResource.show()
     }
+
+    override def drawZonaView(zones: List[Zona]): Unit =
+      hrHome.drawZona(zones)
+
+    override def drawChangePassword: Unit =
+      ChangePasswordView(stage, Some(stage.getScene))
 
     override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
 

@@ -237,8 +237,9 @@ object RecruitBox {
     }
 
     private def controlMainFields(): Boolean = {
-      !name.getText.equals("") && !surname.getText.equals("") && !contractTypes.getSelectionModel.isEmpty &&
-        !tel.getText.equals("") && tel.getText.size == 10
+      !(name.getText.equals("") || name.getText.equals(" ") || name.getText.equals("'")) &&
+        !(surname.getText.equals("") || surname.getText.equals(" ") || surname.getText.equals("'")) &&
+          !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("") && tel.getText.size == 10
     }
 
     private def controlDriverFields(): Boolean = {

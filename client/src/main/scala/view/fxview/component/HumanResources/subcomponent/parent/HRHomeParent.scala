@@ -9,7 +9,7 @@ import view.fxview.component.HumanResources.subcomponent.IllBoxParent
  * It extends home view's children parent
  *
  */
-trait HRHomeParent extends RecruitParent with FiresParent with IllBoxParent{
+trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent with IllBoxParent {
 
   /**
    * It notify parent that recruitView must be shown
@@ -19,7 +19,20 @@ trait HRHomeParent extends RecruitParent with FiresParent with IllBoxParent{
   /**
    * It notify parent that an employees View must be shown
    *
+   * @param viewToDraw
+   *                   string code for view selection
    */
   def drawEmployeePanel(viewToDraw: String): Unit
 
+  /**
+   * It notify parent that the show change password view
+   *
+   */
+  def drawChangePassword: Unit
+
+  /**
+   * It notify parent that a manage zones view must be shown
+   *
+   */
+  def drawZonePanel: Unit
 }
