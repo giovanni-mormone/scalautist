@@ -24,8 +24,6 @@ object HolidayBox{
   private class HolidayBoxFX(employees: List[Persona]) extends AbstractComponent[HolidayBoxParent]("humanresources/subcomponent/AbsenceBox") with HolidayBox {
 
     @FXML
-    var button:Button = _
-    @FXML
     var employeeTable: TableView[PersonaTable] = _
     @FXML
     var searchBox: TextField = _
@@ -36,8 +34,10 @@ object HolidayBox{
       CreateTable.fillTable[PersonaTable](employeeTable, employees)
 
       initializeSearch(resources)
-      button.setText(resources.getString("holiday"))
-      button.setOnAction(_=>parent.openModal(2,"nome","cognome",isMalattia = false))
+      CreateTable.clickListener[PersonaTable](
+        employeeTable,
+        item => parent.openModal(item.id.get().toInt,item.name.get(),item.surname.get(),isMalattia = false))
+
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {

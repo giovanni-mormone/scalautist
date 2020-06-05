@@ -24,8 +24,6 @@ object IllBox{
   private class IllBoxFX(employees: List[Persona]) extends AbstractComponent[IllBoxParent]("humanresources/subcomponent/AbsenceBox") with IllBox {
 
     @FXML
-    var button:Button = _
-    @FXML
     var employeeTable: TableView[PersonaTable] = _
     @FXML
     var searchBox: TextField = _
@@ -36,8 +34,9 @@ object IllBox{
       CreateTable.fillTable[PersonaTable](employeeTable, employees)
 
       initializeSearch(resources)
-      button.setText(resources.getString("ill"))
-      button.setOnAction(_=>parent.openModal(2,"nome","cognome"))
+      CreateTable.clickListener[PersonaTable](
+        employeeTable,
+        item => parent.openModal(item.id.get().toInt,item.name.get(),item.surname.get()))
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {

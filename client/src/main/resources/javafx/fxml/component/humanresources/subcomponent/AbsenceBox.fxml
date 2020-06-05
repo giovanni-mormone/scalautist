@@ -22,10 +22,6 @@
                         </TableView>
                   </children>
             </VBox>
-            <VBox prefHeight="10.0" prefWidth="400.0">
-                  <children>
-                        <Button fx:id="button" mnemonicParsing="false" text="Button" />
-                  </children>
-            </VBox>
+
       </children>
 </VBox>
