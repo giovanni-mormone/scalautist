@@ -1,7 +1,6 @@
-package view.fxview.component.HumanResources.subcomponent.employee
+package view.fxview.component.HumanResources.subcomponent.util
 
 import caseclass.CaseClassDB.Persona
-import javafx.scene.control.CheckBox
 
 /**
  * @author Francesco Cassano
@@ -16,13 +15,8 @@ import javafx.scene.control.CheckBox
  *                 String surname
  */
 class PersonaTableWithSelection(idp: String, namep: String, surnamep: String)
-  extends PersonaTable(idp, namep, surnamep){
+  extends PersonaTable(idp, namep, surnamep) with SelectionTableField with TableArgument {
 
-  var selected: CheckBox = new CheckBox()
-
-  def getSelected: CheckBox = selected
-  def setSelected(v: CheckBox): Unit = selected = v
-  def isSelected: Boolean = selected.isSelected
 }
 
 /**

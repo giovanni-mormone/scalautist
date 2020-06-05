@@ -1,4 +1,4 @@
-package view.fxview.component.HumanResources.subcomponent.employee
+package view.fxview.component.HumanResources.subcomponent.util
 
 import caseclass.CaseClassDB.Persona
 import javafx.beans.property.SimpleStringProperty
@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty
  * @author Francesco Cassano
  *
  * Class to draw people in table
+ *
  * @param idp
  *            String id
  * @param namep
@@ -14,7 +15,7 @@ import javafx.beans.property.SimpleStringProperty
  * @param surnamep
  *                 String surname
  */
-class PersonaTable(idp: String, namep: String, surnamep: String){
+class PersonaTable(idp: String, namep: String, surnamep: String) extends TableArgument {
 
   var id = new SimpleStringProperty(idp)
   var name = new SimpleStringProperty(namep)

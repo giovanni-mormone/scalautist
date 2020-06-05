@@ -11,7 +11,7 @@ import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
 import model.utils.ModelUtils.id
 import utils.UserType
-import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 
 import scala.concurrent.Future
 
@@ -61,8 +61,10 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
 
+  def saveZona(zone: Zona): Unit
+
   /**
-   * getData method recovery all data that are requied to recruit employee
+   * getRecruitData method retrieves all data needed to recruit employee
    *
    */
   def getRecruitData: Unit
@@ -80,6 +82,12 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *
    */
   def getAllPersona(callingView: String): Unit //TODO quando i dati arrivano li faccio disegnare
+
+  /**
+   * getZonaData method retrieves all data needed to draw zona view
+   *
+   */
+  def getZonaData(): Unit
 
 }
 
@@ -163,6 +171,16 @@ object HumanResourceController {
       myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))
     }
 
+    override def getZonaData(): Unit = {
+      //getZone.onComplete(zones => myView.drawZonaView(zones.get.head))
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      myView.drawZonaView(zone)
+    }
+
+    override def saveZona(zone: Zona): Unit = {
+      //model.newZona(zone).onComplete(_ => getZonaData)
+      println(zone)
+      
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
        myView.result(":)")
