@@ -8,7 +8,7 @@ import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.control.{Button, TableColumn, TableView, TextField}
-import view.fxview.component.HumanResources.subcomponent.employee.PersonaTable
+import view.fxview.component.HumanResources.subcomponent.employee.PersonaTableWithSelection
 import view.fxview.component.HumanResources.subcomponent.parent.FiresParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -45,7 +45,7 @@ object FireBox {
     @FXML
     var fireButton: Button = _
     @FXML
-    var employeeTable: TableView[PersonaTable] = _
+    var employeeTable: TableView[PersonaTableWithSelection] = _
     @FXML
     var searchBox: TextField = _
 
@@ -65,25 +65,25 @@ object FireBox {
 
     private def initializeTable: Unit = {
 
-      val id: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Id")
+      val id: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Id")
       id.setMinWidth(100)
-      id.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("id"))
+      id.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("id"))
 
-      val firstNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Name")
+      val firstNameCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Name")
       firstNameCol.setMinWidth(100)
-      firstNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("name"))
+      firstNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("name"))
 
-      val secondNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Surname")
+      val secondNameCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Surname")
       secondNameCol.setMinWidth(100)
-      secondNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("surname"))
+      secondNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("surname"))
 
       /*val contractNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Contract")
       contractNameCol.setMinWidth(100)
       contractNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("contract"))*/
 
-      val selectCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("selected")
+      val selectCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("selected")
       selectCol.setMaxWidth(50)
-      selectCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("selected"))
+      selectCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("selected"))
 
       employeeTable.getColumns.addAll(id, firstNameCol, secondNameCol, selectCol)
     }
@@ -98,7 +98,7 @@ object FireBox {
       })
     }
 
-    def fillTable(employees: List[PersonaTable]): Unit = {
+    def fillTable(employees: List[PersonaTableWithSelection]): Unit = {
       employeeTable.getItems.clear()
       employees.foreach(employee => insertIntoTable(employee))
     }
@@ -109,7 +109,7 @@ object FireBox {
           .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet
     }
 
-    private def insertIntoTable(guy: PersonaTable): Unit = {
+    private def insertIntoTable(guy: PersonaTableWithSelection): Unit = {
       employeeTable.getItems.add(guy)
     }
 

@@ -2,13 +2,11 @@ package view.fxview.component.HumanResources.subcomponent.employee
 
 import caseclass.CaseClassDB.Persona
 import javafx.beans.property.SimpleStringProperty
-import javafx.scene.control.CheckBox
 
 /**
  * @author Francesco Cassano
  *
- * Class to draw peoplr in table
- *
+ * Class to draw people in table
  * @param idp
  *            String id
  * @param namep
@@ -22,22 +20,16 @@ class PersonaTable(idp: String, namep: String, surnamep: String){
   var name = new SimpleStringProperty(namep)
   var surname = new SimpleStringProperty(surnamep)
   //var contract = new SimpleStringProperty(contractp)
-  var selected: CheckBox = new CheckBox()
 
   def getId: String = id.get
   def getName: String = name.get
   def getSurname: String = surname.get
   //def getContract: String = contract.get
-  def getSelected: CheckBox = selected
 
-  def setId(v: String) = id.set(v)
-  def setName(v: String) = name.set(v)
-  def setSurname(v: String) = surname.set(v)
+  def setId(v: String): Unit = id.set(v)
+  def setName(v: String): Unit = name.set(v)
+  def setSurname(v: String): Unit = surname.set(v)
   //def setContract(v: String) = contract.set(v)
-  def setSelected(v: CheckBox) = selected = v
-
-  def isSelected: Boolean = selected.isSelected
-
 }
 
 /**
