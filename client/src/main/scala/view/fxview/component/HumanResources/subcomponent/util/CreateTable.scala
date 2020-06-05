@@ -2,8 +2,9 @@ package view.fxview.component.HumanResources.subcomponent.util
 
 import java.util.stream.Collectors
 
+import caseclass.CaseClassDB.Zona
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.{TableColumn, TableView}
+import javafx.scene.control.{TableColumn, TableRow, TableView}
 
 import scala.jdk.CollectionConverters
 
@@ -22,5 +23,16 @@ object CreateTable {
   def fillTable[A <: TableArgument](table: TableView[A], employees: List[A]): Unit = {
     table.getItems.clear()
     employees.foreach(employee => table.getItems.add(employee))
+  }
+
+  def clickListener[A <: TableArgument](table: TableView[A], action: A => Unit): Unit = {
+    table.setRowFactory(_ => {
+      val row: TableRow[A] = new TableRow[A]()
+      row.setOnMouseClicked(event => {
+        if(event.getClickCount == 2 && !row.isEmpty)
+          action(row.getItem)
+      })
+      row
+    })
   }
 }
