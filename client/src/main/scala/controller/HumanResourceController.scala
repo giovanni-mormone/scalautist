@@ -2,7 +2,6 @@ package controller
 
 import java.sql.Date
 
-import caseclass.CaseClassDB
 import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
@@ -109,10 +108,11 @@ object HumanResourceController {
       //model.recruit(persona)
 
     override def fires(ids: Set[Int]): Unit =
-      if(ids.size > 1)
+      println(ids)
+      /*if(ids.size > 1)
         model.firesAll(ids)
       else
-        model.fires(ids.head)
+        model.fires(ids.head)*/
 
     override def getAllPersona(callingView: String): Unit = {
       /*model.getAllPersone.onComplete(employees =>

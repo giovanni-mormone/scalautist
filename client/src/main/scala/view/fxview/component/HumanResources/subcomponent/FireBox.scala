@@ -48,16 +48,19 @@ object FireBox {
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       fireButton.setText(resources.getString("fire"))
 
-      fireButton.setOnAction(_ => elementSelected)
+      fireButton.setOnAction(_ => parent.fireClicked(selectedElements))
 
       initializeTable
       employees.foreach(employee => insertIntoTable(employee))
+
+
     }
 
-    private def elementSelected(): Unit = {
-
-      println(employeeTable.getItems.filtered(person => person.isSelected)
-        .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int]))
+    private def selectedElements(): Set[Int] = {
+      import scala.jdk.CollectionConverters
+      new CollectionConverters.ListHasAsScala[Int](
+        employeeTable.getItems.filtered(person => person.isSelected)
+        .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet
     }
 
     private def insertIntoTable(guy: Persona): Unit = {

@@ -86,9 +86,8 @@ object HRHome{
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
     }
 
-    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit = {
+    override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
-    }
 
     override def drawRecruitTerminals(terminals: List[Terminale]): Unit =
       recruitView.setTerminals(terminals)
