@@ -7,9 +7,9 @@ import caseclass.CaseClassDB._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
-import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
-import view.fxview.component.HumanResources.subcomponent.{FireBox, RecruitBox}
+import view.fxview.component.HumanResources.subcomponent.{FireBox, RecruitBox, ZonaBox}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -24,11 +24,11 @@ trait HRHome extends Component[HRHomeParent]{
    * Initialize Recruit view before show
    *
    * @param zone
-   *             List of zona to use in view
+   *             List of [[caseclass.CaseClassDB.Zona]] to use in view
    * @param contratti
-   *                  List of contratti type to use in view
+   *                  List of [[caseclass.CaseClassDB.Contratto]] type to use in view
    * @param turni
-   *              List of turni type to use in view
+   *              List of [[caseclass.CaseClassDB.Turno]] type to use in view
    */
   def drawRecruit(zone: List[Zona], contratti: List[Contratto], turni: List[Turno])
 
@@ -36,6 +36,7 @@ trait HRHome extends Component[HRHomeParent]{
    * Show Terminale after Zona is chosen
    *
    * @param terminali
+   *                  List of [[caseclass.CaseClassDB.Terminale]]
    */
   def drawRecruitTerminals(terminali: List[Terminale]): Unit
 
@@ -43,8 +44,17 @@ trait HRHome extends Component[HRHomeParent]{
    * Initialize Fire view before show
    *
    * @param employees
+   *                  List of [[caseclass.CaseClassDB.Persona]]
    */
   def drawFire(employees: List[Persona]): Unit
+
+  /**
+   * Initialize zona Manager view before show
+   *
+   * @param zones
+   * *                  List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZona(zones: List[Zona]):Unit
 }
 
 
@@ -61,6 +71,7 @@ object HRHome{
 
   /**
    * HRHome Fx implementation. It shows Humane resource home view
+   *
    */
   private class HomeFX() extends AbstractComponent[HRHomeParent] ("humanresources/BaseHumanResource")
     with HRHome {
@@ -75,19 +86,24 @@ object HRHome{
     var firesButton: Button = _
     @FXML
     var changePassword: Button = _
+    @FXML
+    var zonaManage: Button = _
 
     var recruitView: RecruitBox = _
     var fireView: FireBox = _
+    var zonaView: ZonaBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      nameLabel.setText("sono una persona delle risorse umane")
+      nameLabel.setText("sono il Re delle risorse umane, e ti BENEDICO")
 
       recruitButton.setText(resources.getString("recuit-button"))
       firesButton.setText(resources.getString("fire-button"))
+      zonaManage.setText(resources.getString("zonaManage"))
       changePassword.setText(resources.getString("changePassword"))
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
+      zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
     }
 
@@ -102,6 +118,9 @@ object HRHome{
     override def drawFire(employees: List[Persona]): Unit =
       baseHR.setCenter(fireBox(employees))
 
+    override def drawZona(zones: List[Zona]): Unit =
+      baseHR.setCenter(zonaBox())
+
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
     private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
@@ -115,5 +134,12 @@ object HRHome{
       fireView.setParent(parent)
       fireView.pane
     }
+
+    private def zonaBox(): Pane = {
+      zonaView = ZonaBox()
+      zonaView.setParent(parent)
+      zonaView.pane
+    }
+
   }
 }

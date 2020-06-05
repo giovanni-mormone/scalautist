@@ -23,7 +23,7 @@
             <Button fx:id="recruitButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="firesButton"   mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="altro" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
-            <Button fx:id="altro1" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
+            <Button fx:id="zonaManage" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="altro2" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="changePassword" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
          </children>

@@ -8,7 +8,7 @@ import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
 import model.utils.ModelUtils.id
 import utils.UserType
-import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 
 import scala.concurrent.Future
 

@@ -1,8 +1,5 @@
 package view.fxview.component.HumanResources.subcomponent.parent
 
-import javafx.scene.Scene
-import javafx.stage.Stage
-
 /**
  * @author Francesco Cassano
  *
@@ -10,7 +7,7 @@ import javafx.stage.Stage
  * It extends home view's children parent
  *
  */
-trait HRHomeParent extends RecruitParent with FiresParent{
+trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent {
 
   /**
    * It notify parent that recruitView must be shown
@@ -30,4 +27,10 @@ trait HRHomeParent extends RecruitParent with FiresParent{
    *
    */
   def drawChangePassword: Unit
+
+  /**
+   * It notify parent that a manage zones view must be shown
+   *
+   */
+  def drawZonePanel: Unit
 }

@@ -10,7 +10,7 @@ import javafx.stage.Stage
 import view.BaseView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.HumanResources.HRHome
-import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 
 /**
@@ -94,6 +94,8 @@ object HumanResourceView {
     override def drawEmployeePanel(viewToDraw: String): Unit =
       myController.getAllPersona(viewToDraw)
 
+    override def newZona(zona: Zona): Unit = ???
+
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
@@ -108,5 +110,8 @@ object HumanResourceView {
 
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
+
+    override def drawZonePanel: Unit = ???
+
   }
 }
