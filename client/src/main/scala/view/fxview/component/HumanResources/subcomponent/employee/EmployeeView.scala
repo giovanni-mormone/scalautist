@@ -1,4 +1,4 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.HumanResources.subcomponent.employee
 
 object EmployeeView {
   val fire: String = "Fire"

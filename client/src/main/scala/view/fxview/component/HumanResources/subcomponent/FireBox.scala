@@ -7,10 +7,12 @@ import java.util.stream.Collectors
 import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.{Button, TableColumn, TableView}
+import javafx.scene.control.{Button, TableColumn, TableView, TextField}
+import view.fxview.component.HumanResources.subcomponent.employee.PersonaTableWithSelection
 import view.fxview.component.HumanResources.subcomponent.parent.FiresParent
 import view.fxview.component.{AbstractComponent, Component}
 
+import scala.jdk.CollectionConverters
 import scala.language.postfixOps
 
 /**
@@ -43,51 +45,74 @@ object FireBox {
     @FXML
     var fireButton: Button = _
     @FXML
-    var employeeTable: TableView[PersonaTable] = _
+    var employeeTable: TableView[PersonaTableWithSelection] = _
+    @FXML
+    var searchBox: TextField = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      fireButton.setText(resources.getString("fire"))
-
-      fireButton.setOnAction(_ => elementSelected)
+      initializeButton(resources)
 
       initializeTable
-      employees.foreach(employee => insertIntoTable(employee))
+      fillTable(employees)
+
+      initializeSearch(resources)
     }
 
-    private def elementSelected(): Unit = {
-
-      println(employeeTable.getItems.filtered(person => person.isSelected)
-        .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int]))
-    }
-
-    private def insertIntoTable(guy: Persona): Unit = {
-      employeeTable.getItems.add(new PersonaTable(guy.matricola.head.toString, guy.nome, guy.cognome))
+    private def initializeButton(resources: ResourceBundle) = {
+      fireButton.setText(resources.getString("fire"))
+      fireButton.setOnAction(_ => parent.fireClicked(selectedElements))
     }
 
     private def initializeTable: Unit = {
 
-      val id: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Id")
+      val id: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Id")
       id.setMinWidth(100)
-      id.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("id"))
+      id.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("id"))
 
-      val firstNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Name")
+      val firstNameCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Name")
       firstNameCol.setMinWidth(100)
-      firstNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("name"))
+      firstNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("name"))
 
-      val secondNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Surname")
+      val secondNameCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("Surname")
       secondNameCol.setMinWidth(100)
-      secondNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("surname"))
+      secondNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("surname"))
 
       /*val contractNameCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("Contract")
       contractNameCol.setMinWidth(100)
       contractNameCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("contract"))*/
 
-      val selectCol: TableColumn[PersonaTable, String] = new TableColumn[PersonaTable, String]("selected")
+      val selectCol: TableColumn[PersonaTableWithSelection, String] = new TableColumn[PersonaTableWithSelection, String]("selected")
       selectCol.setMaxWidth(50)
-      selectCol.setCellValueFactory(new PropertyValueFactory[PersonaTable, String]("selected"))
+      selectCol.setCellValueFactory(new PropertyValueFactory[PersonaTableWithSelection, String]("selected"))
 
       employeeTable.getColumns.addAll(id, firstNameCol, secondNameCol, selectCol)
     }
+
+    private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
+      searchBox.setPromptText(resourceBundle.getString("search"))
+
+      searchBox.textProperty().addListener((_, _, word) => {
+        fillTable(employees.filter(person => person.cognome.contains(word) ||
+                                              person.nome.contains(word) ||
+                                              person.matricola.head.toString.contains(word)))
+      })
+    }
+
+    def fillTable(employees: List[PersonaTableWithSelection]): Unit = {
+      employeeTable.getItems.clear()
+      employees.foreach(employee => insertIntoTable(employee))
+    }
+
+    private def selectedElements(): Set[Int] = {
+      new CollectionConverters.ListHasAsScala[Int](
+        employeeTable.getItems.filtered(person => person.isSelected)
+          .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet
+    }
+
+    private def insertIntoTable(guy: PersonaTableWithSelection): Unit = {
+      employeeTable.getItems.add(guy)
+    }
+
   }
 
 }

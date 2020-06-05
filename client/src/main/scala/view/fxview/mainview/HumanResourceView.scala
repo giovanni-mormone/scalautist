@@ -10,7 +10,7 @@ import javafx.stage.Stage
 import view.BaseView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.HumanResources.HRHome
-import view.fxview.component.HumanResources.subcomponent.EmployeeView
+import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 
 /**
@@ -82,8 +82,8 @@ object HumanResourceView {
     override def recruitClicked(persona: Assumi): Unit =
       myController.recruit(persona)
 
-    override def fireClicked(employees: Seq[Int]): Unit = println("ciao")
-      //myController.fires()
+    override def fireClicked(employees: Set[Int]): Unit =
+      myController.fires(employees)
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
