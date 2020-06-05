@@ -7,6 +7,8 @@ import caseclass.CaseClassHttpMessage.Assumi
 import model.entity.HumanResourceModel
 import view.fxview.mainview.HumanResourceView
 import model.utils.ModelUtils.id
+import utils.UserType
+import view.fxview.component.HumanResources.subcomponent.employee.EmployeeView
 
 import scala.concurrent.Future
 
@@ -107,12 +109,15 @@ object HumanResourceController {
       println(persona)
       //model.recruit(persona)
 
-    override def fires(ids: Set[Int]): Unit =
+    override def fires(ids: Set[Int]): Unit = {
       println(ids)
       /*if(ids.size > 1)
         model.firesAll(ids)
       else
         model.fires(ids.head)*/
+      //getAllPersona(EmployeeView.fire)
+    }
+
 
     override def getAllPersona(callingView: String): Unit = {
       /*model.getAllPersone.onComplete(employees =>
