@@ -54,9 +54,19 @@ trait HRHome extends Component[HRHomeParent]{
    * Initialize zona Manager view before show
    *
    * @param zones
-   * *                  List of [[caseclass.CaseClassDB.Zona]]
+   *                List of [[caseclass.CaseClassDB.Zona]]
    */
-  def drawZona(zones: List[Zona]):Unit
+  def drawZona(zones: List[Zona]): Unit
+
+  /**
+   * Initialize Terminal Manager view before show
+   *
+   * @param zones
+   *             List of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals
+   *                  List of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
 
   /**
    *
@@ -103,16 +113,18 @@ object HRHome{
     @FXML
     var zonaManage: Button = _
     @FXML
-    var illness:Button = _
+    var terminalManger: Button = _
     @FXML
-    var holidays:Button = _
-
+    var illness: Button = _
+    @FXML
+    var holidays: Button = _
 
     var recruitView: RecruitBox = _
     var fireView: FireBox = _
     var zonaView: ZonaBox = _
-    var illBox:IllBox = _
-    var holidayBox:HolidayBox = _
+    var illBox: IllBox = _
+    var holidayBox: HolidayBox = _
+    var terminalView: TerminalBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("sono il Re delle risorse umane, e ti BENEDICO")
@@ -122,15 +134,17 @@ object HRHome{
       illness.setText(resources.getString("illness-button"))
       holidays.setText(resources.getString("holiday-button"))
       zonaManage.setText(resources.getString("zonaManage"))
+      terminalManger.setText(resources.getString("terminalManager"))
       changePassword.setText(resources.getString("changePassword"))
+
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
-
       zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
-      illness.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.ill))
-      holidays.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.holiday))
+      illness.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.ill))
+      holidays.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.holiday))
+      terminalManger.setOnAction(_ => parent.drawTerminalPanel)
     }
 
     /////////////////////////////////////////////////////////////////////////////////// panel drawing method
@@ -152,6 +166,10 @@ object HRHome{
 
     override def drawHolidayBox(employees: List[Persona]): Unit =
       baseHR.setCenter(holidayBox(employees))
+
+    override def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit =
+      baseHR.setCenter(terminalBox(zones, terminals))
+
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
     private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
@@ -170,6 +188,12 @@ object HRHome{
       zonaView = ZonaBox(zones)
       zonaView.setParent(parent)
       zonaView.pane
+    }
+
+    private def terminalBox(zones: List[Zona], terminals: List[Terminale]): Pane = {
+      terminalView = TerminalBox(zones, terminals)
+      terminalView.setParent(parent)
+      terminalView.pane
     }
 
     private def illBox(employees: List[Persona]): Pane = {

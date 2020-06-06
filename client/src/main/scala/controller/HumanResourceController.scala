@@ -54,7 +54,18 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
 
+  /**
+   *
+   * @param zone
+   */
   def saveZona(zone: Zona): Unit
+
+  /**
+   *
+   * @param terminale
+   */
+  def saveTerminal(terminale: Terminale): Unit
+
 
   /**
    * getRecruitData method retrieves all data needed to recruit employee
@@ -82,6 +93,11 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def getZonaData(): Unit
 
+  /**
+   * getTerminalData method retrieves all data needed to draw zona view
+   *
+   */
+  def getTerminalData(): Unit
 }
 
 /**
@@ -151,8 +167,12 @@ object HumanResourceController {
        */
       val turni = List(Turno("bho","0-6",Some(1)), Turno("bho","6-12",Some(2)),
         Turno("bho","12-18",Some(3)), Turno("bho","18-0",Some(4)))
-      val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
-        Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
+      val contratti = List(
+        Contratto("Full-Time-5x2", turnoFisso = true, Some(1)),
+        Contratto("Part-Time-5x2", turnoFisso = true, Some(2)),
+        Contratto("Part-Time-6x1", turnoFisso = false,Some(3)),
+        Contratto("Full-Time-6x1", turnoFisso = true, Some(4))
+      )
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       myView.drawRecruit(zone, contratti, turni)
     }
@@ -170,6 +190,14 @@ object HumanResourceController {
       myView.drawZonaView(zone)
     }
 
+    override def getTerminalData(): Unit = {
+      //chiamata al model simile al recruit
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
+      myView.drawTerminaleView(zone, terminale)
+    }
+
     override def saveZona(zone: Zona): Unit = {
       //model.newZona(zone).onComplete(_ => getZonaData)
       println(zone)
@@ -178,6 +206,12 @@ object HumanResourceController {
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia) model.illnessPeriod(absence) else model.holidays(absence)
        myView.result(":)")
+    }
+
+
+    override def saveTerminal(terminale: Terminale): Unit = {
+      //model.newTerminale(terminale).onComplete(_ => getTerminalData())
+      println(terminale)
     }
   }
 }

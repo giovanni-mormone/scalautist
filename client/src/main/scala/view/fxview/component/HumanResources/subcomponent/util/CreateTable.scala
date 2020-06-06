@@ -1,12 +1,7 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
-import java.util.stream.Collectors
-
-import caseclass.CaseClassDB.Zona
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.control.{TableColumn, TableRow, TableView}
-
-import scala.jdk.CollectionConverters
 
 object CreateTable {
 

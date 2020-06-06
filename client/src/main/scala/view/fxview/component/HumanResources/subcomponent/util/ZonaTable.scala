@@ -33,10 +33,10 @@ class ZonaTable (idz: String, namez: String) extends TableArgument {
  */
 object ZonaTable{
 
-  implicit def ZonaToZonaTable(zone: Zona) =
+  implicit def ZonaToZonaTable(zone: Zona): ZonaTable =
     new ZonaTable(zone.idZone.head.toString, zone.zones)
 
-  implicit def ZonaListToZonaTableList(zones: List[Zona]) =
+  implicit def ZonaListToZonaTableList(zones: List[Zona]): List[ZonaTable] =
     zones.map(zone => new ZonaTable(zone.idZone.head.toString, zone.zones))
 }
 

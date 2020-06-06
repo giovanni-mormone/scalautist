@@ -52,6 +52,21 @@ trait HumanResourceView extends DialogView {
    *              List of [[caseclass.CaseClassDB.Zona]]
    */
   def drawZonaView(zones: List[Zona]): Unit
+
+  /**
+   * show terminal view
+   *
+   * @param zones
+   *              Listo of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals
+   *                   Listo of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit
+
+  /**
+   *
+   * @param message
+   */
   def result(message:String):Unit
 }
 
@@ -104,6 +119,12 @@ object HumanResourceView {
     override def newZona(zona: Zona): Unit =
       myController.saveZona(zona)
 
+    override def saveAbscense(assenza: Assenza): Unit =
+      myController.saveAbsence(assenza)
+
+    override def newTerminale(terminal: Terminale): Unit =
+      myController.saveTerminal(terminal)
+
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
 
@@ -115,6 +136,9 @@ object HumanResourceView {
 
     override def drawZonePanel: Unit =
       myController.getZonaData()
+
+    override def drawTerminalPanel: Unit =
+      myController.getTerminalData()
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
@@ -140,12 +164,13 @@ object HumanResourceView {
     override def drawZonaView(zones: List[Zona]): Unit =
       hrHome.drawZona(zones)
 
+    override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
+      hrHome.drawTerminal(zones, terminals)
+
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
 
-    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
-
-    override def result(message: String): Unit = modalResource.showMessage(message)
-
+    override def result(message: String): Unit =
+      modalResource.showMessage(message)
   }
 }

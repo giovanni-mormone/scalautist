@@ -5,10 +5,10 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, TableRow, TableView, TextField}
+import javafx.scene.control.{Button, TableView, TextField}
 import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.parent.ZonaParent
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTableWithSelection, ZonaTable}
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, ZonaTable}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -37,36 +37,42 @@ object ZonaBox {
     @FXML
     var zonaButton: Button = _
     @FXML
-    var newNome: TextField = _
+    var newName: TextField = _
     @FXML
     var searchBox: TextField = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
 
-      zonaButton.setText(resources.getString("add"))
-      zonaButton.setDisable(true)
-      zonaButton.setOnAction(_ => parent.newZona(Zona(newNome.getText)))
-
+      initializeButton(resources)
       initializeSearch(resources)
+      initializeTextField(resources)
+      initializeTable()
+    }
 
-      newNome.setPromptText(resources.getString("nametxt"))
-      newNome.textProperty().addListener((_, old, word) => {
-        if(!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
-            newNome.setText(old)
-        ableToSave
-      })
-
+    private def initializeTable(): Unit = {
       val columnFields = List("id", "name")
       CreateTable.createColumns[ZonaTable](zonaTable, columnFields)
       CreateTable.fillTable[ZonaTable](zonaTable, zones)
       CreateTable.clickListener[ZonaTable](
         zonaTable,
-        item => println(Zona(item.name.get, Some(item.id.get().toInt))))
-
+        item => println(Zona(item.name.get, Some(item.id.get().toInt)))
+      )
     }
 
-    private def ableToSave: Unit =
-      zonaButton.setDisable(newNome.getText().equals(""))
+    private def initializeTextField(resources: ResourceBundle): Unit = {
+      newName.setPromptText(resources.getString("nametxt"))
+      newName.textProperty().addListener((_, old, word) => {
+        if (!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
+          newName.setText(old)
+        ableToSave()
+      })
+    }
+
+    private def initializeButton(resources: ResourceBundle): Unit = {
+      zonaButton.setText(resources.getString("add"))
+      zonaButton.setDisable(true)
+      zonaButton.setOnAction(_ => parent.newZona(Zona(newName.getText)))
+    }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
       searchBox.setPromptText(resourceBundle.getString("search"))
@@ -77,6 +83,12 @@ object ZonaBox {
           zones.filter(zone => zone.zones.contains(word) || zone.idZone.head.toString.contains(word)))
       })
     }
+
+    ////////////////////////////////////////////////////////////////////////////////  Controll
+
+    private def ableToSave(): Unit =
+      zonaButton.setDisable(newName.getText().equals(""))
+
   }
 }
 
