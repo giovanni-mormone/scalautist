@@ -4,7 +4,7 @@ import java.sql.Date
 
 import akka.actor.typed.ActorSystem
 import caseclass.CaseClassDB.Stipendio
-import dbfactory.operation.{PersonaOperation, StipendioOperation}
+import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
 import servermodel.ServerConf.StartServer
 
 /**
@@ -13,6 +13,6 @@ import servermodel.ServerConf.StartServer
 object MainServer extends App{
 
     //ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
-    StipendioOperation.calculateStipendi(new Date(System.currentTimeMillis()))
+    AssenzaOperation.getAllFerie(2020)
     while(true){}
 }
