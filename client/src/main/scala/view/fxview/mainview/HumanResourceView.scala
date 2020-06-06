@@ -160,11 +160,8 @@ object HumanResourceView {
       myController.getAllPersona()
 
 
-    override def openZonaModal(zona: Zona): Unit = ???
+    override def openZonaModal(zona: Zona): Unit = {
 
-    override def openModal(id: Int, name: String, surname: String, isMalattia: Boolean): Unit = {
-      modalResource = MainModalResource(id,name,surname,myStage,this,isMalattia)
-      modalResource.show()
     }
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
@@ -191,7 +188,6 @@ object HumanResourceView {
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
 
-    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
     override def message(message: String): Unit = Platform.runLater(()=>this.showMessage(message))
     override def result(message: String): Unit = Platform.runLater(()=>modalResource.showMessage(message))
 
