@@ -218,3 +218,4 @@ SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 select * from [dbo].[PresenzaSets] where data < '2020-06-06'
 select * from [dbo].[StraordinariSets] where data < '2020-06-06'
 select * from StipendioSet
+

@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.Assumi
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
@@ -68,7 +68,7 @@ trait HRHome extends Component[HRHomeParent]{
    *
    * @param employees
    */
-  def drawHolidayBox(employees: List[Persona]): Unit
+  def drawHolidayBox(employees: List[Ferie]): Unit
 }
 
 
@@ -130,7 +130,7 @@ object HRHome{
       zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
       illness.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.ill))
-      holidays.setOnAction(_ =>parent.drawEmployeePanel(EmployeeView.holiday))
+      holidays.setOnAction(_ =>parent.drawHoliday())
     }
 
     /////////////////////////////////////////////////////////////////////////////////// panel drawing method
@@ -150,7 +150,7 @@ object HRHome{
     override def drawIllBox(employees: List[Persona]): Unit =
       baseHR.setCenter(illBox(employees))
 
-    override def drawHolidayBox(employees: List[Persona]): Unit =
+    override def drawHolidayBox(employees: List[Ferie]): Unit =
       baseHR.setCenter(holidayBox(employees))
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
@@ -178,7 +178,7 @@ object HRHome{
       illBox.pane
     }
 
-    private def holidayBox(employees: List[Persona]): Pane = {
+    private def holidayBox(employees: List[Ferie]): Pane = {
       holidayBox = HolidayBox(employees)
       holidayBox.setParent(parent)
       holidayBox.pane
