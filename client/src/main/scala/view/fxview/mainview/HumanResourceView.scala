@@ -74,6 +74,7 @@ trait HumanResourceView extends DialogView {
    * @param message
    */
   def result(message:String):Unit
+  def message(message: String): Unit
 }
 
 /**
@@ -111,7 +112,6 @@ object HumanResourceView {
       hrHome = HRHome()
       hrHome.setParent(this)
       pane.getChildren.add(hrHome.pane)
-      FXHelperFactory.modalWithMessage(myStage,"Strunz").show()
     }
 
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
@@ -191,11 +191,15 @@ object HumanResourceView {
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
 
-    override def result(message: String): Unit =
-      Platform.runLater(()=> modalResource.showMessage(message))
+    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
+    override def message(message: String): Unit = Platform.runLater(()=>this.showMessage(message))
+    override def result(message: String): Unit = Platform.runLater(()=>modalResource.showMessage(message))
 
-    override def drawHolidayView(employeesList: List[Ferie]): Unit =
-      hrHome.drawHolidayBox(employeesList)
+    override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
+      modalResource = MainModalResource(item,myStage,this,isMalattia)
+      modalResource.show()
+    }
 
+    override def drawHolidayView(employeesList: List[Ferie]): Unit = Platform.runLater(()=>hrHome.drawHolidayBox(employeesList))
   }
 }

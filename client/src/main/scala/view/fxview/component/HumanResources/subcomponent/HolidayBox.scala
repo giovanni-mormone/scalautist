@@ -3,12 +3,11 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.Persona
 import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, TableView, TextField}
+import javafx.scene.control.{TableView, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.HolidayBoxParent
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTable}
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, FerieTable}
 import view.fxview.component.{AbstractComponent, Component}
 
 
@@ -25,19 +24,20 @@ object HolidayBox{
   private class HolidayBoxFX(employees: List[Ferie]) extends AbstractComponent[HolidayBoxParent]("humanresources/subcomponent/AbsenceBox") with HolidayBox {
 
     @FXML
-    var employeeTable: TableView[Ferie] = _
+    var employeeTable: TableView[FerieTable] = _
     @FXML
     var searchBox: TextField = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      val columnFields = List("id", "name", "surname","day in holiday")
-      CreateTable.createColumns[Ferie](employeeTable, columnFields)
-      CreateTable.fillTable[Ferie](employeeTable, employees)
+      val columnFields = List("id","nameSurname","holiday")
+
+      CreateTable.createColumns[FerieTable](employeeTable, columnFields)
+      CreateTable.fillTable[FerieTable](employeeTable, employees)
 
       initializeSearch(resources)
-      CreateTable.clickListener[Ferie](
+      CreateTable.clickListener[FerieTable](
         employeeTable,
-        item => parent.openModal(item.id.get().toInt,item.name.get(),item.surname.get(),isMalattia = false))
+        item => parent.openModal(Ferie(item.getId,item.getNameSurname,item.getHoliday),isMalattia = false))
 
     }
 
@@ -45,7 +45,7 @@ object HolidayBox{
       searchBox.setPromptText(resourceBundle.getString("search"))
 
       searchBox.textProperty().addListener((_, _, word) => {
-        CreateTable.fillTable[Ferie](
+        CreateTable.fillTable[FerieTable](
           employeeTable, employees.filter(person => person.nomeCognome.contains(word) ||
             person.idPersona.toString==word ||
             person.giorniVacanza.toString==word))

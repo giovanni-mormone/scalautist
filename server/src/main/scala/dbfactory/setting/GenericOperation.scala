@@ -104,5 +104,6 @@ object GenericOperation{
     override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption.transactionally)
     override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).result.transactionally).map(t => Option(t.toList))
     override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
+    //def execQueryUpdate[F, G, A:List](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:List[A])(implicit shape: Shape[_ <: FlatShapeLevel, F, List[A], G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
   }
 }

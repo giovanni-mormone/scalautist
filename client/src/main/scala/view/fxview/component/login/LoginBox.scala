@@ -1,4 +1,4 @@
-package view.fxview.component.Login
+package view.fxview.component.login
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -30,7 +30,7 @@ trait LoginBox extends Component[LoginParent]{
 /**
  * @author Giovanni Mormone.
  *
- * Companion object of the [[view.fxview.component.Login.LoginBox]]
+ * Companion object of the [[view.fxview.component.login.LoginBox]]
  *
  */
 object LoginBox{
