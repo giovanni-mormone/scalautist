@@ -10,6 +10,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Assenza
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, DateCell, DatePicker, Label, TextField}
+import javafx.util.Callback
 import view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -21,9 +22,9 @@ trait ModalAbsence extends Component[ModalAbsenceParent]{
 }
 object ModalAbsence{
 
-  def apply(idDriver:Int,name:String,surname:String): ModalAbsence =new ModalAbsenceFX(idDriver,name,surname)
+  def apply(idDriver:Int,name:String,surname:String, isMalattia:Boolean=true): ModalAbsence =new ModalAbsenceFX(idDriver,name,surname,isMalattia)
 
-  private class ModalAbsenceFX(id:Int,name:String,surname:String) extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence") with ModalAbsence {
+  private class ModalAbsenceFX(id:Int,name:String,surname:String, isMalattia:Boolean) extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence") with ModalAbsence {
 
     @FXML
     var nameSurname:TextField = _
@@ -32,18 +33,18 @@ object ModalAbsence{
     @FXML
     var finishDate:DatePicker = _
     @FXML
-    var illness:Button = _
+    var button:Button = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      illness.setText(resources.getString("absence-button"))
+      if(isMalattia)button.setText(resources.getString("absence-button"))else button.setText(resources.getString("holiday-button"))
       nameSurname.setText(s"$name "+s" $surname")
       setInitDate(LocalDate.now())
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
-      illness.setOnAction(_=>saveAbscence())
+      button.setOnAction(_=>saveAbscence())
     }
     private def saveAbscence(): Unit ={
-      parent.saveAbsence(Assenza(id,createDataSql(initDate),createDataSql(finishDate),malattia = true))
+      parent.saveAbsence(Assenza(id,createDataSql(initDate),createDataSql(finishDate),isMalattia))
     }
     private def enableFinishDate(): Unit ={
       val today = initDate.getValue
@@ -57,16 +58,22 @@ object ModalAbsence{
         setDisable(empty || date.compareTo(today) < 0 )
       }
     }
+    def setFinalDate(today:LocalDate):DateCell = new DateCell(){
+      override def updateItem(date:LocalDate, empty:Boolean) {
+        super.updateItem(date, empty)
+        setDisable(empty || date.compareTo(today) < 0 || date.minusDays(30).compareTo(today) >= 0)
+      }
+    }
     private def setInitDate(today:LocalDate): Unit ={
       initDate.setDayCellFactory(_=>setDate(today.minusDays(3)))
     }
 
     private def setFinishDate(today:LocalDate): Unit ={
-      finishDate.setDayCellFactory(_=>setDate(today))
+      finishDate.setDayCellFactory(_=>setFinalDate(today))
     }
 
     private def enableButton(): Unit ={
-      illness.setDisable(false)
+      button.setDisable(false)
     }
     private def createDataSql(dateP:DatePicker)={
       val localDate: LocalDate = dateP.getValue

@@ -8,6 +8,6 @@
       <TextField fx:id="nameSurname" disable="true" editable="false" prefWidth="180.0" />
       <DatePicker fx:id="initDate" editable="false" prefWidth="180.0" showWeekNumbers="true" />
       <DatePicker fx:id="finishDate" disable="true" editable="false" prefWidth="180.0" showWeekNumbers="true" />
-      <Button fx:id="illness" disable="true" mnemonicParsing="false" prefWidth="150.0" />
+      <Button fx:id="button" disable="true" mnemonicParsing="false" prefWidth="150.0" />
    </children>
 </VBox>

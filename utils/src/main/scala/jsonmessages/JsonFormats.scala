@@ -4,7 +4,7 @@ import caseclass.CaseClassDB._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import ImplicitDate._
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie, Id}
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 
@@ -31,4 +31,5 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val intJsonFormat:RootJsonFormat[Id] = jsonFormat1(Id)
     implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat3(Disponibilita)
     implicit val assumiJsonFormat:RootJsonFormat[Assumi] = jsonFormat3(Assumi)
+    implicit val ferieJsonFormat:RootJsonFormat[Ferie] = jsonFormat3(Ferie)
 }
