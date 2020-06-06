@@ -2,11 +2,10 @@ package dbfactory.operation
 import java.sql.Date
 import java.util.Calendar
 
-import caseclass.CaseClassDB.{Presenza, Stipendio, Straordinario}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePresenza, InstanceStraordinario}
+import caseclass.CaseClassDB.{Persona, Presenza, Stipendio, Straordinario, Turno}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePresenza, InstanceStipendio, InstanceStraordinario}
 import dbfactory.implicitOperation.OperationCrud
 import slick.jdbc.SQLServerProfile.api._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -25,12 +24,15 @@ trait StipendioOperation extends OperationCrud[Stipendio]{
    *
    */
   def calculateStipendi(date: Date): Future[Option[Int]]
+
+  def getstipendiForPersona(idPersona: Int): Future[Option[List[Stipendio]]]
 }
 
 object StipendioOperation extends StipendioOperation{
-  private val PAGA_TURNO = 32
-  private val PAGA_NOTTE = PAGA_TURNO * 1.3
-  private val MUL_STRAORDINARIO = 1.5
+  private val PAGA_TURNO:Double = 32
+  private val PAGA_NOTTE:Double = PAGA_TURNO * 1.3
+  private val MUL_STRAORDINARIO:Double = 1.5
+  implicit private val STANDARD_MUL:Double = 1
 
   private val startMonthDate: Date =>  Date = x  => {
     val calendar = Calendar.getInstance()
@@ -39,56 +41,43 @@ object StipendioOperation extends StipendioOperation{
     new Date(calendar.getTimeInMillis)
   }
 
-  def fcalculateStipendi(date: Date): Future[(Map[Int,Double],Map[Int,Double])] = {
-    for{
-      r <-InstanceStraordinario.operation().selectFilter(f => f.data < date)
-      tt <- calculateMoneyStraordinari(r)
-      z <- InstancePresenza.operation().selectFilter(f => f.data < date)
-      ttt <- calculateMoney(z)
-    }yield (ttt,tt)
-  }
-
   override def calculateStipendi(date: Date): Future[Option[Int]] = {
-    fcalculateStipendi(date).flatMap(x => {
-      val stipList = stipendi(x._1, x._2,date)
-      insertAll(stipList).collect {
+    createStipendi(date).flatMap(stipendi => {
+      insertAll(stipendi.orElse(Some(List())).head).collect {
         case Some(List()) => None
         case Some(x) => Some(x.length)
       }
     })
   }
 
-  private def calculateMoneyStraordinari(straordinaris: Option[List[Straordinario]]): Future[Map[Int,Double]] = Future{
-    println("STRAOOOOO     " +straordinaris)
-    straordinaris match {
-      case Some(List()) => Map()
-      case Some(list) =>
-        list.map(s => (s.personaId,s.turnoId)).groupBy(_._1).map(x => x._1 -> money(x._2))
-    }
+  override def getstipendiForPersona(idPersona: Int): Future[Option[List[Stipendio]]] = {
+    InstanceStipendio.operation().selectFilter(f => f.personaId === idPersona)
   }
 
-
-  private def calculateMoney(presenze: Option[List[Presenza]]): Future[Map[Int,Double]] = Future{
-    println("PRESEEEEE     " +presenze)
-    presenze match {
-      case Some(List()) => Map()
-      case Some(list) =>
-        list.map(s => (s.personaId,s.turnoId)).groupBy(_._1).map(x => x._1 -> money(x._2))
-    }
+  private def createStipendi(date: Date): Future[Option[List[Stipendio]]] = {
+    for{
+      turni <- TurnoOperation.selectAll
+      straordinari <-InstanceStraordinario.operation().execQueryFilter(c => (c.personaId,c.turnoId),f => f.data < date /*&& f.data >= startMonthDate(date)*/)
+      presenze <- InstancePresenza.operation()execQueryFilter (c => (c.personeId,c.turnoId),f => f.data < date /*&& f.data >= startMonthDate(date)*/ )
+      stipendi <- calculateMoney(presenze,straordinari,turni,date)
+    }yield stipendi
   }
 
-
-  private def stipendi(presenze:Map[Int,Double], straordinari:Map[Int,Double], date:Date):List[Stipendio] ={
-    println("LISTTTT PREEEEE" + presenze)
-    println("LISTTTT STRAOOOO" + straordinari)
-    val s = presenze.map(p => Stipendio(p._1,p._2 + straordinari.getOrElse(p._1,0.0),date))
-    s.toList
+  private def calculateMoney(presenzeList: Option[List[(Int,Int)]],straordinariList: Option[List[(Int,Int)]],turni:Option[List[Turno]],date:Date): Future[Option[List[Stipendio]]] = Future{
+    var stip:Map[Int,Double] = Map()
+    presenzeList.orElse(Some(List())).head.foreach(x => stip =  updateMoneyMap(stip,turni,x))
+    straordinariList.orElse(Some(List())).head.foreach(x => stip = updateMoneyMap(stip,turni,x)( MUL_STRAORDINARIO))
+    stipendi(Some(stip),date)
   }
 
-
-  private def money(value: List[(Int, Int)]):Double = {
-    println("MONEEEEEEE " + value)
-    value.map(t => t._2).map(_ => PAGA_TURNO * MUL_STRAORDINARIO).sum
+  def updateMoneyMap(stip:Map[Int,Double],turni:Option[List[Turno]],presenza:(Int,Int))(implicit mul:Double): Map[Int,Double] = {
+    stip.updated(presenza._1,stip.getOrElse(presenza._1,0.0) + turnoNotturno(turni)(presenza._2) * mul)
   }
 
+  private val turnoNotturno: Option[List[Turno]] => Int => Double = turni => idTurno=>
+    if(turni.orElse(Some(List())).head.exists(turno => turno.id.contains(idTurno) && turno.notturno)) PAGA_NOTTE else PAGA_TURNO
+
+  private def stipendi(soldi:Option[Map[Int,Double]],date:Date):Option[List[Stipendio]] = {
+    Some(soldi.orElse(Some(Map())).head.map(x => Stipendio(x._1,x._2,date)).toList)
+  }
 }

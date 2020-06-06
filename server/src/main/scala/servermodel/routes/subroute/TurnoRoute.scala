@@ -37,7 +37,7 @@ object TurnoRoute {
     post {
       entity(as[Turno]) { turno =>
         onComplete(TurnoOperation.insert(turno)) {
-          case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(1)))
+          //case Success(t)  =>  complete(StatusCodes.Created,Turno(turno.nomeTurno,turno.fasciaOraria,Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
       }
