@@ -9,7 +9,7 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import view.GoBackView
 import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
-import view.fxview.component.Login.ChangePasswordBox
+import view.fxview.component.login.ChangePasswordBox
 
 /**
  * @author Giovanni Mormone.
@@ -28,7 +28,7 @@ trait ChangePasswordView extends GoBackView{
 /**
  * @author Giovanni Mormone.
  *
- * A ChangePasswordParent is the container of a [[view.fxview.component.Login.ChangePasswordBox]]
+ * A ChangePasswordParent is the container of a [[view.fxview.component.login.ChangePasswordBox]]
  *
  */
 trait ChangePasswordParent{

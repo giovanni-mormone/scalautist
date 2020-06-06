@@ -1,4 +1,4 @@
-package view.fxview.component.Login
+package view.fxview.component.login
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -18,7 +18,7 @@ trait ChangePasswordBox extends Component[ChangePasswordParent]{
 }
 
 /**
- * Companion object of the [[view.fxview.component.Login.ChangePasswordBox]]
+ * Companion object of the [[view.fxview.component.login.ChangePasswordBox]]
  *
  *  @author Giovanni Mormone.
  */

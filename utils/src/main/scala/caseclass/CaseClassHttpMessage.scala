@@ -43,5 +43,5 @@ object CaseClassHttpMessage {
    * @param nomeCognome name and surname of the person
    * @param giorniVacanza quantity of day of a persona in holiday
    */
-  case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int)
+  case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int=0)
 }

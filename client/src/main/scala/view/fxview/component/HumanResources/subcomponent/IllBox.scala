@@ -4,8 +4,9 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Persona
+import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, TableView, TextField}
+import javafx.scene.control.{TableView, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.IllBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTable}
 import view.fxview.component.{AbstractComponent, Component}
@@ -36,7 +37,7 @@ object IllBox{
       initializeSearch(resources)
       CreateTable.clickListener[PersonaTable](
         employeeTable,
-        item => parent.openModal(item.id.get().toInt,item.name.get(),item.surname.get()))
+        item => parent.openModal(Ferie(item.getId.toInt,item.getName+" "+item.getSurname)))
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
