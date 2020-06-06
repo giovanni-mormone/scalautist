@@ -89,7 +89,8 @@ trait HumanResourceModel extends AbstractModel{
    * @return Option of zone if exists
    */
   def getAllZone:Future[Option[List[Zona]]]
-
+  def setZona(zona: Zona):Future[Option[Zona]]
+  def setTerminal(terminale: Terminale):Future[Option[Terminale]]
   /**
    * method that return all contract in database
    * @return Option of list with all contract existing into database
@@ -189,6 +190,16 @@ object HumanResourceModel {
     }
     private def callServerSalary(request: HttpRequest)=
         callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
+
+    override def setZona(zona: Zona): Future[Option[Zona]] = {
+      val request = Post(getURI("createzona"))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[Zona]])
+    }
+
+    override def setTerminal(terminale: Terminale): Future[Option[Terminale]] = {
+      val request = Post(getURI("createterminale"))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[Terminale]])
+    }
   }
 
 }
