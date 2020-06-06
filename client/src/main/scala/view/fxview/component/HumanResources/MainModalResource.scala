@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Assenza
+import caseclass.CaseClassHttpMessage.Ferie
 import javafx.stage.Stage
 import view.DialogView
 import view.fxview.AbstractFXModalView
@@ -15,9 +16,9 @@ trait MainModalResource extends DialogView{
 }
 object MainModalResource{
 
-  def apply(id: Int,name:String,surname:String,stage:Stage,parent:ModalTrait,isMalattian:Boolean=true): MainModalResource = new Modal(id,name,surname,stage,parent,isMalattian)
+  def apply(item:Ferie,stage:Stage,parent:ModalTrait,isMalattia:Boolean): MainModalResource = new Modal(item,stage,parent,isMalattia)
 
-  private class Modal(id: Int,name:String,surname:String,stage:Stage,parent:ModalTrait,isMalattian:Boolean) extends AbstractFXModalView(stage) with MainModalResource
+  private class Modal(item:Ferie,stage:Stage,parent:ModalTrait,isMalattian:Boolean) extends AbstractFXModalView(stage) with MainModalResource
   with ModalAbsenceParent{
     /**
      * Closes the view.
@@ -25,7 +26,7 @@ object MainModalResource{
     private var sonResource: ModalAbsence = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      sonResource = ModalAbsence(id,name,surname,isMalattian)
+      sonResource = ModalAbsence(item,isMalattian)
       sonResource.setParent(this)
       pane.getChildren.add(sonResource.pane)
     }
