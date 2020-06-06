@@ -219,4 +219,5 @@ select * from [dbo].[PresenzaSets] where data < '2020-06-06'
 select * from AssenzaSet;
 select * from [dbo].[StraordinariSets] where data < '2020-06-06'
 select * from StipendioSet
+select * from PersoneSets FULL outer JOIN AssenzaSet on Matricola=AssenzaSet.PersoneSet_Matricola where DataFine < '2021-1-1' and DataInizio > '2020-1-1'
 

@@ -41,7 +41,8 @@ object CaseClassHttpMessage {
    * @param idPersona represent the user id, this is for search user into database and
    *                  and be able to change password
    * @param nomeCognome name and surname of the person
-   * @param giorniVacanza quantity of day of a persona in holiday
+   * @param giorniVacanza
+   *                      Remaining day of holidays for the person
    */
   case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int)
 }

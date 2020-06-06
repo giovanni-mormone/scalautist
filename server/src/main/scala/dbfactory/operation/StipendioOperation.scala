@@ -84,6 +84,6 @@ object StipendioOperation extends StipendioOperation{
     if(turni.orElse(Some(List())).head.exists(turno => turno.id.contains(idTurno) && turno.notturno)) PAGA_NOTTE else PAGA_TURNO
 
   private def stipendi(soldi:Option[Map[Int,Double]],date:Date):Option[List[Stipendio]] = {
-    Some(soldi.orElse(Some(Map())).head.map(x => Stipendio(x._1,x._2,date)).toList)
+    Option(soldi.orElse(Some(Map())).head.map(x => Stipendio(x._1,x._2,date)).toList)
   }
 }
