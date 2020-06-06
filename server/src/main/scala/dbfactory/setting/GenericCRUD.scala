@@ -1,8 +1,6 @@
 package dbfactory.setting
 import dbfactory.implicitOperation.Crud
-import dbfactory.setting.Table.ZonaTableQuery
 import slick.jdbc.SQLServerProfile.api._
-import slick.lifted.{FlatShapeLevel, Shape}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -25,6 +23,7 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
   protected val queryByIdPlus: Seq[Int] => Query[T, C, Seq] = (id: Seq[Int]) => tableDB().filter(_.id.inSet(id))
 
 }
+
 object GenericCRUD{
   case class GenericOperationCRUD[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericCRUD[C,T]{
     import dbfactory.util.Helper._

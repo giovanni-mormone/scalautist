@@ -293,8 +293,8 @@ CREATE TABLE [dbo].[TerminalSets] (
 CREATE TABLE [dbo].[TurnoSets] (
                                    [IdTurno] int IDENTITY(1,1) NOT NULL,
                                    [NomeTurno] nvarchar(max)  NOT NULL,
-                                   [FasciaOraria] nvarchar(max)  NOT NULL,
-                                   [Notturno] bit  NOT NULL
+                                   [Notturno] bit NOT NULL ,
+                                   [FasciaOraria] nvarchar(max)  NOT NULL
 );
 
 

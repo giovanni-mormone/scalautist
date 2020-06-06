@@ -7,6 +7,7 @@ import ImplicitDate._
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
+
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
     implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
     implicit val terminaleJsonFormat: RootJsonFormat[Terminale] = jsonFormat3(Terminale)

@@ -86,7 +86,7 @@ object TerminaleRoute  {
     post {
       entity(as[Id]) { idZona =>
         onComplete(TerminaleOperation.getTermininaliInZona(idZona.id)) {
-          case Success(terminale)  =>  complete(StatusCodes.Found,terminale)
+          case Success(terminale) if terminale.isDefined  =>  complete(StatusCodes.Found,terminale)
           case t => anotherSuccessAndFailure(t)
         }
       }

@@ -114,7 +114,15 @@ object PersonaRoute{
         }
       }
     }
-  def salaryCalculus(): Route = ???
+  def salaryCalculus(): Route =
+    post{
+      entity(as[Id]) {
+        id => onComplete(stipendio(id.id)){
+          case Success(t)  =>  complete((StatusCodes.Found,t))
+          case t => anotherSuccessAndFailure(t)
+        }
+      }
+    }
   import scala.concurrent.ExecutionContext.Implicits.global
   private def stipendio(id:Int) =Future{Id(id)}
  /* def addAbsence(): Route =

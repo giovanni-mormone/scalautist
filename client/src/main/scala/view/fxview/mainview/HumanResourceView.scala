@@ -3,16 +3,16 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Contratto, Persona, Terminale, Turno, Zona}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import controller.HumanResourceController
-import javafx.application.Platform
-import javafx.scene.layout.Pane
 import javafx.stage.Stage
-import view.BaseView
-import view.fxview.AbstractFXDialogView
-import view.fxview.component.HumanResources.{HRHome, HRViewParent}
+import view.DialogView
+import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
+import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
+import view.fxview.component.HumanResources.{HRHome, MainModalResource}
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
+ 
 
 /**
  * @author Francesco Cassano
@@ -21,19 +21,38 @@ import view.fxview.component.HumanResources.{HRHome, HRViewParent}
  * It extends [[view.BaseView]]
  *
  */
-trait HumanResourceView extends BaseView {
+trait HumanResourceView extends DialogView {
 
   /**
    * Show child's recruit view
    *
    */
-  def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno])
+  def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit
 
   /**
    * Show terminals into child's recruit view
    *
    */
-  def drawTerminal(terminals: List[Terminale])
+  def drawTerminal(terminals: List[Terminale]): Unit
+
+  /**
+   * Show the view that requested the list of employees
+   *
+   * @param employeesList
+   *                      List of [[caseclass.CaseClassDB.Persona]] represent employees
+   * @param viewToDraw
+   *                   The string represent the view code requesting the data
+   */
+  def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
+
+  /**
+   * Show the zone view
+   *
+   * @param zones
+   *              List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZonaView(zones: List[Zona]): Unit
+  def result(message:String):Unit
 }
 
 /**
@@ -44,7 +63,7 @@ trait HumanResourceView extends BaseView {
  */
 object HumanResourceView {
 
-  def apply(stage: Stage): HumanResourceView = new HumanResourceViewFX(stage)
+  def apply(stage: Stage): HumanResourceView = new HumanResourceHomeFX(stage)
 
   /**
    * HumanResourceView FX implementation
@@ -52,10 +71,11 @@ object HumanResourceView {
    * @param stage
    *              Stage that load view
    */
-  private class HumanResourceViewFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with HumanResourceView with HRViewParent {
+  private class HumanResourceHomeFX(stage: Stage) extends AbstractFXDialogView(stage)
+    with HumanResourceView with HRHomeParent with ModalTrait{
 
     private var myController: HumanResourceController = _
+    private var modalResource: MainModalResource = _
     private var hrHome: HRHome = _
 
     /**
@@ -70,30 +90,62 @@ object HumanResourceView {
       hrHome = HRHome()
       hrHome.setParent(this)
       pane.getChildren.add(hrHome.pane)
+      FXHelperFactory.modalWithMessage(myStage,"Strunz").show()
     }
 
-    override def recruitClicked(persona: Assumi): Unit = myController.recruit(persona)
+    ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
+
+    override def recruitClicked(persona: Assumi): Unit =
+      myController.recruit(persona)
+
+    override def fireClicked(employees: Set[Int]): Unit =
+      myController.fires(employees)
+
+    override def newZona(zona: Zona): Unit =
+      myController.saveZona(zona)
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
 
     override def drawRecruitPanel: Unit =
       myController.getRecruitData
+ 
+    override def drawEmployeePanel(viewToDraw: String): Unit =
+      myController.getAllPersona(viewToDraw)
+
+    override def drawZonePanel: Unit =
+      myController.getZonaData()
+
+    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
-      hrHome.drawRecruit(zones, contracts, shifts)
+     hrHome.drawRecruit(zones, contracts, shifts)
+    
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
       hrHome.drawRecruitTerminals(terminals)
+
+ 
+    override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
+      case EmployeeView.fire => hrHome.drawFire(employeesList)
+      case EmployeeView.ill => hrHome.drawIllBox(employeesList)
+      case EmployeeView.holiday => hrHome.drawHolidayBox(employeesList)
+    }
+
+    override def openModal(id: Int,name:String,surname:String): Unit = {
+      modalResource = MainModalResource(id,name,surname,myStage,this)
+      modalResource.show()
+    }
+
+    override def drawZonaView(zones: List[Zona]): Unit =
+      hrHome.drawZona(zones)
+
+    override def drawChangePassword: Unit =
+      ChangePasswordView(stage, Some(stage.getScene))
+
+    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
+
+    override def result(message: String): Unit = modalResource.showMessage(message)
+
   }
 }
-/*override def drawRecruit(): Unit = {
-      Platform.runLater(() =>{
-        /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-        val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
-          Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
-        val turni = List(Turno("mattina","04-08",Some(1)), Turno("mattina2","08-14",Some(2)),
-          Turno("pomer","14-19",Some(3)), Turno("sera","19-23",Some(4)), Turno("notte","23-04",Some(5)))*/
-
-      })
-    }*/
