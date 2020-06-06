@@ -29,8 +29,8 @@ object ZonaBox {
 
   def apply(zones: List[Zona]): ZonaBox = new ZonaBoxFX(zones)
 
-  private class ZonaBoxFX(zones: List[Zona]) extends AbstractComponent[ZonaParent]("humanresources/subcomponent/ZonaBox")
-    with ZonaBox {
+  private class ZonaBoxFX(zones: List[Zona])
+    extends AbstractComponent[ZonaParent]("humanresources/subcomponent/ZonaBox") with ZonaBox {
 
     @FXML
     var zonaTable: TableView[ZonaTable] = _
@@ -55,7 +55,7 @@ object ZonaBox {
       CreateTable.fillTable[ZonaTable](zonaTable, zones)
       CreateTable.clickListener[ZonaTable](
         zonaTable,
-        item => println(Zona(item.name.get, Some(item.id.get().toInt)))
+        item => parent.openZonaModal(Zona(item.name.get, Some(item.id.get().toInt)))
       )
     }
 

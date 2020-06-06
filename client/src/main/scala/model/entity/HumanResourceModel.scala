@@ -131,9 +131,11 @@ object HumanResourceModel {
     private def callServer(request: HttpRequest) =
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Login]])
 
-    override def illnessPeriod(assenza: Assenza): Future[Option[Int]] = createRequest(assenza)
+    override def illnessPeriod(assenza: Assenza): Future[Option[Int]] =
+      createRequest(assenza)
 
-    override def holidays(assenza: Assenza): Future[Option[Int]] = createRequest(assenza)
+    override def holidays(assenza: Assenza): Future[Option[Int]] =
+      createRequest(assenza)
 
 
     override def fires(ids: Id): Future[Option[Int]] = {

@@ -116,26 +116,36 @@ object HumanResourceView {
 
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
 
+    /////////////////////////////////////////////////////////   assumi
     override def recruitClicked(persona: Assumi): Unit =
       myController.recruit(persona)
-
-    override def fireClicked(employees: Set[Int]): Unit =
-      myController.fires(employees)
-
-    override def newZona(zona: Zona): Unit =
-      myController.saveZona(zona)
-
-    override def saveAbscense(assenza: Assenza): Unit =
-      myController.saveAbsence(assenza)
-
-    override def newTerminale(terminal: Terminale): Unit =
-      myController.saveTerminal(terminal)
 
     override def loadRecruitTerminals(zona: Zona): Unit =
       myController.getTerminals(zona)
 
+    /////////////////////////////////////////////////////////   licenzia
+    override def fireClicked(employees: Set[Int]): Unit =
+      myController.fires(employees)
+
+    /////////////////////////////////////////////////////////   zona
+    override def newZona(zona: Zona): Unit =
+      myController.saveZona(zona)
+
+    override def deleteZona(zona: Zona): Unit = ???
+
+    override def updateZona(zona: Zona): Unit = ???
+
+    /////////////////////////////////////////////////////////   assenza
+    override def saveAbscense(assenza: Assenza): Unit =
+      myController.saveAbsence(assenza)
+
+    /////////////////////////////////////////////////////////   terminale
+    override def newTerminale(terminal: Terminale): Unit =
+      myController.saveTerminal(terminal)
+
+    /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
-      myController.getRecruitData
+      myController.getRecruitData()
  
     override def drawEmployeePanel(viewToDraw: String): Unit =
       myController.getAllPersona(viewToDraw)
@@ -143,13 +153,20 @@ object HumanResourceView {
     override def drawZonePanel: Unit =
       myController.getZonaData()
 
-<<<<<<< HEAD
     override def drawTerminalPanel: Unit =
       myController.getTerminalData()
 
-=======
-    override def drawHoliday(): Unit =  myController.getAllPersona()
->>>>>>> e5e9be816b0ca2982f1d8c22b58c11b5157d9eca
+    override def drawHoliday(): Unit =
+      myController.getAllPersona()
+
+
+    override def openZonaModal(zona: Zona): Unit = ???
+
+    override def openModal(id: Int, name: String, surname: String, isMalattia: Boolean): Unit = {
+      modalResource = MainModalResource(id,name,surname,myStage,this,isMalattia)
+      modalResource.show()
+    }
+
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
@@ -174,20 +191,11 @@ object HumanResourceView {
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
 
-<<<<<<< HEAD
     override def result(message: String): Unit =
-      modalResource.showMessage(message)
-=======
-    override def saveAbscense(assenza: Assenza): Unit = myController.saveAbsence(assenza)
+      Platform.runLater(()=> modalResource.showMessage(message))
 
-    override def result(message: String): Unit = Platform.runLater(()=>modalResource.showMessage(message))
+    override def drawHolidayView(employeesList: List[Ferie]): Unit =
+      hrHome.drawHolidayBox(employeesList)
 
-    override def openModal(id: Int, name: String, surname: String, isMalattia: Boolean): Unit = {
-      modalResource = MainModalResource(id,name,surname,myStage,this,isMalattia)
-      modalResource.show()
-    }
-
-    override def drawHolidayView(employeesList: List[Ferie]): Unit = hrHome.drawHolidayBox(employeesList)
->>>>>>> e5e9be816b0ca2982f1d8c22b58c11b5157d9eca
   }
 }

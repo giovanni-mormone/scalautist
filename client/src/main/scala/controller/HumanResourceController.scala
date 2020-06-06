@@ -17,8 +17,14 @@ import scala.util.{Failure, Success, Try}
  * A HumanResource controller for a view of type [[view.fxview.mainview.HumanResourceView]]
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
-  def saveAbsence(absence: Assenza): Unit
 
+  /**
+   * Absence saves a new absence on the db
+   *
+   * @param absence
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
+   */
+  def saveAbsence(absence: Assenza): Unit
 
   /**
    * Recruit saves a new employee on the db
@@ -40,6 +46,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * illness saves on the db an employee's absence for a period of time
    *
    * @param assenza
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
    */
   def illness(assenza: Assenza): Unit
 
@@ -88,8 +95,9 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * getAllPersona asks model for the employees list
    *
    */
-  def getAllPersona(callingView: String): Unit //TODO quando i dati arrivano li faccio disegnare
+  def getAllPersona(callingView: String): Unit
   def getAllPersona(): Unit
+
   /**
    * getZonaData method retrieves all data needed to draw zona view
    *
@@ -207,8 +215,12 @@ object HumanResourceController {
     }
       
     override def saveAbsence(absence: Assenza): Unit = {
-       if(absence.malattia) model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)} else model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
+       if(absence.malattia)
+         model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
+       else
+         model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
     }
+
     private def sendMessageModal(t:Try[Option[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
       case (Failure(_),true) => myView.result("Error assignando malattia")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
