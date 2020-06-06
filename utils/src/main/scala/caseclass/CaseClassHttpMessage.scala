@@ -9,7 +9,7 @@ import caseclass.CaseClassDB.{Disponibilita, Persona, StoricoContratto, Straordi
  */
 object CaseClassHttpMessage {
   /**
-   *
+   * case class that represent the possibility of change password in the system
    * @param id represent the user id, this is for search user into database and
    * and be able to change password
    * @param oldPassword represent the old password of the user in the system
@@ -35,4 +35,13 @@ object CaseClassHttpMessage {
    *                         all over time that driver make in the week, where week can be also saturday
    */
   case class Assumi(persona:Persona,storicoContratto: StoricoContratto,disponibilita:Option[Disponibilita]=None)
+
+  /**
+   * case class that represent the day that one person to have of holiday
+   * @param idPersona represent the user id, this is for search user into database and
+   *                  and be able to change password
+   * @param nomeCognome name and surname of the person
+   * @param giorniVacanza quantity of day of a persona in holiday
+   */
+  case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int)
 }

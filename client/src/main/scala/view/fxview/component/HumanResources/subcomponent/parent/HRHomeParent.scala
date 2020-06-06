@@ -34,4 +34,9 @@ trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent with I
    *
    */
   def drawZonePanel: Unit
+
+  /**
+   * design view for holiday
+   */
+  def drawHoliday():Unit
 }

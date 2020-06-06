@@ -10,6 +10,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Assenza
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, DateCell, DatePicker, Label, TextField}
+import javafx.util.Callback
 import view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -57,12 +58,18 @@ object ModalAbsence{
         setDisable(empty || date.compareTo(today) < 0 )
       }
     }
+    def setFinalDate(today:LocalDate):DateCell = new DateCell(){
+      override def updateItem(date:LocalDate, empty:Boolean) {
+        super.updateItem(date, empty)
+        setDisable(empty || date.compareTo(today) < 0 || date.minusDays(30).compareTo(today) >= 0)
+      }
+    }
     private def setInitDate(today:LocalDate): Unit ={
       initDate.setDayCellFactory(_=>setDate(today.minusDays(3)))
     }
 
     private def setFinishDate(today:LocalDate): Unit ={
-      finishDate.setDayCellFactory(_=>setDate(today))
+      finishDate.setDayCellFactory(_=>setFinalDate(today))
     }
 
     private def enableButton(): Unit ={

@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.Assumi
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
 import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -46,6 +46,11 @@ trait HumanResourceView extends DialogView {
    */
   def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
 
+  /**
+   *
+   * @param employeesList
+   */
+  def drawHolidayView(employeesList: List[Ferie]):Unit
   /**
    * Show the zone view
    *
@@ -117,6 +122,7 @@ object HumanResourceView {
     override def drawZonePanel: Unit =
       myController.getZonaData()
 
+    override def drawHoliday(): Unit =  myController.getAllPersona()
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
@@ -128,9 +134,8 @@ object HumanResourceView {
 
  
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
-      case EmployeeView.fire => hrHome.drawFire(employeesList)
-      case EmployeeView.ill => hrHome.drawIllBox(employeesList)
-      case EmployeeView.holiday => hrHome.drawHolidayBox(employeesList)
+      case EmployeeView.fire =>Platform.runLater(()=>hrHome.drawFire(employeesList))
+      case EmployeeView.ill => Platform.runLater(()=>hrHome.drawIllBox(employeesList))
     }
 
     override def drawZonaView(zones: List[Zona]): Unit =
@@ -147,5 +152,7 @@ object HumanResourceView {
       modalResource = MainModalResource(id,name,surname,myStage,this,isMalattia)
       modalResource.show()
     }
+
+    override def drawHolidayView(employeesList: List[Ferie]): Unit = hrHome.drawHolidayBox(employeesList)
   }
 }
