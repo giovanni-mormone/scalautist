@@ -215,12 +215,3 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO
-select * from [dbo].[PresenzaSets] where data < '2020-06-06'
-select * from AssenzaSet;
-select * from [dbo].[StraordinariSets] where data < '2020-06-06'
-select * from StipendioSet
-select * from PersoneSets
-select * from StoricoContrattoSets
-select * from TurnoSets
-
-    5 -> 112.0, 1 -> 64.0, 6 -> 96.0, 2 -> 240.0, 3 -> 64.0, 4 -> 80.0
