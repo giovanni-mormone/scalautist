@@ -69,7 +69,8 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @tparam F  Tuple which represent the field what we want to select
    * @tparam G  Represent the element Packed
    * @tparam A  Represent the element unpacked which are a tuple
-   * @return    List of case class that satisfies condition f
+   * @return    List of case class that satisfies condition f. The List is a List of Tuples that has the types of the selected fields
+   *            of the query.
    */
   def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
 

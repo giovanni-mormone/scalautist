@@ -49,12 +49,14 @@ object StipendioOperation extends StipendioOperation{
 
   override def calculateStipendi(date: Date): Future[Option[Int]] = {
     createStipendi(date).flatMap(stipendi => {
-      insertAll(stipendi.orElse(Some(List())).head).collect {
-        case Some(List()) => None
+      insertAll(stipendi.getOrElse(List())).collect{
         case Some(x) => Some(x.length)
+        case _ => None
       }
     })
   }
+
+
 
   override def getstipendiForPersona(idPersona: Int): Future[Option[List[Stipendio]]] = {
     InstanceStipendio.operation().selectFilter(f => f.personaId === idPersona)
@@ -71,8 +73,8 @@ object StipendioOperation extends StipendioOperation{
 
   private def calculateMoney(presenzeList: Option[List[(Int,Int)]],straordinariList: Option[List[(Int,Int)]],turni:Option[List[Turno]],date:Date): Future[Option[List[Stipendio]]] = Future{
     var stip:Map[Int,Double] = Map()
-    presenzeList.orElse(Some(List())).head.foreach(x => stip =  updateMoneyMap(stip,turni,x))
-    straordinariList.orElse(Some(List())).head.foreach(x => stip = updateMoneyMap(stip,turni,x)( MUL_STRAORDINARIO))
+    presenzeList.foreach(_.foreach(x => stip =  updateMoneyMap(stip,turni,x)))
+    straordinariList.foreach(_.foreach(x => stip = updateMoneyMap(stip,turni,x)(MUL_STRAORDINARIO)))
     stipendi(Some(stip),date)
   }
 
@@ -81,9 +83,9 @@ object StipendioOperation extends StipendioOperation{
   }
 
   private val turnoNotturno: Option[List[Turno]] => Int => Double = turni => idTurno=>
-    if(turni.orElse(Some(List())).head.exists(turno => turno.id.contains(idTurno) && turno.notturno)) PAGA_NOTTE else PAGA_TURNO
+    if(turni.exists(_.exists(turno => turno.id.contains(idTurno) && turno.notturno)))  PAGA_NOTTE else PAGA_TURNO
 
   private def stipendi(soldi:Option[Map[Int,Double]],date:Date):Option[List[Stipendio]] = {
-    Option(soldi.orElse(Some(Map())).head.map(x => Stipendio(x._1,x._2,date)).toList)
+    soldi.map(_.map(x => Stipendio(x._1,x._2,date)).toList)
   }
 }
