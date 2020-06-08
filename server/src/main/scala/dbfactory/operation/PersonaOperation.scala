@@ -1,8 +1,10 @@
 package dbfactory.operation
+import java.sql.Date
+
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.{Login, Persona, StoricoContratto}
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
 
@@ -61,6 +63,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    */
   def assumi(personaDaAssumere: Assumi): Future[Option[Login]]
 }
+
 object PersonaOperation extends PersonaOperation {
   private val generator = scala.util.Random.alphanumeric
 

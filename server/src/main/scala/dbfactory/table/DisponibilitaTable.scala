@@ -21,7 +21,6 @@ object DisponibilitaTable {
     def giorno1: Rep[String] = column[String]("Giorno1")
     def giorno2: Rep[String] = column[String]("Giorno2")
     override def * : ProvenShape[Disponibilita] = (giorno1,giorno2,id.?).mapTo[Disponibilita]
-
   }
 
 }

@@ -8,6 +8,7 @@ object TurnoTable{
   class TurnoTableRep(tag: Tag) extends GenericTable[Turno](tag, "TurnoSets","IdTurno") {
     def nomeTurno: Rep[String] = column[String]("NomeTurno")
     def fasciaOraria: Rep[String] = column[String]("FasciaOraria")
-    override def * : ProvenShape[Turno] = (nomeTurno, fasciaOraria,id.?).mapTo[Turno]
+    def notturno: Rep[Boolean] = column[Boolean]("Notturno")
+    override def * : ProvenShape[Turno] = (nomeTurno, fasciaOraria,notturno,id.?).mapTo[Turno]
   }
 }
