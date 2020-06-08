@@ -54,8 +54,6 @@ object StoricoContrattoOperation extends StoricoContrattoOperation {
     filter => InstanceStoricoContratto.operation().selectFilter(filter)
 
 
-  private def checkStorici(storici: Option[List[StoricoContratto]]) : Future[Option[Int]] = storici match{
-    case Some(List()) => Future.successful(None)
-    case _ => StoricoContrattoOperation.deleteAll(storici.head.flatMap(storico => storico.idStoricoContratto))
-  }
+  private def checkStorici(storici: Option[List[StoricoContratto]]) : Future[Option[Int]] =
+        deleteAll(storici.map(_.flatMap(_.idStoricoContratto)).getOrElse(List()))
 }

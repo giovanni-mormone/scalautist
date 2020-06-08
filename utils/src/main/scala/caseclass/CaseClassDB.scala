@@ -174,7 +174,7 @@ object CaseClassDB{
    * @param fasciaOraria time slot that represent init and finish time
    * @param id represent unambiguous for every turno (for insert operation this is not mandatory)
    */
-  final case class Turno(nomeTurno: String, fasciaOraria: String,id: Option[Int] = None)
+  final case class Turno(nomeTurno: String, fasciaOraria: String,notturno: Boolean,id: Option[Int] = None)
 
   /**
    * Zona is a case class that represent a instance of table into database that contains

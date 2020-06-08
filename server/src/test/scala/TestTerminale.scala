@@ -28,4 +28,8 @@ class TestTerminale extends  AsyncFlatSpec with BeforeAndAfterEach with Init2 wi
     val futureTerminali: Future[Option[List[Terminale]]] = TerminaleOperation.getTermininaliInZona(3)
     futureTerminali map {terminale => assert(terminale.head.length == 1)}
   }
+  it should "return None when zona is wrong " in {
+    val futureTerminali: Future[Option[List[Terminale]]] = TerminaleOperation.getTermininaliInZona(30)
+    futureTerminali map {terminale => assert(terminale.isEmpty)}
+  }
 }

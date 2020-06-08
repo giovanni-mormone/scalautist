@@ -2,6 +2,7 @@ package dbfactory.setting
 
 import caseclass.CaseClassDB._
 import dbfactory.setting.GenericCRUD.GenericOperationCRUD
+import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
@@ -34,6 +35,11 @@ trait Table[C,A<:GenericTable[C]] extends GenericOperationCRUD[C,A]{
   def tableQuery():TableQuery[A]
 }
 object Table{
+
+  object AssenzaTableQuery extends Table[Assenza,AssenzaTableRep]{
+    override def tableQuery(): TableQuery[AssenzaTableRep] = tableDB()
+  }
+
   object ContrattoTableQuery extends Table[Contratto,ContrattoTableRep]{
     override def tableQuery(): TableQuery[ContrattoTableRep] = tableDB()
   }

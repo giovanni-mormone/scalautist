@@ -1,7 +1,7 @@
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, StoricoContratto, Zona}
-import dbfactory.operation.{AssenzaOperation, PersonaOperation, ZonaOperation}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, Stipendio, StoricoContratto, Zona}
+import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation, ZonaOperation}
 import org.scalatest._
 import utils.StartServer
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
@@ -134,11 +134,13 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(101,80))
     fire map {login => assert(login.isEmpty)}
   }
-
-  behavior of "assenza"
-  it should "return an int id for the assenza" in {
-    val assence: Future[Option[Int]] = AssenzaOperation.insert(assenza)
-    assence map {assence => assert(assence.head.isValidInt)}
+  it should "return A list of length N when gets the stipendi for persona with id 2" in {
+    val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(2)
+    stipendi map {stip => assert(stip.head.length == 3)}
+  }
+  it should "return A None stipendi for persona not in the db" in {
+    val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(277)
+    stipendi map {stip => assert(stip.isEmpty)}
   }
  /* it should "return a int when delete a person for id" in {
     val deletePersona: Future[Int] = PersonaOperation.delete(persona)
