@@ -56,9 +56,9 @@ object DriverHome{
       labelStipendio.setOnMouseClicked((_:MouseEvent)=>parent.drawStipendioPanel())
     }
 
-    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12"))))
+    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12",notturno = true))))
 
-    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12"))))
+    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12",notturno = true))))
 
     override def drawSalary(list:List[Stipendio]): Unit = driverHome.setCenter(salary(list))
 

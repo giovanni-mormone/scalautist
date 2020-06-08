@@ -1,7 +1,7 @@
 package dbfactory.implicitOperation
 
 import caseclass.CaseClassDB._
-import dbfactory.setting.GenericOperation.Operation
+import dbfactory.setting.GenericOperation
 import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
@@ -133,7 +133,7 @@ object Crud {
   implicit object CrudPersona extends OperationImplicit[Persona,PersonaTableRep] with Crud[Persona] {
     import slick.jdbc.SQLServerProfile.api._
 
-    private val operation: Operation[Persona, PersonaTableRep] = Operation[Persona,PersonaTableRep]()
+    private val operation: GenericOperation[Persona, PersonaTableRep] = GenericOperation[Persona,PersonaTableRep]()
     override private[implicitOperation] def insert(element: Persona):Future[Option[Int]]                 = typeDB().insert(element)
     override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = operation.execQuery(personaSelect,element)
                                                                                                   .map(convertTupleToPerson)
