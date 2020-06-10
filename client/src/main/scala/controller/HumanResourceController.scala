@@ -213,8 +213,8 @@ object HumanResourceController {
         } yield (zones.head, contracts.head, turns.head)
       future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))*/
 
-      val turni = List(Turno("bho","0-6",Some(1)), Turno("bho","6-12",Some(2)),
-        Turno("bho","12-18",Some(3)), Turno("bho","18-0",Some(4)))
+      val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
+        Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
       val contratti = List(
         Contratto("Full-Time-5x2", turnoFisso = true, Some(1)),
         Contratto("Part-Time-5x2", turnoFisso = true, Some(2)),
