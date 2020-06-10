@@ -4,12 +4,13 @@ import caseclass.CaseClassDB._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json._
 import ImplicitDate._
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie, Id}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Ferie, Id, Request, Response}
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
-    implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat3(Turno)
+    implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
     implicit val terminaleJsonFormat: RootJsonFormat[Terminale] = jsonFormat3(Terminale)
     implicit val straordinarioJsonFormat: RootJsonFormat[Straordinario] = jsonFormat4(Straordinario)
     implicit val storicoContrattoJsonFormat: RootJsonFormat[StoricoContratto] = jsonFormat7(StoricoContratto)
@@ -32,4 +33,9 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat3(Disponibilita)
     implicit val assumiJsonFormat:RootJsonFormat[Assumi] = jsonFormat3(Assumi)
     implicit val ferieJsonFormat:RootJsonFormat[Ferie] = jsonFormat3(Ferie)
+    implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
+    implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
+    implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
+
+
 }

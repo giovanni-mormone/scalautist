@@ -8,7 +8,7 @@ import org.scalatest.flatspec.AsyncFlatSpec
 import servermodel.MainServer
 import akka.http.scaladsl.client.RequestBuilding.Post
 import caseclass.CaseClassDB.{Login, Persona}
-import caseclass.CaseClassHttpMessage.ChangePassword
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie}
 import jsonmessages.JsonFormats._
 import utils.StartServer
 
@@ -27,8 +27,8 @@ trait HttpRequest {
   implicit val system = ActorSystem("test")
   implicit val materializer = SystemMaterializer(system)
   implicit val ex = system.dispatchers
+  protected val hirePerson: String = "hireperson"
 
-  MainServer
 }
 
 class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpRequest with StartServer{
@@ -57,7 +57,13 @@ class TestHttpDummydb extends AsyncFlatSpec with BeforeAndAfterEach with HttpReq
     val string = Unmarshal(request).to[String]
     string map (s => assert(s.equals(dummyString)))
   }
+  behavior of "send Null to server"
+  it should "return InternalServerError with send null to server" in {
+    val assumi:Ferie = Ferie(1,"giorni",2)
+    val request: HttpResponse =  Await.result(Http().singleRequest(Post(uri + hirePerson,assumi)), Duration.Inf)
+    assert(request.status == StatusCodes.InternalServerError)
 
+  }
 }
 
 class TestHttpOnlinedb extends  AsyncFlatSpec with BeforeAndAfterEach with HttpRequest {

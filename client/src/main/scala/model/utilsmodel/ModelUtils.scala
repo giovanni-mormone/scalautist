@@ -1,4 +1,4 @@
-package model.utils
+package model.utilsmodel
 
 import caseclass.CaseClassHttpMessage.Id
 

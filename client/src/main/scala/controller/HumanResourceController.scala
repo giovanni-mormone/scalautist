@@ -2,9 +2,9 @@ package controller
 
 
 import caseclass.CaseClassDB.{Assenza, Contratto, Persona, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Id, Response}
 import model.entity.HumanResourceModel
-import model.utils.ModelUtils.id
+import model.utilsmodel.ModelUtils.id
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.mainview.HumanResourceView
 
@@ -199,11 +199,11 @@ object HumanResourceController {
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
 
-    def getZone: Future[Option[List[Zona]]] = model.getAllZone
+    def getZone: Future[Response[List[Zona]]] = model.getAllZone
 
-    def getTurni: Future[Option[List[Turno]]] = model.getAllShift
+    def getTurni: Future[Response[List[Turno]]] = model.getAllShift
 
-    def getContratti: Future[Option[List[Contratto]]] = model.getAllContract
+    def getContratti: Future[Response[List[Contratto]]] = model.getAllContract
 
     override def getRecruitData(): Unit = {
       /*val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
@@ -278,12 +278,11 @@ object HumanResourceController {
        else
          model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
     }
-
-    private def sendMessageModal(t:Try[Option[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
-      case (Failure(_),true) => myView.result("Error assignando malattia")
+    private def sendMessageModal(t:Try[Response[Id]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
+      case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
-      case (Success(Some(value)),true)  =>myView.result("malattia asignada correctamente")
-      case (Success(Some(value)),false)  =>myView.result("vacaciones asignada correctamente")
+      case (Success(value),true)  =>myView.result("malattia asignada correctamente")
+      case (Success(value),false)  =>myView.result("vacaciones asignada correctamente")
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 

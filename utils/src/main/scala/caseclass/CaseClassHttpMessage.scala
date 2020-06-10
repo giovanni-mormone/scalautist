@@ -1,6 +1,8 @@
 package caseclass
 
-import caseclass.CaseClassDB.{Disponibilita, Persona, StoricoContratto, Straordinario}
+import java.sql.Date
+
+import caseclass.CaseClassDB.{Disponibilita, Persona, StoricoContratto}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone
@@ -22,7 +24,27 @@ object CaseClassHttpMessage {
    * @param id id that represent identifies of a element into database for operation
    *           select or delete.
    */
-  case class Id(id:Int)
+  final case class Id(id:Int)
+
+  /**
+   * case class used has a wrapper for server response
+   * @param payload object that represent the case class send of the server
+   * @tparam A
+   */
+  final case class Request[A](payload:Option[A])
+  /**
+   * case class used has a wrapper for server response
+   * @param statusCode status of the operation
+   * @param payload object that represent the case class send of the server
+   * @tparam A
+   */
+  final case class Response[A](statusCode:Int,payload:Option[A])
+
+  /**
+   * case class which enable send id and use post for receive
+   * @param date date for request into rest api for obtain salary for a person an another operation
+   */
+  case class Dates(date:Date)
 
   /**
    * Case class which enable create a driver, Human resource or Manager operation in the system
@@ -41,7 +63,8 @@ object CaseClassHttpMessage {
    * @param idPersona represent the user id, this is for search user into database and
    *                  and be able to change password
    * @param nomeCognome name and surname of the person
-   * @param giorniVacanza quantity of day of a persona in holiday
+   * @param giorniVacanza
+   *                      Remaining day of holidays for the person
    */
   case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int=0)
 }

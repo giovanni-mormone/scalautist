@@ -1,4 +1,5 @@
 package dbfactory.table
+
 import java.sql.Date
 
 import caseclass.CaseClassDB.{Assenza, Persona}

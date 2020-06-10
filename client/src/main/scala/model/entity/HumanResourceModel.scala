@@ -1,15 +1,15 @@
 package model.entity
 
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Id}
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Id, Response}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
 /**
  * @author Fabian Aspee Encina
@@ -24,7 +24,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Login that contains username and password
    */
-  def recruit(persona:Assumi):Future[Option[Login]]
+  def recruit(persona:Assumi):Future[Response[Login]]
 
   /**
    * Layoff operations, delete one people from the database
@@ -33,7 +33,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def fires(ids:Id): Future[Option[Int]]
+  def fires(ids:Id): Future[Response[Id]]
   /**
    * Layoff operations, delete a set of people from the database
    * @param ids
@@ -41,7 +41,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Unit
    */
-  def firesAll(ids: Set[Int]): Future[Option[Int]]
+  def firesAll(ids: Set[Int]): Future[Response[Id]]
 
 
   /**
@@ -49,21 +49,21 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of List of Persona
    */
-  def getAllPersone: Future[Option[List[Persona]]]
+  def getAllPersone: Future[Response[List[Persona]]]
 
   /**
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of type Int
    */
-  def illnessPeriod(assenza: Assenza): Future[Option[Int]]
+  def illnessPeriod(assenza: Assenza): Future[Response[Id]]
 
   /**
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of type Int
    */
-  def holidays(assenza: Assenza):Future[Option[Int]]
+  def holidays(assenza: Assenza):Future[Response[Id]]
 
   /**
    * Recover an employee's password
@@ -72,20 +72,20 @@ trait HumanResourceModel extends AbstractModel{
    * @return
    * Future of type Login data (only new password)
    */
-  def passwordRecovery(user: Id): Future[Option[Login]]
+  def passwordRecovery(user: Id): Future[Response[Login]]
 
   /**
    * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
    * @param id identifies a zone into database, then select all terminale associate to id
    * @return Option of list of terminal that can be empty
    */
-  def getTerminalByZone(id:Id): Future[Option[List[Terminale]]]
+  def getTerminalByZone(id:Id): Future[Response[List[Terminale]]]
 
   /**
    * method that return Option of List of zone if exists
    * @return Option of zone if exists
    */
-  def getAllZone:Future[Option[List[Zona]]]
+  def getAllZone:Future[Response[List[Zona]]]
 
   /**
    * Insert zona into database, this case class not contains id for zona
@@ -95,7 +95,7 @@ trait HumanResourceModel extends AbstractModel{
    * @return Future of Option of zona that represent zona insert into database
    *          with your Id
    */
-  def setZona(zona: Zona):Future[Option[Zona]]
+  def setZona(zona: Zona):Future[Response[Zona]]
 
   /**
    * Insert terminal into database, this case class not contains id for terminal
@@ -104,42 +104,43 @@ trait HumanResourceModel extends AbstractModel{
    * @return Future of Option of Terminal that represent terminal insert into database
    *         with your Id
    */
-  def setTerminal(terminale: Terminale):Future[Option[Terminale]]
+  def setTerminal(terminale: Terminale):Future[Response[Terminale]]
 
   /**
    * method that return all contract in database
    * @return Option of list with all contract existing into database
    */
-  def getAllContract:Future[Option[List[Contratto]]]
+  def getAllContract:Future[Response[List[Contratto]]]
 
   /**
    * method that return all shift in database
    * @return Option of list with all shift existing into database
    */
-  def getAllShift:Future[Option[List[Turno]]]
+  def getAllShift:Future[Response[List[Turno]]]
 
   /**
    * Method that calculus salary for all person in the system, this method is call every 30 days
    * @return Future of Option of List of Stipendio, for details of Stipendio,
    *         see [[caseclass.CaseClassDB.Stipendio]]
    */
-  def salaryCalculation():Future[Option[List[Stipendio]]]
+  def salaryCalculation():Future[Response[List[Stipendio]]]
 
-  /**
-   *  Method that obtains salary for a person
-   * @param id id that represent case class that contains id of a persona
-   * @return Option of List of Stipendio that represent all salary of a persona
-   */
-  def getSalary(id:Id):Future[Option[List[Stipendio]]]
+
 
   /**
    * Method that obtains all day of holiday of a persona
    * @return Option of List with all day of holiday of a persona
    */
-  def getHolidayByPerson:Future[Option[List[Ferie]]]
+  def getHolidayByPerson:Future[Response[List[Ferie]]]
 
 }
-
+object  tryGeneric extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+ HumanResourceModel().passwordRecovery(Id(1)).onComplete { case Failure(exception) => println(exception)
+ case Success(value) =>println(value)
+ }
+  while (true){}
+}
 /**
  * Companin object of [[model.entity.HumanResourceModel]]. [Singleton]
  * Human Resource Model interface implementation with http request.
@@ -152,93 +153,87 @@ object HumanResourceModel {
 
   private class HumanResourceHttp extends HumanResourceModel{
 
-    override def recruit(assumi: Assumi): Future[Option[Login]] = {
-      val request = Post(getURI("hirePerson"), assumi)
+    override def recruit(assumi: Assumi): Future[Response[Login]] = {
+      val request = Post(getURI("hireperson"), assumi)
       callServer(request)
     }
 
-    override def passwordRecovery(idUser: Id): Future[Option[Login]] = {
+    override def passwordRecovery(idUser: Id): Future[Response[Login]] = {
       val request = Post(getURI("recoverypassword"),idUser)
       callServer(request)
     }
-    private def callServer(request: HttpRequest) =
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Login]])
 
-    override def illnessPeriod(assenza: Assenza): Future[Option[Int]] =
-      createRequest(assenza)
+    private def callServer(request: HttpRequest):Future[Response[Login]] =
+      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
-    override def holidays(assenza: Assenza): Future[Option[Int]] =
-      createRequest(assenza)
+    override def illnessPeriod(assenza: Assenza): Future[Response[Id]] = createRequest(assenza)
+
+    override def holidays(assenza: Assenza): Future[Response[Id]] = createRequest(assenza)
 
 
-    override def fires(ids: Id): Future[Option[Int]] = {
+    override def fires(ids: Id): Future[Response[Id]] = {
       val request = Post(getURI("deletepersona"), ids)
       callRequest(request)
     }
 
-    override def firesAll(ids: Set[Int]): Future[Option[Int]] = {
+    override def firesAll(ids: Set[Int]): Future[Response[Id]] = {
       val request = Post(getURI("deleteallpersona"), ids.map(id=>Id(id)).toList)
       callRequest(request)
     }
 
-    private def createRequest(absence: Assenza):Future[Option[Int]] = {
+    private def createRequest(absence: Assenza):Future[Response[Id]] = {
       val request = Post(getURI("addabsence"), absence)
       callRequest(request)
     }
 
-    private def callRequest(request:HttpRequest):Future[Option[Int]] =
-      callHtpp(request).collect{case value if value.isDefined=> Some(value.head.status.intValue());case _ => None}
+    private def callRequest(request:HttpRequest):Future[Response[Id]] =
+      callHtpp(request).flatMap( isNotCaseId orElse isCaseId)
 
-    override def getTerminalByZone(id: Id): Future[Option[List[Terminale]]] = {
+    override def getTerminalByZone(id: Id): Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getterminalebyzona"), id)
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[List[Terminale]]])
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
-    override def getAllZone: Future[Option[List[Zona]]] = {
+    override def getAllZone: Future[Response[List[Zona]]] = {
       val request = Post(getURI("getallzona"))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[List[Zona]]])
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Zona]]])
     }
 
-    override def getAllContract: Future[Option[List[Contratto]]] = {
+    override def getAllContract: Future[Response[List[Contratto]]] = {
       val request = Post(getURI("getallcontratto"))
-      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Option[List[Contratto]]])
+      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Contratto]]])
     }
 
-    override def getAllPersone: Future[Option[List[Persona]]] = {
+    override def getAllPersone: Future[Response[List[Persona]]] = {
       val request = Post(getURI("getallpersona"))
-      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Option[List[Persona]]])
+      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Persona]]])
     }
 
-    override def getAllShift: Future[Option[List[Turno]]] = {
+    override def getAllShift: Future[Response[List[Turno]]] = {
       val request = Post(getURI("getallturno"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Turno]]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Turno]]])
     }
 
-    override def salaryCalculation():Future[Option[List[Stipendio]]] = {
+    override def salaryCalculation():Future[Response[List[Stipendio]]] = {
       val request = Post(getURI("calcolostipendio"))
       callServerSalary(request)
     }
-
-    override def getSalary(id: Id): Future[Option[List[Stipendio]]] = {
-      val request = Post(getURI("getstipendio"))
-      callServerSalary(request)
-    }
     private def callServerSalary(request: HttpRequest)=
-        callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
+        callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
-    override def setZona(zona: Zona): Future[Option[Zona]] = {
+    override def setZona(zona: Zona): Future[Response[Zona]] = {
       val request = Post(getURI("createzona"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[Zona]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
 
-    override def setTerminal(terminale: Terminale): Future[Option[Terminale]] = {
+    override def setTerminal(terminale: Terminale): Future[Response[Terminale]] = {
       val request = Post(getURI("createterminale"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[Terminale]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
 
-    override def getHolidayByPerson: Future[Option[List[Ferie]]] = {
+    override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
       val request = Post(getURI("getholidaybypersona"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Ferie]]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
   }
 
