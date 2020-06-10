@@ -94,11 +94,12 @@ object GenericOperation{
   case class Operation[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericOperation[C,T] {
     import dbfactory.util.Helper._
 
-    override def selectFilter(filter:T=>Rep[Boolean]): Future[Option[List[C]]] =mapOptionList(super.run(tableDB().withFilter(filter).result))
-    override def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]] = mapOptionList(super.run(join.result))
-    override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] =mapOptionList(super.run(tableDB().map(selectField).result))
-    override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption)
-    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = mapOptionList(super.run(tableDB().withFilter(filter).map(selectField).result))
-    override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate)).map(t => Option(t))
+    override def selectFilter(filter:T=>Rep[Boolean]): Future[Option[List[C]]] =mapOptionList(super.run(tableDB().withFilter(filter).result.transactionally))
+    override def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]] = mapOptionList(super.run(join.result.transactionally))
+    override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = mapOptionList(super.run(tableDB().map(selectField).result.transactionally))
+    override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption.transactionally)
+    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = mapOptionList(super.run(tableDB().withFilter(filter).map(selectField).result.transactionally))
+    override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
+    //def execQueryUpdate[F, G, A:List](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:List[A])(implicit shape: Shape[_ <: FlatShapeLevel, F, List[A], G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
   }
 }

@@ -190,9 +190,9 @@ object HumanResourceController {
     }
 
     override def getAllPersona(): Unit =
-      model.getAllPersone.onComplete {
-        case Failure(exception) => myView.result("Errore interno del sistema")
-        case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",0)))
+      model.getHolidayByPerson.onComplete {
+        case Failure(exception) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+        case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
       }
 
   }

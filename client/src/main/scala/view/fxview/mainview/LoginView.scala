@@ -8,7 +8,7 @@ import javafx.application.Platform
 import javafx.stage.Stage
 import view.BaseView
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
-import view.fxview.component.Login.LoginBox
+import view.fxview.component.login.LoginBox
 
 /**
  * @author Giovanni Mormone.
@@ -34,12 +34,13 @@ trait LoginView extends BaseView{
 /**
  * @author Giovanni Mormone.
  *
- * A LoginParent is the container of a [[view.fxview.component.Login.LoginBox]] [[view.fxview.component.Component]]
+ *         A LoginParent is the container of a [[view.fxview.component.login.LoginBox]] [[view.fxview.component.Component]]
  *
  */
 trait LoginParent{
   /**
-   * Method called to submit user credentials. It should be called by a [[view.fxview.component.Login.LoginBox]]
+   * Method called to submit user credentials. It should be called by a [[view.fxview.component.login.LoginBox]]
+ *
    * @param username
    *                 The username of the user.
    * @param password

@@ -1,21 +1,18 @@
 package model.entity
 
-import model.AbstractModel
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import caseclass.CaseClassDB.{Assenza, Contratto, Login, Persona, Stipendio, Terminale, Turno, Zona}
-import java.sql.Date
-
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
-import caseclass.CaseClassHttpMessage.{Assumi, Id}
-import model.utils.ModelUtils._
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Id}
+import jsonmessages.JsonFormats._
+import model.AbstractModel
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 /**
+ * @author Fabian Aspee Encina
  * RisorseUmaneModel extends [[model.Model]].
  * Interface for Human Resource Manager's operation on data
  */
@@ -89,8 +86,26 @@ trait HumanResourceModel extends AbstractModel{
    * @return Option of zone if exists
    */
   def getAllZone:Future[Option[List[Zona]]]
+
+  /**
+   * Insert zona into database, this case class not contains id for zona
+   *  in the init operation, but result contain your id
+   *
+   * @param zona case class that represent struct for a zona in database
+   * @return Future of Option of zona that represent zona insert into database
+   *          with your Id
+   */
   def setZona(zona: Zona):Future[Option[Zona]]
+
+  /**
+   * Insert terminal into database, this case class not contains id for terminal
+   * in the init operation, but result contain your id
+   * @param terminale case class that represent struct for a terminal in database
+   * @return Future of Option of Terminal that represent terminal insert into database
+   *         with your Id
+   */
   def setTerminal(terminale: Terminale):Future[Option[Terminale]]
+
   /**
    * method that return all contract in database
    * @return Option of list with all contract existing into database
@@ -103,8 +118,26 @@ trait HumanResourceModel extends AbstractModel{
    */
   def getAllShift:Future[Option[List[Turno]]]
 
+  /**
+   * Method that calculus salary for all person in the system, this method is call every 30 days
+   * @return Future of Option of List of Stipendio, for details of Stipendio,
+   *         see [[caseclass.CaseClassDB.Stipendio]]
+   */
   def salaryCalculation():Future[Option[List[Stipendio]]]
+
+  /**
+   *  Method that obtains salary for a person
+   * @param id id that represent case class that contains id of a persona
+   * @return Option of List of Stipendio that represent all salary of a persona
+   */
   def getSalary(id:Id):Future[Option[List[Stipendio]]]
+
+  /**
+   * Method that obtains all day of holiday of a persona
+   * @return Option of List with all day of holiday of a persona
+   */
+  def getHolidayByPerson:Future[Option[List[Ferie]]]
+
 }
 
 /**
@@ -199,6 +232,11 @@ object HumanResourceModel {
     override def setTerminal(terminale: Terminale): Future[Option[Terminale]] = {
       val request = Post(getURI("createterminale"))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[Terminale]])
+    }
+
+    override def getHolidayByPerson: Future[Option[List[Ferie]]] = {
+      val request = Post(getURI("getholidaybypersona"))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Ferie]]])
     }
   }
 
