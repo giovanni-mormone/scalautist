@@ -1,4 +1,4 @@
-package model.utils
+package model.utilsmodel
 
 /**
  * @author Francesco Cassano

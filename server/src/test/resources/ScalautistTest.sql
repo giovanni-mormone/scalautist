@@ -215,5 +215,9 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 --//STORICOCONTRATTO
+<<<<<<< HEAD
 
 select * from PresenzeSets
+select * from PersoneSets
+select * from PersoneSets full join AssenzaSet on Matricola=PersoneSet_Matricola
+

@@ -120,7 +120,8 @@ object AssenzaOperation extends AssenzaOperation{
 
     startingPersoneFerie()
       .flatMap(ferie => {
-        InstanceAssenza.operation().execJoin(filterJoin)
+        InstanceAssenza.operation()
+          .execJoin(filterJoin)
           .map(_.map(ass => ass.map(x => toFerie(x)).groupBy(_.idPersona).values.map(_.reduce(ferieReduction)).toList))
           .collect{
             case None => ferie
@@ -137,7 +138,8 @@ object AssenzaOperation extends AssenzaOperation{
     //prende id-nome-cognome e li concatena
     val tupToNameSurname: ((Int,String,String)) => String = x => x._2.concat(x._3).concat(x._1.toString)
 
-    InstancePersona.operation().execQueryFilter(field => (field.id,field.nome,field.cognome),_.ruolo === CODICE_CONDUCENTE)
+    InstancePersona.operation()
+      .execQueryFilter(field => (field.id,field.nome,field.cognome),_.ruolo === CODICE_CONDUCENTE)
       .map(_.map(_.map(x => Ferie(x._1,tupToNameSurname(x),GIORNI_FERIE_ANNUI))))
   }
 }

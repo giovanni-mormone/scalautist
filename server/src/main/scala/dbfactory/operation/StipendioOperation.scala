@@ -71,12 +71,14 @@ object StipendioOperation extends StipendioOperation{
     }yield stipendi
   }
 
-  private def calculateMoney(presenzeList: Option[List[(Int,Int)]],straordinariList: Option[List[(Int,Int)]],turni:Option[List[Turno]],date:Date): Future[Option[List[Stipendio]]] = Future{
+  private def calculateMoney(presenzeList: Option[List[(Int,Int)]],straordinariList: Option[List[(Int,Int)]],turni:Option[List[Turno]],date:Date): Future[Option[List[Stipendio]]] = {
     var stip:Map[Int,Double] = Map()
     presenzeList.foreach(_.foreach(x => stip =  updateMoneyMap(stip,turni,x)))
     straordinariList.foreach(_.foreach(x => stip = updateMoneyMap(stip,turni,x)(MUL_STRAORDINARIO)))
-    stipendi(Some(stip),date)
+    Future.successful(stipendi(Some(stip),date))
   }
+
+
 
   def updateMoneyMap(stip:Map[Int,Double],turni:Option[List[Turno]],presenza:(Int,Int))(implicit mul:Double): Map[Int,Double] = {
     stip.updated(presenza._1,stip.getOrElse(presenza._1,0.0) + turnoNotturno(turni)(presenza._2) * mul)

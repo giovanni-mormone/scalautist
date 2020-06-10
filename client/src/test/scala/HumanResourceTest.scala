@@ -3,8 +3,8 @@ import java.sql.Date
 
 import akka.actor.Terminated
 import caseclass.CaseClassDB.{Contratto, Disponibilita, Login, Persona, StoricoContratto, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.Assumi
-import model.utils.ModelUtils._
+import caseclass.CaseClassHttpMessage.{Assumi, Id, Response}
+import model.utilsmodel.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import model.entity.{HumanResourceModel, PersonaModel}
@@ -31,8 +31,8 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
 
   behavior of "contract"
   it should "return login with credential of a person" in {
-    val futureRecruit:Future[Option[Login]]=terminale.recruit(insertPersona)
-    futureRecruit map { recruit => assert(recruit.isDefined)}
+    val futureRecruit:Future[Response[Login]]=terminale.recruit(insertPersona)
+    futureRecruit map { recruit => assert(recruit.payload.isDefined)}
   }
   it should "return  a person" in {
     val futureSecondLogin: Future[Option[Persona]] = persona.login("admin","admin")
@@ -43,29 +43,29 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     futureLogin map { login => assert(login.isEmpty) }
   }
   it should "return ok when delete person" in {
-    val futureDelete:Future[Option[Int]]=terminale.fires(6)
-    futureDelete map { recruit => assert(recruit.contains(410))}
+    val futureDelete:Future[Response[Id]]=terminale.fires(6)
+    futureDelete map { recruit => assert(recruit.payload.contains(410))}
 
   }
   it should "return list of terminal lenght 2" in {
-    val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(1)
-    futureTerminale map { terminale => assert(terminale.head.length==2)}
+    val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(1)
+    futureTerminale map { terminale => assert(terminale.payload.head.length==2)}
   }
   it should "return None of terminal" in {
-    val futureTerminale:Future[Option[List[Terminale]]]=terminale.getTerminalByZone(20)
-    futureTerminale map { terminale => assert(terminale.isEmpty)}
+    val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(20)
+    futureTerminale map { terminale => assert(terminale.payload.isEmpty)}
   }
   it should "return type contract with length 8" in {
-    val futureContract:Future[Option[List[Contratto]]]=terminale.getAllContract
-    futureContract map { contract => assert(contract.head.length==8)}
+    val futureContract:Future[Response[List[Contratto]]]=terminale.getAllContract
+    futureContract map { contract => assert(contract.payload.head.length==8)}
   }
   it should "return all shift with length 6" in {
-    val futureshift:Future[Option[List[Turno]]]=terminale.getAllShift
-    futureshift map { shift => assert(shift.head.length==6)}
+    val futureshift:Future[Response[List[Turno]]]=terminale.getAllShift
+    futureshift map { shift => assert(shift.payload.head.length==6)}
   }
   it should "return a list of zone length 4 when get operation" in {
-    val futureZona:Future[Option[List[Zona]]]=terminale.getAllZone
-    futureZona map { zona => assert(zona.head.length==4)}
+    val futureZona:Future[Response[List[Zona]]]=terminale.getAllZone
+    futureZona map { zona => assert(zona.payload.head.length==4)}
   }
   it should "shutdown System" in {
     val futureTerminated:Future[Terminated]=terminale.shutdownActorSystem()

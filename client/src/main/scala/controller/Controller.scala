@@ -1,10 +1,10 @@
 package controller
 
-import java.util.concurrent.Executors
 
+import utils.Execution
 import view.BaseView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContextExecutor
 
 /**
  * @author Giovanni Mormone.
@@ -33,12 +33,12 @@ trait Controller[A<:BaseView] {
  *
  */
 abstract class AbstractController[A<:BaseView] extends Controller[A]{
+
   /**
    * The view that i control.
    */
   protected var myView:A = _
-  implicit val executionContext = ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor)
-
+  implicit protected val execution: ExecutionContextExecutor = Execution.executionContext
   override def setView(view: A): Unit =
     myView = view
 }
