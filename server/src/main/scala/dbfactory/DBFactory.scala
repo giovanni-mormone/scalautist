@@ -1,0 +1,5 @@
+package dbfactory
+
+trait DBFactory {
+
+}
