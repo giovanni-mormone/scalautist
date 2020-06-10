@@ -33,6 +33,6 @@ trait TerminaleOperation extends OperationCrud[Terminale]{
 object TerminaleOperation extends TerminaleOperation {
 
   override def getTermininaliInZona(zonaID:Int): Future[Option[List[Terminale]]] = {
-   InstanceTerminale.operation().selectFilter(x => x.zonaId === zonaID).collect(collectCheck(_))
+   InstanceTerminale.operation().selectFilter(x => x.zonaId === zonaID)
   }
 }

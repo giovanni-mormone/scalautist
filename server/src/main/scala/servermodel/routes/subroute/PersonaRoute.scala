@@ -39,7 +39,7 @@ object PersonaRoute{
     post {
       entity(as[Assumi]) { assumi =>
         onComplete(PersonaOperation.assumi(assumi)) {
-          case Success(Some(login)) =>  complete(Response(StatusCodes.Created.intValue, Some(login)))
+          case Success(Some(t)) =>  complete(Response(StatusCodes.Created.intValue, Some(t)))
           case t => anotherSuccessAndFailure(t)
         }
       }

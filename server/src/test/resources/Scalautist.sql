@@ -163,7 +163,8 @@ IF OBJECT_ID(N'[dbo].[DisponibilitaStraordinarioSets]', 'U') IS NOT NULL
 CREATE TABLE [dbo].[ContratoeSets] (
                                        [IdContratto] int IDENTITY(1,1) NOT NULL,
                                        [TipoContratto] nvarchar(max)  NOT NULL,
-                                       [TurnoFisso] bit  NOT NULL
+                                       [TurnoFisso] bit  NOT NULL,
+                                       [Ruolo] int NOT NULL
 );
 
 
@@ -790,7 +791,7 @@ ALTER TABLE [dbo].[AssenzaSet]
         FOREIGN KEY ([PersoneSet_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_AssenzaPersoneSet'
@@ -805,7 +806,7 @@ ALTER TABLE [dbo].[StipendioSet]
         FOREIGN KEY ([PersoneSet_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_StipendioPersoneSet'
