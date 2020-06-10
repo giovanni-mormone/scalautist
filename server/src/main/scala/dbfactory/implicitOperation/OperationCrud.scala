@@ -66,9 +66,4 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
    */
   def update(element:A):Future[Option[Int]]= crud.update(element)
 
-  protected def collectCheck[A](valueToCheck: Option[A]): Option[A] = valueToCheck match {
-    case Some(List()) => None
-    case Some(0) => None
-    case value => value
-  }
 }

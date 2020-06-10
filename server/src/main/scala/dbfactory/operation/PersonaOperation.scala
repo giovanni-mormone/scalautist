@@ -61,7 +61,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @return
    *         An option with the login data of the hired person
    */
-  def assumi(personaDaAssumere: Assumi): Future[Option[Login]]
+  def assumi(personaDaAssumere: Assumi): Future[Option[Int]]
 }
 
 object PersonaOperation extends PersonaOperation {
@@ -73,10 +73,10 @@ object PersonaOperation extends PersonaOperation {
   private val createString:Option[String]= Some(generator.take(10).map(c => EMPTY_STRING.concat(c.toString)).mkString)
 
   override def filterByName(name: String): Future[Option[List[Persona]]] =
-    selectPersone(x => x.nome === name).collect(collectCheck(_))
+    selectPersone(x => x.nome === name)
 
   override def filterBySurname(surname: String): Future[Option[List[Persona]]] =
-    selectPersone(x => x.cognome === surname).collect(collectCheck(_))
+    selectPersone(x => x.cognome === surname)
 
   override def login(login: Login): Future[Option[Persona]] =
     InstancePersona.operation().
@@ -93,13 +93,12 @@ object PersonaOperation extends PersonaOperation {
   override def recoveryPassword(idUser: Int): Future[Option[Login]] =
     InstancePersona.operation().
       execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (createString.head, true))
-      .collect{collectCheck(_)}.collect {
+      .collect {
       case Some(_) => Some(Login(EMPTY_STRING,createString.head))
       case None => None
     }
 
-  override def assumi(personaDaAssumere:Assumi): Future[Option[Login]] = {
-
+  override def assumi(personaDaAssumere:Assumi): Future[Option[Int]] = {
     if(personaDaAssumere.persona.ruolo == 3 && personaDaAssumere.disponibilita.isDefined){
       DisponibilitaOperation.insert(personaDaAssumere.disponibilita.head)
         .flatMap(dispId => {
@@ -114,18 +113,17 @@ object PersonaOperation extends PersonaOperation {
   }
 
   override def delete(element:Int): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPerson(element).flatMap(_ => super.delete(element).collect(collectCheck(_)))
+    StoricoContrattoOperation.deleteAllStoricoForPerson(element).flatMap(_ => super.delete(element))
   }
 
   override def deleteAll(element: List[Int]): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPersonList(element).flatMap(_ => super.deleteAll(element).collect(collectCheck(_)))
+    StoricoContrattoOperation.deleteAllStoricoForPersonList(element).flatMap(_ => super.deleteAll(element))
   }
 
-  private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Login]] = {
+  private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Int]] = {
     insert(persona)
-      .flatMap(idPersona => StoricoContrattoOperation.insert(constructContratto(contratto,idPersona))).collect{
-      case _ => Some(Login(persona.userName,persona.password.head))
-    }
+      .flatMap(idPersona => StoricoContrattoOperation.insert(constructContratto(contratto,idPersona)))
+    
   }
 
   private def constructContratto(contratto:StoricoContratto, personaId:Option[Int]): StoricoContratto = {

@@ -90,11 +90,11 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
   }
   behavior of "PersoneManagment"
   it should "return a login with credential of user" in {
-    val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
+    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersona)
     assumi map {login => assert(login.isDefined)}
   }
   it should "return a login with credential of user2" in {
-    val assumi: Future[Option[Login]] = PersonaOperation.assumi(insertPersona)
+    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersona)
     assumi map {login => assert(login.isDefined)}
   }
   it should "return a 1 int when removed from db" in {
