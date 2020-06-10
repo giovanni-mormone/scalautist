@@ -134,13 +134,7 @@ trait HumanResourceModel extends AbstractModel{
   def getHolidayByPerson:Future[Response[List[Ferie]]]
 
 }
-object  tryGeneric extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
- HumanResourceModel().passwordRecovery(Id(1)).onComplete { case Failure(exception) => println(exception)
- case Success(value) =>println(value)
- }
-  while (true){}
-}
+
 /**
  * Companin object of [[model.entity.HumanResourceModel]]. [Singleton]
  * Human Resource Model interface implementation with http request.
@@ -162,7 +156,6 @@ object HumanResourceModel {
       val request = Post(getURI("recoverypassword"),idUser)
       callServer(request)
     }
-
 
     private def callServer(request: HttpRequest):Future[Response[Login]] =
       callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])

@@ -1,11 +1,10 @@
 package jsonmessages
 
-import caseclass.CaseClassDB._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage._
+import jsonmessages.ImplicitDate._
 import spray.json._
-import ImplicitDate._
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Ferie, Id, Request, Response}
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 

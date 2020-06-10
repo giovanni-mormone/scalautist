@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, get, onComplete, post}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.Contratto
-import caseclass.CaseClassHttpMessage.Id
+import caseclass.CaseClassHttpMessage.{Id, Request, Response}
 import jsonmessages.JsonFormats._
 
 import scala.util.Success
@@ -16,11 +16,12 @@ object ContrattoRoute {
 
   def getContratto: Route =
     post {
-      entity(as[Id]){ id =>
-        onComplete(ContrattoOperation.select(id.id)) {
-          case Success(t) =>    complete((StatusCodes.Found,t))
+      entity(as[Request[Int]]){
+        case Request(Some(id))=> onComplete(ContrattoOperation.select(id)) {
+          case Success(contract) =>    complete(Response(StatusCodes.Found.intValue,contract))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
 
     }
@@ -28,28 +29,30 @@ object ContrattoRoute {
   def getAllContratto: Route =
     post {
       onComplete(ContrattoOperation.selectAll) {
-        case Success(t) =>  complete((StatusCodes.Found,t))
+        case Success(contracts) =>  complete(Response(StatusCodes.Found.intValue,contracts))
         case t => anotherSuccessAndFailure(t)
       }
     }
 
   def createContratto(): Route =
     post {
-      entity(as[Contratto]) { contratto =>
-        onComplete(ContrattoOperation.insert(contratto)) {
-          case Success(t) =>  complete(StatusCodes.Created)
+      entity(as[Request[Contratto]]) {
+        case Request(Some(contratto))=>onComplete(ContrattoOperation.insert(contratto)) {
+          case Success(id) =>  complete(Response(StatusCodes.Created.intValue,id))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
   def updateContratto(): Route =
     post {
-      entity(as[Contratto]) { contratto =>
-        onComplete(ContrattoOperation.update(contratto)) {
-          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
-          case Success(None) =>  complete(StatusCodes.OK)
+      entity(as[Request[Contratto]]) {
+        case Request(Some(contratto)) => onComplete(ContrattoOperation.update(contratto)) {
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
+          case Success(None) =>  complete(Response(StatusCodes.OK.intValue,Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 }

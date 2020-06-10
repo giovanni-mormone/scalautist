@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Zona
-import caseclass.CaseClassHttpMessage.Id
+import caseclass.CaseClassHttpMessage.{Id, Request, Response}
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.ZonaOperation
@@ -23,52 +23,57 @@ object ZonaRoute {
 
   def createZona(): Route =
     post {
-      entity(as[Zona]) { zona =>
-        onComplete(ZonaOperation.insert(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,t)) //TODO
+      entity(as[Request[Zona]]) {
+        case Request(Some(zona))=> onComplete(ZonaOperation.insert(zona)) {
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(Zona(zona.zones,Some(id))))) //TODO
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def createAllZona(): Route =
     post {
-      entity(as[List[Zona]]) { zona =>
-        onComplete(ZonaOperation.insertAll(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created)//qualcosa
+      entity(as[Request[List[Zona]]]) {
+        case Request(Some(zona))=>onComplete(ZonaOperation.insertAll(zona)) {
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))//qualcosa
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def deleteZona(): Route =
     post {
-      entity(as[Id]) { zona =>
-        onComplete(ZonaOperation.delete(zona.id)) {
-          case Success(Some(1)) =>  complete(StatusCodes.Gone)
+      entity(as[Request[Int]]) {
+        case Request(Some(id))=> onComplete(ZonaOperation.delete(id)) {
+          case Success(Some(1)) =>  complete(Response(StatusCodes.OK.intValue,Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def deleteAllZona(): Route =
     post {
-      entity(as[List[Id]]) { zona =>
-        onComplete(ZonaOperation.deleteAll(zona.map(_.id))) {
-          case Success(Some(_)) =>  complete(StatusCodes.Gone)
+      entity(as[Request[List[Int]]]) {
+        case Request(Some(id))=> onComplete(ZonaOperation.deleteAll(id)) {
+          case Success(Some(t)) =>  complete(Response(StatusCodes.OK.intValue,Some(t)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def updateZona(): Route =
     post {
-      entity(as[Zona]) { zona =>
-        onComplete(ZonaOperation.update(zona)) {
-          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
-          case Success(None) =>complete(StatusCodes.OK)
+      entity(as[Request[Zona]]) {
+        case Request(Some(zona))=>onComplete(ZonaOperation.update(zona)) {
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
+          case Success(None) =>complete(Response(StatusCodes.OK.intValue,Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 }

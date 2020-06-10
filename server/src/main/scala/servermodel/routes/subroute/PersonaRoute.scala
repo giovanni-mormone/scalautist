@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.{Assenza, Login, Persona}
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Id, Response}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Id, Request, Response}
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
@@ -18,14 +18,14 @@ import scala.util.Success
  * PersonaRoute is an object that manage methods that act on the persona entity
  */
 object PersonaRoute{
-
   def getPersona: Route =
     post {
-      entity(as[Id]) { id =>
-        onComplete(PersonaOperation.select(id.id)) {
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.select(value)) {
           case Success(Some(person)) => complete(Response(StatusCodes.OK.intValue, Some(person)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
   def getAllPersona: Route =
@@ -37,99 +37,110 @@ object PersonaRoute{
     }
   def hirePerson: Route =
     post {
-      entity(as[Assumi]) { assumi =>
-        onComplete(PersonaOperation.assumi(assumi)) {
+      entity(as[Request[Assumi]]) {
+        case Request(Some(value)) =>
+        onComplete(PersonaOperation.assumi(value)) {
           case Success(Some(login)) =>  complete(Response(StatusCodes.Created.intValue, Some(login)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def deletePersona(): Route =
     post {
-      entity(as[Id]) { order =>
-        onComplete(PersonaOperation.delete(order.id)) {
-          case Success(Some(1)) =>  complete(Response(StatusCodes.OK.intValue, Some(1)))
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.delete(value)) {
+          case Success(Some(1)) => complete(Response(StatusCodes.OK.intValue, Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def deleteAllPersona(): Route =
     post {
-      entity(as[List[Id]]) { order =>
-        onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
-          case Success(Some(_)) =>  complete(Response(StatusCodes.OK.intValue, Some(1)))
+      entity(as[Request[List[Int]]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.deleteAll(value)) {
+          case Success(Some(id>0)) =>  complete(Response(StatusCodes.OK.intValue, Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def updatePersona(): Route =
     post {
-      entity(as[Persona]) { persona =>
-        onComplete(PersonaOperation.update(persona)) {
+      entity(as[Request[Persona]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.update(value)) {
           case Success(Some(t)) =>  complete(Response(StatusCodes.Created.intValue, Some(Id(t))))
           case Success(None) =>complete(Response(StatusCodes.OK.intValue, Some(Id(1))))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def loginPersona(): Route =
     post {
-      entity(as[Login]) { login =>
-        onComplete(PersonaOperation.login(login)) {
+      entity(as[Request[Login]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.login(value)) {
           case Success(Some(person))  =>  complete(Response(StatusCodes.OK.intValue, Some(person)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
   def recoveryPassword(): Route =
     post {
-      entity(as[Id]) {
-        idUser => onComplete(PersonaOperation.recoveryPassword(idUser.id)){
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.recoveryPassword(value)){
           case Success(login)  =>  complete(Response(StatusCodes.OK.intValue, Some(login)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def changePassword(): Route =
     post {
-      entity(as[ChangePassword]) {
-        change => onComplete(PersonaOperation.changePassword(change)){
+      entity(as[Request[ChangePassword]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.changePassword(value)){
           case Success(Some(1))  =>  complete(Response(StatusCodes.OK.intValue, Some(Id(1))))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 
   def getStipendio: Route =
     post{
-      entity(as[Id]) {
-        id => onComplete(StipendioOperation.getstipendiForPersona(id.id)){
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(StipendioOperation.getstipendiForPersona(value)){
           case Success(Some(salary))  =>  complete(Response(StatusCodes.OK.intValue, Some(salary)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
   def salaryCalculus(): Route =
     post{
-      entity(as[Dates]) {
-        date => onComplete(StipendioOperation.calculateStipendi(date.date)){
+      entity(as[Request[Dates]]) {
+        case Request(Some(value)) => onComplete(StipendioOperation.calculateStipendi(value.date)){
           case Success(Some(1))  =>  complete(Response(StatusCodes.Created.intValue, Some(Id(1))))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
   def addAbsence(): Route =
     post {
-      entity(as[Assenza]){
-        absence => onComplete(AssenzaOperation.insert(absence)){
+      entity(as[Request[Assenza]]){
+        case Request(Some(value)) => onComplete(AssenzaOperation.insert(value)){
           case Success(Some(1)) => complete(Response(StatusCodes.Created.intValue, Some(Id(1))))
           case t =>anotherSuccessAndFailure(t)
         }
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
       }
     }
 }
