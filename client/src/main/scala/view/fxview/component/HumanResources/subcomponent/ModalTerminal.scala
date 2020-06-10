@@ -40,25 +40,35 @@ object ModalTerminal {
     var update: Button = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      zonesList.foreach(zone => zones.getItems.add(zone.zones))
-      zones.getSelectionModel.select(zonesList.filter(zone => terminal.idZona == zone.idZone).head.zones)
-
-      id.setDisable(true)
-      id.setText(terminal.idTerminale.head.toString)
+      initializeComboBox()
+      initializeFixedField()
 
       name.setText(terminal.nomeTerminale)
 
       delete.setText(resources.getString("delete"))
       delete.setOnAction(_ => parent.deleteTerminal(terminal))
 
-      update.setText(resources.getString("update"))
-      update.setOnAction(_ => parent.updateTerminal(
-        Terminale(name.getText(),
-              zonesList.filter(zone => zones.getSelectionModel.getSelectedItem.equals(zone.zones)).head.idZone.head,
-              Some(id.getText.toInt)))
-      )
+      updateButton(resources)
     }
 
+    def initializeComboBox(): Unit = {
+      zonesList.foreach(zone => zones.getItems.add(zone.zones))
+      zones.getSelectionModel.select(zonesList.filter(zone => terminal.idZona == zone.idZone.head).head.zones)
+    }
+
+    def initializeFixedField(): Unit = {
+      id.setDisable(true)
+      id.setText(terminal.idTerminale.head.toString)
+    }
+
+    def updateButton(resourceBundle: ResourceBundle): Unit = {
+      update.setText(resourceBundle.getString("update"))
+      update.setOnAction(_ => parent.updateTerminal(
+        Terminale(name.getText(),
+          zonesList.filter(zone => zones.getSelectionModel.getSelectedItem.equals(zone.zones)).head.idZone.head,
+          Some(id.getText.toInt)))
+      )
+    }
   }
 }
 
