@@ -163,7 +163,6 @@ object HumanResourceModel {
       callServer(request)
     }
 
-
     private def callServer(request: HttpRequest):Future[Response[Login]] =
       callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 

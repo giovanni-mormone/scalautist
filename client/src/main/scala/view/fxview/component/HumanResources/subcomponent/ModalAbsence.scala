@@ -13,17 +13,17 @@ import javafx.scene.control.{Button, DateCell, DatePicker, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent
 import view.fxview.component.{AbstractComponent, Component}
 
-//metodi view -> controller
-
-//metodi controller -> view
 trait ModalAbsence extends Component[ModalAbsenceParent]{
 
 }
+
 object ModalAbsence{
 
   def apply(item:Ferie, isMalattia:Boolean=true): ModalAbsence =new ModalAbsenceFX(item,isMalattia)
 
-  private class ModalAbsenceFX(item:Ferie, isMalattia:Boolean) extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence") with ModalAbsence {
+  private class ModalAbsenceFX(item:Ferie, isMalattia:Boolean)
+    extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence")
+      with ModalAbsence {
 
     @FXML
     var nameSurname:TextField = _
