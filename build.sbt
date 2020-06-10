@@ -12,17 +12,24 @@ lazy val client = project.settings(
     libraries.akkaHttp,
     libraries.akkaActor,
     libraries.akkaStream,
-    libraries.sprayJson
+    libraries.sprayJson,
+    librariesTest.scalatest,
+    librariesTest.scalaCheck,
+    librariesTest.testFXTest,
+    librariesTest.junit,
+    librariesTest.monocle,
+    librariesTest.testFXCore,
+    librariesTest.junitParams
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
 
 ).dependsOn(utils,event)
-lazy val server = project.settings(
-
+lazy val server = project.enablePlugins(JavaAppPackaging).
+enablePlugins(DockerPlugin).settings(
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
-  mainClass  := Some("main.MainServer"),
+  mainClass  in Compile := Some("servermodel.MainServer"),
   name := "scalautist-server-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,
@@ -34,7 +41,9 @@ lazy val server = project.settings(
     libraries.scalaReflect,
     libraries.mssql,
     libraries.logBack,
-    librariesTest.scalatest
+    librariesTest.scalatest,
+    librariesTest.scalaCheck,
+    librariesTest.junit
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
@@ -70,6 +79,7 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
+  "-language:postfixOps"
 )
 
 lazy val libraries = new {
@@ -95,13 +105,29 @@ lazy val libraries = new {
 }
 
 lazy val librariesTest = new {
-  val scalatestVersion = "3.3.0-SNAP2"
-  val scalatestOrg = "org.scalatest"
-  val scalatest =  "org.scalatest" %% "scalatest" % scalatestVersion % Test
+  val scalatestVersion   = "3.1.2"
+  val junitVersion       = "0.11"
+  val scalaCheckVersion  = "1.14.0"
+  val scalatestOrg       = "org.scalatest"
+  val junitCom           = "com.novocode"
+  val scalaCheckOrg      = "org.scalacheck"
+  val testFXVersion      ="4.0.13-alpha"
+  val testFXOrg          = "org.testfx"
+  val junitParamsVersion = "1.1.1"
+  val juntPl             = "pl.pragmatists"
+  val scalatest          = "org.scalatest" % "scalatest_2.13"   % scalatestVersion % Test
+  val junitInterface     = "com.novocode"   % "junit-interface" % junitVersion % Test
+  val junit              = "com.novocode"   % "junit-interface" % junitVersion % Test
+  val scalaCheck         = "org.scalacheck" %% "scalacheck"     % scalaCheckVersion % Test
+  val testFXTest         ="org.testfx" % "testfx-junit" % testFXVersion % Test
+  val testFXCore         = "org.testfx" % "testfx-core" % testFXVersion % Test
+  val monocle            ="org.testfx" % "openjfx-monocle" % "1.8.0_20" % Test
+  val junitParams        = "pl.pragmatists" % "JUnitParams" % junitParamsVersion % Test
 
 }
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
-  excludeDependencies ++= Seq(librariesTest.scalatestOrg)
+  scalacOptions ++= compilerOptions,
+  excludeDependencies ++= Seq(librariesTest.scalatestOrg,librariesTest.junitCom,librariesTest.scalaCheckOrg, librariesTest.testFXOrg, librariesTest.juntPl)
 )
