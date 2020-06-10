@@ -86,7 +86,7 @@ object TerminalBox {
       CreateTable.createColumns[TerminalTable](terminalTable, fieldsList)
       CreateTable.fillTable[TerminalTable](terminalTable, terminalList)
       CreateTable.clickListener[TerminalTable](terminalTable,
-        terminal => println(terminal.name.get(), terminal.id.get().toInt)
+        terminal  => parent.openTerminalModal(terminal.id.get().toInt)
       )
     }
 

@@ -1,6 +1,6 @@
 package view.fxview.component.HumanResources.subcomponent.parent
 
-import caseclass.CaseClassDB.Terminale
+import caseclass.CaseClassDB.{Terminale, Zona}
 
 /**
  * @author Francesco Cassano
@@ -14,4 +14,10 @@ trait TerminalParent {
    * @param terminal
    */
   def newTerminale(terminal: Terminale): Unit
+
+  /**
+   *
+   * @param terminal
+   */
+  def openTerminalModal(terminal: Int): Unit
 }
