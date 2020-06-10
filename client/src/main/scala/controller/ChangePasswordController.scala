@@ -23,7 +23,7 @@ trait ChangePasswordController extends AbstractController[ChangePasswordView]{
    *                The new password of the user.
    *
    */
-  def changePassword(oldPassword: String, newPassword:String)
+  def changePassword(oldPassword: String, newPassword:String): Unit
 }
 
 /**

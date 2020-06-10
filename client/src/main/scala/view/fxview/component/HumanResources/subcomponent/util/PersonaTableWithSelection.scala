@@ -29,6 +29,6 @@ object PersonaTableWithSelection {
   implicit def PersonaToPersonaTable(person: Persona): PersonaTableWithSelection =
     new PersonaTableWithSelection(person.matricola.head.toString, person.nome, person.cognome)
 
-  implicit def ListPersonaToListPersonaTable(peopleList: List[Persona]) =
+  implicit def ListPersonaToListPersonaTable(peopleList: List[Persona]): List[PersonaTableWithSelection] =
     peopleList.map(person => new PersonaTableWithSelection(person.matricola.head.toString, person.nome, person.cognome))
 }
