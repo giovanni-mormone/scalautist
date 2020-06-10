@@ -6,10 +6,9 @@ import java.util.stream.Collectors
 
 import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
-import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.control.{Button, TableColumn, TableView, TextField}
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTableWithSelection}
+import javafx.scene.control.{Button, TableView, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.FiresParent
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTableWithSelection}
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.jdk.CollectionConverters

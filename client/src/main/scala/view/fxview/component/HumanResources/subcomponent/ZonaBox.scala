@@ -29,6 +29,12 @@ object ZonaBox {
 
   def apply(zones: List[Zona]): ZonaBox = new ZonaBoxFX(zones)
 
+  /**
+   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.ZonaBox]]
+   *
+   * @param zones
+   *              List of [[caseclass.CaseClassDB.Zona]] to manage
+   */
   private class ZonaBoxFX(zones: List[Zona])
     extends AbstractComponent[ZonaParent]("humanresources/subcomponent/ZonaBox") with ZonaBox {
 

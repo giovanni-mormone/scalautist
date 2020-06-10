@@ -1,6 +1,5 @@
 package view.fxview.component.HumanResources.subcomponent
 
-
 import java.net.URL
 import java.sql.{Date => dateSql}
 import java.time.{Instant, LocalDate, ZoneId}
@@ -13,14 +12,32 @@ import javafx.scene.control.{Button, DateCell, DatePicker, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent
 import view.fxview.component.{AbstractComponent, Component}
 
+/**
+ * @author Fabian Aspee Encina
+ *
+ * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
+ * * of [[view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent]]
+ */
 trait ModalAbsence extends Component[ModalAbsenceParent]{
 
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalAbsence]]
+ *
+ */
 object ModalAbsence{
 
   def apply(item:Ferie, isMalattia:Boolean=true): ModalAbsence =new ModalAbsenceFX(item,isMalattia)
 
+  /**
+   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.ModalAbsence]]
+   *
+   * @param item
+   *             instance of [[caseclass.CaseClassHttpMessage.Ferie]] about employee's available free days
+   * @param isMalattia
+   *                   boolean to specify if day off is sickness or vacation
+   */
   private class ModalAbsenceFX(item:Ferie, isMalattia:Boolean)
     extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence")
       with ModalAbsence {

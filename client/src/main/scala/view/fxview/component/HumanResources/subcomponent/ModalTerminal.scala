@@ -20,10 +20,21 @@ trait ModalTerminal extends Component[ModalTerminalParent] {
 
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalTerminal]]
+ */
 object ModalTerminal {
 
   def apply(zones: List[Zona], terminal: Terminale): ModalTerminal = new ModalTerminalFX(zones, terminal)
 
+  /**
+   * JavaFX implementation of [[view.fxview.component.HumanResources.subcomponent.ModalTerminal]]
+   *
+   * @param zonesList
+   *                  list of reference [[caseclass.CaseClassDB.Zona]] of the terminals
+   * @param terminal
+   *                 list of [[caseclass.CaseClassDB.Terminale]] to manage
+   */
   private class ModalTerminalFX(zonesList: List[Zona], terminal: Terminale)
     extends AbstractComponent[ModalTerminalParent]("humanresources/subcomponent/ModalTerminal")
       with ModalTerminal {

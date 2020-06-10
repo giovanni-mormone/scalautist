@@ -20,10 +20,17 @@ trait ModalZone extends Component[ModalZoneParent] {
 
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+ */
 object ModalZone {
 
   def apply(zona: Zona): ModalZone = new ModalZoneFX(zona)
 
+  /**
+   * JavaFX implementation of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+   * @param zona
+   */
   private class ModalZoneFX(zona: Zona)
     extends AbstractComponent[ModalZoneParent]("humanresources/subcomponent/ModalZone") with ModalZone {
 
