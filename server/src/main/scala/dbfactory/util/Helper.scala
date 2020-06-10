@@ -18,4 +18,10 @@ object Helper {
       case value => Some(value.toList)
     })
   }
+  implicit class ConvertToOptionOneElement[A](f:Future[A]){
+    def result(): Future[Option[A]] =  f.collect({
+      case 0 => None
+      case value => Some(value)
+    })
+  }
 }
