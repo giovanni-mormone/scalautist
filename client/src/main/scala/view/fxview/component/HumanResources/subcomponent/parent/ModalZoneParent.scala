@@ -1,10 +1,23 @@
 package view.fxview.component.HumanResources.subcomponent.parent
 
 import caseclass.CaseClassDB.Zona
+import view.fxview.component.modal.ModalParent
 
-trait ModalZoneParent {
+trait ModalZoneParent extends ModalParent {
 
-  def updateZone(zone: Zona): Unit
-  def deleteZone(zone: Zona): Unit
-  def
+  /**
+   * Delete a Zona form the db
+   *
+   * @param zona
+   *             [[caseclass.CaseClassDB.Zona]] instance to delete
+   */
+  def deleteZona(zona: Zona): Unit
+
+  /**
+   * Update a Zona in the db
+   *
+   * @param zona
+   *             [[caseclass.CaseClassDB.Zona]] instance to update
+   */
+  def updateZona(zona:Zona): Unit
 }

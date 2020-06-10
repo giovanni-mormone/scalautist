@@ -21,7 +21,7 @@ trait LoginController extends AbstractController[LoginView]{
    * @param password
    *                 The password of the user to login.
    */
-  def login(username: String, password: String)
+  def login(username: String, password: String): Unit
 }
 
 /**

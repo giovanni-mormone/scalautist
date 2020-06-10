@@ -18,21 +18,6 @@ trait ZonaParent {
   def newZona(zona: Zona): Unit
 
   /**
-   * Delete a Zona form the db
-   *
-   * @param zona
-   *             [[caseclass.CaseClassDB.Zona]] instance to delete
-   */
-  def deleteZona(zona: Zona): Unit
-
-  /**
-   * Update a Zona in the db
-   *
-   * @param zona
-   *             [[caseclass.CaseClassDB.Zona]] instance to update
-   */
-  def updateZona(zona:Zona): Unit
-  /**
    * open a modal
    *
    * @param zona

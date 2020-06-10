@@ -9,10 +9,13 @@ import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.DialogView
-import view.fxview.component.HumanResources.subcomponent.parent.{HRHomeParent, ModalTrait}
+import view.fxview.AbstractFXDialogView
+import view.fxview.component.Component
+import view.fxview.component.HumanResources.HRHome
+import view.fxview.component.HumanResources.subcomponent.parent._
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.fxview.component.HumanResources.{HRHome, MainModalResource}
-import view.fxview.{AbstractFXDialogView, FXHelperFactory}
+import view.fxview.component.HumanResources.subcomponent.{ModalAbsence, ModalZone}
+import view.fxview.component.modal.{Modal, ModalParent}
  
 
 /**
@@ -94,10 +97,10 @@ object HumanResourceView {
    *              Stage that load view
    */
   private class HumanResourceHomeFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with HumanResourceView with HRHomeParent with ModalTrait{
+    with HumanResourceView with HRHomeParent with HRModalBoxParent {
 
     private var myController: HumanResourceController = _
-    private var modalResource: MainModalResource = _
+    private var modalResource: Modal = _
     private var hrHome: HRHome = _
 
     /**
@@ -131,12 +134,20 @@ object HumanResourceView {
     override def newZona(zona: Zona): Unit =
       myController.saveZona(zona)
 
-    override def deleteZona(zona: Zona): Unit = ???
+    override def deleteZona(zona: Zona): Unit = {
+      println(zona + "-> cancella" )
+      modalResource.showMessage("cancellato")
+      //myController.delete
+    }
 
-    override def updateZona(zona: Zona): Unit = ???
+
+
+    override def updateZona(zona: Zona): Unit =
+      println(zona + "-> modifica" )
+      //myController.update
 
     /////////////////////////////////////////////////////////   assenza
-    override def saveAbscense(assenza: Assenza): Unit =
+    override def saveAbsence(assenza: Assenza): Unit =
       myController.saveAbsence(assenza)
 
     /////////////////////////////////////////////////////////   terminale
@@ -159,11 +170,6 @@ object HumanResourceView {
     override def drawHoliday(): Unit =
       myController.getAllPersona()
 
-
-    override def openZonaModal(zona: Zona): Unit = {
-
-    }
-
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
@@ -175,8 +181,8 @@ object HumanResourceView {
 
  
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
-      case EmployeeView.fire =>Platform.runLater(()=>hrHome.drawFire(employeesList))
-      case EmployeeView.ill => Platform.runLater(()=>hrHome.drawIllBox(employeesList))
+      case EmployeeView.fire =>Platform.runLater(() => hrHome.drawFire(employeesList))
+      case EmployeeView.ill => Platform.runLater(() => hrHome.drawIllBox(employeesList))
     }
 
     override def drawZonaView(zones: List[Zona]): Unit =
@@ -185,17 +191,32 @@ object HumanResourceView {
     override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
       hrHome.drawTerminal(zones, terminals)
 
+    override def drawHolidayView(employeesList: List[Ferie]): Unit =
+      Platform.runLater(() => hrHome.drawHolidayBox(employeesList))
+
     override def drawChangePassword: Unit =
       ChangePasswordView(stage, Some(stage.getScene))
 
-    override def message(message: String): Unit = Platform.runLater(()=>this.showMessage(message))
-    override def result(message: String): Unit = Platform.runLater(()=>modalResource.showMessage(message))
+    /////////////////////////////////////////////////////////   disegni modal
 
     override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
-      modalResource = MainModalResource(item,myStage,this,isMalattia)
+      modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
       modalResource.show()
     }
 
-    override def drawHolidayView(employeesList: List[Ferie]): Unit = Platform.runLater(()=>hrHome.drawHolidayBox(employeesList))
+    override def openZonaModal(zona: Zona): Unit = {
+      modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
+      modalResource.show()
+    }
+
+
+    ////////////////////////////////////////////////////////////// esito modal
+
+    override def message(message: String): Unit =
+      Platform.runLater(()=> this.showMessage(message))
+
+    override def result(message: String): Unit =
+      Platform.runLater(() => modalResource.showMessage(message))
+
   }
 }

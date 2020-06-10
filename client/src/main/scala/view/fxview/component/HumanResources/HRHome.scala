@@ -32,7 +32,7 @@ trait HRHome extends Component[HRHomeParent]{
    * @param turni
    *              List of [[caseclass.CaseClassDB.Turno]] type to use in view
    */
-  def drawRecruit(zone: List[Zona], contratti: List[Contratto], turni: List[Turno])
+  def drawRecruit(zone: List[Zona], contratti: List[Contratto], turni: List[Turno]): Unit
 
   /**
    * Show Terminale after Zona is chosen
@@ -127,7 +127,7 @@ object HRHome{
     var terminalView: TerminalBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      nameLabel.setText("sono il Re delle risorse umane, e ti BENEDICO")
+      nameLabel.setText("I am HR king, and I BENEDICO to you!")
 
       recruitButton.setText(resources.getString("recruit-button"))
       firesButton.setText(resources.getString("fire-button"))
@@ -143,7 +143,7 @@ object HRHome{
       zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
       illness.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.ill))
-      holidays.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.holiday))
+      holidays.setOnAction(_ => parent.drawHoliday())
       terminalManger.setOnAction(_ => parent.drawTerminalPanel)
     }
 

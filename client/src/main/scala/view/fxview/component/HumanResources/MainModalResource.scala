@@ -11,18 +11,17 @@ import view.fxview.AbstractFXModalView
 import view.fxview.component.HumanResources.subcomponent.ModalAbsence
 import view.fxview.component.HumanResources.subcomponent.parent.{ModalAbsenceParent, ModalTrait}
 
-trait MainModalResource extends DialogView{
+trait  MainModalResource extends DialogView{
     def saveAbsence(assenza: Assenza):Unit
 }
+
 object MainModalResource{
 
   def apply(item:Ferie,stage:Stage,parent:ModalTrait,isMalattia:Boolean): MainModalResource = new Modal(item,stage,parent,isMalattia)
 
   private class Modal(item:Ferie,stage:Stage,parent:ModalTrait,isMalattian:Boolean) extends AbstractFXModalView(stage) with MainModalResource
   with ModalAbsenceParent{
-    /**
-     * Closes the view.
-     */
+
     private var sonResource: ModalAbsence = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
