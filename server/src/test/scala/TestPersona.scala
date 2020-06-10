@@ -63,10 +63,6 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with Init with
     val futureRecoveryPassword: Future[Option[Login]] = PersonaOperation.recoveryPassword(1)
     futureRecoveryPassword map { recoveryPassword => assert(recoveryPassword.head.password.length == 10) }
   }
-  it should "eventually  Login with new password" in {
-    val futureZone: Future[Option[Int]] = ZonaOperation.update(Zona("Cesena2",Some(5)))
-    futureZone map { zone => assert(zone.isDefined) }
-  }
   behavior of "CRUD"
   it should "return a int when insert into database" in {
     val insertPersona: Future[Option[Int]] = PersonaOperation.insert(newPersona)

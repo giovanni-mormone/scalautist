@@ -222,4 +222,3 @@ select * from StipendioSet
 select * from PersoneSets
 select * from StoricoContrattoSets
 select * from TurnoSets
-

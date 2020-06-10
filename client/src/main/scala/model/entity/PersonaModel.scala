@@ -7,7 +7,6 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 

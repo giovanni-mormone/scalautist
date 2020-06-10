@@ -7,7 +7,7 @@ import scala.reflect.runtime.{universe => runtime}
 /** @author Fabian Aspée Encina
  *  object which allow create a instance of table in real-time, avoiding generating more code
  */
-object Reflection {
+object GenericTableQuery {
   private val runtimeMirror: runtime.Mirror = runtime.runtimeMirror(getClass.getClassLoader)
   private def getTypeTag[T: runtime.TypeTag]: runtime.TypeTag[T] = runtime.typeTag[T]
 
@@ -17,7 +17,7 @@ object Reflection {
    * @tparam T is anything which represent tag of table in database
    * @return instance table we want in real-time
    */
-  def createClassByConstructor[T: runtime.TypeTag](args: Any*): T =
+  private def createClassByConstructor[T: runtime.TypeTag](args: Any*): T =
     runtimeMirror.reflectClass(getTypeTag[T].tpe.typeSymbol.asClass)
       .reflectConstructor(runtime.typeOf[T].decl(runtime.termNames.CONSTRUCTOR)
         .asMethod)(args: _*).asInstanceOf[T]
@@ -41,11 +41,10 @@ abstract class GenericTable[T](tag: Tag, name: String,nameId:String) extends Tab
  * @tparam T class which represent instance table in database
  */
 abstract class GenericTableQuery[C, T <: AbstractTable[C]: runtime.TypeTag] {
-  import Reflection._
+
   // look at following code: Students, if you want to initialize Students
   // you're gonna need a tag parameter, that's why we pass tag here
-  private val table: TableQuery[T] = TableQuery.apply(tag => createClassByConstructor[T](tag))
-
+  private val table: TableQuery[T] = TableQuery.apply(tag => GenericTableQuery.createClassByConstructor[T](tag))
   /**
    * method which call table which call scalaReflection to generate instance table
    * @return instance table we want in real-time

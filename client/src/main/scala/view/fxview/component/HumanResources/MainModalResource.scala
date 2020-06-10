@@ -33,6 +33,7 @@ object MainModalResource{
     override def close(): Unit =myStage.close()
 
     override def showMessage(message: String): Unit = {
+
       super.showMessage(message)
       this.close()
     }

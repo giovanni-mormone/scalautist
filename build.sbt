@@ -41,6 +41,17 @@ enablePlugins(DockerPlugin).settings(
     libraries.scalaReflect,
     libraries.mssql,
     libraries.logBack,
+    libraries.javax,
+    libraries.swaggerAkkaHttp,
+    libraries.swaggerScala ,
+    libraries.swaggerEnum,
+    libraries.jacksonModule,
+    libraries.iterator,
+    libraries.coreSwagger,
+    libraries.coreAnnotations,
+    libraries.modelSwagger,
+    libraries.jaxrs2Swagger,
+    libraries.megard,
     librariesTest.scalatest,
     librariesTest.scalaCheck,
     librariesTest.junit
@@ -90,7 +101,14 @@ lazy val libraries = new {
   val mssqlVersion    = "8.2.2.jre8"
   val jwtVersion      = "4.2.0"
   val scalaReflectVersion = "2.13.2"
-  val rabbitVersion = "5.9.0"
+  val rabbitVersion  = "5.9.0"
+  val swaggerVersion ="2.1.1"
+  val jacksonVersion = "2.11.0"
+  val javaxVersion   ="2.0.1"
+  val swaggerAkkaHttpVersion="2.1.0"
+  val swaggerEnumeratunVersion = "2.0.0"
+  val iteratorVersion = "1.7.1"
+  val megarVersion    = "0.4.3"
   val akkaHttp       = "com.typesafe.akka"        %% "akka-http"                % akkaHttpVersion
   val akkaActor      ="com.typesafe.akka"         %% "akka-actor-typed"         % akkaVersion
   val akkaStream     = "com.typesafe.akka"        %% "akka-stream"              % akkaVersion
@@ -102,6 +120,17 @@ lazy val libraries = new {
   val scalaReflect   = "org.scala-lang"            % "scala-reflect"            % scalaReflectVersion
   val jwt            = "com.pauldijou"            %% "jwt-spray-json"           % jwtVersion
   val rabbit         = "com.rabbitmq"              % "amqp-client"              % rabbitVersion
+  val javax          ="javax.ws.rs"               % "javax.ws.rs-api"           % javaxVersion
+  val swaggerAkkaHttp="com.github.swagger-akka-http" %% "swagger-akka-http"     % swaggerAkkaHttpVersion
+  val swaggerScala   ="com.github.swagger-akka-http" %% "swagger-scala-module"  % swaggerVersion
+  val swaggerEnum    ="com.github.swagger-akka-http" %% "swagger-enumeratum-module" % swaggerEnumeratunVersion
+  val jacksonModule  = "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+  val iterator       ="pl.iterators" %% "kebs-spray-json"                       % iteratorVersion
+  val coreSwagger    = "io.swagger.core.v3" % "swagger-core"                    % swaggerVersion
+  val coreAnnotations ="io.swagger.core.v3" % "swagger-annotations"              % swaggerVersion
+  val modelSwagger   ="io.swagger.core.v3" % "swagger-models"                   % swaggerVersion
+  val jaxrs2Swagger  ="io.swagger.core.v3" % "swagger-jaxrs2"                   % swaggerVersion
+  val megard         = "ch.megard"                %% "akka-http-cors"           % megarVersion
 }
 
 lazy val librariesTest = new {
