@@ -54,6 +54,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * Holiday saves on the db an employee's absence for a period of time
    *
    * @param assenza
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
    */
   def holiday(assenza: Assenza): Unit
 
@@ -67,15 +68,44 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   /**
    *
    * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
    */
   def saveZona(zone: Zona): Unit
 
   /**
    *
-   * @param terminale
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
    */
-  def saveTerminal(terminale: Terminale): Unit
+  def updateZona(zone: Zona): Unit
 
+  /**
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
+   */
+  def deleteZona(zone: Zona): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def saveTerminal(terminal: Terminale): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def updateTerminal(terminal: Terminale): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def deleteTerminal(terminal: Terminale): Unit
 
   /**
    * getRecruitData method retrieves all data needed to recruit employee
@@ -128,9 +158,9 @@ object HumanResourceController {
    */
   private class HumanResourceControllerImpl extends HumanResourceController {
 
-    override def recruit(persona: Assumi): Unit =model.recruit(persona)
+    override def recruit(persona: Assumi): Unit =
+      model.recruit(persona)
       //println(persona)
-
 
     override def fires(ids: Set[Int]): Unit = {
       /*println(ids)*/
@@ -220,17 +250,33 @@ object HumanResourceController {
        //model.setZona(zone).onComplete(_ => getZonaData())
        println(zone)
     }
+
+    override def updateZona(zone: Zona): Unit =
+      //model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      println(zone + "-> update")
+
+    override def deleteZona(zone: Zona): Unit =
+      //model.deleteZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      println(zone + "-> delete")
+
+    override def saveTerminal(terminal: Terminale): Unit = {
+      //model.newTerminale(terminale).onComplete(_ => getTerminalData())
+      println(terminal)
+    }
+
+    override def updateTerminal(terminal: Terminale): Unit =
+      //model.updateTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
+      println(terminal + "-> update")
+
+    override def deleteTerminal(terminal: Terminale): Unit =
+      //model.deleteTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
+      println(terminal + "-> delete")
       
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia)
          model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
        else
          model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
-    }
-
-    override def saveTerminal(terminale: Terminale): Unit = {
-      //model.newTerminale(terminale).onComplete(_ => getTerminalData())
-      println(terminale)
     }
 
     private def sendMessageModal(t:Try[Option[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
@@ -240,6 +286,7 @@ object HumanResourceController {
       case (Success(Some(value)),false)  =>myView.result("vacaciones asignada correctamente")
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
+
 
   }
 }

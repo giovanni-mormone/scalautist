@@ -140,8 +140,6 @@ object HumanResourceView {
       //myController.delete
     }
 
-
-
     override def updateZona(zona: Zona): Unit =
       println(zona + "-> modifica" )
       //myController.update
@@ -153,6 +151,12 @@ object HumanResourceView {
     /////////////////////////////////////////////////////////   terminale
     override def newTerminale(terminal: Terminale): Unit =
       myController.saveTerminal(terminal)
+
+    override def deleteTerminal(terminal: Terminale): Unit =
+      myController.deleteTerminal(terminal)
+
+    override def updateTerminal(terminal: Terminale): Unit =
+      myController.updateTerminal(terminal)
 
     /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
@@ -208,6 +212,7 @@ object HumanResourceView {
       modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
       modalResource.show()
     }
+
 
 
     ////////////////////////////////////////////////////////////// esito modal
