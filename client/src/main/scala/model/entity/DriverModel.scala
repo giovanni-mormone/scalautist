@@ -1,8 +1,13 @@
 package model.entity
 
+import akka.http.scaladsl.client.RequestBuilding.Post
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import model.Model
+import caseclass.CaseClassHttpMessage.Id
+import model.AbstractModel
 
+import jsonmessages.JsonFormats._
 import scala.concurrent.Future
 
 
@@ -10,7 +15,7 @@ import scala.concurrent.Future
  * DriverModel extends [[model.Model]].
  * Interface for driver's operation on data
  */
-trait DriverModel extends Model {
+trait DriverModel extends AbstractModel{
   /**
    * Return a set of one driver's turn
    * @param id
@@ -24,14 +29,30 @@ trait DriverModel extends Model {
    */
   def getWorkshift(id: Int, startData: String, endData: String): Future[List[Turno]]
 
-  /**
-   * Return a set of driver's Stipendio
-   * @param id
-   * User id
-   * @return
-   * Future of List of Stipendio
-   */
-  def getSalaries(id: Int): Future[List[Stipendio]]
 
+  /**
+   *  Method that obtains salary for a person
+   * @param id id that represent case class that contains id of a persona
+   * @return Option of List of Stipendio that represent all salary of a persona
+   */
+  def getSalary(id:Id):Future[Option[List[Stipendio]]]
+
+}
+
+object DriverModel {
+
+  def apply(): DriverModel = new DriverResourceHttp()
+
+  private class DriverResourceHttp extends DriverModel {
+
+    override def getWorkshift(id: Int, startData: String, endData: String): Future[List[Turno]] = ???
+
+    override def getSalary(id: Id): Future[Option[List[Stipendio]]] = {
+      val request = Post(getURI("getstipendio"))
+      callServerSalary(request)
+    }
+    private def callServerSalary(request: HttpRequest)=
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
+  }
 
 }

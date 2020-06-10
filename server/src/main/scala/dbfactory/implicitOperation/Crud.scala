@@ -1,7 +1,7 @@
 package dbfactory.implicitOperation
 
 import caseclass.CaseClassDB._
-import dbfactory.setting.GenericOperation.Operation
+import dbfactory.setting.GenericOperation
 import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
@@ -34,12 +34,14 @@ trait Crud[A]{
    *
    * @param element Id for select one element in a table in the database
    * @return Option of case class which represent a instance of object in database
+   *         Note that the return value will be None if not exist element into database and Some if the operation was select
    */
   private[implicitOperation] def select(element:Int):Future[Option[A]]
 
   /**
    * Select all element in a table in the database
    * @return List of all element in the table of the database
+   *         Note that the return value will be None if not exist element into database and Some if the operation was selectAll
    */
   private[implicitOperation] def selectAll: Future[Option[List[A]]
 ]
@@ -47,34 +49,42 @@ trait Crud[A]{
    * Generic operation which enable insert any element in any table in database
    * @param element case class that represent instance of the table in database
    * @return Future of Int that represent status of operation
+   *         Note that the return value will be None if element has not been inserted into database and Some if the operation was insert
    */
   private[implicitOperation] def insert(element:A):Future[Option[Int]]
 
   /**
    *  Generic operation which enable insert a List of any element in any table in database
    * @param element List of case class that represent instance of the table in database
-   * @return Future of List of Int that represent status of operation
+   * @return Future of Option of List of Int that represent status of operation
+   *         Note that the return value will be None if element has not been inserted into database and Some if the operation was insertAll
    */
   private[implicitOperation] def insertAll(element:List[A]):Future[Option[List[Int]]]
 
   /**
    *  Generic operation which enable delete one element in any table in database
    * @param element case class that represent one element in one table in database
-   * @return Future of Int that represent status of operation
+   * @return Future of Option of Int that represent status of operation
+   *          Note that the return value will be None if element not exist into database and Some if the operation was delete
    */
   private[implicitOperation] def delete(element:Int):Future[Option[Int]]
 
   /**
    *  Generic Operation which enable delete a List of element of any table in database
    * @param element List of case class that represent one instance of a table in database
-   * @return Future of Int that represent status of operation
+   * @return Future of Option of Int that represent status of operation
+   *          Note that the return value will be None if an error if occurred and Some if the operation was deleteAll
    */
   private[implicitOperation] def deleteAll(element:List[Int]): Future[Option[Int]]
 
   /**
    *  Operation which enable update one element in any table in database
+   * Insert a single row if its primary key does not exist in the table,
+   * otherwise update the existing record.
+   *
    * @param element case class that represent element in table of the database we want update
    * @return Future of Int that represent status of operation
+   *          Note that the return value will be None if an update was performed and Some if the operation was insert
    */
   private[implicitOperation] def update(element:A):Future[Option[Int]]
 }
@@ -133,7 +143,7 @@ object Crud {
   implicit object CrudPersona extends OperationImplicit[Persona,PersonaTableRep] with Crud[Persona] {
     import slick.jdbc.SQLServerProfile.api._
 
-    private val operation: Operation[Persona, PersonaTableRep] = Operation[Persona,PersonaTableRep]()
+    private val operation: GenericOperation[Persona, PersonaTableRep] = GenericOperation[Persona,PersonaTableRep]()
     override private[implicitOperation] def insert(element: Persona):Future[Option[Int]]                 = typeDB().insert(element)
     override private[implicitOperation] def select(element: Int): Future[Option[Persona]]        = operation.execQuery(personaSelect,element)
                                                                                                   .map(convertTupleToPerson)

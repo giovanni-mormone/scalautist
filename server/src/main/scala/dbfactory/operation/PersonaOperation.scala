@@ -82,8 +82,9 @@ object PersonaOperation extends PersonaOperation {
     InstancePersona.operation().
         execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
       .collect{
-        case Some(value) if value.nonEmpty=> convertTupleToPerson(Some(value.head))
-        case Some(List()) => None
+        case None => None
+        case Some(value)  => value.map(x=>convertTupleToPerson(Some(x))).head
+
       }
 
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]=

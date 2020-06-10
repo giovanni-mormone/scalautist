@@ -1,9 +1,7 @@
 package dbfactory.implicitOperation
 
 import caseclass.CaseClassDB._
-import dbfactory.setting.GenericCRUD.GenericOperationCRUD
-import dbfactory.setting.GenericOperation.Operation
-import dbfactory.setting.GenericTable
+import dbfactory.setting.{GenericCRUD, GenericOperation, GenericTable}
 import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
 import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
@@ -37,7 +35,7 @@ trait ImplicitInstanceTableDB[A,B<:GenericTable[A]] {
    * Brands [[dbfactory.setting.GenericCRUD.GenericOperationCRUD]], which enable make generic operation in the database
    * @return A instance of GenericOperationCRUD which enables operation in database
    */
-  private[implicitOperation] def typeDB():GenericOperationCRUD[A,B]
+  private[implicitOperation] def typeDB():GenericCRUD[A,B]
 
   /**
    * method which enable obtain the instance of Operation [[dbfactory.setting.GenericOperation]],
@@ -45,104 +43,104 @@ trait ImplicitInstanceTableDB[A,B<:GenericTable[A]] {
    * e.g ExecQuery,ExecQueryFilter, etc.
    * @return A instance of Operation which enables operation in database
    */
-  def operation():Operation[A,B]
+  def operation():GenericOperation[A,B]
 }
 object ImplicitInstanceTableDB {
   implicit object InstanceContratto extends ImplicitInstanceTableDB[Contratto,ContrattoTableRep] {
-    override private[implicitOperation]  def typeDB(): GenericOperationCRUD[Contratto, ContrattoTableRep] = GenericOperationCRUD[Contratto,ContrattoTableRep]
-    override def operation(): Operation[Contratto, ContrattoTableRep] = Operation[Contratto,ContrattoTableRep]
+    override private[implicitOperation]  def typeDB(): GenericCRUD[Contratto, ContrattoTableRep] = GenericCRUD[Contratto,ContrattoTableRep]()
+    override def operation(): GenericOperation[Contratto, ContrattoTableRep] = GenericOperation[Contratto, ContrattoTableRep]()
   }
   implicit object InstanceGiornoInSettimana extends ImplicitInstanceTableDB[GiornoInSettimana,GiornoInSettimanaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[GiornoInSettimana, GiornoInSettimanaTableRep] = GenericOperationCRUD[GiornoInSettimana, GiornoInSettimanaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[GiornoInSettimana, GiornoInSettimanaTableRep] = GenericCRUD[GiornoInSettimana, GiornoInSettimanaTableRep]()
 
-    override def operation(): Operation[GiornoInSettimana, GiornoInSettimanaTableRep] = Operation[GiornoInSettimana, GiornoInSettimanaTableRep]
+    override def operation(): GenericOperation[GiornoInSettimana, GiornoInSettimanaTableRep] = GenericOperation[GiornoInSettimana, GiornoInSettimanaTableRep]()
   }
   implicit object InstanceGiorno extends ImplicitInstanceTableDB[Giorno,GiornoTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Giorno, GiornoTableRep] = GenericOperationCRUD[Giorno, GiornoTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Giorno, GiornoTableRep] = GenericCRUD[Giorno, GiornoTableRep]()
 
-    override def operation(): Operation[Giorno, GiornoTableRep] =  Operation[Giorno, GiornoTableRep]
+    override def operation(): GenericOperation[Giorno, GiornoTableRep] =  GenericOperation[Giorno, GiornoTableRep]()
   }
   implicit object InstanceGruppoTerminale extends ImplicitInstanceTableDB[GruppoTerminale,GruppoTerminaleTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[GruppoTerminale, GruppoTerminaleTableRep] = GenericOperationCRUD[GruppoTerminale, GruppoTerminaleTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[GruppoTerminale, GruppoTerminaleTableRep] = GenericCRUD[GruppoTerminale, GruppoTerminaleTableRep]()
 
-    override def operation(): Operation[GruppoTerminale, GruppoTerminaleTableRep] = Operation[GruppoTerminale, GruppoTerminaleTableRep]
+    override def operation(): GenericOperation[GruppoTerminale, GruppoTerminaleTableRep] = GenericOperation[GruppoTerminale, GruppoTerminaleTableRep]()
   }
   implicit object InstanceParametro extends ImplicitInstanceTableDB[Parametro,ParametroTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Parametro, ParametroTableRep] = GenericOperationCRUD[Parametro, ParametroTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Parametro, ParametroTableRep] = GenericCRUD[Parametro, ParametroTableRep]()
 
-    override def operation(): Operation[Parametro, ParametroTableRep] = Operation[Parametro, ParametroTableRep]
+    override def operation(): GenericOperation[Parametro, ParametroTableRep] = GenericOperation[Parametro, ParametroTableRep]()
   }
   implicit object InstancePersona extends ImplicitInstanceTableDB[Persona,PersonaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Persona, PersonaTableRep] = GenericOperationCRUD[Persona,PersonaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Persona, PersonaTableRep] = GenericCRUD[Persona,PersonaTableRep]()
 
-    override def operation(): Operation[Persona, PersonaTableRep] = Operation[Persona, PersonaTableRep]
+    override def operation(): GenericOperation[Persona, PersonaTableRep] = GenericOperation[Persona, PersonaTableRep]()
   }
   implicit object InstancePresenza extends ImplicitInstanceTableDB[Presenza,PresenzaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Presenza, PresenzaTableRep] = GenericOperationCRUD[Presenza, PresenzaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Presenza, PresenzaTableRep] = GenericCRUD[Presenza, PresenzaTableRep]()
 
-    override def operation(): Operation[Presenza, PresenzaTableRep] = Operation[Presenza, PresenzaTableRep]
+    override def operation(): GenericOperation[Presenza, PresenzaTableRep] = GenericOperation[Presenza, PresenzaTableRep]()
   }
   implicit object InstanceRichiesta extends ImplicitInstanceTableDB[Richiesta,RichiestaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Richiesta, RichiestaTableRep] = GenericOperationCRUD[Richiesta, RichiestaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Richiesta, RichiestaTableRep] = GenericCRUD[Richiesta, RichiestaTableRep]()
 
-    override  def operation(): Operation[Richiesta, RichiestaTableRep] = Operation[Richiesta, RichiestaTableRep]
+    override  def operation(): GenericOperation[Richiesta, RichiestaTableRep] = GenericOperation[Richiesta, RichiestaTableRep]()
   }
   implicit object InstanceRichiestaTeorica extends ImplicitInstanceTableDB[RichiestaTeorica,RichiestaTeoricaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[RichiestaTeorica, RichiestaTeoricaTableRep] = GenericOperationCRUD[RichiestaTeorica, RichiestaTeoricaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[RichiestaTeorica, RichiestaTeoricaTableRep] = GenericCRUD[RichiestaTeorica, RichiestaTeoricaTableRep]()
 
-    override def operation(): Operation[RichiestaTeorica, RichiestaTeoricaTableRep] = Operation[RichiestaTeorica, RichiestaTeoricaTableRep]
+    override def operation(): GenericOperation[RichiestaTeorica, RichiestaTeoricaTableRep] = GenericOperation[RichiestaTeorica, RichiestaTeoricaTableRep]()
   }
   implicit object InstanceRisultato extends ImplicitInstanceTableDB[Risultato,RisultatoTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Risultato, RisultatoTableRep] = GenericOperationCRUD[Risultato, RisultatoTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Risultato, RisultatoTableRep] = GenericCRUD[Risultato, RisultatoTableRep]()
 
-    override def operation(): Operation[Risultato, RisultatoTableRep] = Operation[Risultato, RisultatoTableRep]
+    override def operation(): GenericOperation[Risultato, RisultatoTableRep] = GenericOperation[Risultato, RisultatoTableRep]()
   }
   implicit object InstanceSettimana extends ImplicitInstanceTableDB[Settimana,SettimanaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Settimana, SettimanaTableRep] = GenericOperationCRUD[Settimana, SettimanaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Settimana, SettimanaTableRep] = GenericCRUD[Settimana, SettimanaTableRep]()
 
-    override def operation(): Operation[Settimana, SettimanaTableRep] = Operation[Settimana, SettimanaTableRep]
+    override def operation(): GenericOperation[Settimana, SettimanaTableRep] = GenericOperation[Settimana, SettimanaTableRep]()
   }
   implicit object InstanceStoricoContratto extends ImplicitInstanceTableDB[StoricoContratto,StoricoContrattoTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[StoricoContratto, StoricoContrattoTableRep] = GenericOperationCRUD[StoricoContratto, StoricoContrattoTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[StoricoContratto, StoricoContrattoTableRep] = GenericCRUD[StoricoContratto, StoricoContrattoTableRep]()
 
-    override def operation(): Operation[StoricoContratto, StoricoContrattoTableRep] = Operation[StoricoContratto, StoricoContrattoTableRep]
+    override def operation(): GenericOperation[StoricoContratto, StoricoContrattoTableRep] = GenericOperation[StoricoContratto, StoricoContrattoTableRep]()
   }
   implicit object InstanceStraordinario extends ImplicitInstanceTableDB[Straordinario,StraordinarioTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Straordinario, StraordinarioTableRep] = GenericOperationCRUD[Straordinario, StraordinarioTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Straordinario, StraordinarioTableRep] = GenericCRUD[Straordinario, StraordinarioTableRep]()
 
-    override def operation(): Operation[Straordinario, StraordinarioTableRep] = Operation[Straordinario, StraordinarioTableRep]
+    override def operation(): GenericOperation[Straordinario, StraordinarioTableRep] = GenericOperation[Straordinario, StraordinarioTableRep]()
   }
   implicit object InstanceTerminale extends ImplicitInstanceTableDB[Terminale,TerminaleTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Terminale, TerminaleTableRep] = GenericOperationCRUD[Terminale, TerminaleTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Terminale, TerminaleTableRep] = GenericCRUD[Terminale, TerminaleTableRep]()
 
-    override def operation(): Operation[Terminale, TerminaleTableRep] =  Operation[Terminale, TerminaleTableRep]
+    override def operation(): GenericOperation[Terminale, TerminaleTableRep] =  GenericOperation[Terminale, TerminaleTableRep]()
   }
   implicit object InstanceTurno extends ImplicitInstanceTableDB[Turno,TurnoTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Turno, TurnoTableRep] = GenericOperationCRUD[Turno, TurnoTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Turno, TurnoTableRep] = GenericCRUD[Turno, TurnoTableRep]()
 
-    override def operation(): Operation[Turno, TurnoTableRep] = Operation[Turno, TurnoTableRep]
+    override def operation(): GenericOperation[Turno, TurnoTableRep] = GenericOperation[Turno, TurnoTableRep]()
   }
   implicit object InstanceZona extends ImplicitInstanceTableDB[Zona,ZonaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Zona, ZonaTableRep] = GenericOperationCRUD[Zona,ZonaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Zona, ZonaTableRep] = GenericCRUD[Zona, ZonaTableRep]()
 
-    override def operation(): Operation[Zona, ZonaTableRep] = Operation[Zona, ZonaTableRep]
+    override def operation(): GenericOperation[Zona, ZonaTableRep] = GenericOperation[Zona, ZonaTableRep]()
   }
 
   implicit object InstanceDisponibilita extends ImplicitInstanceTableDB[Disponibilita,DisponibilitaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Disponibilita, DisponibilitaTableRep] = GenericOperationCRUD[Disponibilita,DisponibilitaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Disponibilita, DisponibilitaTableRep] = GenericCRUD[Disponibilita, DisponibilitaTableRep]()
 
-    override def operation(): Operation[Disponibilita, DisponibilitaTableRep] = Operation[Disponibilita, DisponibilitaTableRep]
+    override def operation(): GenericOperation[Disponibilita, DisponibilitaTableRep] = GenericOperation[Disponibilita, DisponibilitaTableRep]()
   }
 
   implicit object InstanceAssenza extends ImplicitInstanceTableDB[Assenza,AssenzaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Assenza, AssenzaTableRep] = GenericOperationCRUD[Assenza,AssenzaTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Assenza, AssenzaTableRep] = GenericCRUD[Assenza, AssenzaTableRep]()
 
-    override def operation(): Operation[Assenza, AssenzaTableRep] = Operation[Assenza, AssenzaTableRep]
+    override def operation(): GenericOperation[Assenza, AssenzaTableRep] = GenericOperation[Assenza, AssenzaTableRep]()
   }
 
   implicit object InstanceStipendio extends ImplicitInstanceTableDB[Stipendio,StipendioTableRep] {
-    override private[implicitOperation] def typeDB(): GenericOperationCRUD[Stipendio, StipendioTableRep] = GenericOperationCRUD[Stipendio,StipendioTableRep]
+    override private[implicitOperation] def typeDB(): GenericCRUD[Stipendio, StipendioTableRep] = GenericCRUD[Stipendio, StipendioTableRep]()
 
-    override def operation(): Operation[Stipendio, StipendioTableRep] = Operation[Stipendio, StipendioTableRep]
+    override def operation(): GenericOperation[Stipendio, StipendioTableRep] = GenericOperation[Stipendio, StipendioTableRep]()
   }
 }

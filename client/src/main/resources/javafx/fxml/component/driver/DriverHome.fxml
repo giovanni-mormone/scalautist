@@ -12,7 +12,7 @@
            <Menu fx:id="stipendi" mnemonicParsing="false"/>
        </MenuBar>
    </top>
-    <Label fx:id="labelHome"  text="Home"/>
-    <Label fx:id="labelTurni"  text="Turni"/>
-    <Label fx:id="labelStipendio"  text="Stipendi"/>
+    <Label fx:id="labelHome"/>
+    <Label fx:id="labelTurni"/>
+    <Label fx:id="labelStipendio"/>
 </BorderPane>
