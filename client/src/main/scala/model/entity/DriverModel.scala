@@ -4,10 +4,10 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.Id
+import caseclass.CaseClassHttpMessage.Response
+import jsonmessages.JsonFormats._
 import model.AbstractModel
 
-import jsonmessages.JsonFormats._
 import scala.concurrent.Future
 
 
@@ -32,10 +32,17 @@ trait DriverModel extends AbstractModel{
 
   /**
    *  Method that obtains salary for a person
-   * @param id id that represent case class that contains id of a persona
+   * @param id id that represent  id of a persona
    * @return Option of List of Stipendio that represent all salary of a persona
    */
-  def getSalary(id:Id):Future[Option[List[Stipendio]]]
+  def getSalary(id:Int):Future[Response[List[Stipendio]]]
+
+  /**
+   *  Method that obtains information of salary for a person
+   * @param id id that represent  id of salary
+   * @return Option of List of Stipendio that represent all salary of a persona
+   */
+  def getInfoForSalary(id:Int)
 
 }
 
@@ -47,12 +54,17 @@ object DriverModel {
 
     override def getWorkshift(id: Int, startData: String, endData: String): Future[List[Turno]] = ???
 
-    override def getSalary(id: Id): Future[Option[List[Stipendio]]] = {
-      val request = Post(getURI("getstipendio"))
+    override def getSalary(id: Int): Future[Response[List[Stipendio]]] = {
+      val request = Post(getURI("getstipendio"),transform(id))
       callServerSalary(request)
     }
     private def callServerSalary(request: HttpRequest)=
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Option[List[Stipendio]]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+
+    override def getInfoForSalary(id: Int): Unit = {
+      val request = Post(getURI("getinfostipendio"),transform(id))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+    }
   }
 
 }

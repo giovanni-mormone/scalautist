@@ -16,6 +16,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   var terminale:HumanResourceModel=_
   var persona:PersonaModel=_
   protected var insertPersona: Assumi = _
+  protected var insertWithoutStorico: Assumi = _
   val zona:Zona = Zona("Cesena",Some(1))
   val personaC: Persona =Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,None,Some(1))
   override def beforeEach(): Unit = {
@@ -34,6 +35,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureRecruit:Future[Response[Login]]=terminale.recruit(insertPersona)
     futureRecruit map { recruit =>print(recruit); assert(recruit.payload.isDefined)}
   }
+
   it should "return  a person" in {
     val futureSecondLogin: Future[Response[Persona]] = persona.login("admin","admin")
     futureSecondLogin map { login => assert(login.payload.contains(personaC)) }

@@ -14,5 +14,5 @@ trait ModalAbsenceParent extends ModalParent {
    * It saves a [[caseclass.CaseClassDB.Assenza]] into the database
    * @param absence
    */
-  def saveAbsence(absence: Assenza)
+  def saveAbsence(absence: Assenza):Unit
 }
