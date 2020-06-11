@@ -2,12 +2,13 @@ package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
 import java.sql.Date
+import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, TextField}
+import javafx.scene.control._
 import regularexpressionutilities.{Checker, NameChecker, NumberChecker}
 import utils.UserType._
 import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
@@ -61,6 +62,8 @@ object RecruitBox {
     @FXML
     var tel: TextField = _
     @FXML
+    var recruitDate: DatePicker = _
+    @FXML
     var role: ComboBox[String] = _
     @FXML
     var contractTypes: ComboBox[String] = _
@@ -85,8 +88,9 @@ object RecruitBox {
     private var contractTypeFI5FU: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      initializeComboBox
-      setActions
+      initializeComboBox()
+      setRecruitDate()
+      setActions()
       setPromptText(resources)
     }
 
@@ -107,7 +111,24 @@ object RecruitBox {
       initialBlockComponent
     }
 
-    private def setActions: Unit = {
+    private def setRecruitDate(): Unit = {
+      recruitDate.setEditable(false)
+      recruitDate.setDayCellFactory(_=> setDate(LocalDate.now()))
+
+    }
+
+    private def setDate(today:LocalDate): DateCell = new DateCell() {
+      import java.time.LocalDate
+      val PERIOD = 1
+      val minDate = today.minusMonths(PERIOD)
+      val maxDate = today.plusMonths(PERIOD)
+      override def updateItem(date:LocalDate, empty:Boolean) {
+        super.updateItem(date, empty)
+        setDisable(date.isBefore(minDate) || date.isAfter(maxDate) || empty)
+      }
+    }
+
+    private def setActions(): Unit = {
       //default action
 
       def setNameStringControl(component: TextField): Unit = {
@@ -170,7 +191,7 @@ object RecruitBox {
 
       terminals.setOnAction(_ => ableSave)
 
-      save.setOnAction(event => {
+      save.setOnAction(_ => {
         if(noEmptyField) {
           val hasShift1: Boolean = chosenSomething(shift1)
           val hasShift2: Boolean = chosenSomething(shift2)
@@ -183,9 +204,8 @@ object RecruitBox {
             )
           )
         }
-          //println("Ok dude! You recruit a big asshole " + name.getText + " " + surname.getText() + " " + tel.getText() + " " + getComboSelectedIndex(role) + 1)
         else
-          println("holy shit man!! You can't fill a simple form? Are you an asshole?") //TODO
+          println("holy shit man!! You can't fill a simple form? Are you an asshole?")
       })
     }
 
