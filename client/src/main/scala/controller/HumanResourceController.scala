@@ -179,22 +179,22 @@ object HumanResourceController {
     }
 
     override def getAllPersona(callingView: String): Unit = {
-       /*model.getAllPersone.onComplete(employees =>
-              myView.drawEmployeeView(employees.get.head, callingView))*/
-      val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
+       model.getAllPersone.onComplete(employees =>
+              myView.drawEmployeeView(employees.get.payload.head, callingView))
+      /*val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
         Persona("ajeje","brazorf","123", None, 3, false, "gne", Some(2), matricola = Some(16)),
         Persona("samir","kebab","123", None, 3, false, "gne", Some(2), matricola = Some(18)),
         Persona("mangiapane","atradimento","123", None, 3, false, "gne", Some(2), matricola = Some(32)),
       )
-      myView.drawEmployeeView(perosne, callingView)
+      myView.drawEmployeeView(perosne, callingView)*/
     }
 
     override def getAllPersona(): Unit =
-      myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
-    /*model.getHolidayByPerson.onComplete {
-      case Failure(exception) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
-      case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
-    }*/
+      //myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+      model.getHolidayByPerson.onComplete {
+        case Failure(exception) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+        case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+      }
 
     override def illness(assenza: Assenza): Unit =
       model.illnessPeriod(assenza)
@@ -212,14 +212,14 @@ object HumanResourceController {
     def getContratti: Future[Response[List[Contratto]]] = model.getAllContract
 
     override def getRecruitData(): Unit = {
-      /*val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
+      val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
           turns <- getTurni
           contracts <- getContratti
           zones <- getZone
-        } yield (zones.head, contracts.head, turns.head)
-      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))*/
+        } yield (zones.payload.head, contracts.payload.head, turns.payload.head)
+      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))
 
-      val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
+      /*val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
         Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
       val contratti = List(
         Contratto("Full-Time-5x2", turnoFisso = true, partTime = true, 1),
@@ -228,20 +228,20 @@ object HumanResourceController {
         Contratto("Full-Time-6x1", turnoFisso = true, partTime = false,4)
       )
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      myView.drawRecruit(zone, contratti, turni)
+      myView.drawRecruit(zone, contratti, turni)*/
     }
 
     override def getTerminals(zona: Zona): Unit = {
-     // model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.head))
-      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+      model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.payload.head))
+      /*val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
         Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
-      myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))
+      myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))*/
     }
 
     override def getZonaData(): Unit = {
-       //getZone.onComplete(zones => myView.drawZonaView(zones.get.head))
-      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      myView.drawZonaView(zone)
+       getZone.onComplete(zones => myView.drawZonaView(zones.get.payload.head))
+      /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      myView.drawZonaView(zone)*/
     }
 
     override def getTerminalData(): Unit = {
@@ -253,7 +253,7 @@ object HumanResourceController {
     }
 
     override def saveZona(zone: Zona): Unit = {
-       //model.setZona(zone).onComplete(_ => getZonaData())
+       model.setZona(zone).onComplete(_ => getZonaData())
        println(zone)
     }
 
