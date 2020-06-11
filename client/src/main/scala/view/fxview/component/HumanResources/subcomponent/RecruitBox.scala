@@ -129,11 +129,10 @@ object RecruitBox {
     }
 
     private def setActions(): Unit = {
-      //default action
 
       def setNameStringControl(component: TextField): Unit = {
         component.textProperty().addListener((_, oldS, word) => {
-          if ( !controlString(word, NameChecker) )
+          if (!word.isEmpty && !controlString(word, NameChecker) )
             component.setText(oldS)
           ableSave
         })
@@ -144,7 +143,7 @@ object RecruitBox {
       setNameStringControl(surname)
 
       tel.textProperty().addListener((_, oldS, word) => {
-        if (!controlString(word, NumberChecker) || word.size > 10)
+        if (!word.isEmpty && !controlString(word, NumberChecker) || word.size > 10)
           tel.setText(oldS)
         ableSave
       })

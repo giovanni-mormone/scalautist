@@ -6,6 +6,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TextField}
+import regularexpressionutilities.{NameChecker, ZonaChecker}
 import view.fxview.component.HumanResources.subcomponent.parent.ModalZoneParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -47,15 +48,29 @@ object ModalZone {
       id.setText(zona.idZone.head.toString)
       id.setEditable(false)
 
-      name.setText(zona.zones)
-      name.setEditable(true)
+      manageZonaText()
 
       delete.setText(resources.getString("delete"))
       delete.setOnAction(_ => parent.deleteZona(zona))
 
       update.setText(resources.getString("update"))
-      update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone))) //todo controllare stringa
+      update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone)))
+
+      ableToChange
     }
+
+    private def manageZonaText(): Unit = {
+      name.setText(zona.zones)
+      name.setEditable(true)
+      name.textProperty().addListener((_, oldS, word) => {
+        if (!word.isEmpty && !ZonaChecker.checkRegex.matches("" + word.last) )
+          name.setText(oldS)
+        ableToChange()
+      })
+    }
+
+    private def ableToChange(): Unit =
+      update.setDisable(name.getText().equals(""))
 
   }
 }

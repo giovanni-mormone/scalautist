@@ -6,6 +6,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.{Terminale, Zona}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TextField}
+import regularexpressionutilities.{NameChecker, ZonaChecker}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.HumanResources.subcomponent.parent.{ModalTerminalParent, ModalZoneParent}
 
@@ -54,25 +55,27 @@ object ModalTerminal {
       initializeComboBox()
       initializeFixedField()
 
-      name.setText(terminal.nomeTerminale)
+      manageTerminalText()
 
       delete.setText(resources.getString("delete"))
       delete.setOnAction(_ => parent.deleteTerminal(terminal))
 
       updateButton(resources)
+
+      ableToChange()
     }
 
-    def initializeComboBox(): Unit = {
+    private def initializeComboBox(): Unit = {
       zonesList.foreach(zone => zones.getItems.add(zone.zones))
       zones.getSelectionModel.select(zonesList.filter(zone => terminal.idZona == zone.idZone.head).head.zones)
     }
 
-    def initializeFixedField(): Unit = {
+    private def initializeFixedField(): Unit = {
       id.setDisable(true)
       id.setText(terminal.idTerminale.head.toString)
     }
 
-    def updateButton(resourceBundle: ResourceBundle): Unit = {
+    private def updateButton(resourceBundle: ResourceBundle): Unit = {
       update.setText(resourceBundle.getString("update"))
       update.setOnAction(_ => parent.updateTerminal(
         Terminale(name.getText(),
@@ -80,6 +83,19 @@ object ModalTerminal {
           Some(id.getText.toInt)))
       )
     }
+
+    private def manageTerminalText(): Unit = {
+      name.setText(terminal.nomeTerminale)
+      name.textProperty().addListener((_, oldS, word) => {
+        if (!word.isEmpty && !ZonaChecker.checkRegex.matches("" + word.last) )
+          name.setText(oldS)
+        ableToChange()
+      })
+    }
+
+    private def ableToChange(): Unit =
+      update.setDisable(name.getText().equals(""))
+
   }
 }
 
