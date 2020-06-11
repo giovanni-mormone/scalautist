@@ -1,7 +1,7 @@
 package servermodel.routes.exception
 
 import akka.http.scaladsl.model.StatusCodes
-import utils.{StatusCodes=>statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
 import caseclass.CaseClassHttpMessage.Response

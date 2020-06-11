@@ -11,7 +11,7 @@ import jsonmessages.JsonFormats._
 
 import servermodel.routes.exception.RouteException
 import servermodel.routes.exception.SuccessAndFailure._
-import utils.{StatusCodes => statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 
 import scala.util.Success
 

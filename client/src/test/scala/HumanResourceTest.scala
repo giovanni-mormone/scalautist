@@ -2,15 +2,15 @@
 import java.sql.Date
 
 import akka.actor.Terminated
-import akka.http.scaladsl.model.StatusCodes
-import caseclass.CaseClassDB.{Contratto, Disponibilita, Login, Persona, StoricoContratto, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{Assumi, Id, Request, Response}
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage.{Assumi, Request, Response}
+import messagecodes.{StatusCodes => statusCodes}
+import model.entity.{HumanResourceModel, PersonaModel}
 import model.utilsmodel.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import model.entity.{HumanResourceModel, PersonaModel}
 import utils.ClientAkkaHttp
-import utils.{StatusCodes=>statusCodes}
+
 import scala.concurrent.Future
 
 class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
@@ -54,7 +54,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return StatusCodes.BadRequest when get terminal by id not exist" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(Request[Int](None))
-    futureTerminale map { terminale => assert(terminale.statusCode==StatusCodes.BadRequest.intValue)}
+    futureTerminale map { terminale => assert(terminale.statusCode==statusCodes.BAD_REQUEST)}
   }
   it should "return None of terminal" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(20)

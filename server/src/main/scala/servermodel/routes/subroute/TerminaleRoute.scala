@@ -1,6 +1,6 @@
 package servermodel.routes.subroute
 
-import utils.{StatusCodes => statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
