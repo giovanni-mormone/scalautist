@@ -6,7 +6,7 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.{Assumi, Dates, Ferie, Id, Request, Response}
+import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
@@ -104,8 +104,14 @@ trait HumanResourceModel extends AbstractModel{
   def deleteTerminale(id:Int): Future[Response[Int]]
 
   /**
+   * method that return Option of List of Terminale if exist
+   * @return Option of List of Terminale
+   */
+  def getAllTerminale: Future[Response[List[Terminale]]]
+
+  /**
    * method that return Option of List of zone if exists
-   * @return Option of zone if exists
+   * @return Option of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
 
@@ -118,6 +124,23 @@ trait HumanResourceModel extends AbstractModel{
    *          with your Id
    */
   def setZona(zona: Zona):Future[Response[Zona]]
+
+  /**
+   * method that update a Zona instance and return a Response of Zona, this can be empty if it fails
+   *
+   * @param zona zona we want update in database
+   * @return Future of Response of Int, can be None if operation if update another case is
+   *         some with id of zona
+   */
+  def updateZona(zona: Zona): Future[Response[Int]]
+
+  /**
+   * method that delete a Zona instance and return a Response of Zona, this can be empty if it fails
+   *
+   * @param zona id that represent a zone in database
+   * @return Future of Response of Zona
+   */
+  def deleteZona(zona: Int): Future[Response[Zona]]
 
   /**
    * Insert terminal into database, this case class not contains id for terminal
@@ -266,7 +289,21 @@ object HumanResourceModel {
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
     }
 
+    override def updateZona(zona: Zona): Future[Response[Int]] = {
+      val request = Post(getURI("updatezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+    }
 
-}
+    override def deleteZona(zona: Int): Future[Response[Zona]] = {
+      val request = Post(getURI("deletezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+    }
+
+    override def getAllTerminale: Future[Response[List[Terminale]]] = {
+      val request: HttpRequest = Post(getURI("getallterminale"))
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+    }
+
+  }
 
 }
