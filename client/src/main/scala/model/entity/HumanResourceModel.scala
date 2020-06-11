@@ -84,6 +84,34 @@ trait HumanResourceModel extends AbstractModel{
   def getTerminalByZone(id:Request[Int]): Future[Response[List[Terminale]]]
 
   /**
+   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * @param id identifies a zone into database, then select all terminale associate to id
+   * @return Option of list of terminal that can be empty
+   */
+  def getTerminale(id:Request[Int]): Future[Response[Terminale]]
+
+  /**
+   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * @param terminale identifies a zone into database, then select all terminale associate to id
+   * @return Option of list of terminal that can be empty
+   */
+  def updateTerminale(terminale:Request[Terminale]): Future[Response[Int]]
+
+  /**
+   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * @param id identifies a zone into database, then select all terminale associate to id
+   * @return Option of list of terminal that can be empty
+   */
+  def deleteTerminale(id:Request[Int]): Future[Response[Int]]
+
+  /**
+   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * @param terminale identifies a zone into database, then select all terminale associate to id
+   * @return Option of list of terminal that can be empty
+   */
+  def createTerminale(terminale:Request[Terminale]): Future[Response[Terminale]]
+
+  /**
    * method that return Option of List of zone if exists
    * @return Option of zone if exists
    */
@@ -151,20 +179,12 @@ object HumanResourceModel {
 
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), Request(Some(assumi)))
-      ok(request)
       callServer(request)
     }
 
     override def passwordRecovery(idUser: Request[Int]): Future[Response[Login]] = {
       val request = Post(getURI("recoverypassword"),Request(Some(idUser)))
       callServer(request)
-    }
-    private def ok(request: HttpRequest)  = {
-
-      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]]).onComplete {
-        case Failure(exception) => println(exception)
-      case Success(value) =>println(value)
-      }
     }
 
     private def callServer(request: HttpRequest):Future[Response[Login]] =
@@ -239,6 +259,27 @@ object HumanResourceModel {
       val request = Post(getURI("getholidaybypersona"))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
-  }
+
+    override def getTerminale(id: Request[Int]): Future[Response[Terminale]] = {
+      val request = Post(getURI("getterminale"),id)
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+    }
+
+    override def updateTerminale(terminale: Request[Terminale]): Future[Response[Int]] = {
+      val request = Post(getURI("updateterminale"),terminale)
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+    }
+
+
+    override def deleteTerminale(id: Request[Int]): Future[Response[Int]] = {
+      val request = Post(getURI("deleteterminale"),id)
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+    }
+
+    override def createTerminale(terminale: Request[Terminale]): Future[Response[Terminale]] = {
+      val request = Post(getURI("createterminale"),terminale)
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+    }
+}
 
 }
