@@ -23,7 +23,7 @@ trait HumanResourceModel extends AbstractModel{
    * @param persona
    * Instance of Persona to save
    * @return
-   * Future of type Login that contains username and password
+   * Future of type Response of Login that contains username and password
    */
   def recruit(persona:Assumi):Future[Response[Login]]
 
@@ -32,7 +32,7 @@ trait HumanResourceModel extends AbstractModel{
    * @param ids
    *  id of the persona
    * @return
-   * Future of type Unit
+   * Future of type Response of Int
    */
   def fires(ids:Int): Future[Response[Int]]
   /**
@@ -40,7 +40,7 @@ trait HumanResourceModel extends AbstractModel{
    * @param ids
    * Set of Persona ids
    * @return
-   * Future of type Unit
+   * Future of Response of type Int
    */
   def firesAll(ids: Set[Int]): Future[Response[Int]]
 
@@ -48,21 +48,21 @@ trait HumanResourceModel extends AbstractModel{
   /**
    * Return employee list, list of Persona in the database
    * @return
-   * Future of List of Persona
+   * Future of Response of List of Persona
    */
   def getAllPersone: Future[Response[List[Persona]]]
 
   /**
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
-   * @return Future of type Int
+   * @return Future of Response of type Int
    */
   def illnessPeriod(assenza: Assenza): Future[Response[Int]]
 
   /**
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
-   * @return Future of type Int
+   * @return Future of Response of type Int
    */
   def holidays(assenza: Assenza):Future[Response[Int]]
 
@@ -71,44 +71,37 @@ trait HumanResourceModel extends AbstractModel{
    * @param user
    * User that lost password
    * @return
-   * Future of type Login data (only new password)
+   * Future of Response of type Login data (only new password)
    */
   def passwordRecovery(user: Int): Future[Response[Login]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
+   * method that return a Response of list of terminal, this can be empty if zone not contains a terminal
    * @param id identifies a zone into database, then select all terminale associate to id
-   * @return Option of list of terminal that can be empty
+   * @return Response of list of terminal that can be empty
    */
   def getTerminalByZone(id:Int): Future[Response[List[Terminale]]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param id identifies a zone into database, then select all terminale associate to id
-   * @return Option of list of terminal that can be empty
+   * method that return a Response of terminal, this can be empty if terminal not exist
+   * @param id identifies a terminal into database, then select this
+   * @return Response of terminal that can be empty
    */
   def getTerminale(id:Int): Future[Response[Terminale]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param terminale identifies a zone into database, then select all terminale associate to id
-   * @return Option of list of terminal that can be empty
+   * method that return a None if terminal if update and Int if terminal if insert
+   * @param terminale identifies a terminal we want update into database
+   * @return Response of Int that can be empty
    */
   def updateTerminale(terminale:Terminale): Future[Response[Int]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param id identifies a zone into database, then select all terminale associate to id
+   * method that delete a terminal by id
+   * @param id identifies a terminal into database, then select terminale associate to id and delete
    * @return Option of list of terminal that can be empty
    */
   def deleteTerminale(id:Int): Future[Response[Int]]
-
-  /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param terminale identifies a zone into database, then select all terminale associate to id
-   * @return Option of list of terminal that can be empty
-   */
-  def createTerminale(terminale:Terminale): Future[Response[Terminale]]
 
   /**
    * method that return Option of List of zone if exists
@@ -130,10 +123,10 @@ trait HumanResourceModel extends AbstractModel{
    * Insert terminal into database, this case class not contains id for terminal
    * in the init operation, but result contain your id
    * @param terminale case class that represent struct for a terminal in database
-   * @return Future of Option of Terminal that represent terminal insert into database
+   * @return Future of Response of Terminal that represent terminal insert into database
    *         with your Id
    */
-  def setTerminal(terminale: Terminale):Future[Response[Terminale]]
+  def createTerminale(terminale:Terminale): Future[Response[Terminale]]
 
   /**
    * method that return all contract in database
@@ -175,7 +168,7 @@ object HumanResourceModel {
   def apply(): HumanResourceModel = instance
 
   private class HumanResourceHttp extends HumanResourceModel{
-    private def transform[A](value:A)=Request(Some(value))
+
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), transform(assumi))
       callServer(request)
@@ -249,11 +242,6 @@ object HumanResourceModel {
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
 
-    override def setTerminal(terminale: Terminale): Future[Response[Terminale]] = {
-      val request = Post(getURI("createterminale"),transform(terminale))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
-    }
-
     override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
       val request = Post(getURI("getholidaybypersona"))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
@@ -268,17 +256,17 @@ object HumanResourceModel {
       val request = Post(getURI("updateterminale"),transform(terminale))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
     }
-
+    override def createTerminale(terminale: Terminale): Future[Response[Terminale]] = {
+      val request = Post(getURI("createterminale"),transform(terminale))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+    }
 
     override def deleteTerminale(id: Int): Future[Response[Int]] = {
       val request = Post(getURI("deleteterminale"),transform(id))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
     }
 
-    override def createTerminale(terminale: Terminale): Future[Response[Terminale]] = {
-      val request = Post(getURI("createterminale"),transform(terminale))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
-    }
+
 }
 
 }
