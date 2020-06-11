@@ -9,6 +9,7 @@ import javafx.scene.control.{Button, ComboBox, TextField}
 import regularexpressionutilities.{NameChecker, ZonaChecker}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.HumanResources.subcomponent.parent.{ModalTerminalParent, ModalZoneParent}
+import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
 
 /**
  * @author Francesco Cassano
@@ -87,8 +88,7 @@ object ModalTerminal {
     private def manageTerminalText(): Unit = {
       name.setText(terminal.nomeTerminale)
       name.textProperty().addListener((_, oldS, word) => {
-        if (!word.isEmpty && !ZonaChecker.checkRegex.matches("" + word.last) )
-          name.setText(oldS)
+        TextFieldControl.controlNewChar(name, ZonaChecker, word, oldS)
         ableToChange()
       })
     }

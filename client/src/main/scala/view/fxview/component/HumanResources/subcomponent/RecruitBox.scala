@@ -9,9 +9,10 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
 import javafx.scene.control._
-import regularexpressionutilities.{Checker, NameChecker, NumberChecker}
+import regularexpressionutilities.{NameChecker, NumberChecker}
 import utils.UserType._
 import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
+import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
@@ -86,6 +87,7 @@ object RecruitBox {
     private val fixedString = "-Fisso"
     private val rotateString = "-Rotazione"
     private var contractTypeFI5FU: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
+    private val TEL_NUMBER: Int = 10
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       initializeComboBox()
@@ -108,7 +110,7 @@ object RecruitBox {
       shiftList.foreach(shift => shift2.getItems.add(shift.fasciaOraria))
       zoneList.foreach(zone => zones.getItems.add(zone.zones))
       getUserType.foreach(user => role.getItems.add(user))
-      initialBlockComponent
+      initialBlockComponent()
     }
 
     private def setRecruitDate(): Unit = {
@@ -132,9 +134,8 @@ object RecruitBox {
 
       def setNameStringControl(component: TextField): Unit = {
         component.textProperty().addListener((_, oldS, word) => {
-          if (!word.isEmpty && !controlString(word, NameChecker) )
-            component.setText(oldS)
-          ableSave
+          TextFieldControl.controlNewChar(component, NameChecker, word, oldS)
+          ableSave()
         })
       }
 
@@ -143,14 +144,13 @@ object RecruitBox {
       setNameStringControl(surname)
 
       tel.textProperty().addListener((_, oldS, word) => {
-        if (!word.isEmpty && !controlString(word, NumberChecker) || word.size > 10)
-          tel.setText(oldS)
-        ableSave
+        TextFieldControl.controlNewChar(tel, NumberChecker, word, oldS, TEL_NUMBER)
+        ableSave()
       })
 
       zones.setOnAction(_ => {
         parent.loadRecruitTerminals(getIdZone)
-        ableSave
+        ableSave()
       })
 
       role.setOnAction(_ => {
@@ -158,24 +158,24 @@ object RecruitBox {
           notDrive(true)
         else
           notDrive(false)
-        ableSave
+        ableSave()
       })
 
       contractTypes.setOnAction(_ => {
         contractControl(getComboSelected(contractTypes))
-        ableSave
+        ableSave()
       })
 
       day1.setOnAction(_ => {
         if (getComboSelected(day1).equals(getComboSelected(day2)))
-          day1.getSelectionModel.clearSelection
-        ableSave
+          day1.getSelectionModel.clearSelection()
+        ableSave()
       })
 
       day2.setOnAction(_ => {
         if (getComboSelected(day2).equals(getComboSelected(day1)))
-          day2.getSelectionModel.clearSelection
-        ableSave
+          day2.getSelectionModel.clearSelection()
+        ableSave()
       })
 
       shift1.setOnAction(_ => {
@@ -185,13 +185,13 @@ object RecruitBox {
             shift2.getSelectionModel.selectFirst()
           else
             shift2.getSelectionModel.select(itemSelected + 1)
-        ableSave
+        ableSave()
       })
 
-      terminals.setOnAction(_ => ableSave)
+      terminals.setOnAction(_ => ableSave())
 
       save.setOnAction(_ => {
-        if(noEmptyField) {
+        if(noEmptyField()) {
           val hasShift1: Boolean = chosenSomething(shift1)
           val hasShift2: Boolean = chosenSomething(shift2)
           parent.recruitClicked(
@@ -247,18 +247,14 @@ object RecruitBox {
 
         fixedShift(contractTypeFI5FU._1)
         if(contractTypeFI5FU._1)
-          refillDays
+          refillDays()
       }
-    }
-
-    private def controlString(string: String, checker: Checker): Boolean = {
-      checker.checkRegex.matches("" + string.last )
     }
 
     private def controlMainFields(): Boolean = {
       !(name.getText.equals("") || name.getText.equals(" ") || name.getText.equals("'")) &&
         !(surname.getText.equals("") || surname.getText.equals(" ") || surname.getText.equals("'")) &&
-          !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("") && tel.getText.size == 10
+          !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("") && tel.getText.length == 10
     }
 
     private def controlDriverFields(): Boolean = {
@@ -271,7 +267,7 @@ object RecruitBox {
       terminalChosen
     }
 
-    private def noEmptyField: Boolean = {
+    private def noEmptyField(): Boolean = {
       if(role.getSelectionModel.isEmpty)
         false
       else if(!isDriver)
@@ -328,11 +324,11 @@ object RecruitBox {
 
     /////////////////////////////////////////////////////////////////////////////             METODI DI BLOCCO COMPONENTI
 
-    private def ableSave: Unit = {
+    private def ableSave(): Unit = {
       save.setDisable(!noEmptyField)
     }
 
-    private def initialBlockComponent: Unit = {
+    private def initialBlockComponent(): Unit = {
       shift1.setDisable(true)
       shift2.setDisable(true)
       zones.setDisable(true)
@@ -343,7 +339,7 @@ object RecruitBox {
       save.setDisable(true)
     }
 
-    private def refillDays: Unit = {
+    private def refillDays(): Unit = {
       var baseDays  = List("Lun","Mar","Mer","Gio","Ven")
       if(!contractTypeFI5FU._2)
         baseDays = baseDays.appended("Sab")
@@ -395,10 +391,10 @@ object RecruitBox {
       !component.getSelectionModel.isEmpty
 
     private def emptyComboBox(component: ComboBox[String]): Unit =
-      component.getItems.clear
+      component.getItems.clear()
 
     private def resetComboBox(component: ComboBox[String]): Unit =
-      component.getSelectionModel.clearSelection
+      component.getSelectionModel.clearSelection()
 
     private def getComboSelected(component: ComboBox[String]): String =
       component.getSelectionModel.getSelectedItem

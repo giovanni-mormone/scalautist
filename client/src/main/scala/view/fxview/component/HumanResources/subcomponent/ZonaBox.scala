@@ -6,9 +6,9 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
-import regularexpressionutilities.ZonaChecker
+import regularexpressionutilities.NameChecker
 import view.fxview.component.HumanResources.subcomponent.parent.ZonaParent
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, ZonaTable}
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TextFieldControl, ZonaTable}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -68,8 +68,7 @@ object ZonaBox {
     private def initializeTextField(resources: ResourceBundle): Unit = {
       newName.setPromptText(resources.getString("nametxt"))
       newName.textProperty().addListener((_, old, word) => {
-        if (!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
-          newName.setText(old)
+        TextFieldControl.controlNewChar(newName, NameChecker, word, old)
         ableToSave()
       })
     }

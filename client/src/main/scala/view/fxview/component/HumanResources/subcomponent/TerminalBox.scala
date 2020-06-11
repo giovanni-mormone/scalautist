@@ -6,9 +6,9 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.{Terminale, Zona}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TableView, TextField}
-import regularexpressionutilities.ZonaChecker
+import regularexpressionutilities.NameChecker
 import view.fxview.component.HumanResources.subcomponent.parent.TerminalParent
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TerminalTable}
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TerminalTable, TextFieldControl}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -79,8 +79,7 @@ object TerminalBox {
 
     private def initializeTextField(): Unit =
       newName.textProperty().addListener((_, old, word) => {
-        if (!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
-          newName.setText(old)
+        TextFieldControl.controlNewChar(newName, NameChecker, word, old)
         ableToSave()
       })
 

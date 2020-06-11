@@ -6,8 +6,9 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TextField}
-import regularexpressionutilities.{NameChecker, ZonaChecker}
+import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.parent.ModalZoneParent
+import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -63,8 +64,7 @@ object ModalZone {
       name.setText(zona.zones)
       name.setEditable(true)
       name.textProperty().addListener((_, oldS, word) => {
-        if (!word.isEmpty && !ZonaChecker.checkRegex.matches("" + word.last) )
-          name.setText(oldS)
+        TextFieldControl.controlNewChar(name, ZonaChecker, word, oldS)
         ableToChange()
       })
     }
