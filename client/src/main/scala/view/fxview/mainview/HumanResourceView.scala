@@ -15,8 +15,7 @@ import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.parent._
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.{ModalAbsence, ModalTerminal, ModalZone}
-import view.fxview.component.modal.{Modal, ModalParent}
- 
+import view.fxview.component.modal.Modal
 
 /**
  * @author Francesco Cassano

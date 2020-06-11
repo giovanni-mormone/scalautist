@@ -1,6 +1,5 @@
 package controller
 
-
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import model.entity.HumanResourceModel
