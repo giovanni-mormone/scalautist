@@ -37,7 +37,7 @@ object DB{
    * It is instantiated lazily when this method is called for the first time, and must be closed after use.
    */
   private val database = dbCo.db
-  private def close() {
+  private def close():Unit={
     dbCo.db.close
   }
 

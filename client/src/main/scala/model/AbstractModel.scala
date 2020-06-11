@@ -4,7 +4,7 @@ package model
 import akka.actor.{ActorSystem, Terminated}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassHttpMessage.{Id, Response}
+import caseclass.CaseClassHttpMessage.Response
 import jsonmessages.JsonFormats._
 import utils.Execution
 
@@ -36,16 +36,16 @@ abstract class AbstractModel extends Model{
 
 
 
-  protected val isNotCaseId: PartialFunction[Option[HttpResponse], Future[Response[Id]]] = new PartialFunction[Option[HttpResponse], Future[Response[Id]] ] {
+  protected val isNotCaseId: PartialFunction[Option[HttpResponse], Future[Response[Int]]] = new PartialFunction[Option[HttpResponse], Future[Response[Int]] ] {
     override def isDefinedAt(x: Option[HttpResponse]): Boolean = x.head.status!=StatusCodes.BadRequest
 
-    override def apply(v1: Option[HttpResponse]): Future[Response[Id]] = Unmarshal(v1).to[Response[Id]]
+    override def apply(v1: Option[HttpResponse]): Future[Response[Int]] = Unmarshal(v1).to[Response[Int]]
   }
 
-  protected val isCaseId: PartialFunction[Option[HttpResponse], Future[Response[Id]]] = new PartialFunction[Option[HttpResponse], Future[Response[Id]] ] {
-    override def isDefinedAt(x: Option[HttpResponse]): Boolean = x.head.status!=StatusCodes.BadRequest
+  protected val isCaseId: PartialFunction[Option[HttpResponse], Future[Response[Int]]] = new PartialFunction[Option[HttpResponse], Future[Response[Int]] ] {
+    override def isDefinedAt(x: Option[HttpResponse]): Boolean = x.head.status==StatusCodes.BadRequest
 
-    override def apply(v1: Option[HttpResponse]): Future[Response[Id]] = Unmarshal(v1).to[Response[Id]]
+    override def apply(v1: Option[HttpResponse]): Future[Response[Int]] =Future.successful(v1.map(response=>Response[Int](response.status.intValue(),None)).head)
   }
 
   private val found: PartialFunction[HttpResponse, Option[HttpResponse]] = new PartialFunction[HttpResponse, Option[HttpResponse]] {
@@ -59,7 +59,7 @@ abstract class AbstractModel extends Model{
   }
 
   def callHtpp(request: HttpRequest):Future[Option[HttpResponse]] =
-    doHttp(request).collect{found orElse notFound}
+    doHttp(request).collect{notFound orElse found}
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)
 

@@ -17,14 +17,20 @@ import scala.util.{Failure, Success, Try}
  * A HumanResource controller for a view of type [[view.fxview.mainview.HumanResourceView]]
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
-  def saveAbsence(absence: Assenza): Unit
 
+  /**
+   * Absence saves a new absence on the db
+   *
+   * @param absence
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
+   */
+  def saveAbsence(absence: Assenza): Unit
 
   /**
    * Recruit saves a new employee on the db
    *
    * @param persona
-   *                instance of the employee to save. It's [[caseclass.CaseClassHttpMessage.Assumi]] instance //todo
+   *                instance of the employee to save. It's [[caseclass.CaseClassHttpMessage.Assumi]] instance
    */
   def recruit(persona: Assumi): Unit
 
@@ -40,6 +46,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * illness saves on the db an employee's absence for a period of time
    *
    * @param assenza
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
    */
   def illness(assenza: Assenza): Unit
 
@@ -47,6 +54,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * Holiday saves on the db an employee's absence for a period of time
    *
    * @param assenza
+   *                instance of [[caseclass.CaseClassDB.Assenza]]
    */
   def holiday(assenza: Assenza): Unit
 
@@ -55,9 +63,49 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * @param user
    *             User's id
    */
-  def passwordRecovery(user: Int): Unit //TODO quando i dati arrivano li faccio disegnare
+  def passwordRecovery(user: Int): Unit
 
+  /**
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
+   */
   def saveZona(zone: Zona): Unit
+
+  /**
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
+   */
+  def updateZona(zone: Zona): Unit
+
+  /**
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]]
+   */
+  def deleteZona(zone: Zona): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def saveTerminal(terminal: Terminale): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def updateTerminal(terminal: Terminale): Unit
+
+  /**
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def deleteTerminal(terminal: Terminale): Unit
 
   /**
    * getRecruitData method retrieves all data needed to recruit employee
@@ -77,14 +125,20 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * getAllPersona asks model for the employees list
    *
    */
-  def getAllPersona(callingView: String): Unit //TODO quando i dati arrivano li faccio disegnare
+  def getAllPersona(callingView: String): Unit
   def getAllPersona(): Unit
+
   /**
    * getZonaData method retrieves all data needed to draw zona view
    *
    */
   def getZonaData(): Unit
 
+  /**
+   * getTerminalData method retrieves all data needed to draw zona view
+   *
+   */
+  def getTerminalData(): Unit
 }
 
 /**
@@ -104,9 +158,9 @@ object HumanResourceController {
    */
   private class HumanResourceControllerImpl extends HumanResourceController {
 
-    override def recruit(persona: Assumi): Unit =model.recruit(persona)
+    override def recruit(persona: Assumi): Unit =
+      model.recruit(persona)
       //println(persona)
-
 
     override def fires(ids: Set[Int]): Unit = {
       /*println(ids)*/
@@ -119,15 +173,22 @@ object HumanResourceController {
     }
 
     override def getAllPersona(callingView: String): Unit = {
-       model.getAllPersone.onComplete(employees =>
-              myView.drawEmployeeView(employees.get.payload.get, callingView))
-      /*val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
+       /*model.getAllPersone.onComplete(employees =>
+              myView.drawEmployeeView(employees.get.head, callingView))*/
+      val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
         Persona("ajeje","brazorf","123", None, 3, false, "gne", Some(2), matricola = Some(16)),
         Persona("samir","kebab","123", None, 3, false, "gne", Some(2), matricola = Some(18)),
         Persona("mangiapane","atradimento","123", None, 3, false, "gne", Some(2), matricola = Some(32)),
       )
-      myView.drawEmployeeView(perosne, callingView)*/
+      myView.drawEmployeeView(perosne, callingView)
     }
+
+    override def getAllPersona(): Unit =
+      myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+    /*model.getHolidayByPerson.onComplete {
+      case Failure(exception) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+      case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+    }*/
 
     override def illness(assenza: Assenza): Unit =
       model.illnessPeriod(assenza)
@@ -145,19 +206,23 @@ object HumanResourceController {
     def getContratti: Future[Response[List[Contratto]]] = model.getAllContract
 
     override def getRecruitData(): Unit = {
-      val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
+      /*val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
           turns <- getTurni
           contracts <- getContratti
           zones <- getZone
-        } yield (zones.payload.head, contracts.payload.head, turns.payload.head)
-      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))
+        } yield (zones.head, contracts.head, turns.head)
+      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))*/
 
-     /* val turni = List(Turno("bho","0-6",Some(1)), Turno("bho","6-12",Some(2)),
-        Turno("bho","12-18",Some(3)), Turno("bho","18-0",Some(4)))
-      val contratti = List(Contratto("Full-Time-5x2", true,Some(1)), Contratto("Part-Time-5x2", true,Some(2)),
-        Contratto("Part-Time-6x1", false,Some(3)), Contratto("Full-Time-6x1", true,Some(4)))
+      val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
+        Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
+      val contratti = List(
+        Contratto("Full-Time-5x2", turnoFisso = true, 1),
+        Contratto("Part-Time-5x2", turnoFisso = true, 2),
+        Contratto("Part-Time-6x1", turnoFisso = false,3),
+        Contratto("Full-Time-6x1", turnoFisso = true, 4)
+      )
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      myView.drawRecruit(zone, contratti, turni)*/
+      myView.drawRecruit(zone, contratti, turni)
     }
 
     override def getTerminals(zona: Zona): Unit = {
@@ -168,20 +233,52 @@ object HumanResourceController {
     }
 
     override def getZonaData(): Unit = {
-       getZone.onComplete(zones => myView.drawZonaView(zones.get.payload.head))
-      //val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      //myView.drawZonaView(zone)
+       //getZone.onComplete(zones => myView.drawZonaView(zones.get.head))
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      myView.drawZonaView(zone)
+    }
+
+    override def getTerminalData(): Unit = {
+      //chiamata al model simile al recruit
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
+      myView.drawTerminaleView(zone, terminale)
     }
 
     override def saveZona(zone: Zona): Unit = {
-       model.setZona(zone).onComplete(_ => getZonaData())
-      //println(zone)
+       //model.setZona(zone).onComplete(_ => getZonaData())
+       println(zone)
     }
+
+    override def updateZona(zone: Zona): Unit =
+      //model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      println(zone + "-> update")
+
+    override def deleteZona(zone: Zona): Unit =
+      //model.deleteZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      println(zone + "-> delete")
+
+    override def saveTerminal(terminal: Terminale): Unit = {
+      //model.newTerminale(terminale).onComplete(_ => getTerminalData())
+      println(terminal)
+    }
+
+    override def updateTerminal(terminal: Terminale): Unit =
+      //model.updateTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
+      println(terminal + "-> update")
+
+    override def deleteTerminal(terminal: Terminale): Unit =
+      //model.deleteTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
+      println(terminal + "-> delete")
       
     override def saveAbsence(absence: Assenza): Unit = {
-       if(absence.malattia) model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)} else model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
+       if(absence.malattia)
+         model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
+       else
+         model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
     }
-    private def sendMessageModal(t:Try[Response[Id]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
+    private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
       case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
       case (Success(value),true)  =>myView.result("malattia asignada correctamente")
@@ -189,11 +286,6 @@ object HumanResourceController {
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 
-    override def getAllPersona(): Unit =
-      model.getHolidayByPerson.onComplete {
-        case Failure(exception) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
-        case Success(value) => myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
-      }
 
   }
 }

@@ -1,6 +1,7 @@
 package controller
 
 import caseclass.CaseClassDB.Persona
+import caseclass.CaseClassHttpMessage.{Request, Response}
 import model.entity.PersonaModel
 import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.LoginView
@@ -21,7 +22,7 @@ trait LoginController extends AbstractController[LoginView]{
    * @param password
    *                 The password of the user to login.
    */
-  def login(username: String, password: String)
+  def login(username: String, password: String): Unit
 }
 
 /**
@@ -42,7 +43,7 @@ object LoginController {
       case (s1,s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin()
       case _ =>
         myModel.login(username,password).onComplete{
-          case Success(t) => checkLoginResult(t)
+          case Success(Response(int,persona)) => checkLoginResult(persona)
           case Failure(exception) => println(exception)
         }
     }

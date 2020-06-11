@@ -54,7 +54,9 @@ enablePlugins(DockerPlugin).settings(
     libraries.megard,
     librariesTest.scalatest,
     librariesTest.scalaCheck,
-    librariesTest.junit
+    librariesTest.junit,
+    librariesTest.testKitHttp,
+    librariesTest.testKitStream
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
@@ -143,6 +145,8 @@ lazy val librariesTest = new {
   val testFXVersion      ="4.0.13-alpha"
   val testFXOrg          = "org.testfx"
   val junitParamsVersion = "1.1.1"
+  val akkaStream         = "akka-stream-testkit"
+  val akkaHttp           = "akka-http-testkit"
   val juntPl             = "pl.pragmatists"
   val scalatest          = "org.scalatest" % "scalatest_2.13"   % scalatestVersion % Test
   val junitInterface     = "com.novocode"   % "junit-interface" % junitVersion % Test
@@ -152,11 +156,21 @@ lazy val librariesTest = new {
   val testFXCore         = "org.testfx" % "testfx-core" % testFXVersion % Test
   val monocle            ="org.testfx" % "openjfx-monocle" % "1.8.0_20" % Test
   val junitParams        = "pl.pragmatists" % "JUnitParams" % junitParamsVersion % Test
+  val testKitStream      ="com.typesafe.akka" %% "akka-stream-testkit" % libraries.akkaVersion % Test
+  val testKitHttp        ="com.typesafe.akka" %% "akka-http-testkit" % libraries.akkaHttpVersion % Test
 
 }
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
   scalacOptions ++= compilerOptions,
-  excludeDependencies ++= Seq(librariesTest.scalatestOrg,librariesTest.junitCom,librariesTest.scalaCheckOrg, librariesTest.testFXOrg, librariesTest.juntPl)
+  excludeDependencies ++= Seq(
+    librariesTest.scalatestOrg,
+    librariesTest.junitCom,
+    librariesTest.scalaCheckOrg,
+    librariesTest.testFXOrg,
+    librariesTest.juntPl,
+    librariesTest.akkaStream,
+    librariesTest.akkaHttp
+  )
 )

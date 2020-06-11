@@ -24,7 +24,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   override def insert(element:Disponibilita): Future[Option[Int]] = {
     for{
       disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
-      result <- if (disponibilita.head.isEmpty) for( newDisp <- super.insert(element)) yield newDisp else Future.successful(disponibilita.head.headOption)
+      result <- if (disponibilita.isEmpty) for(newDisp <- super.insert(element)) yield newDisp else Future.successful(disponibilita.get.headOption)
     } yield result
   }
 }

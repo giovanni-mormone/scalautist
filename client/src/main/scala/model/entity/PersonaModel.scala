@@ -1,11 +1,11 @@
 package model.entity
-import model.AbstractModel
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import jsonmessages.JsonFormats._
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Login, Persona}
-import caseclass.CaseClassHttpMessage.{ChangePassword, Id}
+import caseclass.CaseClassHttpMessage.{ChangePassword, Id, Request, Response}
+import jsonmessages.JsonFormats._
+import model.AbstractModel
 
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
@@ -27,7 +27,7 @@ trait PersonaModel extends AbstractModel {
    * @return
    * future of istance of persona
    */
-  def login(user: String, password: String): Future[Option[Persona]]
+  def login(user: String, password: String): Future[Response[Persona]]
 
   /**
    * If old password is correct, it update user password on the database
@@ -41,8 +41,8 @@ trait PersonaModel extends AbstractModel {
    * @return
    * future
    */
-  def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int]
-  def getPersone(id:Id): Future[Option[Persona]]
+  def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Response[Int]]
+  def getPersone(id:Request[Int]): Future[Response[Persona]]
 }
 
 /**
@@ -58,33 +58,33 @@ object PersonaModel {
   private class PersonaModelHttp extends PersonaModel{
 
 
-    override def login(user: String, password: String): Future[Option[Persona]] = {
-      val credential = Login(user, password)
+    override def login(user: String, password: String): Future[Response[Persona]] = {
+      val credential = Request(Some(Login(user, password)))
       val request = Post(getURI("loginpersona"), credential)
       tranformMarshal(request)
     }
-    override def getPersone(id: Id): Future[Option[Persona]] = {
+    override def getPersone(id: Request[Int]): Future[Response[Persona]] = {
       val request = Post(getURI("getpersona"), id)
       tranformMarshal(request)
     }
-    private def tranformMarshal(request: HttpRequest):Future[Option[Persona]]={
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Option[Persona]])
+    private def tranformMarshal(request: HttpRequest):Future[Response[Persona]]={
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[Persona]])
     }
-    override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Int] = {
-      val result = Promise[Int]
+    override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Response[Int]] = {
+      val result =Promise[Response[Int]]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
       changePassword(result,newCredential)
       result.future
     }
-    private def changePassword(result: Promise[Int],newCredential:ChangePassword): Unit ={
-      val request = Post(getURI("changepassword"), newCredential) // cambiare request
+    private def changePassword(result: Promise[Response[Int]],newCredential:ChangePassword): Unit ={
+      val request = Post(getURI("changepassword"), Request(Some(newCredential))) // cambiare request
       doHttp(request).onComplete{
         case Success(t) => t.status match {
-          case StatusCodes.OK => result.success(StatusCodes.OK.intValue)
-          case StatusCodes.NotFound => result.success(StatusCodes.NotFound.intValue)
-          case StatusCodes.InternalServerError => result.success(StatusCodes.InternalServerError.intValue)
+          case StatusCodes.OK => result.success(Response[Int](StatusCodes.OK.intValue,None))
+          case StatusCodes.NotFound => result.success(Response[Int](StatusCodes.NotFound.intValue,None))
+          case StatusCodes.InternalServerError => result.success(Response[Int](StatusCodes.InternalServerError.intValue,None))
         }
-        case Failure(_) => result.success(StatusCodes.InternalServerError.intValue)
+        case Failure(_) => result.success(Response[Int](StatusCodes.InternalServerError.intValue,None))
       }
     }
   }

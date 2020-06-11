@@ -27,7 +27,7 @@
          <children>
             <HBox>
                <children>
-                  <TextField fx:id="newNome"></TextField>
+                  <TextField fx:id="newName"></TextField>
                   <Button fx:id="zonaButton" mnemonicParsing="false" text="Button" />
                </children>
             </HBox>

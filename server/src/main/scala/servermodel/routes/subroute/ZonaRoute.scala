@@ -11,12 +11,13 @@ import dbfactory.operation.ZonaOperation
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
+import utils.{StatusCodes=>statusCodes}
 
 object ZonaRoute {
   def getAllZona: Route =
     post {
       onComplete(ZonaOperation.selectAll) {
-        case Success(t) =>  complete((StatusCodes.Found,t))
+        case Success(Some(zone)) =>  complete(Response(StatusCodes.Found.intValue,Some(zone)))
         case t => anotherSuccessAndFailure(t)
       }
     }
@@ -25,10 +26,10 @@ object ZonaRoute {
     post {
       entity(as[Request[Zona]]) {
         case Request(Some(zona))=> onComplete(ZonaOperation.insert(zona)) {
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(Zona(zona.zones,Some(id))))) //TODO
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(Zona(zona.zones,Some(id)))))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
       }
     }
 
@@ -36,10 +37,10 @@ object ZonaRoute {
     post {
       entity(as[Request[List[Zona]]]) {
         case Request(Some(zona))=>onComplete(ZonaOperation.insertAll(zona)) {
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))//qualcosa
+          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
       }
     }
 
@@ -47,10 +48,10 @@ object ZonaRoute {
     post {
       entity(as[Request[Int]]) {
         case Request(Some(id))=> onComplete(ZonaOperation.delete(id)) {
-          case Success(Some(1)) =>  complete(Response(StatusCodes.OK.intValue,Some(1)))
+          case Success(Some(statusCodes.SUCCES_CODE)) =>  complete(Response(StatusCodes.OK.intValue,Some(statusCodes.SUCCES_CODE)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
       }
     }
 
@@ -58,10 +59,10 @@ object ZonaRoute {
     post {
       entity(as[Request[List[Int]]]) {
         case Request(Some(id))=> onComplete(ZonaOperation.deleteAll(id)) {
-          case Success(Some(t)) =>  complete(Response(StatusCodes.OK.intValue,Some(t)))
+          case Success(Some(result)) =>  complete(Response(StatusCodes.OK.intValue,Some(result)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
       }
     }
 
@@ -69,11 +70,11 @@ object ZonaRoute {
     post {
       entity(as[Request[Zona]]) {
         case Request(Some(zona))=>onComplete(ZonaOperation.update(zona)) {
+          case Success(None) =>complete(Response(StatusCodes.OK.intValue,Some(statusCodes.SUCCES_CODE)))
           case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
-          case Success(None) =>complete(Response(StatusCodes.OK.intValue,Some(1)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(1)))
+        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
       }
     }
 }

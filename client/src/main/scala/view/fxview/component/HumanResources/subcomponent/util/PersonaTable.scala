@@ -43,6 +43,6 @@ object PersonaTable {
   implicit def PersonaToPersonaTable(person: Persona): PersonaTable =
     new PersonaTable(person.matricola.head.toString, person.nome, person.cognome)
 
-  implicit def ListPersonaToListPersonaTable(peopleList: List[Persona]) =
+  implicit def ListPersonaToListPersonaTable(peopleList: List[Persona]): List[PersonaTable] =
     peopleList.map(person => new PersonaTable(person.matricola.head.toString, person.nome, person.cognome))
 }

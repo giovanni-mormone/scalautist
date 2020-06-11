@@ -25,6 +25,7 @@
             <Button fx:id="illness" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" /> 
             <Button fx:id="holidays" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="zonaManage" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
+            <Button fx:id="terminalManger" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
             <Button fx:id="changePassword" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" text="Button" />
          </children>
       </VBox>
