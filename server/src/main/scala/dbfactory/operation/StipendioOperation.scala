@@ -94,7 +94,7 @@ object StipendioOperation extends StipendioOperation{
     Future.successful(stipendi(Some(stip),date))
   }
 
-  def updateMoneyMap(stip:Map[Int,Double],turni:Option[List[Turno]],presenza:(Int,Int))(implicit mul:Double): Map[Int,Double] = {
+  private def updateMoneyMap(stip:Map[Int,Double],turni:Option[List[Turno]],presenza:(Int,Int))(implicit mul:Double): Map[Int,Double] = {
     stip.updated(presenza._1,stip.getOrElse(presenza._1,0.0) + turnoNotturno(turni)(presenza._2) * mul)
   }
 

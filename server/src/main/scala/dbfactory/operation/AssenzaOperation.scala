@@ -25,6 +25,17 @@ trait AssenzaOperation extends OperationCrud[Assenza]{
    *             The year of the remainig feries to get
    */
   def getAllFerie(data: Int): Future[Option[List[Ferie]]]
+
+  /**
+   * Returns the list of assenze for the person in the year provide
+   * @param year
+   *            The year that the assenze must have
+   * @param idPersona
+   *                  the persona which ferie are asked
+   * @return
+   *         A list of [[Assenza]] or None if no Assenze are in the DB.
+   */
+  def getAssenzeInYearForPerson(year: Int, idPersona: Int): Future[Option[List[Assenza]]]
 }
 
 object AssenzaOperation extends AssenzaOperation{
@@ -60,24 +71,28 @@ object AssenzaOperation extends AssenzaOperation{
     constructFerie(currentYear,nextYear)
   }
 
-  /**
-   *
-   * @param element case class that represent instance of the table in database
-   * @return
-   *         Future of Int that represent status of operation, returning the id of the assenza inserted or an error code:
-   *            [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
-   *            [[messagecodes.StatusCodes.ERROR_CODE2]]  if the days between the given day are > of [[GIORNI_FERIE_ANNUI]]
-   *            [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
-   *            [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
-   *            [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
-   *
-   */
-override def insert(element: Assenza): Future[Option[Int]] ={
-  for{
-    absence <-InstanceAssenza.operation().selectFilter(f => f.dataInizio <= element.dataFine && f.dataFine >= element.dataInizio && f.personaId === element.personaId)
-    result <- if (absence.isDefined) Future.successful(Some(StatusCodes.ERROR_CODE1)) else for(x <- insertPriv(element)) yield x
-  }yield result
-}
+    /**
+     *
+     * @param element case class that represent instance of the table in database
+     * @return
+     *         Future of Int that represent status of operation, returning the id of the assenza inserted or an error code:
+     *            [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+     *            [[messagecodes.StatusCodes.ERROR_CODE2]]  if the days between the given day are > of [[GIORNI_FERIE_ANNUI]]
+     *            [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+     *            [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+     *            [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
+     *
+     */
+  override def insert(element: Assenza): Future[Option[Int]] ={
+    for{
+      absence <-InstanceAssenza.operation().selectFilter(f => f.dataInizio <= element.dataFine && f.dataFine >= element.dataInizio && f.personaId === element.personaId)
+      result <- if (absence.isDefined) Future.successful(Some(StatusCodes.ERROR_CODE1)) else for(x <- insertPriv(element)) yield x
+    }yield result
+  }
+
+  override def getAssenzeInYearForPerson(year: Int, idPersona: Int): Future[Option[List[Assenza]]] = {
+    InstanceAssenza.operation().selectFilter(f => f.personaId === idPersona && f.dataInizio >= dateFromYear(year) && f.dataFine <= dateFromYear(year+1))
+  }
 
   private def insertPriv(element: Assenza): Future[Option[Int]] = element match {
     case Assenza(_,start,end,false,_) if computeDaysBetweenDates(start,end) > GIORNI_FERIE_ANNUI => Future.successful(Some(StatusCodes.ERROR_CODE2))
