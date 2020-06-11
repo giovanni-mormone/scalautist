@@ -4,7 +4,7 @@ package model
 import akka.actor.{ActorSystem, Terminated}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassHttpMessage.Response
+import caseclass.CaseClassHttpMessage.{Request, Response}
 import jsonmessages.JsonFormats._
 import utils.Execution
 
@@ -16,7 +16,7 @@ abstract class AbstractModel extends Model{
   private val dispatcher: ModelDispatcher = ModelDispatcher()
   protected implicit val system: ActorSystem = dispatcher.system
   override def getURI(request: String): String = dispatcher.address + "/" + request
-
+  protected def transform[A](value:A): Request[A] =Request(Some(value))
   implicit protected val execution: ExecutionContextExecutor = Execution.executionContext
 
 

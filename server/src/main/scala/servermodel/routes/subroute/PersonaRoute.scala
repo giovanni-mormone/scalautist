@@ -6,12 +6,11 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage._
-import dbfactory.operation.{PersonaOperation, StipendioOperation}
+import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
 import jsonmessages.JsonFormats._
-
 import servermodel.routes.exception.RouteException
 import servermodel.routes.exception.SuccessAndFailure._
-import messagecodes.{StatusCodes=>statusCodes}
+import messagecodes.{StatusCodes => statusCodes}
 
 import scala.util.Success
 
@@ -140,4 +139,14 @@ object PersonaRoute{
       }
     }
 
+  def holidayByPerson(): Route =
+    post{
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(AssenzaOperation.getAllFerie(value)){
+          case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
 }

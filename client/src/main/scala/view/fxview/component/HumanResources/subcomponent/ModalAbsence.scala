@@ -76,6 +76,7 @@ object ModalAbsence{
       else
         holiday = 30-item.giorniVacanza
       CreateDatePicker.createDataPicker(finishDate, MoveDatePeriod(), MoveDatePeriod(years = sickness, days = holiday), initDate.getValue)
+      finishDate.setDisable(false)
     }
 
     private def setInitDate(): Unit ={

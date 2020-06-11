@@ -3,6 +3,7 @@ package servermodel.routes.masterroute
 import akka.http.scaladsl.server.{Directives, Route}
 import caseclass.CaseClassDB.{Assenza, Login, Persona, Stipendio}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Id}
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -121,6 +122,8 @@ object MasterRoutePersona extends Directives{
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
   @Operation(summary = "Log-in Person", description = "Login person in the system",
+    parameters = Array(new Parameter(name = "username", in = ParameterIn.PATH, description = "login"),
+      new Parameter(name = "password", in = ParameterIn.PATH, description = "login")),
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Login])))),
     responses = Array(
       new ApiResponse(responseCode = "302", description = "Correct Login",
@@ -211,11 +214,26 @@ object MasterRoutePersona extends Directives{
       addAbsence()
     }
 
+  @Path("/addabsence")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Add Absence", description = "Add Absence into database. this can be illness or holidays",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
+    responses = Array(
+      new ApiResponse(responseCode = "201", description = "Insert Absence correctly into database"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def getHolidayByPerson: Route =
+    path("getholidaybyperson") {
+      holidayByPerson()
+    }
+
   val routePersona: Route =
     concat(
       getAllPersonaDatabase,getPersonaDatabase,getHirePersonDatabase,
       deletePersonaDatabase(),deleteAllPersonaDatabase(),updatePersonaDatabase(),
       loginPersonaDatabase,changePasswordPersona,recoveryPasswordPersona,
-      salaryCalculusAll,getSalaryPersona,addAbsencePersona()
+      salaryCalculusAll,getSalaryPersona,addAbsencePersona(),getHolidayByPerson
     )
 }
