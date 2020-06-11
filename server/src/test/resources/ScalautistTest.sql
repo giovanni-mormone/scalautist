@@ -74,12 +74,11 @@ SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 --ASSENZA
 
 SET IDENTITY_INSERT [dbo].[AssenzaSet] ON
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (1,N'20200622',N'20200822',1,1)
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (2,N'20200619',N'20201019',0,1)
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (3,N'20200530',N'20210530',1,3)
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (4,N'20200622',N'20200822',0,3)
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (5,N'20200619',N'20201019',0,2)
-INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (6,N'20200530',N'20210530',1,2)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (1,N'20200622',N'20200629',0,2)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (2,N'20200822',N'20200829',0,2)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (3,N'20201222',N'20201231',0,5)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (4,N'20200220',N'20200325',0,6)
+INSERT INTO [dbo].[AssenzaSet] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (5,N'20200622',N'20200629',0,7)
 SET IDENTITY_INSERT [dbo].[AssenzaSet] OFF
 
 --//ASSENZA
@@ -167,16 +166,16 @@ SET IDENTITY_INSERT [dbo].[StipendioSet] OFF
 --CONTRATTO
 
 SET IDENTITY_INSERT [dbo].[ContratoeSets] ON
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (1, N'Full-Time-5x2', 1,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (2, N'Full-Time-5x2', 0,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (3, N'Part-Time-5x2', 1,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (4, N'Part-Time-5x2', 0,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (5, N'Full-Time-6x1', 1,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (6, N'Full-Time-6x1', 0,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (7, N'Part-Time-6x1', 1,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (8, N'Part-Time-6x1', 0,3)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (9, N'Manager',0,1)
-INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[Ruolo]) VALUES (10, N'Risorse Umane',0,2)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (1, N'Full-Time-5x2', 1, 0, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (2, N'Full-Time-5x2', 0, 0, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (3, N'Part-Time-5x2', 1, 1, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (4, N'Part-Time-5x2', 0, 1, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (5, N'Full-Time-6x1', 1, 0, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (6, N'Full-Time-6x1', 0, 0, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (7, N'Part-Time-6x1', 1, 1, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (8, N'Part-Time-6x1', 0, 1, 3)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (9, N'Manager',0, 0, 1)
+INSERT INTO [dbo].[ContratoeSets] ([IdContratto], [TipoContratto], [TurnoFisso],[PartTime],[Ruolo]) VALUES (10, N'Risorse Umane',0, 0, 2)
 SET IDENTITY_INSERT [dbo].[ContratoeSets] OFF
 
 --//CONTRATTO
@@ -221,6 +220,6 @@ select * from [dbo].[PresenzaSets] where data < '2020-06-06'
 select * from AssenzaSet;
 select * from [dbo].[StraordinariSets] where data < '2020-06-06'
 select * from StipendioSet
-select * from PersoneSets
+select * from PersoneSets where Ruolo = 3
 select * from StoricoContrattoSets
 select * from TurnoSets
