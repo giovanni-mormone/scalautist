@@ -11,6 +11,7 @@ object StatusCodes {
   val ERROR_CODE4: Int = -4
   val ERROR_CODE5: Int = -5
   val ERROR_CODE6: Int = -6
-
+  val BAD_REQUEST: Int = 2
+  val NOT_FOUND  : Int = 0
   val SUCCES_CODE: Int = 1
 }

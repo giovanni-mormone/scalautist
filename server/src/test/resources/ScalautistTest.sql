@@ -8,6 +8,7 @@ USE [viroli]
 --ZONA
 
 SET IDENTITY_INSERT [dbo].[ZonaSets] ON
+INSERT INTO [dbo].[ZonaSets] ([IdZona], [Zone]) VALUES (0, N'Default')
 INSERT INTO [dbo].[ZonaSets] ([IdZona], [Zone]) VALUES (1, N'Cesena')
 INSERT INTO [dbo].[ZonaSets] ([IdZona], [Zone]) VALUES (2, N'Cesenatico')
 INSERT INTO [dbo].[ZonaSets] ([IdZona], [Zone]) VALUES (3, N'SantGiovanni')
@@ -19,6 +20,7 @@ SET IDENTITY_INSERT [dbo].[ZonaSets] OFF
 --TERMINALE
 
 SET IDENTITY_INSERT [dbo].[TerminalSets] ON
+INSERT INTO [dbo].[TerminalSets] ([IdTerminale], [NomeTerminale], [ZonaIdZona]) VALUES (0, N'Cansas', 0)
 INSERT INTO [dbo].[TerminalSets] ([IdTerminale], [NomeTerminale], [ZonaIdZona]) VALUES (1, N'Cansas', 1)
 INSERT INTO [dbo].[TerminalSets] ([IdTerminale], [NomeTerminale], [ZonaIdZona]) VALUES (2, N'Casablanca', 2)
 INSERT INTO [dbo].[TerminalSets] ([IdTerminale], [NomeTerminale], [ZonaIdZona]) VALUES (3, N'Florida', 3)
@@ -220,6 +222,11 @@ select * from [dbo].[PresenzaSets] where data < '2020-06-06'
 select * from AssenzaSet;
 select * from [dbo].[StraordinariSets] where data < '2020-06-06'
 select * from StipendioSet
+select * from PersoneSets
+select * from PersoneSets full join AssenzaSet on Matricola=PersoneSet_Matricola
+
 select * from PersoneSets where Ruolo = 3
+select * from StoricoContrattoSets
+
 select * from StoricoContrattoSets
 select * from TurnoSets

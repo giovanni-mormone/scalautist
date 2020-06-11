@@ -38,7 +38,7 @@ object CaseClassHttpMessage {
    * @param payload object that represent the case class send of the server
    * @tparam A
    */
-  final case class Response[A](statusCode:Int,payload:Option[A])
+  final case class Response[A](statusCode:Int,payload:Option[A]=None)
 
   /**
    * case class which enable send id and use post for receive

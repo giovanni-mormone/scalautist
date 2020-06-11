@@ -139,6 +139,12 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *
    */
   def getTerminalData(): Unit
+
+  /**
+   *
+   * @param terminalId
+   */
+  def terminalModalData(terminalId: Int): Unit
 }
 
 /**
@@ -216,10 +222,10 @@ object HumanResourceController {
       val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
         Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
       val contratti = List(
-        Contratto("Full-Time-5x2", turnoFisso = true, Some(1)),
-        Contratto("Part-Time-5x2", turnoFisso = true, Some(2)),
-        Contratto("Part-Time-6x1", turnoFisso = false,Some(3)),
-        Contratto("Full-Time-6x1", turnoFisso = true, Some(4))
+        Contratto("Full-Time-5x2", turnoFisso = true, partTime = true, 1),
+        Contratto("Part-Time-5x2", turnoFisso = true,partTime = true, 2),
+        Contratto("Part-Time-6x1", turnoFisso = false,partTime = false,3),
+        Contratto("Full-Time-6x1", turnoFisso = true, partTime = false,4)
       )
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       myView.drawRecruit(zone, contratti, turni)
@@ -278,7 +284,7 @@ object HumanResourceController {
        else
          model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
     }
-    private def sendMessageModal(t:Try[Response[Id]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
+    private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
       case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
       case (Success(value),true)  =>myView.result("malattia asignada correctamente")
@@ -286,6 +292,18 @@ object HumanResourceController {
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 
+    override def terminalModalData(terminalId: Int): Unit = {
+      /*val future: Future[(List[Zona], Terminale)] = for{
+        zones <- getZone
+        terminal <- model.getTerminal(terminalId)
+      } yield (zones.payload.head, terminal.payload.head)
+      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))*/
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
+      .filter(terminal => terminal.idTerminale.head == terminalId).head
+      myView.openTerminalModal(zone, terminale)
+    }
 
   }
 }

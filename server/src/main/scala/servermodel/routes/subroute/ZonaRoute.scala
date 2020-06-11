@@ -4,71 +4,78 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Zona
-import caseclass.CaseClassHttpMessage.Id
+import caseclass.CaseClassHttpMessage.{Request, Response}
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.ZonaOperation
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
+import utils.{StatusCodes=>statusCodes}
 
 object ZonaRoute {
+  private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
   def getAllZona: Route =
     post {
       onComplete(ZonaOperation.selectAll) {
-        case Success(t) =>  complete((StatusCodes.Found,t))
+        case Success(Some(zone)) =>  complete(Response(statusCodes.SUCCES_CODE,Some(zone)))
         case t => anotherSuccessAndFailure(t)
       }
     }
 
   def createZona(): Route =
     post {
-      entity(as[Zona]) { zona =>
-        onComplete(ZonaOperation.insert(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created,Zona(zona.zones,t)) //TODO
+      entity(as[Request[Zona]]) {
+        case Request(Some(zona))=> onComplete(ZonaOperation.insert(zona)) {
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(Zona(zona.zones,Some(id)))))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def createAllZona(): Route =
     post {
-      entity(as[List[Zona]]) { zona =>
-        onComplete(ZonaOperation.insertAll(zona)) {
-          case Success(t) =>  complete(StatusCodes.Created)//qualcosa
+      entity(as[Request[List[Zona]]]) {
+        case Request(Some(zona))=>onComplete(ZonaOperation.insertAll(zona)) {
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def deleteZona(): Route =
     post {
-      entity(as[Id]) { zona =>
-        onComplete(ZonaOperation.delete(zona.id)) {
-          case Success(Some(1)) =>  complete(StatusCodes.Gone)
+      entity(as[Request[Int]]) {
+        case Request(Some(id))=> onComplete(ZonaOperation.delete(id)) {
+          case Success(Some(statusCodes.SUCCES_CODE)) =>  complete(Response[Int](statusCodes.SUCCES_CODE))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def deleteAllZona(): Route =
     post {
-      entity(as[List[Id]]) { zona =>
-        onComplete(ZonaOperation.deleteAll(zona.map(_.id))) {
-          case Success(Some(_)) =>  complete(StatusCodes.Gone)
+      entity(as[Request[List[Int]]]) {
+        case Request(Some(id))=> onComplete(ZonaOperation.deleteAll(id)) {
+          case Success(Some(result)) =>  complete(Response(statusCodes.SUCCES_CODE,Some(result)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def updateZona(): Route =
     post {
-      entity(as[Zona]) { zona =>
-        onComplete(ZonaOperation.update(zona)) {
-          case Success(Some(t)) =>  complete((StatusCodes.Created,Id(t)))
-          case Success(None) =>complete(StatusCodes.OK)
+      entity(as[Request[Zona]]) {
+        case Request(Some(zona))=>onComplete(ZonaOperation.update(zona)) {
+          case Success(None) =>complete(Response[Int](statusCodes.SUCCES_CODE))
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 }

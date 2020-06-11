@@ -6,7 +6,9 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TextField}
+import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.parent.ModalZoneParent
+import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -20,10 +22,17 @@ trait ModalZone extends Component[ModalZoneParent] {
 
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+ */
 object ModalZone {
 
   def apply(zona: Zona): ModalZone = new ModalZoneFX(zona)
 
+  /**
+   * JavaFX implementation of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+   * @param zona
+   */
   private class ModalZoneFX(zona: Zona)
     extends AbstractComponent[ModalZoneParent]("humanresources/subcomponent/ModalZone") with ModalZone {
 
@@ -40,15 +49,28 @@ object ModalZone {
       id.setText(zona.idZone.head.toString)
       id.setEditable(false)
 
-      name.setText(zona.zones)
-      name.setEditable(true)
+      manageZonaText()
 
       delete.setText(resources.getString("delete"))
       delete.setOnAction(_ => parent.deleteZona(zona))
 
       update.setText(resources.getString("update"))
-      update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone))) //todo controllare stringa
+      update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone)))
+
+      ableToChange
     }
+
+    private def manageZonaText(): Unit = {
+      name.setText(zona.zones)
+      name.setEditable(true)
+      name.textProperty().addListener((_, oldS, word) => {
+        TextFieldControl.controlNewChar(name, ZonaChecker, word, oldS)
+        ableToChange()
+      })
+    }
+
+    private def ableToChange(): Unit =
+      update.setDisable(name.getText().equals(""))
 
   }
 }

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.DatePicker?>
 
 <VBox alignment="TOP_CENTER" fillWidth="false" maxHeight="-Infinity"
       maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0"
@@ -14,6 +14,7 @@
       <TextField fx:id="name" promptText="Nome" />
       <TextField fx:id="surname" promptText="Cognome" />
       <TextField fx:id="tel" />
+      <DatePicker fx:id="recruitDate" prefWidth="180.0" showWeekNumbers="true" />
       <ComboBox fx:id="role" prefWidth="150.0" />
       <ComboBox fx:id="contractTypes" prefHeight="25.0" prefWidth="140.0" />
       <ComboBox fx:id="shift1" prefWidth="150.0" />

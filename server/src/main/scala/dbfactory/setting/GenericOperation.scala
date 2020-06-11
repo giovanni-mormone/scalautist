@@ -93,7 +93,6 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
 object GenericOperation{
   def apply[C,T<: GenericTable[C]:runtime.TypeTag](): GenericOperation[C,T] = new Operation[C,T]()
   private class Operation[C,T<: GenericTable[C]:runtime.TypeTag]() extends GenericOperation[C,T] {
-
     import dbfactory.util.Helper._
     override def selectFilter(filter:T=>Rep[Boolean]): Future[Option[List[C]]] = super.run(tableDB().withFilter(filter).result.transactionally).result()
     override def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]] = super.run(join.result.transactionally).result()
