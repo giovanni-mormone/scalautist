@@ -74,7 +74,7 @@ object FireBox {
       })
     }
 
-    private def getSelectedElements(): Set[Int] = {
+    private def getSelectedElements: Set[Int] = {
       new CollectionConverters.ListHasAsScala[Int](
         employeeTable.getItems.filtered(person => person.isSelected)
           .stream().map[Int](person => person.getId.toInt).collect(Collectors.toList[Int])).asScala.toSet

@@ -196,7 +196,7 @@ object RecruitBox {
           val hasShift2: Boolean = chosenSomething(shift2)
           parent.recruitClicked(
             Assumi(
-              Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, true, "", getIdTerminal, None),
+              Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, isNew = true, "", getIdTerminal, None),
               StoricoContratto(new Date(System.currentTimeMillis()), None, None,
                   getContrattoId, getIdTurno(hasShift1, shift1), getIdTurno(hasShift2, shift2)),
               getDisponibilita
