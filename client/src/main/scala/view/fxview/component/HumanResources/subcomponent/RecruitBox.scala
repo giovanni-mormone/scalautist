@@ -12,6 +12,7 @@ import javafx.scene.control._
 import regularexpressionutilities.{NameChecker, NumberChecker}
 import utils.UserType._
 import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
+import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.MoveDatePeriod
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, TextFieldControl}
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -114,20 +115,8 @@ object RecruitBox {
     }
 
     private def setRecruitDate(): Unit = {
-      recruitDate.setEditable(false)
-      recruitDate.setDayCellFactory(_=> setDate(LocalDate.now()))
-
-    }
-
-    private def setDate(today:LocalDate): DateCell = new DateCell() {
-      import java.time.LocalDate
-      val PERIOD = 1
-      val minDate = today.minusMonths(PERIOD)
-      val maxDate = today.plusMonths(PERIOD)
-      override def updateItem(date:LocalDate, empty:Boolean) {
-        super.updateItem(date, empty)
-        setDisable(date.isBefore(minDate) || date.isAfter(maxDate) || empty)
-      }
+      CreateDatePicker.createDataPicker(recruitDate, MoveDatePeriod(months = 1), MoveDatePeriod(months = 1))
+      recruitDate.setOnAction(_ => ableSave())
     }
 
     private def setActions(): Unit = {
@@ -253,8 +242,9 @@ object RecruitBox {
 
     private def controlMainFields(): Boolean = {
       !(name.getText.equals("") || name.getText.equals(" ") || name.getText.equals("'")) &&
-        !(surname.getText.equals("") || surname.getText.equals(" ") || surname.getText.equals("'")) &&
-          !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("") && tel.getText.length == 10
+      !(surname.getText.equals("") || surname.getText.equals(" ") || surname.getText.equals("'")) &&
+      !contractTypes.getSelectionModel.isEmpty && !tel.getText.equals("") && tel.getText.length == 10 &&
+      !(recruitDate.getValue == null)
     }
 
     private def controlDriverFields(): Boolean = {

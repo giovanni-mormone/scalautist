@@ -199,11 +199,11 @@ object HumanResourceView {
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
-     hrHome.drawRecruit(zones, contracts, shifts)
+      Platform.runLater(() => hrHome.drawRecruit(zones, contracts, shifts))
     
 
     override def drawTerminal(terminals: List[Terminale]): Unit =
-      hrHome.drawRecruitTerminals(terminals)
+      Platform.runLater(() => hrHome.drawRecruitTerminals(terminals))
 
  
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
@@ -212,33 +212,39 @@ object HumanResourceView {
     }
 
     override def drawZonaView(zones: List[Zona]): Unit =
-      hrHome.drawZona(zones)
+      Platform.runLater(() => hrHome.drawZona(zones))
 
     override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
-      hrHome.drawTerminal(zones, terminals)
+      Platform.runLater(() => hrHome.drawTerminal(zones, terminals))
 
     override def drawHolidayView(employeesList: List[Ferie]): Unit =
       Platform.runLater(() => hrHome.drawHolidayBox(employeesList))
 
     override def drawChangePassword: Unit =
-      ChangePasswordView(stage, Some(stage.getScene))
+      Platform.runLater(() => ChangePasswordView(stage, Some(stage.getScene)))
 
     /////////////////////////////////////////////////////////   disegni modal
 
-    override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
-      modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
-      modalResource.show()
-    }
+    override def openModal(item:Ferie, isMalattia: Boolean): Unit =
+      Platform.runLater(() => {
+        modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
+        modalResource.show()
+      })
 
-    override def openZonaModal(zona: Zona): Unit = {
-      modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
-      modalResource.show()
-    }
+    override def openZonaModal(zona: Zona): Unit =
+      Platform.runLater(() => {
+        modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
+        modalResource.show()
+      })
 
-    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
-      modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
-      modalResource.show()
-    }
+
+    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit =
+      Platform.runLater(() => {
+        modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
+        modalResource.show()
+      })
+
+
 
     ////////////////////////////////////////////////////////////// esito modal
 

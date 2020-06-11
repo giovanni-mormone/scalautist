@@ -104,15 +104,21 @@ trait HumanResourceModel extends AbstractModel{
   def deleteTerminale(id:Int): Future[Response[Int]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param terminale identifies a zone into database, then select all terminale associate to id
+   * method that return a Option of terminal, this can be empty if fail
+   * @param terminale instance of Terminale to insert into database
    * @return Option of list of terminal that can be empty
    */
   def createTerminale(terminale:Terminale): Future[Response[Terminale]]
 
   /**
+   * method that return Option of List of Terminale if exist
+   * @return Option of List of Terminale
+   */
+  def getAllTerminale(): Future[Response[List[Terminale]]]
+
+  /**
    * method that return Option of List of zone if exists
-   * @return Option of zone if exists
+   * @return Option of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
 
@@ -125,6 +131,22 @@ trait HumanResourceModel extends AbstractModel{
    *          with your Id
    */
   def setZona(zona: Zona):Future[Response[Zona]]
+
+  /**
+   * method that update a Zona instance and return a Option of Zona, this can be empty if it fails
+   *
+   * @param zona
+   * @return
+   */
+  def updateZona(zona: Zona): Future[Response[Zona]]
+
+  /**
+   * method that delete a Zona instance and return a Option of Zona, this can be empty if it fails
+   *
+   * @param zona
+   * @return
+   */
+  def deleteZona(zona: Int): Future[Response[Zona]]
 
   /**
    * Insert terminal into database, this case class not contains id for terminal
@@ -279,6 +301,22 @@ object HumanResourceModel {
       val request = Post(getURI("createterminale"),transform(terminale))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
-}
+
+    override def updateZona(zona: Zona): Future[Response[Zona]] = {
+      val request = Post(getURI("updatezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+    }
+
+    override def deleteZona(zona: Int): Future[Response[Zona]] = {
+      val request = Post(getURI("deletezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+    }
+
+    override def getAllTerminale(): Future[Response[List[Terminale]]] = {
+      val request: HttpRequest = Post(getURI("getallterminale"))
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+    }
+
+  }
 
 }

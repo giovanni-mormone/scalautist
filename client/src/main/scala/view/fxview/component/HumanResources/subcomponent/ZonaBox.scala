@@ -85,7 +85,7 @@ object ZonaBox {
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[ZonaTable](
           zonaTable,
-          zones.filter(zone => zone.zones.contains(word) || zone.idZone.head.toString.contains(word)))
+          zones.filter(zone => zone.zones.toLowerCase.contains(word) || zone.idZone.head.toString.contains(word)))
       })
     }
 
