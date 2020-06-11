@@ -1,9 +1,10 @@
+
 name := "scalautist"
 
 version := "0.1"
 
 ThisBuild /scalaVersion := "2.13.2"
-
+ThisBuild /crossPaths := false
 
 lazy val client = project.settings(
   mainClass := Some("view.MainClient"),
