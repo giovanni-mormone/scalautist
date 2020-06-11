@@ -138,15 +138,4 @@ object PersonaRoute{
         case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
-
-  def holidayByPerson(): Route =
-    post{
-      entity(as[Request[Int]]) {
-        case Request(Some(value)) => onComplete(AssenzaOperation.getAllFerie(value)){
-          case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
-          case t => anotherSuccessAndFailure(t)
-        }
-        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
-      }
-    }
 }

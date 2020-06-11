@@ -179,6 +179,12 @@ trait HumanResourceModel extends AbstractModel{
    */
   def getHolidayByPerson:Future[Response[List[Ferie]]]
 
+  /**
+   * Method that obtains all day of holiday of a persona
+   * @return Option of List with all day of holiday of a persona
+   */
+  def getAbsenceInYearForPerson:Future[Response[List[Assenza]]]
+
 }
 
 /**
@@ -309,6 +315,10 @@ object HumanResourceModel {
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
+    override def getAbsenceInYearForPerson: Future[Response[List[Assenza]]] = {
+      val request: HttpRequest = Post(getURI("getAbsenceInYearForPerson"))
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Assenza]]])
+    }
   }
 
 }

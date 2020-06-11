@@ -7,12 +7,12 @@ import caseclass.CaseClassDB.Assenza
 import caseclass.CaseClassHttpMessage.{Request, Response}
 import dbfactory.operation.AssenzaOperation
 import jsonmessages.JsonFormats._
+import messagecodes.{StatusCodes => statusCodes}
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
-import messagecodes.{StatusCodes=>statusCodes}
 
 import scala.util.Success
 
-object AssenzaRoute {
+object AssenzaRoute{
   private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
   def addAbsence(): Route =
     post {
@@ -20,6 +20,27 @@ object AssenzaRoute {
         case Request(Some(value)) => onComplete(AssenzaOperation.insert(value)){
           case Success(Some(id)) if id!=0 && id>0=> complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(id)))
           case t =>anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
+  def holidayByPerson(): Route =
+    post{
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(AssenzaOperation.getAllFerie(value)){
+          case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
+
+  def absenceInYearForPerson(): Route =
+    post{
+      entity(as[Request[(Int,Int)]]) {
+        case Request(Some(value)) => onComplete(AssenzaOperation.getAbsenceInYearForPerson(value._1,value._2)){
+          case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
+          case t => anotherSuccessAndFailure(t)
         }
         case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
