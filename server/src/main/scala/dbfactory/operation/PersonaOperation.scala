@@ -11,7 +11,7 @@ import dbfactory.implicitOperation.OperationCrud
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import dbfactory.util.Helper._
-import utils.StatusCodes
+import messagecodes.StatusCodes
 
 import scala.concurrent
 
@@ -64,11 +64,11 @@ trait PersonaOperation extends OperationCrud[Persona]{
    *                          The data of the person to hire
    * @return
    * An option with the id of the hired person or an error code:
-   * [[utils.StatusCodes.ERROR_CODE1]] if the contratto provided not exits in the db
-   * [[utils.StatusCodes.ERROR_CODE2]] if the contratto not allows for disponibilita to be defined but the disponibilita is present
-   * [[utils.StatusCodes.ERROR_CODE3]] if the contratto is not fisso but there is a disponibilità present
-   * [[utils.StatusCodes.ERROR_CODE4]] if the contratto is fisso but there is not a disponibilità present
-   * [[utils.StatusCodes.ERROR_CODE5]] if the turni are not right according to the contratto
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the contratto provided not exits in the db
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the contratto not allows for disponibilita to be defined but the disponibilita is present
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the contratto is not fisso but there is a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the contratto is fisso but there is not a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the turni are not right according to the contratto
    */
   def assumi(personaDaAssumere: Assumi): Future[Option[Int]]
 }
@@ -106,7 +106,7 @@ object PersonaOperation extends PersonaOperation {
   override def recoveryPassword(idUser: Int): Future[Option[Login]] ={
     val newPass = createString.head
     for{
-      persona <-InstancePersona.operation().execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (newPass, true))
+      _ <-InstancePersona.operation().execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (newPass, true))
       credentials <- select(idUser).map(_.map(user => Login(user.userName,newPass)))
     }yield credentials
   }
@@ -140,19 +140,12 @@ object PersonaOperation extends PersonaOperation {
 
   val completeCall: Int => Future[Option[Int]] = value => Future.successful(Some(value))
 
-  /*override def delete(element:Int): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPerson(element).flatMap(_ => super.delete(element))
-  }
+  private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Int]] =
+    for{
+      persona <- insert(persona)
+      contratto <- if(persona.isDefined) StoricoContrattoOperation.insert(constructContratto(contratto,persona)) else Future.successful(None)
+    }yield if (contratto.isDefined) persona else None
 
-  override def deleteAll(element: List[Int]): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPersonList(element).flatMap(_ => super.deleteAll(element))
-  }*/
-
-  private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Int]] = {
-    insert(persona)
-      .flatMap(idPersona => StoricoContrattoOperation.insert(constructContratto(contratto,idPersona)))
-    
-  }
 
   private def constructContratto(contratto:StoricoContratto, personaId:Option[Int]): StoricoContratto = {
     StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)

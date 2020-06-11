@@ -3,14 +3,13 @@ import java.sql.Date
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 
-import akka.http.scaladsl.server.util.Tuple
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.Assenza
 import caseclass.CaseClassHttpMessage.Ferie
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{AssenzaTableQuery, PersonaTableQuery}
-import utils.StatusCodes
+import messagecodes.StatusCodes
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -66,11 +65,11 @@ object AssenzaOperation extends AssenzaOperation{
    * @param element case class that represent instance of the table in database
    * @return
    *         Future of Int that represent status of operation, returning the id of the assenza inserted or an error code:
-   *            [[utils.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
-   *            [[utils.StatusCodes.ERROR_CODE2]]  if the days between the given day are > of [[GIORNI_FERIE_ANNUI]]
-   *            [[utils.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
-   *            [[utils.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
-   *            [[utils.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
+   *            [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   *            [[messagecodes.StatusCodes.ERROR_CODE2]]  if the days between the given day are > of [[GIORNI_FERIE_ANNUI]]
+   *            [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   *            [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   *            [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
    *
    */
 override def insert(element: Assenza): Future[Option[Int]] ={
