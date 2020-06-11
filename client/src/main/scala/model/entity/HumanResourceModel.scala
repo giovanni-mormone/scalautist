@@ -104,15 +104,21 @@ trait HumanResourceModel extends AbstractModel{
   def deleteTerminale(id:Int): Future[Response[Int]]
 
   /**
-   * method that return a Option of list of terminal, this can be empty if zone not contains a terminal
-   * @param terminale identifies a zone into database, then select all terminale associate to id
+   * method that return a Option of terminal, this can be empty if fail
+   * @param terminale instance of Terminale to insert into database
    * @return Option of list of terminal that can be empty
    */
   def createTerminale(terminale:Terminale): Future[Response[Terminale]]
 
   /**
+   * method that return Option of List of Terminale if exist
+   * @return Option of List of Terminale
+   */
+  def getAllTerminale(): Future[Response[List[Terminale]]]
+
+  /**
    * method that return Option of List of zone if exists
-   * @return Option of zone if exists
+   * @return Option of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
 
@@ -305,6 +311,12 @@ object HumanResourceModel {
       val request = Post(getURI("deletezona"), transform(zona))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
+
+    override def getAllTerminale(): Future[Response[List[Terminale]]] = {
+      val request: HttpRequest = Post(getURI("getallterminale"))
+      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+    }
+
   }
 
 }
