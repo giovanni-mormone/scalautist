@@ -5,8 +5,9 @@ import java.sql.Date
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
 import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
+import messagecodes.StatusCodes
 import org.scalatest._
-import utils.{StartServer, StatusCodes}
+import utils.StartServer
 
 import scala.concurrent.Future
 
