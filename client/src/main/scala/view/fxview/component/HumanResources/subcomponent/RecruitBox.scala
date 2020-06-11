@@ -12,7 +12,7 @@ import javafx.scene.control._
 import regularexpressionutilities.{NameChecker, NumberChecker}
 import utils.UserType._
 import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
-import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
+import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, TextFieldControl}
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
@@ -197,7 +197,7 @@ object RecruitBox {
           parent.recruitClicked(
             Assumi(
               Persona(name.getText, surname.getText, tel.getText, None, getIdRuolo, isNew = true, "", getIdTerminal, None),
-              StoricoContratto(new Date(System.currentTimeMillis()), None, None,
+              StoricoContratto(CreateDatePicker.createDataSql(recruitDate), None, None,
                   getContrattoId, getIdTurno(hasShift1, shift1), getIdTurno(hasShift2, shift2)),
               getDisponibilita
             )
