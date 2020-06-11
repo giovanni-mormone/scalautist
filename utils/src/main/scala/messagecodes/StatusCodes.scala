@@ -1,4 +1,4 @@
-package utils
+package messagecodes
 
 object StatusCodes {
 

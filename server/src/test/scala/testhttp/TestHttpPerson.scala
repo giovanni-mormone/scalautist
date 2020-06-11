@@ -5,15 +5,16 @@ import java.sql.Date
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, Stipendio, StoricoContratto}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Dates, Request, Response}
 import jsonmessages.JsonFormats._
 import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
 import servermodel.routes.masterroute.MasterRoutePersona.routePersona
-import utils.{StartServer, StatusCodes => statusCodes}
-
+import utils.StartServer
+import messagecodes.{StatusCodes=>statusCodes}
 import scala.concurrent.duration.DurationInt
+
 object TestHttpPerson{
   private def startServer():Unit=MainServer
   private val getPersona: (String,Request[Int]) = ("/getpersona",Request(Some(1)))

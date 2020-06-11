@@ -8,7 +8,7 @@ import caseclass.CaseClassHttpMessage.{Request, Response}
 import dbfactory.operation.AssenzaOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
-import utils.{StatusCodes => statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 
 import scala.util.Success
 
