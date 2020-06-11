@@ -4,7 +4,6 @@ package controller
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import model.entity.HumanResourceModel
-import model.utilsmodel.ModelUtils.id
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.mainview.HumanResourceView
 
