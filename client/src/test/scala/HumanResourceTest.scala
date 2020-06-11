@@ -54,7 +54,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return StatusCodes.BadRequest when get terminal by id not exist" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(Request[Int](None))
-    futureTerminale map { terminale => assert(terminale.statusCode==StatusCodes.BadRequest.intValue)}
+    futureTerminale map { terminale => assert(terminale.statusCode==statusCodes.BAD_REQUEST)}
   }
   it should "return None of terminal" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(20)
