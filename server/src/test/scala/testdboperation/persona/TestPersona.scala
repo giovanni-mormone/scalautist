@@ -60,11 +60,11 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   behavior of "PersoneManagment"
   it should "return a login with credential of user when good parameters inserted" in {
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
-    assumi map {login => assert(login.head > 0)}
+    assumi map {login => assert(login.head == 12)}
   }
   it should "return a login with credential of user2" in {
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
-    assumi map {login => assert(login.head > 0)}
+    assumi map {login => assert(login.head == 13)}
   }
   it should "return a 1 int when removed from db" in {
     val fire: Future[Option[Int]] = PersonaOperation.delete(6)
@@ -148,11 +148,11 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   }
   it should "return an number >0 when tries to insert a persona that has a turno fisso parttime well defined" in {
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGoodPartTimeFisso)
-    assumi map {status => assert(status.head >0)}
+    assumi map {status => assert(status.head == 14 )}
   }
   it should "return an number >0 when tries to insert a persona that has a turno fisso fulltime with last and first turno" in {
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGoodFullTimeFissoHeadTail)
-    assumi map {status => assert(status.head >0)}
+    assumi map {status => assert(status.head == 15)}
   }
   behavior of "Assenze"
   it should "return the given the list when tries to get all ferie for that year" in {
@@ -181,7 +181,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   }
   it should "return an int >0 when adding good malattie between 2 years" in {
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(malattiaBetweenYears)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE3)}
+    assenza map { ass => assert(ass.head > 0)}
   }
   it should "return an ERROR_CODE4 when adding an assenza that starts after the end" in {
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(startAfterEnd)
