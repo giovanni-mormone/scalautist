@@ -1,6 +1,7 @@
 package model.entity
 
 import java.sql.Date
+import java.util.Calendar
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
@@ -266,9 +267,13 @@ object HumanResourceModel {
     }
 
     override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
-      val request = Post(getURI("getholidaybypersona"))
+      val year = Calendar.getInstance()
+      year.setTime(new Date(System.currentTimeMillis()))
+      val request = Post(getURI("getholidaybyperson"),Request(Some(year.get(Calendar.YEAR))))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
+
+    
 
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))

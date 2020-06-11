@@ -245,7 +245,7 @@ object HumanResourceController {
 
     override def getTerminalData(): Unit = {
       val future: Future[(List[Zona], List[Terminale])] = for{
-        terminals <- model.getAllTerminale()
+        terminals <- model.getAllTerminale
         zones <- getZone
       } yield (zones.payload.head, terminals.payload.head)
       future.onComplete(data => myView.drawTerminaleView(data.get._1, data.get._2))

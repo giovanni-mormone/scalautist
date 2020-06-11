@@ -214,11 +214,26 @@ object MasterRoutePersona extends Directives{
       addAbsence()
     }
 
+  @Path("/addabsence")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Add Absence", description = "Add Absence into database. this can be illness or holidays",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
+    responses = Array(
+      new ApiResponse(responseCode = "201", description = "Insert Absence correctly into database"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def getHolidayByPerson: Route =
+    path("getholidaybyperson") {
+      holidayByPerson()
+    }
+
   val routePersona: Route =
     concat(
       getAllPersonaDatabase,getPersonaDatabase,getHirePersonDatabase,
       deletePersonaDatabase(),deleteAllPersonaDatabase(),updatePersonaDatabase(),
       loginPersonaDatabase,changePasswordPersona,recoveryPasswordPersona,
-      salaryCalculusAll,getSalaryPersona,addAbsencePersona()
+      salaryCalculusAll,getSalaryPersona,addAbsencePersona(),getHolidayByPerson
     )
 }
