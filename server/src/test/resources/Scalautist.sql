@@ -164,6 +164,7 @@ CREATE TABLE [dbo].[ContratoeSets] (
                                        [IdContratto] int IDENTITY(1,1) NOT NULL,
                                        [TipoContratto] nvarchar(max)  NOT NULL,
                                        [TurnoFisso] bit  NOT NULL,
+                                       [PartTime] bit NOT NULL,
                                        [Ruolo] int NOT NULL
 );
 
@@ -581,7 +582,7 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
         FOREIGN KEY ([Persone_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoricoContrattoPersone'
