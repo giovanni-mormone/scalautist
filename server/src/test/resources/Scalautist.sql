@@ -199,7 +199,7 @@ CREATE TABLE [dbo].[PersoneSets] (
                                      [Cognome] nvarchar(max)  NOT NULL,
                                      [NumTelefono] nvarchar(max)  NOT NULL,
                                      [Ruolo] int  NOT NULL,
-                                     [Terminale_IdTerminale] int  NULL,
+                                     [Terminale_IdTerminale] int  NULL default 0,
                                      [Password] nvarchar(max)  NOT NULL,
                                      [IsNew] bit  NOT NULL,
                                      [UserName] nvarchar(max)  NOT NULL,
@@ -612,7 +612,7 @@ ALTER TABLE [dbo].[PersoneSets]
         FOREIGN KEY ([Terminale_IdTerminale])
             REFERENCES [dbo].[TerminalSets]
                 ([IdTerminale])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE SET DEFAULT ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_TerminalePersone'
