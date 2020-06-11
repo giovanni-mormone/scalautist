@@ -261,20 +261,19 @@ object HumanResourceController {
       //println(zone + "-> update")
 
     override def deleteZona(zone: Zona): Unit =
-      model.deleteZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      model.deleteZona(zone.idZone.head).onComplete(_ => myView.showMessage("Completato"))
       //println(zone + "-> delete")
 
-    override def saveTerminal(terminal: Terminale): Unit = {
-      //model.newTerminale(terminale).onComplete(_ => getTerminalData())
-      println(terminal)
-    }
+    override def saveTerminal(terminal: Terminale): Unit =
+      model.createTerminale(terminal).onComplete(_ => getTerminalData())
+      //println(terminal)
 
     override def updateTerminal(terminal: Terminale): Unit =
       model.updateTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
       //println(terminal + "-> update")
 
     override def deleteTerminal(terminal: Terminale): Unit =
-      model.deleteTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
+      model.deleteTerminale(terminal.idTerminale.head).onComplete(_ => myView.showMessage("Completato"))
       //println(terminal + "-> delete")
       
     override def saveAbsence(absence: Assenza): Unit = {

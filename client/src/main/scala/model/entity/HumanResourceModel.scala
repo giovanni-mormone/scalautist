@@ -127,6 +127,22 @@ trait HumanResourceModel extends AbstractModel{
   def setZona(zona: Zona):Future[Response[Zona]]
 
   /**
+   * method that update a Zona instance and return a Option of Zona, this can be empty if it fails
+   *
+   * @param zona
+   * @return
+   */
+  def updateZona(zona: Zona): Future[Response[Zona]]
+
+  /**
+   * method that delete a Zona instance and return a Option of Zona, this can be empty if it fails
+   *
+   * @param zona
+   * @return
+   */
+  def deleteZona(zona: Int): Future[Response[Zona]]
+
+  /**
    * Insert terminal into database, this case class not contains id for terminal
    * in the init operation, but result contain your id
    * @param terminale case class that represent struct for a terminal in database
@@ -279,6 +295,16 @@ object HumanResourceModel {
       val request = Post(getURI("createterminale"),transform(terminale))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
-}
+
+    override def updateZona(zona: Zona): Future[Response[Zona]] = {
+      val request = Post(getURI("updatezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+    }
+
+    override def deleteZona(zona: Int): Future[Response[Zona]] = {
+      val request = Post(getURI("deletezona"), transform(zona))
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+    }
+  }
 
 }

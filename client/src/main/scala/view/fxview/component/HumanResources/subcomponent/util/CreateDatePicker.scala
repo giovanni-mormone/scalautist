@@ -11,7 +11,6 @@ case object CreateDatePicker{
   final case class MoveDatePeriod(years: Int = 0, months: Int = 0, days: Int = 0)
 
   def createDataPicker(dataPicker: DatePicker, behind: MoveDatePeriod, after: MoveDatePeriod, today: LocalDate = LocalDate.now()): Unit = {
-    dataPicker.setDisable(false)
     dataPicker.setEditable(false)
     dataPicker.setDayCellFactory(_=> setDate(today, behind, after))
   }
