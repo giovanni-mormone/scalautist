@@ -140,18 +140,12 @@ object PersonaOperation extends PersonaOperation {
 
   val completeCall: Int => Future[Option[Int]] = value => Future.successful(Some(value))
 
-  /*override def delete(element:Int): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPerson(element).flatMap(_ => super.delete(element))
-  }
-
-  override def deleteAll(element: List[Int]): Future[Option[Int]] = {
-    StoricoContrattoOperation.deleteAllStoricoForPersonList(element).flatMap(_ => super.deleteAll(element))
-  }*/
-
   private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Int]] = {
-    insert(persona)
-      .flatMap(idPersona => StoricoContrattoOperation.insert(constructContratto(contratto,idPersona)))
-    
+
+    for{
+      persona <- insert(persona)
+      contratto <- if(persona.isDefined) StoricoContrattoOperation.insert(constructContratto(contratto,persona)) else Future.successful(None)
+    }yield persona
   }
 
   private def constructContratto(contratto:StoricoContratto, personaId:Option[Int]): StoricoContratto = {
