@@ -1,11 +1,12 @@
 package jsonmessages
 
-import caseclass.CaseClassDB._
+import java.sql.Date
+
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage._
+import jsonmessages.ImplicitDate._
 import spray.json._
-import ImplicitDate._
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Ferie, Id, Request, Response}
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 
@@ -24,7 +25,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val gruppoTerminaleJsonFormat: RootJsonFormat[GruppoTerminale] = jsonFormat2(GruppoTerminale)
     implicit val giornoJsonFormat: RootJsonFormat[Giorno] = jsonFormat3(Giorno)
     implicit val giornoInSettimanaJsonFormat: RootJsonFormat[GiornoInSettimana] = jsonFormat5(GiornoInSettimana)
-    implicit val contrattoJsonFormat: RootJsonFormat[Contratto] = jsonFormat3(Contratto)
+    implicit val contrattoJsonFormat: RootJsonFormat[Contratto] = jsonFormat5(Contratto)
     implicit val loginJsonFormat: RootJsonFormat[Login] = jsonFormat2(Login)
     implicit val stipendioJsonFormat: RootJsonFormat[Stipendio] = jsonFormat4(Stipendio)
     implicit val assenzaJsonFormat: RootJsonFormat[Assenza] = jsonFormat5(Assenza)
@@ -36,6 +37,5 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
-
 
 }

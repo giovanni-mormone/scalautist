@@ -48,7 +48,7 @@ trait Crud[A]{
   /**
    * Generic operation which enable insert any element in any table in database
    * @param element case class that represent instance of the table in database
-   * @return Future of Int that represent status of operation
+   * @return Future of Int that represent id of element inserted
    *         Note that the return value will be None if element has not been inserted into database and Some if the operation was insert
    */
   private[implicitOperation] def insert(element:A):Future[Option[Int]]
@@ -56,7 +56,7 @@ trait Crud[A]{
   /**
    *  Generic operation which enable insert a List of any element in any table in database
    * @param element List of case class that represent instance of the table in database
-   * @return Future of Option of List of Int that represent status of operation
+   * @return Future of Option of List of Int that represent id of element inserted
    *         Note that the return value will be None if element has not been inserted into database and Some if the operation was insertAll
    */
   private[implicitOperation] def insertAll(element:List[A]):Future[Option[List[Int]]]

@@ -163,7 +163,9 @@ IF OBJECT_ID(N'[dbo].[DisponibilitaStraordinarioSets]', 'U') IS NOT NULL
 CREATE TABLE [dbo].[ContratoeSets] (
                                        [IdContratto] int IDENTITY(1,1) NOT NULL,
                                        [TipoContratto] nvarchar(max)  NOT NULL,
-                                       [TurnoFisso] bit  NOT NULL
+                                       [TurnoFisso] bit  NOT NULL,
+                                       [PartTime] bit NOT NULL,
+                                       [Ruolo] int NOT NULL
 );
 
 
@@ -197,7 +199,7 @@ CREATE TABLE [dbo].[PersoneSets] (
                                      [Cognome] nvarchar(max)  NOT NULL,
                                      [NumTelefono] nvarchar(max)  NOT NULL,
                                      [Ruolo] int  NOT NULL,
-                                     [Terminale_IdTerminale] int  NULL,
+                                     [Terminale_IdTerminale] int  NULL default 0,
                                      [Password] nvarchar(max)  NOT NULL,
                                      [IsNew] bit  NOT NULL,
                                      [UserName] nvarchar(max)  NOT NULL,
@@ -580,7 +582,7 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
         FOREIGN KEY ([Persone_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_StoricoContrattoPersone'
@@ -610,7 +612,7 @@ ALTER TABLE [dbo].[PersoneSets]
         FOREIGN KEY ([Terminale_IdTerminale])
             REFERENCES [dbo].[TerminalSets]
                 ([IdTerminale])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE SET DEFAULT ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_TerminalePersone'
@@ -790,7 +792,7 @@ ALTER TABLE [dbo].[AssenzaSet]
         FOREIGN KEY ([PersoneSet_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_AssenzaPersoneSet'
@@ -805,7 +807,7 @@ ALTER TABLE [dbo].[StipendioSet]
         FOREIGN KEY ([PersoneSet_Matricola])
             REFERENCES [dbo].[PersoneSets]
                 ([Matricola])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_StipendioPersoneSet'

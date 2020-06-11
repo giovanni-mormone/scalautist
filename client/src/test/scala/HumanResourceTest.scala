@@ -2,14 +2,15 @@
 import java.sql.Date
 
 import akka.actor.Terminated
+import akka.http.scaladsl.model.StatusCodes
 import caseclass.CaseClassDB.{Contratto, Disponibilita, Login, Persona, StoricoContratto, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{Assumi, Id, Response}
+import caseclass.CaseClassHttpMessage.{Assumi, Id, Request, Response}
 import model.utilsmodel.ModelUtils._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import model.entity.{HumanResourceModel, PersonaModel}
 import utils.ClientAkkaHttp
-
+import utils.{StatusCodes=>statusCodes}
 import scala.concurrent.Future
 
 class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
@@ -32,24 +33,28 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   behavior of "contract"
   it should "return login with credential of a person" in {
     val futureRecruit:Future[Response[Login]]=terminale.recruit(insertPersona)
-    futureRecruit map { recruit => assert(recruit.payload.isDefined)}
+    futureRecruit map { recruit =>print(recruit); assert(recruit.payload.isDefined)}
   }
   it should "return  a person" in {
-    val futureSecondLogin: Future[Option[Persona]] = persona.login("admin","admin")
-    futureSecondLogin map { login => assert(login.contains(personaC)) }
+    val futureSecondLogin: Future[Response[Persona]] = persona.login("admin","admin")
+    futureSecondLogin map { login => assert(login.payload.contains(personaC)) }
   }
   it should "eventually return None whit login error" in {
-    val futureLogin: Future[Option[Persona]] = persona.login("persona","prsona")
-    futureLogin map { login => assert(login.isEmpty) }
+    val futureLogin: Future[Response[Persona]] = persona.login("persona","prsona")
+    futureLogin map { login => assert(login.payload.isEmpty) }
   }
   it should "return ok when delete person" in {
-    val futureDelete:Future[Response[Id]]=terminale.fires(6)
-    futureDelete map { recruit => assert(recruit.payload.contains(410))}
+    val futureDelete:Future[Response[Int]]=terminale.fires(6)
+    futureDelete map { recruit => assert(recruit.statusCode==statusCodes.SUCCES_CODE)}
 
   }
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(1)
     futureTerminale map { terminale => assert(terminale.payload.head.length==2)}
+  }
+  it should "return StatusCodes.BadRequest when get terminal by id not exist" in {
+    val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(Request[Int](None))
+    futureTerminale map { terminale => assert(terminale.statusCode==StatusCodes.BadRequest.intValue)}
   }
   it should "return None of terminal" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(20)
@@ -57,7 +62,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return type contract with length 8" in {
     val futureContract:Future[Response[List[Contratto]]]=terminale.getAllContract
-    futureContract map { contract => assert(contract.payload.head.length==8)}
+    futureContract map { contract => assert(contract.payload.head.length==10)}
   }
   it should "return all shift with length 6" in {
     val futureshift:Future[Response[List[Turno]]]=terminale.getAllShift
@@ -65,7 +70,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return a list of zone length 4 when get operation" in {
     val futureZona:Future[Response[List[Zona]]]=terminale.getAllZone
-    futureZona map { zona => assert(zona.payload.head.length==4)}
+    futureZona map { zona => assert(zona.payload.head.length==5)}
   }
   it should "shutdown System" in {
     val futureTerminated:Future[Terminated]=terminale.shutdownActorSystem()

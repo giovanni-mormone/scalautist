@@ -7,7 +7,9 @@ object ContrattoTable {
   class ContrattoTableRep(tag: Tag) extends GenericTable[Contratto](tag, "ContratoeSets","IdContratto") {
     def tipoContratto: Rep[String] = column[String]("TipoContratto")
     def turnoFisso: Rep[Boolean] = column[Boolean]("TurnoFisso")
-    override def * : ProvenShape[Contratto] = (tipoContratto,turnoFisso,id.?).mapTo[Contratto]
+    def partTime: Rep[Boolean] = column[Boolean]("PartTime")
+    def ruolo: Rep[Int] = column[Int]("Ruolo")
+    override def * : ProvenShape[Contratto] = (tipoContratto,turnoFisso,partTime,ruolo,id.?).mapTo[Contratto]
 
   }
 }

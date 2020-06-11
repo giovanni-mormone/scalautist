@@ -2,14 +2,16 @@ package servermodel.routes.subroute
 
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
-import caseclass.CaseClassDB.{Assenza, Login, Persona}
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Id, Response}
+import akka.http.scaladsl.server.Route
+import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassHttpMessage._
+import dbfactory.operation.{PersonaOperation, StipendioOperation}
 import jsonmessages.JsonFormats._
+
 import servermodel.routes.exception.RouteException
-import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
 import servermodel.routes.exception.SuccessAndFailure._
+import utils.{StatusCodes => statusCodes}
 
 import scala.util.Success
 
@@ -18,118 +20,124 @@ import scala.util.Success
  * PersonaRoute is an object that manage methods that act on the persona entity
  */
 object PersonaRoute{
-
+  private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
   def getPersona: Route =
     post {
-      entity(as[Id]) { id =>
-        onComplete(PersonaOperation.select(id.id)) {
-          case Success(Some(person)) => complete(Response(StatusCodes.OK.intValue, Some(person)))
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.select(value)) {
+          case Success(Some(person)) => complete(Response(statusCodes.SUCCES_CODE, Some(person)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
   def getAllPersona: Route =
     post {
       onComplete(PersonaOperation.selectAll) {
-        case Success(persons) =>  complete(Response(StatusCodes.OK.intValue, Some(persons)))
+        case Success(persons) =>  complete(Response(statusCodes.SUCCES_CODE, Some(persons)))
         case t => anotherSuccessAndFailure(t)
       }
     }
   def hirePerson: Route =
     post {
-      entity(as[Assumi]) { assumi =>
-        onComplete(PersonaOperation.assumi(assumi)) {
-          case Success(Some(login)) =>  complete(Response(StatusCodes.Created.intValue, Some(login)))
+      entity(as[Request[Assumi]]) {
+        case Request(Some(assumi)) => onComplete(PersonaOperation.assumi(assumi)) {
+          case Success(Some(idPerson)) =>onComplete(PersonaOperation.recoveryPassword(idPerson)) {
+            case Success(Some(login)) => complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(login)))
+            case t => anotherSuccessAndFailure(t)
+          }
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
+
     }
 
   def deletePersona(): Route =
     post {
-      entity(as[Id]) { order =>
-        onComplete(PersonaOperation.delete(order.id)) {
-          case Success(Some(1)) =>  complete(Response(StatusCodes.OK.intValue, Some(1)))
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.delete(value)) {
+          case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def deleteAllPersona(): Route =
     post {
-      entity(as[List[Id]]) { order =>
-        onComplete(PersonaOperation.deleteAll(order.map(_.id))) {
-          case Success(Some(_)) =>  complete(Response(StatusCodes.OK.intValue, Some(1)))
+      entity(as[Request[List[Int]]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.deleteAll(value)) {
+          case Success(Some(result)) =>  complete(Response(statusCodes.SUCCES_CODE, Some(result)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def updatePersona(): Route =
     post {
-      entity(as[Persona]) { persona =>
-        onComplete(PersonaOperation.update(persona)) {
-          case Success(Some(t)) =>  complete(Response(StatusCodes.Created.intValue, Some(Id(t))))
-          case Success(None) =>complete(Response(StatusCodes.OK.intValue, Some(Id(1))))
+      entity(as[Request[Persona]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.update(value)) {
+          case Success(None) =>complete(Response[Int](statusCodes.SUCCES_CODE))
+          case Success(Some(id)) if id>0 =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def loginPersona(): Route =
     post {
-      entity(as[Login]) { login =>
-        onComplete(PersonaOperation.login(login)) {
-          case Success(Some(person))  =>  complete(Response(StatusCodes.OK.intValue, Some(person)))
+      entity(as[Request[Login]]) {
+        case Request(Some(value))=> onComplete(PersonaOperation.login(value)) {
+          case Success(Some(person)) => complete(Response(statusCodes.SUCCES_CODE, Some(person)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
   def recoveryPassword(): Route =
     post {
-      entity(as[Id]) {
-        idUser => onComplete(PersonaOperation.recoveryPassword(idUser.id)){
-          case Success(login)  =>  complete(Response(StatusCodes.OK.intValue, Some(login)))
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.recoveryPassword(value)){
+          case Success(Some(login))  =>  complete(Response(statusCodes.SUCCES_CODE, Some(login)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def changePassword(): Route =
     post {
-      entity(as[ChangePassword]) {
-        change => onComplete(PersonaOperation.changePassword(change)){
-          case Success(Some(1))  =>  complete(Response(StatusCodes.OK.intValue, Some(Id(1))))
+      entity(as[Request[ChangePassword]]) {
+        case Request(Some(value)) => onComplete(PersonaOperation.changePassword(value)){
+          case Success(Some(statusCodes.SUCCES_CODE))  =>  complete(Response[Int](statusCodes.SUCCES_CODE))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
   def getStipendio: Route =
     post{
-      entity(as[Id]) {
-        id => onComplete(StipendioOperation.getstipendiForPersona(id.id)){
-          case Success(Some(salary))  =>  complete(Response(StatusCodes.OK.intValue, Some(salary)))
+      entity(as[Request[Int]]) {
+        case Request(Some(value)) => onComplete(StipendioOperation.getstipendiForPersona(value)){
+          case Success(Some(salary))  =>  complete(Response(statusCodes.SUCCES_CODE, Some(salary)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
   def salaryCalculus(): Route =
     post{
-      entity(as[Dates]) {
-        date => onComplete(StipendioOperation.calculateStipendi(date.date)){
-          case Success(Some(1))  =>  complete(Response(StatusCodes.Created.intValue, Some(Id(1))))
+      entity(as[Request[Dates]]) {
+        case Request(Some(value)) => onComplete(StipendioOperation.calculateStipendi(value.date)){
+          case Success(Some(id)) if id>0 =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
-  def addAbsence(): Route =
-    post {
-      entity(as[Assenza]){
-        absence => onComplete(AssenzaOperation.insert(absence)){
-          case Success(Some(1)) => complete(Response(StatusCodes.Created.intValue, Some(Id(1))))
-          case t =>anotherSuccessAndFailure(t)
-        }
-      }
-    }
+
 }

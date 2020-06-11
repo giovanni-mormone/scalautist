@@ -17,7 +17,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val password: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.login(user, password), Duration.Inf)
-    assert(result.head.isInstanceOf[Persona])
+    assert(result.payload.head.isInstanceOf[Persona])
   }
 
   it should "return None with wrong credential" in {
@@ -25,7 +25,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val password: String = "admi"
     val http = PersonaModel.apply()
     val result = Await.result(http.login(user, password), Duration.Inf)
-    assert(result.isEmpty)
+    assert(result.payload.isEmpty)
   }
 
   it should "Success code when it try to change password" in {
@@ -34,7 +34,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.equals(StatusCodes.OK.intValue))
+    assert(result.statusCode.equals(StatusCodes.OK.intValue))
   }
 
   it should "Not Found code when it try to change password with wrong" in {
@@ -43,6 +43,6 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.equals(StatusCodes.NotFound.intValue))
+    assert(result.statusCode.equals(StatusCodes.NotFound.intValue))
   }
 }

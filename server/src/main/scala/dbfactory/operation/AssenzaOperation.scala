@@ -10,6 +10,7 @@ import caseclass.CaseClassHttpMessage.Ferie
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{AssenzaTableQuery, PersonaTableQuery}
+import utils.StatusCodes
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,23 +41,6 @@ object AssenzaOperation extends AssenzaOperation{
   private val GIORNI_FERIE_ANNUI: Int = 35
   //anche questo si può caricare da qualche parte
   private val CODICE_CONDUCENTE: Int = 3
-  //idem per i prossimi codici
-  /**
-   * 0
-   */
-  private val CODE_WRONG_ASSENZA_DAYS:Int = 0
-  /**
-   * -1
-   */
-  private val CODE_NOT_SAME_YEAR:Int = -1
-  /**
-   * -2
-   */
-  private val CODE_START_AFTER_END:Int = -2
-  /**
-   * -2
-   */
-  private val CODE_TOO_MUCH_DAYS: Int = -3
 
   //input un anno, output un java.sql.Date -> colpa del DB
   private val dateFromYear: Int => Date = year => {
@@ -64,6 +48,7 @@ object AssenzaOperation extends AssenzaOperation{
     calendar.set(year,0,1)
     new Date(calendar.getTimeInMillis)
   }
+
   private val computeDaysBetweenDates: (Date,Date) => Int = (dateStart,dateStop) =>
     ChronoUnit.DAYS.between(dateStart.toLocalDate,dateStop.toLocalDate).toInt
 
@@ -80,16 +65,25 @@ object AssenzaOperation extends AssenzaOperation{
    *
    * @param element case class that represent instance of the table in database
    * @return
-   *         Future of Int that represent status of operation ->
-   *            -[[CODE_WRONG_ASSENZA_DAYS]] (0) if the days between the given day are > of [[GIORNI_FERIE_ANNUI]](35 per ora)
-   *            -[[CODE_NOT_SAME_YEAR]](-1) if the dates given in input are not of the same year.
-   *            -[[CODE_START_AFTER_END]](-2) if the start date is after the end date.
-   *            -[[CODE_TOO_MUCH_DAYS]](-3) if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
+   *         Future of Int that represent status of operation, returning the id of the assenza inserted or an error code:
+   *            [[utils.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   *            [[utils.StatusCodes.ERROR_CODE2]]  if the days between the given day are > of [[GIORNI_FERIE_ANNUI]]
+   *            [[utils.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   *            [[utils.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   *            [[utils.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
+   *
    */
-  override def insert(element: Assenza): Future[Option[Int]] = element match {
-    case Assenza(_,start,end,false,_) if computeDaysBetweenDates(start,end) > GIORNI_FERIE_ANNUI => Future.successful(Some(CODE_WRONG_ASSENZA_DAYS))
-    case Assenza(_,start,end,false,_) if notSameYear(start,end) => Future.successful(Some(CODE_NOT_SAME_YEAR))
-    case Assenza(_,start,end,false,_) if start.compareTo(end) >= 0 => Future.successful(Some(CODE_START_AFTER_END))
+override def insert(element: Assenza): Future[Option[Int]] ={
+  for{
+    absence <-InstanceAssenza.operation().selectFilter(f => f.dataInizio <= element.dataFine && f.dataFine >= element.dataInizio && f.personaId === element.personaId)
+    result <- if (absence.isDefined) Future.successful(Some(StatusCodes.ERROR_CODE1)) else for(x <- insertPriv(element)) yield x
+  }yield result
+}
+
+  private def insertPriv(element: Assenza): Future[Option[Int]] = element match {
+    case Assenza(_,start,end,false,_) if computeDaysBetweenDates(start,end) > GIORNI_FERIE_ANNUI => Future.successful(Some(StatusCodes.ERROR_CODE2))
+    case Assenza(_,start,end,false,_) if notSameYear(start,end) => Future.successful(Some(StatusCodes.ERROR_CODE3))
+    case Assenza(_,start,end,false,_) if start.compareTo(end) >= 0 => Future.successful(Some(StatusCodes.ERROR_CODE4))
     case Assenza(id,start,end,false,_) => tryInsert(Assenza(id,start,end,malattia = false))
     case _ => super.insert(element)
   }
@@ -99,7 +93,7 @@ object AssenzaOperation extends AssenzaOperation{
     InstanceAssenza.operation()
       .selectFilter(filter => filter.personaId === assenza.personaId)
       .map(_.map(_.foldLeft(0)(d))).map(days => days.exists(_ + computeDaysBetweenDates(assenza.dataInizio,assenza.dataFine) > GIORNI_FERIE_ANNUI))
-      .flatMap(outOfDays =>if(outOfDays) Future.successful(Option(CODE_TOO_MUCH_DAYS)) else super.insert(assenza))
+      .flatMap(outOfDays =>if(outOfDays) Future.successful(Option(StatusCodes.ERROR_CODE5)) else super.insert(assenza))
   }
 
   /**
