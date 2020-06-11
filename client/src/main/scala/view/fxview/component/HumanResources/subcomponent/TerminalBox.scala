@@ -3,13 +3,12 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
 import caseclass.CaseClassDB.{Terminale, Zona}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, ComboBox, TableView, TextField}
-import regularexpressionutilities.ZonaChecker
-import view.fxview.component.HumanResources.subcomponent.parent.{TerminalParent, ZonaParent}
-import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TerminalTable}
+import javafx.scene.control.{Button, ComboBox, TableView, TextField}
+import regularexpressionutilities.NameChecker
+import view.fxview.component.HumanResources.subcomponent.parent.TerminalParent
+import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TerminalTable, TextFieldControl}
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
@@ -25,12 +24,21 @@ trait TerminalBox extends Component[TerminalParent] {
 /**
  * @author Francesco Cassano
  *
- *  roba
+ *  Companion object of [[view.fxview.component.HumanResources.subcomponent.TerminalBox]]
+ *
  */
 object TerminalBox {
 
   def apply(zoneList: List[Zona], terminalList: List[Terminale]): TerminalBox = new TerminalBoxFX(zoneList, terminalList)
 
+  /**
+   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.TerminalBox]]
+   *
+   * @param zoneList
+   *                 List of reference [[caseclass.CaseClassDB.Zona]]  of the terminals
+   * @param terminalList
+   *                     List of [[caseclass.CaseClassDB.Terminale]] to manage
+   */
   private class TerminalBoxFX(zoneList: List[Zona], terminalList: List[Terminale])
     extends AbstractComponent[TerminalParent]("humanresources/subcomponent/TerminalBox") with TerminalBox {
 
@@ -71,8 +79,7 @@ object TerminalBox {
 
     private def initializeTextField(): Unit =
       newName.textProperty().addListener((_, old, word) => {
-        if (!word.isEmpty && !ZonaChecker.checkRegex.matches(s"${word.last}"))
-          newName.setText(old)
+        TextFieldControl.controlNewChar(newName, NameChecker, word, old)
         ableToSave()
       })
 
@@ -86,7 +93,7 @@ object TerminalBox {
       CreateTable.createColumns[TerminalTable](terminalTable, fieldsList)
       CreateTable.fillTable[TerminalTable](terminalTable, terminalList)
       CreateTable.clickListener[TerminalTable](terminalTable,
-        terminal => println(terminal.name.get(), terminal.id.get().toInt)
+        terminal  => parent.openTerminalModal(terminal.id.get().toInt)
       )
     }
 

@@ -11,17 +11,29 @@ import view.fxview.component.HumanResources.subcomponent.parent.IllBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTable}
 import view.fxview.component.{AbstractComponent, Component}
 
-
-//metodi controller -> view
+/**
+ * @author Fabian Aspee Encina
+ *
+ * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
+ * of [[view.fxview.component.HumanResources.subcomponent.parent.IllBoxParent]]
+ */
 trait IllBox extends Component[IllBoxParent]{
 
 }
 
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.IllBox]]
+ */
 object IllBox{
 
-  //button che chiama openModal setOnAction
   def apply(persona:List[Persona]): IllBox = new IllBoxFX(persona)
 
+  /**
+   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.IllBox]]
+   *
+   * @param employees
+   *                  List of [[caseclass.CaseClassDB.Persona]] to whom to assign period of illness
+   */
   private class IllBoxFX(employees: List[Persona]) extends AbstractComponent[IllBoxParent]("humanresources/subcomponent/AbsenceBox") with IllBox {
 
     @FXML

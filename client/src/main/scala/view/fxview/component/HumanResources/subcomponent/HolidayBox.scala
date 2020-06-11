@@ -10,18 +10,31 @@ import view.fxview.component.HumanResources.subcomponent.parent.HolidayBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, FerieTable}
 import view.fxview.component.{AbstractComponent, Component}
 
-
-//metodi controller -> view
+/**
+ * @author Fabian Aspee Encina
+ *
+ * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
+ * of [[view.fxview.component.HumanResources.subcomponent.parent.HolidayBoxParent]]
+ */
 trait HolidayBox extends Component[HolidayBoxParent]{
 
 }
 
-object HolidayBox{
+/**
+ * Companion object of [[view.fxview.component.HumanResources.subcomponent.HolidayBox]]
+ */
+object HolidayBox {
 
-  //button che chiama openModal setOnAction
   def apply(persona:List[Ferie]): HolidayBox = new HolidayBoxFX(persona)
 
-  private class HolidayBoxFX(employees: List[Ferie]) extends AbstractComponent[HolidayBoxParent]("humanresources/subcomponent/AbsenceBox") with HolidayBox {
+  /**
+   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.HolidayBox]]
+   *
+   * @param employees
+   *                  List of [[caseclass.CaseClassDB.Persona]] to whom to assign holiday period
+   */
+  private class HolidayBoxFX(employees: List[Ferie])
+    extends AbstractComponent[HolidayBoxParent]("humanresources/subcomponent/AbsenceBox") with HolidayBox {
 
     @FXML
     var employeeTable: TableView[FerieTable] = _

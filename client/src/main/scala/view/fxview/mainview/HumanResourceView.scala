@@ -14,7 +14,7 @@ import view.fxview.component.Component
 import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.parent._
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.fxview.component.HumanResources.subcomponent.{ModalAbsence, ModalZone}
+import view.fxview.component.HumanResources.subcomponent.{ModalAbsence, ModalTerminal, ModalZone}
 import view.fxview.component.modal.{Modal, ModalParent}
  
 
@@ -74,9 +74,21 @@ trait HumanResourceView extends DialogView {
 
   /**
    *
+   * @param zoneList
+   * @param terminal
+   */
+  def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit
+
+  /**
+   *
    * @param message
    */
   def result(message:String):Unit
+
+  /**
+   *
+   * @param message
+   */
   def message(message: String): Unit
 }
 
@@ -140,9 +152,12 @@ object HumanResourceView {
       //myController.delete
     }
 
-    override def updateZona(zona: Zona): Unit =
+    override def updateZona(zona: Zona): Unit = {
       println(zona + "-> modifica" )
-      //myController.update
+      modalResource.showMessage("modificato")
+    }
+
+    //myController.update
 
     /////////////////////////////////////////////////////////   assenza
     override def saveAbsence(assenza: Assenza): Unit =
@@ -152,11 +167,15 @@ object HumanResourceView {
     override def newTerminale(terminal: Terminale): Unit =
       myController.saveTerminal(terminal)
 
-    override def deleteTerminal(terminal: Terminale): Unit =
+    override def deleteTerminal(terminal: Terminale): Unit = {
       myController.deleteTerminal(terminal)
+      modalResource.showMessage("cancellato")
+    }
 
-    override def updateTerminal(terminal: Terminale): Unit =
+    override def updateTerminal(terminal: Terminale): Unit = {
       myController.updateTerminal(terminal)
+      modalResource.showMessage("modificato")
+    }
 
     /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
@@ -173,6 +192,9 @@ object HumanResourceView {
 
     override def drawHoliday(): Unit =
       myController.getAllPersona()
+
+    override def openTerminalModal(terminal: Int): Unit =
+      myController.terminalModalData(terminal)
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
@@ -213,7 +235,10 @@ object HumanResourceView {
       modalResource.show()
     }
 
-
+    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
+      modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
+      modalResource.show()
+    }
 
     ////////////////////////////////////////////////////////////// esito modal
 

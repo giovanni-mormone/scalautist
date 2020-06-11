@@ -139,6 +139,12 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *
    */
   def getTerminalData(): Unit
+
+  /**
+   *
+   * @param terminalId
+   */
+  def terminalModalData(terminalId: Int): Unit
 }
 
 /**
@@ -286,6 +292,18 @@ object HumanResourceController {
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 
+    override def terminalModalData(terminalId: Int): Unit = {
+      /*val future: Future[(List[Zona], Terminale)] = for{
+        zones <- getZone
+        terminal <- model.getTerminal(terminalId)
+      } yield (zones.payload.head, terminal.payload.head)
+      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))*/
+      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
+        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
+      .filter(terminal => terminal.idTerminale.head == terminalId).head
+      myView.openTerminalModal(zone, terminale)
+    }
 
   }
 }

@@ -4,13 +4,13 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
+import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.HumanResources.subcomponent._
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.fxview.component.HumanResources.subcomponent._
 import view.fxview.component.{AbstractComponent, Component}
 
 
