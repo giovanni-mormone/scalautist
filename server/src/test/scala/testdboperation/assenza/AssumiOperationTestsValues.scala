@@ -1,9 +1,9 @@
-package testdboperation.persona
+package testdboperation.assenza
 
 import java.sql.Date
 
 import caseclass.CaseClassDB.{Disponibilita, Persona, StoricoContratto}
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
+import caseclass.CaseClassHttpMessage.Assumi
 import testdboperation.persona.LoginAndCrudValues.persona
 
 object AssumiOperationTestsValues {
