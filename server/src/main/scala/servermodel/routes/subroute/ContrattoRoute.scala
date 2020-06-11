@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.Contratto
 import caseclass.CaseClassHttpMessage.{ Request, Response}
 import jsonmessages.JsonFormats._
-import utils.{StatusCodes=>statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 import scala.util.Success
 import dbfactory.operation.ContrattoOperation
 import servermodel.routes.exception.RouteException

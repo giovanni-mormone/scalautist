@@ -4,12 +4,10 @@ import caseclass.CaseClassDB.StoricoContratto
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceStoricoContratto
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
-import promise.PromiseFactory
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Future
 
 /**
  * @author Giovanni Mormone

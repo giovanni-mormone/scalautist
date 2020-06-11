@@ -3,12 +3,10 @@ package dbfactory.operation
 import caseclass.CaseClassDB.Disponibilita
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceDisponibilita
 import dbfactory.implicitOperation.OperationCrud
-import promise.PromiseFactory
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 /**
  * @author Giovanni Mormone

@@ -11,7 +11,7 @@ import dbfactory.operation.ZonaOperation
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
-import utils.{StatusCodes=>statusCodes}
+import messagecodes.{StatusCodes=>statusCodes}
 
 object ZonaRoute {
   private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
