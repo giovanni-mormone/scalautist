@@ -10,7 +10,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import model.entity.{HumanResourceModel, PersonaModel}
 import utils.ClientAkkaHttp
-
+import utils.{StatusCodes=>statusCodes}
 import scala.concurrent.Future
 
 class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
@@ -33,7 +33,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   behavior of "contract"
   it should "return login with credential of a person" in {
     val futureRecruit:Future[Response[Login]]=terminale.recruit(insertPersona)
-    futureRecruit map { recruit => assert(recruit.payload.isDefined)}
+    futureRecruit map { recruit =>print(recruit); assert(recruit.payload.isDefined)}
   }
   it should "return  a person" in {
     val futureSecondLogin: Future[Response[Persona]] = persona.login("admin","admin")
@@ -45,7 +45,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return ok when delete person" in {
     val futureDelete:Future[Response[Int]]=terminale.fires(6)
-    futureDelete map { recruit => assert(recruit.statusCode==StatusCodes.OK.intValue)}
+    futureDelete map { recruit => assert(recruit.statusCode==statusCodes.SUCCES_CODE)}
 
   }
   it should "return list of terminal lenght 2" in {

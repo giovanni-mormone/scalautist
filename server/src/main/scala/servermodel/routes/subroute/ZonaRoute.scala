@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Zona
-import caseclass.CaseClassHttpMessage.{Id, Request, Response}
+import caseclass.CaseClassHttpMessage.{Request, Response}
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.ZonaOperation
@@ -14,10 +14,11 @@ import scala.util.Success
 import utils.{StatusCodes=>statusCodes}
 
 object ZonaRoute {
+  private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
   def getAllZona: Route =
     post {
       onComplete(ZonaOperation.selectAll) {
-        case Success(Some(zone)) =>  complete(Response(StatusCodes.Found.intValue,Some(zone)))
+        case Success(Some(zone)) =>  complete(Response(statusCodes.SUCCES_CODE,Some(zone)))
         case t => anotherSuccessAndFailure(t)
       }
     }
@@ -26,10 +27,10 @@ object ZonaRoute {
     post {
       entity(as[Request[Zona]]) {
         case Request(Some(zona))=> onComplete(ZonaOperation.insert(zona)) {
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(Zona(zona.zones,Some(id)))))
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(Zona(zona.zones,Some(id)))))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
@@ -37,10 +38,10 @@ object ZonaRoute {
     post {
       entity(as[Request[List[Zona]]]) {
         case Request(Some(zona))=>onComplete(ZonaOperation.insertAll(zona)) {
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
@@ -48,10 +49,10 @@ object ZonaRoute {
     post {
       entity(as[Request[Int]]) {
         case Request(Some(id))=> onComplete(ZonaOperation.delete(id)) {
-          case Success(Some(statusCodes.SUCCES_CODE)) =>  complete(Response(StatusCodes.OK.intValue,Some(statusCodes.SUCCES_CODE)))
+          case Success(Some(statusCodes.SUCCES_CODE)) =>  complete(Response[Int](statusCodes.SUCCES_CODE))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
@@ -59,10 +60,10 @@ object ZonaRoute {
     post {
       entity(as[Request[List[Int]]]) {
         case Request(Some(id))=> onComplete(ZonaOperation.deleteAll(id)) {
-          case Success(Some(result)) =>  complete(Response(StatusCodes.OK.intValue,Some(result)))
+          case Success(Some(result)) =>  complete(Response(statusCodes.SUCCES_CODE,Some(result)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 
@@ -70,11 +71,11 @@ object ZonaRoute {
     post {
       entity(as[Request[Zona]]) {
         case Request(Some(zona))=>onComplete(ZonaOperation.update(zona)) {
-          case Success(None) =>complete(Response(StatusCodes.OK.intValue,Some(statusCodes.SUCCES_CODE)))
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
+          case Success(None) =>complete(Response[Int](statusCodes.SUCCES_CODE))
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(id)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 }

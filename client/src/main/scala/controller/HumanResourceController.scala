@@ -216,10 +216,10 @@ object HumanResourceController {
       val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
         Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
       val contratti = List(
-        Contratto("Full-Time-5x2", turnoFisso = true, 1),
-        Contratto("Part-Time-5x2", turnoFisso = true, 2),
-        Contratto("Part-Time-6x1", turnoFisso = false,3),
-        Contratto("Full-Time-6x1", turnoFisso = true, 4)
+        Contratto("Full-Time-5x2", turnoFisso = true, partTime = true, 1),
+        Contratto("Part-Time-5x2", turnoFisso = true,partTime = true, 2),
+        Contratto("Part-Time-6x1", turnoFisso = false,partTime = false,3),
+        Contratto("Full-Time-6x1", turnoFisso = true, partTime = false,4)
       )
       val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       myView.drawRecruit(zone, contratti, turni)

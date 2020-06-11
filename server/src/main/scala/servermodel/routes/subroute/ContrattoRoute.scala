@@ -13,15 +13,15 @@ import servermodel.routes.exception.RouteException
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 object ContrattoRoute {
-
+  private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST,None)
   def getContratto: Route =
     post {
       entity(as[Request[Int]]){
         case Request(Some(id))=> onComplete(ContrattoOperation.select(id)) {
-          case Success(Some(contract)) =>    complete(Response(StatusCodes.Found.intValue,Some(contract)))
+          case Success(Some(contract)) =>    complete(Response(statusCodes.SUCCES_CODE,Some(contract)))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
 
     }
@@ -29,7 +29,7 @@ object ContrattoRoute {
   def getAllContratto: Route =
     post {
       onComplete(ContrattoOperation.selectAll) {
-        case Success(Some(contracts)) =>  complete(Response(StatusCodes.Found.intValue,Some(contracts)))
+        case Success(Some(contracts)) =>  complete(Response(statusCodes.SUCCES_CODE,Some(contracts)))
         case t => anotherSuccessAndFailure(t)
       }
     }
@@ -38,22 +38,23 @@ object ContrattoRoute {
     post {
       entity(as[Request[Contratto]]) {
         case Request(Some(contratto))=>onComplete(ContrattoOperation.insert(contratto)) {
-          case Success(Some(id)) =>  complete(Response(StatusCodes.Created.intValue,Some(Contratto(contratto.tipoContratto,contratto.turnoFisso,contratto.ruolo,Some(id)))))
+          case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,
+            Some(Contratto(contratto.tipoContratto,contratto.turnoFisso,contratto.partTime,contratto.ruolo,Some(id)))))
           case t => anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
   def updateContratto(): Route =
     post {
       entity(as[Request[Contratto]]) {
         case Request(Some(contratto)) => onComplete(ContrattoOperation.update(contratto)) {
-          case Success(None) =>  complete(Response(StatusCodes.OK.intValue,Some(statusCodes.SUCCES_CODE)))
+          case Success(None) =>  complete(Response[Int](statusCodes.SUCCES_CODE,None))
           case Success(Some(id)) if id>0 =>  complete(Response(StatusCodes.Created.intValue,Some(id)))
           case t => anotherSuccessAndFailure(t)
 
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 }

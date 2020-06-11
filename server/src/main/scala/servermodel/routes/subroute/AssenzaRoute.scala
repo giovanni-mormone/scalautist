@@ -8,18 +8,20 @@ import caseclass.CaseClassHttpMessage.{Request, Response}
 import dbfactory.operation.AssenzaOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
-import utils.{StatusCodes=>statusCodes}
+import utils.{StatusCodes => statusCodes}
+
 import scala.util.Success
 
 object AssenzaRoute {
+  private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
   def addAbsence(): Route =
     post {
       entity(as[Request[Assenza]]){
         case Request(Some(value)) => onComplete(AssenzaOperation.insert(value)){
-          case Success(Some(id)) if id!=0 && id>0=> complete(Response(StatusCodes.Created.intValue, Some(id)))
+          case Success(Some(id)) if id!=0 && id>0=> complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(id)))
           case t =>anotherSuccessAndFailure(t)
         }
-        case _ => complete(Response(StatusCodes.BadRequest.intValue, Some(statusCodes.BAD_REQUEST)))
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
       }
     }
 }

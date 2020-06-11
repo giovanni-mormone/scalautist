@@ -17,8 +17,8 @@ object TestHttpContratto{
   private def startServer():Unit=MainServer
   private val getContratto: (String,Request[Int]) = ("/getcontratto",Request(Some(1)))
   private val getAllContratto: String = "/getallcontratto"
-  private val createContratto: (String,Request[Contratto]) = ("/createcontratto",Request(Some(Contratto("Fisso",turnoFisso = true,1))))
-  private val updateContratto: (String,Request[Contratto]) = ("/updatecontratto",Request(Some(Contratto("Rottatorio",turnoFisso = false,1,Some(1)))))
+  private val createContratto: (String,Request[Contratto]) = ("/createcontratto",Request(Some(Contratto("Fisso",turnoFisso = true,partTime = false,1))))
+  private val updateContratto: (String,Request[Contratto]) = ("/updatecontratto",Request(Some(Contratto("Rottatorio",turnoFisso = false,partTime = true,1,Some(1)))))
 }
 
 class TestHttpContratto extends AnyWordSpec with ScalatestRouteTest with StartServer{

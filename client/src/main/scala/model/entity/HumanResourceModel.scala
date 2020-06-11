@@ -11,6 +11,7 @@ import jsonmessages.JsonFormats._
 import model.AbstractModel
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Fabian Aspee Encina
@@ -150,12 +151,20 @@ object HumanResourceModel {
 
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), Request(Some(assumi)))
+      ok(request)
       callServer(request)
     }
 
     override def passwordRecovery(idUser: Request[Int]): Future[Response[Login]] = {
       val request = Post(getURI("recoverypassword"),Request(Some(idUser)))
       callServer(request)
+    }
+    private def ok(request: HttpRequest)  = {
+
+      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]]).onComplete {
+        case Failure(exception) => println(exception)
+      case Success(value) =>println(value)
+      }
     }
 
     private def callServer(request: HttpRequest):Future[Response[Login]] =
@@ -182,7 +191,7 @@ object HumanResourceModel {
     }
 
     private def callRequest(request:HttpRequest):Future[Response[Int]] =
-      callHtpp(request).flatMap( isNotCaseId orElse isCaseId)
+      callHtpp(request).flatMap(unMarshall)
 
     override def getTerminalByZone(id: Request[Int]): Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getterminalebyzona"), id)

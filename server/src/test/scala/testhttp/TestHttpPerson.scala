@@ -5,8 +5,8 @@ import java.sql.Date
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
-import caseclass.CaseClassDB.{Assenza, Login, Persona, Stipendio}
-import caseclass.CaseClassHttpMessage.{Dates, Request, Response}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Login, Persona, Stipendio, StoricoContratto}
+import caseclass.CaseClassHttpMessage.{Assumi, Dates, Request, Response}
 import jsonmessages.JsonFormats._
 import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
@@ -29,6 +29,12 @@ object TestHttpPerson{
   private val loginNotFound: (String,Request[Login]) = ("/loginpersona",Request(Some(Login("","admin"))))
   private val badLogin: (String,Request[Login]) = ("/loginpersona",Request(Some(Login("admin2","admin"))))
   private val badRequestLogin: (String,Request[Login]) = ("/loginpersona",Request(None))
+
+  private val daAssumere:Persona = Persona("JuanitoS","PerezS","569918598",Some(""),3,isNew = true,"")
+  private val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(1),Some(2))
+  private val disp:Disponibilita = Disponibilita("Lunes","Sabato")
+  private val insertPersona = Assumi(daAssumere,contratto,Some(disp))
+  private val hirePerson: (String,Request[Assumi]) = ("/hireperson",Request(Some(insertPersona)))
 }
 
 class TestHttpPerson extends AnyWordSpec with ScalatestRouteTest with StartServer{
@@ -36,6 +42,11 @@ class TestHttpPerson extends AnyWordSpec with ScalatestRouteTest with StartServe
   implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(5).second)
   startServer()
   "The service" should {
+    "return login with credential of a person" in {
+      Post(hirePerson._1,hirePerson._2) ~> routePersona ~> check {
+        responseAs[Response[Login]].payload.isDefined
+      }
+    }
     "return a person for Post requests to the root path" in {
       Post(getPersona._1,getPersona._2) ~> routePersona ~> check {
         responseAs[Response[Persona]].statusCode==StatusCodes.OK.intValue

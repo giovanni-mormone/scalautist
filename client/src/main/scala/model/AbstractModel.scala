@@ -35,31 +35,16 @@ abstract class AbstractModel extends Model{
   //=================================ATTENZIONEE==========================================================||
 
 
+  def unMarshall(v1: Option[HttpResponse]): Future[Response[Int]] = Unmarshal(v1).to[Response[Int]]
 
-  protected val isNotCaseId: PartialFunction[Option[HttpResponse], Future[Response[Int]]] = new PartialFunction[Option[HttpResponse], Future[Response[Int]] ] {
-    override def isDefinedAt(x: Option[HttpResponse]): Boolean = x.head.status!=StatusCodes.BadRequest
-
-    override def apply(v1: Option[HttpResponse]): Future[Response[Int]] = Unmarshal(v1).to[Response[Int]]
-  }
-
-  protected val isCaseId: PartialFunction[Option[HttpResponse], Future[Response[Int]]] = new PartialFunction[Option[HttpResponse], Future[Response[Int]] ] {
-    override def isDefinedAt(x: Option[HttpResponse]): Boolean = x.head.status==StatusCodes.BadRequest
-
-    override def apply(v1: Option[HttpResponse]): Future[Response[Int]] =Future.successful(v1.map(response=>Response[Int](response.status.intValue(),None)).head)
-  }
 
   private val found: PartialFunction[HttpResponse, Option[HttpResponse]] = new PartialFunction[HttpResponse, Option[HttpResponse]] {
-    override def isDefinedAt(x: HttpResponse): Boolean = x.status!=StatusCodes.NotFound
-    override def apply(v1: HttpResponse): Option[HttpResponse] = Some(v1)
-  }
-
-  private val notFound: PartialFunction[HttpResponse, Option[HttpResponse]] = new PartialFunction[HttpResponse, Option[HttpResponse]] {
-    override def isDefinedAt(x: HttpResponse): Boolean = x.status==StatusCodes.NotFound || x.status==StatusCodes.BadRequest
-    override def apply(v1: HttpResponse): Option[HttpResponse] = None
+    override def isDefinedAt(x: HttpResponse): Boolean = x.status==StatusCodes.OK || x.status==StatusCodes.Created || x.status==StatusCodes.NotFound || x.status==StatusCodes.BadRequest
+    override def apply(response: HttpResponse): Option[HttpResponse] = Some(response)
   }
 
   def callHtpp(request: HttpRequest):Future[Option[HttpResponse]] =
-    doHttp(request).collect{notFound orElse found}
+    doHttp(request).collect(found)
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)
 
