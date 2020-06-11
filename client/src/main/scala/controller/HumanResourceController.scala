@@ -1,8 +1,8 @@
 package controller
 
 
-import caseclass.CaseClassDB.{Assenza, Contratto, Persona, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Id, Response}
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import model.entity.HumanResourceModel
 import model.utilsmodel.ModelUtils.id
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
@@ -252,18 +252,18 @@ object HumanResourceController {
       myView.drawTerminaleView(zone, terminale)
     }
 
-    override def saveZona(zone: Zona): Unit = {
+    override def saveZona(zone: Zona): Unit =
        model.setZona(zone).onComplete(_ => getZonaData())
-       println(zone)
-    }
+       //println(zone)
+
 
     override def updateZona(zone: Zona): Unit =
-      //model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
-      println(zone + "-> update")
+      model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      //println(zone + "-> update")
 
     override def deleteZona(zone: Zona): Unit =
-      //model.deleteZona(zone).onComplete(_ => myView.showMessage("Completato"))
-      println(zone + "-> delete")
+      model.deleteZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      //println(zone + "-> delete")
 
     override def saveTerminal(terminal: Terminale): Unit = {
       //model.newTerminale(terminale).onComplete(_ => getTerminalData())
@@ -271,12 +271,12 @@ object HumanResourceController {
     }
 
     override def updateTerminal(terminal: Terminale): Unit =
-      //model.updateTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
-      println(terminal + "-> update")
+      model.updateTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
+      //println(terminal + "-> update")
 
     override def deleteTerminal(terminal: Terminale): Unit =
-      //model.deleteTerminal(terminal).onComplete(_ => myView.showMessage("Completato"))
-      println(terminal + "-> delete")
+      model.deleteTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
+      //println(terminal + "-> delete")
       
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia)
@@ -293,16 +293,16 @@ object HumanResourceController {
     }
 
     override def terminalModalData(terminalId: Int): Unit = {
-      /*val future: Future[(List[Zona], Terminale)] = for{
+      val future: Future[(List[Zona], Terminale)] = for{
         zones <- getZone
-        terminal <- model.getTerminal(terminalId)
+        terminal <- model.getTerminale(terminalId)
       } yield (zones.payload.head, terminal.payload.head)
-      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))*/
-      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
+      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))
+      /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
         Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
       .filter(terminal => terminal.idTerminale.head == terminalId).head
-      myView.openTerminalModal(zone, terminale)
+      myView.openTerminalModal(zone, terminale)*/
     }
 
   }

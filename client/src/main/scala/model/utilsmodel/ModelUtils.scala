@@ -8,4 +8,5 @@ import caseclass.CaseClassHttpMessage.{Id, Request}
  */
 object ModelUtils {
   implicit def id(id:Int):Request[Int] = Request(Some(id))
+
 }
