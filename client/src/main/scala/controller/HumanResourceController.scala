@@ -164,7 +164,7 @@ object HumanResourceController {
   private class HumanResourceControllerImpl extends HumanResourceController {
 
     override def recruit(persona: Assumi): Unit =
-      model.recruit(persona)
+      model.recruit(persona).onComplete(_ => getRecruitData())
       //println(persona)
 
     override def fires(ids: Set[Int]): Unit = {
@@ -204,11 +204,14 @@ object HumanResourceController {
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
 
-    def getZone: Future[Response[List[Zona]]] = model.getAllZone
+    private def getZone: Future[Response[List[Zona]]] =
+      model.getAllZone
 
-    def getTurni: Future[Response[List[Turno]]] = model.getAllShift
+    private def getTurni: Future[Response[List[Turno]]] =
+      model.getAllShift
 
-    def getContratti: Future[Response[List[Contratto]]] = model.getAllContract
+    private def getContratti: Future[Response[List[Contratto]]] =
+      model.getAllContract
 
     override def getRecruitData(): Unit = {
       val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
@@ -259,19 +262,19 @@ object HumanResourceController {
        model.setZona(zone).onComplete(_ => getZonaData())
 
     override def updateZona(zone: Zona): Unit =
-      model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
+      model.updateZona(zone).onComplete(_ => myView.result("Completato"))
 
     override def deleteZona(zone: Zona): Unit =
-      model.deleteZona(zone.idZone.head).onComplete(_ => myView.showMessage("Completato"))
+      model.deleteZona(zone.idZone.head).onComplete(_ => myView.result("Completato"))
 
     override def saveTerminal(terminal: Terminale): Unit =
       model.createTerminale(terminal).onComplete(_ => getTerminalData())
 
     override def updateTerminal(terminal: Terminale): Unit =
-      model.updateTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
+      model.updateTerminale(terminal).onComplete(_ => myView.result("Completato"))
 
     override def deleteTerminal(terminal: Terminale): Unit =
-      model.deleteTerminale(terminal.idTerminale.head).onComplete(_ => myView.showMessage("Completato"))
+      model.deleteTerminale(terminal.idTerminale.head).onComplete(_ => myView.result("Completato"))
 
     override def saveAbsence(absence: Assenza): Unit = {
        if(absence.malattia)

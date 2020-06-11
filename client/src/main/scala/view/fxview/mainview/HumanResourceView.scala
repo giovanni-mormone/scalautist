@@ -124,12 +124,17 @@ object HumanResourceView {
       super.initialize(location, resources)
       myController = HumanResourceController()
       myController.setView(this)
-      hrHome = HRHome()
-      hrHome.setParent(this)
-      pane.getChildren.add(hrHome.pane)
+      homeView()
     }
 
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
+
+    private def homeView(): Unit = {
+      hrHome = HRHome()
+      hrHome.setParent(this)
+      pane.getChildren.clear()
+      pane.getChildren.add(hrHome.pane)
+    }
 
     /////////////////////////////////////////////////////////   assumi
     override def recruitClicked(persona: Assumi): Unit =
@@ -146,18 +151,11 @@ object HumanResourceView {
     override def newZona(zona: Zona): Unit =
       myController.saveZona(zona)
 
-    override def deleteZona(zona: Zona): Unit = {
-      println(zona + "-> cancella" )
-      modalResource.showMessage("cancellato")
-      //myController.delete
-    }
+    override def deleteZona(zona: Zona): Unit =
+      myController.deleteZona(zona)
 
-    override def updateZona(zona: Zona): Unit = {
-      println(zona + "-> modifica" )
-      modalResource.showMessage("modificato")
-    }
-
-    //myController.update
+    override def updateZona(zona: Zona): Unit =
+      myController.updateZona(zona)
 
     /////////////////////////////////////////////////////////   assenza
     override def saveAbsence(assenza: Assenza): Unit =
@@ -167,15 +165,12 @@ object HumanResourceView {
     override def newTerminale(terminal: Terminale): Unit =
       myController.saveTerminal(terminal)
 
-    override def deleteTerminal(terminal: Terminale): Unit = {
+    override def deleteTerminal(terminal: Terminale): Unit =
       myController.deleteTerminal(terminal)
-      modalResource.showMessage("cancellato")
-    }
 
-    override def updateTerminal(terminal: Terminale): Unit = {
+
+    override def updateTerminal(terminal: Terminale): Unit =
       myController.updateTerminal(terminal)
-      modalResource.showMessage("modificato")
-    }
 
     /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
@@ -225,26 +220,30 @@ object HumanResourceView {
 
     /////////////////////////////////////////////////////////   disegni modal
 
-    override def openModal(item:Ferie, isMalattia: Boolean): Unit =
+    override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
+      homeView()
       Platform.runLater(() => {
         modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
         modalResource.show()
       })
+    }
 
-    override def openZonaModal(zona: Zona): Unit =
+    override def openZonaModal(zona: Zona): Unit = {
+      homeView()
       Platform.runLater(() => {
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
         modalResource.show()
       })
+    }
 
 
-    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit =
+    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
+      homeView()
       Platform.runLater(() => {
         modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
         modalResource.show()
       })
-
-
+    }
 
     ////////////////////////////////////////////////////////////// esito modal
 
