@@ -9,7 +9,7 @@ import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.DialogView
-import view.fxview.AbstractFXDialogView
+import view.fxview.{AbstractFXDialogView, Popup}
 import view.fxview.component.Component
 import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.parent._
@@ -89,6 +89,12 @@ trait HumanResourceView extends DialogView {
    * @param message
    */
   def message(message: String): Unit
+
+  /**
+   *
+   * @param message
+   */
+  def dialog(message: String): Unit
 }
 
 /**
@@ -113,6 +119,7 @@ object HumanResourceView {
     private var myController: HumanResourceController = _
     private var modalResource: Modal = _
     private var hrHome: HRHome = _
+    private var popup: Popup = _
 
     /**
      * Closes the view.
@@ -251,6 +258,14 @@ object HumanResourceView {
 
     override def result(message: String): Unit =
       Platform.runLater(() => modalResource.showMessage(message))
+
+    override def dialog(message: String): Unit = {
+      Platform.runLater(() => {
+        popup = new Popup(myStage)
+        popup.showMessage(message)
+      })
+    }
+
 
   }
 }

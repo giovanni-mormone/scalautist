@@ -2,6 +2,7 @@ package controller
 
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
+import messagecodes.StatusCodes
 import model.entity.HumanResourceModel
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.mainview.HumanResourceView
@@ -163,17 +164,32 @@ object HumanResourceController {
   private class HumanResourceControllerImpl extends HumanResourceController {
 
     override def recruit(persona: Assumi): Unit =
-      model.recruit(persona).onComplete(_ => getRecruitData())
-      //println(persona)
+      model.recruit(persona).onComplete {
+        case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+          val login: Login = result.payload.get
+          myView.dialog("new credential:\n user: " + login.user + "\n psw: " + login.password)
+          getRecruitData()
+        case Failure(_) => myView.dialog("error")
+        case _ => myView.message("errore sconosciuto")
+      }
 
     override def fires(ids: Set[Int]): Unit = {
-      /*println(ids)*/
-      if(ids.size > 1)
-        model.firesAll(ids)
-      else
-        model.fires(ids.head)
+      println(ids)
+      val future: Future[Response[Int]] =
+          if(ids.size > 1)
+            model.firesAll(ids)
+          else
+            model.fires(ids.head)
 
-      getAllPersona(EmployeeView.fire)
+      future.onComplete {
+        case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.dialog("operazione completata")
+          getAllPersona(EmployeeView.fire)
+        case Failure(_) =>
+          myView.dialog("ritenta!")
+          getAllPersona(EmployeeView.fire)
+        case _ => myView.dialog("errore sconosciuto")
+      }
     }
 
     override def getAllPersona(callingView: String): Unit = {
@@ -190,15 +206,31 @@ object HumanResourceController {
     override def getAllPersona(): Unit =
       //myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
       model.getHolidayByPerson.onComplete {
-        case Failure(exception) => myView.message("error")
+        case Failure(exception) => myView.dialog("error")
         case Success(value) => myView.drawHolidayView(value.payload.head)
       }
 
     override def illness(assenza: Assenza): Unit =
-      model.illnessPeriod(assenza)
+      model.illnessPeriod(assenza).onComplete {
+        case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.dialog("operazione completata")
+          getAllPersona(EmployeeView.ill)
+        case Failure(_) =>
+          myView.dialog("ritenta!")
+          getAllPersona(EmployeeView.ill)
+        case _ => myView.dialog("errore sconosciuto")
+      }
 
     override def holiday(assenza: Assenza): Unit =
-      model.holidays(assenza)
+      model.holidays(assenza).onComplete {
+        case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.dialog("operazione completata")
+          getAllPersona()
+        case Failure(_) =>
+          myView.dialog("ritenta!")
+          getAllPersona()
+        case _ => myView.dialog("errore sconosciuto")
+      }
 
     override def passwordRecovery(user: Int): Unit =
        model.passwordRecovery(user)
@@ -258,7 +290,15 @@ object HumanResourceController {
     }
 
     override def saveZona(zone: Zona): Unit =
-       model.setZona(zone).onComplete(_ => getZonaData())
+       model.setZona(zone).onComplete {
+         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+           myView.dialog("operazione completata")
+           getZonaData()
+         case Failure(_) =>
+           myView.dialog("ritenta!")
+           getZonaData()
+         case _ => myView.dialog("errore sconosciuto")
+       }
 
     override def updateZona(zone: Zona): Unit =
       model.updateZona(zone).onComplete(_ => myView.result("Completato"))
@@ -267,7 +307,15 @@ object HumanResourceController {
       model.deleteZona(zone.idZone.head).onComplete(_ => myView.result("Completato"))
 
     override def saveTerminal(terminal: Terminale): Unit =
-      model.createTerminale(terminal).onComplete(_ => getTerminalData())
+      model.createTerminale(terminal).onComplete {
+        case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.dialog("operazione completata")
+          getTerminalData()
+        case Failure(_) =>
+          myView.dialog("ritenta!")
+          getTerminalData()
+        case _ => myView.dialog("errore sconosciuto")
+      }
 
     override def updateTerminal(terminal: Terminale): Unit =
       model.updateTerminale(terminal).onComplete(_ => myView.result("Completato"))
@@ -283,7 +331,7 @@ object HumanResourceController {
     }
 
     private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
-      case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
+      case (Failure(_),true)  =>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
       case (Success(value),true)  =>myView.result("malattia asignada correctamente")
       case (Success(value),false)  =>myView.result("vacaciones asignada correctamente")
