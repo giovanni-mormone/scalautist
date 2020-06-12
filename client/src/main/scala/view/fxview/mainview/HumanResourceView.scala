@@ -281,6 +281,7 @@ object HumanResourceView {
 
     override def dialog(message: String): Unit = {
       Platform.runLater(() => {
+        homeView()
         popup = new Popup(myStage)
         popup.showMessage(message)
       })
