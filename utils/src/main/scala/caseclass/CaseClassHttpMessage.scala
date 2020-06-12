@@ -2,7 +2,7 @@ package caseclass
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Disponibilita, Persona, StoricoContratto}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Persona, Presenza, Stipendio, StoricoContratto, Straordinario}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone
@@ -44,7 +44,7 @@ object CaseClassHttpMessage {
    * case class which enable send id and use post for receive
    * @param date date for request into rest api for obtain salary for a person an another operation
    */
-  case class Dates(date:Date)
+  final case class Dates(date:Date)
 
   /**
    * Case class which enable create a driver, Human resource or Manager operation in the system
@@ -56,7 +56,7 @@ object CaseClassHttpMessage {
    * @param disponibilita     Disponibilita is a case class that represent a instance of table into database that contains
    *                         all over time that driver make in the week, where week can be also saturday
    */
-  case class Assumi(persona:Persona,storicoContratto: StoricoContratto,disponibilita:Option[Disponibilita]=None)
+  final case class Assumi(persona:Persona,storicoContratto: StoricoContratto,disponibilita:Option[Disponibilita]=None)
 
   /**
    * case class that represent the day that one person to have of holiday
@@ -66,5 +66,19 @@ object CaseClassHttpMessage {
    * @param giorniVacanza
    *                      Remaining day of holidays for the person
    */
-  case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int=0)
+  final case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int=0)
+
+  /**
+   * case class that represent the informations of a person's Stipendio
+   *
+   * @param assenze
+   *                  The Optional List of all the Assenza for the relative Stipendio
+   * @param presenze
+   *                  The List of all the Presenza for the relative Stipendio
+   * @param straordinari
+   *                  The Optional List of all the Straordinari for the relative Stipendio
+   * @param stipendio
+   *                  The Stipendio
+   */
+  final case class StipendioInformations(assenze:Option[List[Assenza]] , presenze:List[Presenza], straordinari:Option[List[Straordinario]] = None, stipendio: Stipendio)
 }
