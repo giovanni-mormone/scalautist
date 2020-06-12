@@ -60,6 +60,7 @@ object ModalAbsence{
       button.setOnAction(_=>saveAbscence())
 
     }
+
     private def saveAbscence(): Unit ={
       parent.saveAbsence(Assenza(
                 item.idPersona,
@@ -72,9 +73,10 @@ object ModalAbsence{
     private def enableFinishDate(): Unit ={
       var sickness: Int = 0
       var holiday: Int = 0
-      if(isMalattia) sickness = 3
+      if(isMalattia)
+        sickness = 3
       else
-        holiday = 30-item.giorniVacanza
+        holiday = item.giorniVacanza
       CreateDatePicker.createDataPicker(finishDate, MoveDatePeriod(), MoveDatePeriod(years = sickness, days = holiday), initDate.getValue)
       finishDate.setDisable(false)
     }
@@ -86,7 +88,6 @@ object ModalAbsence{
     private def enableButton(): Unit ={
       button.setDisable(false)
     }
-
 
   }
 }

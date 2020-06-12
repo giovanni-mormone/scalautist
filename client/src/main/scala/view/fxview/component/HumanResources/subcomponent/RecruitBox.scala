@@ -57,6 +57,8 @@ object RecruitBox {
   private class RecruitBoxImpl(contractList: List[Contratto], shiftList: List[Turno], zoneList: List[Zona])
     extends AbstractComponent[RecruitParent]("humanresources/subcomponent/RecruitBox") with RecruitBox {
 
+    case class ContractProperty(fix : Boolean = true, fulltime: Boolean = true, week5x2: Boolean = true)
+
     @FXML
     var name: TextField = _
     @FXML
@@ -87,8 +89,8 @@ object RecruitBox {
     private var terminalList = List[Terminale]()
     private val fixedString = "-Fisso"
     private val rotateString = "-Rotazione"
-    private var contractTypeFI5FU: (Boolean, Boolean, Boolean) = _   //fisso/rotazione, 5x2/6x1, fulltime/partime
     private val TEL_NUMBER: Int = 10
+    private var contractTypeFI5FU = ContractProperty()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       initializeComboBox()
@@ -169,7 +171,7 @@ object RecruitBox {
 
       shift1.setOnAction(_ => {
         val itemSelected: Int = getComboSelectedIndex(shift1)
-        if(contractTypeFI5FU._3)
+        if(contractTypeFI5FU.fulltime)
           if( itemSelected == shift1.getItems.size - 1)
             shift2.getSelectionModel.selectFirst()
           else
@@ -232,10 +234,10 @@ object RecruitBox {
             full = true
         }
 
-        contractTypeFI5FU = (fisso, settimana5x2, full)
+        contractTypeFI5FU = ContractProperty(fix = fisso, fulltime = full, week5x2 = settimana5x2)
 
-        fixedShift(contractTypeFI5FU._1)
-        if(contractTypeFI5FU._1)
+        fixedShift(contractTypeFI5FU.fix)
+        if(contractTypeFI5FU.fix)
           refillDays()
       }
     }
@@ -249,9 +251,9 @@ object RecruitBox {
 
     private def controlDriverFields(): Boolean = {
       var terminalChosen: Boolean = chosenSomething(terminals)
-      if(contractTypeFI5FU._1 && terminalChosen){
+      if(contractTypeFI5FU.fix && terminalChosen){
         terminalChosen = chosenSomething(shift1) && chosenSomething(day2) && chosenSomething(day1)
-        if(contractTypeFI5FU._3 && terminalChosen)
+        if(contractTypeFI5FU.fulltime && terminalChosen)
           terminalChosen = chosenSomething(shift2)
       }
       terminalChosen
@@ -292,11 +294,10 @@ object RecruitBox {
         val fixedShift: Boolean = contract.contains(fixedString)
         contractList.filter(contr => {
           contract.contains(contr.tipoContratto) && contr.turnoFisso == fixedShift
-        })
-          .head.idContratto.get
+        }).head.idContratto.get
       }
       else
-        0 //todo quando aggiungiamo gli altri contratti
+        contractList.filter(contr => contr.ruolo == getIdRuolo).head.idContratto.get
     }
 
     private def getIdTurno(search: Boolean, component: ComboBox[String]): Option[Int] = {
@@ -306,7 +307,7 @@ object RecruitBox {
     }
 
     def getDisponibilita: Option[Disponibilita] = {
-      if(isDriver && contractTypeFI5FU._1)
+      if(isDriver && contractTypeFI5FU.fix)
         Some(Disponibilita(getComboSelected(day1), getComboSelected(day2)))
       else
         None
@@ -331,7 +332,7 @@ object RecruitBox {
 
     private def refillDays(): Unit = {
       var baseDays  = List("Lun","Mar","Mer","Gio","Ven")
-      if(!contractTypeFI5FU._2)
+      if(!contractTypeFI5FU.week5x2)
         baseDays = baseDays.appended("Sab")
       refillComponent(day2, baseDays)
       refillComponent(day1, baseDays)
@@ -340,10 +341,11 @@ object RecruitBox {
     private def notDrive(value: Boolean): Unit = {
       contractTypes.setDisable(false)
       if(!value)
-        refillComponent(contractTypes, contractList.map(contract =>
-          contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)))
+        refillComponent(contractTypes, contractList.filter(contr => contr.ruolo == getIdRuolo).map(contract =>
+          contract.tipoContratto + (if(contract.turnoFisso) fixedString else rotateString)) )
       else {
-        refillComponent(contractTypes, List(getComboSelected(role)))
+        refillComponent(contractTypes, contractList.filter(contr => contr.ruolo == getIdRuolo)
+          .map(contract => contract.tipoContratto))
         contractTypes.getSelectionModel.selectFirst()
         shift1.setDisable(value)
         day1.setDisable(value)
