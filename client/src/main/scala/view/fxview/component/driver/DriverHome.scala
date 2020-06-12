@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Stipendio, Turno}
+import caseclass.CaseClassHttpMessage.StipendioInformations
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, Menu}
 import javafx.scene.input.MouseEvent

@@ -1,26 +1,48 @@
 package view.driverviewoperations
 
+import java.time.LocalDate
+
+import javafx.scene.control.DatePicker
 import view.baseconfiguration.BaseTest
 
 trait MalattieOperation{
-  def enterFirstDate(day: String): Unit
-  def enterSecondDate(day: String): Unit
-  def clickButton(): Unit
+  def enterFirstDate(day: LocalDate): Unit
+  def enterSecondDate(day: LocalDate): Unit
+  def clickButtonIllness(): Unit
   def clickModalButton(): Unit
   def clickTable():Unit
+  def clickButtonCloseError(): Unit
 }
 object MalattieOperation {
   def apply(toTest: BaseTest): MalattieOperation = new MalattieOperationImpl(toTest)
 
   private class MalattieOperationImpl(toTest: BaseTest) extends MalattieOperation{
-    override def enterFirstDate(day: String): Unit = ???
 
-    override def enterSecondDate(day: String): Unit = ???
+    override def enterFirstDate(day: LocalDate): Unit =  {
+      val initDate:DatePicker = toTest.find("#initDate")
+      toTest.clickOn(initDate)
+      initDate.setValue(day)
+    }
+    override def enterSecondDate(day: LocalDate): Unit = {
+      val finishDate:DatePicker = toTest.find("#finishDate")
+      toTest.clickOn(finishDate)
+      finishDate.setValue(day)
+    }
 
-    override def clickButton(): Unit = ???
+    override def clickModalButton(): Unit = {
+      toTest.clickOn("#button")
+    }
 
-    override def clickModalButton(): Unit = ???
+    override def clickTable(): Unit =  {
+      toTest.doubleClickOn("2")
+    }
 
-    override def clickTable(): Unit = ???
+    override def clickButtonIllness(): Unit = {
+      toTest.clickOn("#illness")
+    }
+
+    override def clickButtonCloseError(): Unit = {
+      toTest.clickOn("#confirmationButton")
+    }
   }
 }

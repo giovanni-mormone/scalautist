@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Stipendio
+import caseclass.CaseClassHttpMessage.StipendioInformations
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
 import javafx.scene.control.ListView
@@ -53,8 +54,8 @@ object SalaryBox{
       println("Change: old = " + oldText + ", new = " + newText + "\n")
     }
 
-    override def paneInfoSalary(information: Any): Unit = {
-
+    override def paneInfoSalary(information: StipendioInformations): Unit = {
+          println(information)
     }
   }
 }

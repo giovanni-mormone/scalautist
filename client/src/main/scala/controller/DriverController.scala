@@ -37,7 +37,7 @@ object DriverController{
     override def drawShiftPanel(): Unit = myView.drawShiftView()
 
     override def drawSalaryPanel(): Unit =
-      model.getSalary(2) onComplete {
+      model.getSalary(5) onComplete {
         case Success(value) =>value.payload.foreach(result=>myView.drawSalaryView(result))
         case Failure(_) =>myView.showMessage("Error")
       }

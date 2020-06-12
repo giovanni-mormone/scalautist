@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Stipendio
+import caseclass.CaseClassHttpMessage.StipendioInformations
 import controller.DriverController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -84,8 +85,10 @@ object DriverView {
 
     override def drawSalaryView(list:List[Stipendio]): Unit = Platform.runLater(()=>driverHome.drawSalary(list))
 
-    override def informationSalary(information: StipendioInformations): Unit = driverHome.informationSalary(information)
+    override def informationSalary(information: StipendioInformations): Unit =
+      Platform.runLater(()=>driverHome.informationSalary(information))
 
+    override def showMessage(message: String): Unit = Platform.runLater(()=>super.showMessage(message))
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
   }
 }

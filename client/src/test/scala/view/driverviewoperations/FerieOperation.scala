@@ -1,27 +1,47 @@
 package view.driverviewoperations
 
+import java.time.LocalDate
+
+import javafx.scene.control.DatePicker
 import view.baseconfiguration.BaseTest
 
 trait FerieOperation{
-  def enterFirstDate(day: String): Unit
-  def enterSecondDate(day: String): Unit
-  def clickButton(): Unit
+  def enterFirstDate(day: LocalDate): Unit
+  def enterSecondDate(day: LocalDate): Unit
+  def clickButtonHoliday(): Unit
   def clickModalButton(): Unit
   def clickTable():Unit
+  def clickButtonCloseError(): Unit
 }
 object FerieOperation {
   def apply(toTest: BaseTest): FerieOperation = new FerieOperationImpl(toTest)
 
   private class FerieOperationImpl(toTest: BaseTest) extends FerieOperation{
 
-    override def enterFirstDate(day: String): Unit = ???
+    override def enterFirstDate(day: LocalDate): Unit = {
+      val initDate:DatePicker = toTest.find("#initDate")
+      toTest.clickOn(initDate)
+      initDate.setValue(day)
+    }
 
-    override def enterSecondDate(day: String): Unit = ???
+    override def enterSecondDate(day: LocalDate): Unit = {
+      val finishDate:DatePicker = toTest.find("#finishDate")
+      toTest.clickOn(finishDate)
+      finishDate.setValue(day)
+    }
 
-    override def clickButton(): Unit = ???
+    override def clickButtonHoliday(): Unit = {
+      toTest.clickOn("#holidays")
+    }
+    override def clickButtonCloseError(): Unit = {
+      toTest.clickOn("#confirmationButton")
+    }
+    override def clickModalButton(): Unit = {
+      toTest.clickOn("#button")
+    }
 
-    override def clickModalButton(): Unit = ???
-
-    override def clickTable(): Unit = ???
+    override def clickTable(): Unit = {
+      toTest.doubleClickOn("2")
+    }
   }
 }

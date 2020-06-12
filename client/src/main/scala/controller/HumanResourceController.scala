@@ -147,6 +147,11 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    */
   def terminalModalData(terminalId: Int): Unit
 
+  /**
+   * Verify if a driver have absence within year
+   * @param item case class that identifies driver and his holiday in a year
+   * @param isMalattia represent if absence is for illness or holiday
+   */
   def absencePerson(item: Ferie,isMalattia:Boolean): Unit
 }
 
@@ -287,8 +292,8 @@ object HumanResourceController {
     private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
       case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
-      case (Success(value),true)  =>myView.result("malattia asignada correctamente")
-      case (Success(value),false)  =>myView.result("vacaciones asignada correctamente")
+      case (Success(value),true)  =>myView.result("Malattia Inserite Correttamente")
+      case (Success(value),false)  =>myView.result("Ferie Assegnate Correttamente")
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 

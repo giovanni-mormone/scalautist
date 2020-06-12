@@ -54,6 +54,7 @@ object ModalAbsence{
       if(isMalattia)button.setText(resources.getString("absence-button")) else button.setText(resources.getString("holiday-button"))
       nameSurname.setText(s"${item.nomeCognome}")
       setInitDate()
+      initDate.setOnShowing(t=>println(initDate.getProperties))
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
       button.setOnAction(_=>saveAbscence())

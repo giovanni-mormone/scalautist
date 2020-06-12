@@ -29,7 +29,6 @@ class BaseTest extends ApplicationTest{
   }
 
   def ensureEventQueueComplete():Unit = WaitForAsyncUtils.waitForFxEvents(1)
-
   def find[T<:Node](query:String): T ={
     lookup(query).queryAll().iterator().next().asInstanceOf[T]
   }
