@@ -29,12 +29,20 @@ trait HumanResourceView extends DialogView {
   /**
    * Show child's recruit view
    *
+   * @param zones
+   *              list of [[caseclass.CaseClassDB.Zona]] to show
+   * @param contracts
+   *                  list of [[caseclass.CaseClassDB.Contratto]] to show
+   * @param shifts
+   *               list of [[caseclass.CaseClassDB.Turno]] to show
    */
   def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit
 
   /**
    * Show terminals into child's recruit view
    *
+   * @param terminals
+   *                  list of [[caseclass.CaseClassDB.Terminale]] to show
    */
   def drawTerminal(terminals: List[Terminale]): Unit
 
@@ -49,10 +57,13 @@ trait HumanResourceView extends DialogView {
   def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit
 
   /**
+   * show a list of employee to assign holiday
    *
    * @param employeesList
+   *                      list of [[caseclass.CaseClassHttpMessage.Ferie]] to show
    */
   def drawHolidayView(employeesList: List[Ferie]):Unit
+
   /**
    * Show the zone view
    *
@@ -72,27 +83,36 @@ trait HumanResourceView extends DialogView {
   def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit
 
   /**
+   * show terminal modal
    *
    * @param zoneList
+   *                 List of [[caseclass.CaseClassDB.Zona]]
    * @param terminal
+   *                 instance of [[caseclass.CaseClassDB.Terminale]]
    */
   def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit
 
   /**
+   * show a message in the modal like a pop-up
    *
    * @param message
+   *                String of message to show
    */
   def result(message:String):Unit
 
   /**
+   * show a message in the view
    *
    * @param message
+   *                String of message to show
    */
   def message(message: String): Unit
 
   /**
+   * show a message in the main view
    *
    * @param message
+   *                String of message to show
    */
   def dialog(message: String): Unit
 }
@@ -227,16 +247,16 @@ object HumanResourceView {
     /////////////////////////////////////////////////////////   disegni modal
 
     override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
-      homeView()
       Platform.runLater(() => {
+        homeView()
         modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
         modalResource.show()
       })
     }
 
     override def openZonaModal(zona: Zona): Unit = {
-      homeView()
       Platform.runLater(() => {
+        homeView()
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
         modalResource.show()
       })
@@ -244,8 +264,8 @@ object HumanResourceView {
 
 
     def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
-      homeView()
       Platform.runLater(() => {
+        homeView()
         modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
         modalResource.show()
       })
