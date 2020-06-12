@@ -183,10 +183,12 @@ object HumanResourceController {
     private def responseValutation[A](result: Try[Response[A]],
                                       successA: A => Unit,
                                       failurA: String => Unit,
-                                      messageOnModal: Boolean = false): Unit = {
+                                      messageOnModal: Boolean = false,
+                                      showSuccess: Boolean = true): Unit = {
       result match {
         case Success(response) if response.statusCode == StatusCodes.SUCCES_CODE =>
-          showResult(messageOnModal, "success")
+          if(showSuccess)
+            showResult(messageOnModal, "success")
           if(response.payload.isDefined)
             successA(response.payload.get)
         case Success(response) if response.statusCode == StatusCodes.NOT_FOUND =>
@@ -228,8 +230,7 @@ object HumanResourceController {
     override def recruit(persona: Assumi): Unit =
       model.recruit(persona).onComplete(result =>
         responseValutation[Login](result,
-          login => showResult(messageOnModal = false, login.user + ": " + login.password),
-          _ => None))
+          login => showResult(messageOnModal = false, login.user + ": " + login.password), _ => None, showSuccess = false))
 
     override def fires(ids: Set[Int]): Unit = {
       //println(ids)
@@ -287,16 +288,21 @@ object HumanResourceController {
 
     //////////////////////////////////////////////////////////////////////////////// db -> system
 
-    override def dataToFireAndIll(callingView: String): Unit = {
+    override def dataToFireAndIll(callingView: String): Unit =
       model.getAllPersone.onComplete(employees =>
-        myView.drawEmployeeView(employees.get.payload.head, callingView))
-    }
+            responseValutation[List[Persona]](employees,
+              employeeList => myView.drawEmployeeView(employeeList, callingView),
+              _ => None,
+              showSuccess = false)
+      )
 
     override def dataToHoliday(): Unit =
-      model.getHolidayByPerson.onComplete {
-        case Failure(exception) => myView.dialog("error")
-        case Success(value) => myView.drawHolidayView(value.payload.head)
-      }
+      model.getHolidayByPerson.onComplete(employees =>
+        responseValutation[List[Ferie]](employees,
+          employeeList => myView.drawHolidayView(employeeList),
+          _ => None,
+          showSuccess = false)
+      )
 
     override def dataToRecruit(): Unit = {
       val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
@@ -304,30 +310,39 @@ object HumanResourceController {
           contracts <- getContratti
           zones <- getZone
         } yield (zones.payload.head, contracts.payload.head, turns.payload.head)
-      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))
+      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3)) //TODO
     }
 
-    override def dataToZone(): Unit = {
-       getZone.onComplete(zones => myView.drawZonaView(zones.get.payload.head))
-    }
+    override def dataToZone(): Unit =
+       getZone.onComplete(zones =>
+         responseValutation[List[Zona]](zones,
+           zone => myView.drawZonaView(zone),
+           _ => None,
+           showSuccess = false)
+       )
 
     override def dataToTerminal(): Unit = {
       val future: Future[(List[Zona], List[Terminale])] = for{
         terminals <- model.getAllTerminale
         zones <- getZone
       } yield (zones.payload.head, terminals.payload.head)
-      future.onComplete(data => myView.drawTerminaleView(data.get._1, data.get._2))
+      future.onComplete(data => myView.drawTerminaleView(data.get._1, data.get._2)) //TODO
     }
 
     override def getTerminals(zona: Zona): Unit =
-      model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.payload.head))
+      model.getTerminalByZone(zona.idZone.head).onComplete(terminals =>
+        responseValutation[List[Terminale]](terminals,
+          terminal => myView.drawTerminal(terminal),
+          _ => None,
+          showSuccess = false)
+      )
 
     override def terminalModalData(terminalId: Int): Unit = {
       val future: Future[(List[Zona], Terminale)] = for{
         zones <- getZone
         terminal <- model.getTerminale(terminalId)
       } yield (zones.payload.head, terminal.payload.head)
-      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))
+      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2)) //TODO
     }
 
     override def passwordRecovery(user: Int): Unit =
