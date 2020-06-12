@@ -83,9 +83,10 @@ object CaseClassDB{
    * @param data date that represent day which a driver work
    * @param personaId identification of a persona
    * @param turnoId identification of a turn in the day
+   * @param isStraordinario wheter or not the Presenza is a Straordinario
    * @param idPresenza represent univocally for every presence (for insert operation this is not mandatory)
    */
-  final case class Presenza(data:Date,personaId:Int,turnoId:Int,idPresenza:Option[Int]=None)
+  final case class Presenza(data:Date,personaId:Int,turnoId:Int,isStraordinario:Boolean,idPresenza:Option[Int]=None)
 
   /**
    * Richiesta is a case class that represent a instance of table into database that contains all request
@@ -148,17 +149,6 @@ object CaseClassDB{
   final case class StoricoContratto(dataInizio:Date,dataFine:Option[Date],personaId:Option[Int],contrattoId:Int,turnoId:Option[Int],turnoId1:Option[Int],idStoricoContratto:Option[Int]=None)
 
   /**
-   * Straordinario is a case class that represent a instance of table into database that contains
-   * all over time that driver make in the week, where week can be also saturday
-   *
-   * @param data day where driver make over time
-   * @param personaId driver that make over time
-   * @param turnoId shift where driver make over time
-   * @param idStraordinario represent unambiguous for every over time (for insert operation this is not mandatory)
-   */
-  final case class Straordinario(data:Date,personaId:Int,turnoId:Int,idStraordinario:Option[Int]=None)
-
-  /**
    * Terminale is a case class that represent a instance of table into database that contains
    * all terminal in the system, this contains name and associated zone.
    *
@@ -176,7 +166,7 @@ object CaseClassDB{
    * @param fasciaOraria time slot that represent init and finish time
    * @param id represent unambiguous for every turno (for insert operation this is not mandatory)
    */
-  final case class Turno(nomeTurno: String, fasciaOraria: String,notturno: Boolean,id: Option[Int] = None)
+  final case class Turno(nomeTurno: String, fasciaOraria: String,paga: Double,id: Option[Int] = None)
 
   /**
    * Zona is a case class that represent a instance of table into database that contains

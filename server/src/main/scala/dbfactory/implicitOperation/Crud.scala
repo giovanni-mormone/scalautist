@@ -17,7 +17,6 @@ import dbfactory.table.RisultatoTable.RisultatoTableRep
 import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StipendioTable.StipendioTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
-import dbfactory.table.StraordinarioTable.StraordinarioTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
@@ -215,16 +214,7 @@ object Crud {
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
   }
-  implicit object CrudStraordinario extends OperationImplicit[Straordinario,StraordinarioTableRep] with Crud[Straordinario] {
-    override private[implicitOperation] def insert(element: Straordinario):Future[Option[Int]]                 = typeDB().insert(element)
-    override private[implicitOperation] def select(element: Int): Future[Option[Straordinario]]        = typeDB().select(element)
-    override private[implicitOperation] def delete(element: Int): Future[Option[Int]]                = typeDB().delete(element)
-    override private[implicitOperation] def update(element: Straordinario): Future[Option[Int]]                = typeDB().update(element)
-    override private[implicitOperation] def selectAll: Future[Option[List[Straordinario]]]                     = typeDB().selectAll
-    override private[implicitOperation] def insertAll(element: List[Straordinario]): Future[Option[List[Int]]] = typeDB().insertAll(element)
-    override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
-  }
   implicit object CrudTerminale extends OperationImplicit[Terminale,TerminaleTableRep] with Crud[Terminale] {
     override private[implicitOperation] def insert(element: Terminale):Future[Option[Int]]                 = typeDB().insert(element)
     override private[implicitOperation] def select(element: Int): Future[Option[Terminale]]        = typeDB().select(element)

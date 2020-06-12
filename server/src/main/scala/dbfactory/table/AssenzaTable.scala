@@ -15,7 +15,7 @@ import slick.lifted.{ForeignKeyQuery, ProvenShape}
  */
 object AssenzaTable {
 
-  class AssenzaTableRep(tag:Tag) extends GenericTable[Assenza](tag, "AssenzaSet","IdAssenza"){
+  class AssenzaTableRep(tag:Tag) extends GenericTable[Assenza](tag, "AssenzaSets","IdAssenza"){
     def dataInizio: Rep[Date] = column[Date]("DataInizio")
     def dataFine: Rep[Date] = column[Date]("DataFine")
     def malattia: Rep[Boolean] = column[Boolean]("IsMalattia")
