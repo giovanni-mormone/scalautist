@@ -14,11 +14,12 @@ object AssenzaOperationTestValues {
   val alreadyAssenzaInPeriod: Assenza = Assenza(2, new Date(120,5,25), new Date(120,6,1),malattia = false)
   val tooLongFerie: Assenza = Assenza(5, new Date(120,9,1), new Date(120,11,1),malattia = false)
   val malattia: Assenza = Assenza(5, new Date(120,9,1), new Date(120,11,1),malattia = true)
-  val betweenYears: Assenza = Assenza(8, new Date(120,11,1), new Date(121,1,1),malattia = false)
-  val malattiaBetweenYears: Assenza = Assenza(8, new Date(120,11,1), new Date(121,1,1),malattia = true)
+  val betweenYears: Assenza = Assenza(8, new Date(120,11,20), new Date(121,0,15),malattia = false)
+  val malattiaBetweenYears: Assenza = Assenza(8, new Date(120,11,20), new Date(121,0,15),malattia = true)
   val startAfterEnd: Assenza = Assenza(8, new Date(120,11,1), new Date(120,10,31),malattia = false)
   val startSameAsEnd: Assenza = Assenza(8, new Date(120,11,1), new Date(120,11,1),malattia = false)
   val notSoManyFerie: Assenza = Assenza(2, new Date(120,11,1), new Date(120,11,23),malattia = false)
-  val goodFerie: Assenza = Assenza(2, new Date(120,11,1), new Date(120,11,19),malattia = false)
+  val goodFerie: Assenza = Assenza(7, new Date(120,11,1), new Date(120,11,19),malattia = false)
+  val assenzaListId2: List[Assenza] = List(Assenza(2,new Date(120 ,5,22),new Date(120,5,29),false,Some(1)), Assenza(2,new Date(120,7,22),new Date(120,7,29),false,Some(2)))
 
 }

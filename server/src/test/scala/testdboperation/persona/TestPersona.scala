@@ -1,10 +1,7 @@
 package testdboperation.persona
 
-import java.sql.Date
-
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
-import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
+import dbfactory.operation.{PersonaOperation, StipendioOperation}
 import messagecodes.StatusCodes
 import org.scalatest._
 import utils.StartServer
@@ -13,8 +10,7 @@ import scala.concurrent.Future
 
 class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServer{
   import LoginAndCrudValues._
-  import AssumiOperationTestsValues._
-  import AssenzaOperationTestValues._
+  import testdboperation.assenza.AssumiOperationTestsValues._
 
   behavior of "Login"
   it should "eventually return a person" in {
@@ -105,7 +101,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   }
   it should "return A list of length N when gets the stipendi for persona with id 2" in {
     val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(2)
-    stipendi map {stip => assert(stip.head.length == 3)}
+    stipendi map {stip => assert(stip.head.length == 4)}
   }
   it should "return A None stipendi for persona not in the db" in {
     val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(277)
@@ -155,50 +151,4 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGoodFullTimeFissoHeadTail)
     assumi map {status => assert(status.head == 15)}
   }
-  behavior of "Assenze"
-  it should "return the given the list when tries to get all ferie for that year" in {
-    val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2020)
-    ferie map {list => println(list);assert(list.head.equals(remainingFerieList))}
-  }
-  it should "return the given the list when tries to get all ferie for next year" in {
-    val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2021)
-    ferie map {list => assert(list.head.equals(remainingFerieListNext))}
-  }
-  it should "return ERROR_CODE1 when adding an assenza when the period has already an assenza" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(alreadyAssenzaInPeriod)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE1) }
-  }
-  it should "return ERROR_CODE2 when adding an assenza that is greater than the max possible" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(tooLongFerie)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE2) }
-  }
-  it should "return an int > 0 when adding an assenza that is greater than the max possible but is malattia" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(malattia)
-    assenza map { ass => assert(ass.head >0) }
-  }
-   it should "return an ERROR_CODE3 when adding an ferie between 2 years" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(betweenYears)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE3)}
-  }
-  it should "return an int >0 when adding good malattie between 2 years" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(malattiaBetweenYears)
-    assenza map { ass => assert(ass.head > 0)}
-  }
-  it should "return an ERROR_CODE4 when adding an assenza that starts after the end" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(startAfterEnd)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE4) }
-  }
-  it should "return an ERROR_CODE4 when adding an assenza that starts the same day of the end" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(startSameAsEnd)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE4) }
-  }
-  it should "return an ERROR_CODE5 when adding ferie days greater than remaining ferie for the year" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(notSoManyFerie)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE5)}
-  }
-  it should "return an int > 0 when adding an assenza good ferie" in {
-    val assenza: Future[Option[Int]] = AssenzaOperation.insert(goodFerie)
-    assenza map { ass => assert(ass.head >0) }
-  }
-
 }
