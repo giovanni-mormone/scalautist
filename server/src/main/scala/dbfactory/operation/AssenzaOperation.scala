@@ -27,11 +27,11 @@ trait AssenzaOperation extends OperationCrud[Assenza]{
   def getAllFerie(data: Int): Future[Option[List[Ferie]]]
 
   /**
-   * Returns the list of assenze for the person in the year provide
+   * Returns the list of assenze for the person in the year provided
    * @param year
    *            The year that the assenze must have
    * @param idPersona
-   *                  the persona which ferie are asked
+   *                  the persona which assenze are asked
    * @return
    *         A list of [[Assenza]] or None if no Assenze are in the DB.
    */
@@ -40,10 +40,10 @@ trait AssenzaOperation extends OperationCrud[Assenza]{
 
 object AssenzaOperation extends AssenzaOperation{
 
+  import utils.DateConverter._
   private case class JoinResult(dataInizio:Date,dataFine:Date,idPersona:Int,nomePersona:String,cognomePersona:String)
 
   private object JoinResult{
-
     implicit def tuple5ToJoinResult(tuple:(Date,Date,Int,String,String)):JoinResult =
       JoinResult.apply _ tupled tuple
   }
@@ -51,19 +51,6 @@ object AssenzaOperation extends AssenzaOperation{
   private val GIORNI_FERIE_ANNUI: Int = 35
   //anche questo si può caricare da qualche parte
   private val CODICE_CONDUCENTE: Int = 3
-
-  //input un anno, output un java.sql.Date -> colpa del DB
-  private val dateFromYear: Int => Date = year => {
-    val calendar = Calendar.getInstance()
-    calendar.set(year,0,1)
-    new Date(calendar.getTimeInMillis)
-  }
-
-  private val computeDaysBetweenDates: (Date,Date) => Int = (dateStart,dateStop) =>
-    ChronoUnit.DAYS.between(dateStart.toLocalDate,dateStop.toLocalDate).toInt
-
-  private val notSameYear: (Date,Date) => Boolean = (start,end) =>
-    start.toLocalDate.getYear != end.toLocalDate.getYear
 
   override def getAllFerie(data: Int):Future[Option[List[Ferie]]] = {
     val nextYear = dateFromYear(data+1)

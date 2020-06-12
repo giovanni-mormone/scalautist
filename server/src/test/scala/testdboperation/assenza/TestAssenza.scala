@@ -1,5 +1,6 @@
 package testdboperation.assenza
 
+import caseclass.CaseClassDB.Assenza
 import caseclass.CaseClassHttpMessage.Ferie
 import dbfactory.operation.AssenzaOperation
 import messagecodes.StatusCodes
@@ -16,7 +17,7 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
   behavior of "Assenze"
   it should "return the given the list when tries to get all ferie for that year" in {
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2020)
-    ferie map {list => println(list);assert(list.head.equals(remainingFerieList))}
+    ferie map {list => assert(list.head.equals(remainingFerieList))}
   }
   it should "return the given the list when tries to get all ferie for next year" in {
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2021)
@@ -58,6 +59,12 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(goodFerie)
     assenza map { ass => assert(ass.head >0) }
   }
-
-
+  it should "return the provided list of Assenze when getting it for a person in a year " in {
+    val assenza: Future[Option[List[Assenza]]] = AssenzaOperation.getAssenzeInYearForPerson(2020,2)
+    assenza map { ass => assert(ass.head.equals(assenzaListId2)) }
+  }
+  it should "return the provided None if there are no assenze for the person or year " in {
+    val assenza: Future[Option[List[Assenza]]] = AssenzaOperation.getAssenzeInYearForPerson(2020,12)
+    assenza map { ass => assert(ass.isEmpty) }
+  }
 }
