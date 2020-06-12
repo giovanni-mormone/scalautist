@@ -19,6 +19,7 @@ object AssenzaOperationTestValues {
   val startAfterEnd: Assenza = Assenza(8, new Date(120,11,1), new Date(120,10,31),malattia = false)
   val startSameAsEnd: Assenza = Assenza(8, new Date(120,11,1), new Date(120,11,1),malattia = false)
   val notSoManyFerie: Assenza = Assenza(2, new Date(120,11,1), new Date(120,11,23),malattia = false)
-  val goodFerie: Assenza = Assenza(2, new Date(120,11,1), new Date(120,11,19),malattia = false)
+  val goodFerie: Assenza = Assenza(7, new Date(120,11,1), new Date(120,11,19),malattia = false)
+  val assenzaListId2: List[Assenza] = List(Assenza(2,new Date(120 ,5,22),new Date(120,5,29),false,Some(1)), Assenza(2,new Date(120,7,22),new Date(120,7,29),false,Some(2)))
 
 }

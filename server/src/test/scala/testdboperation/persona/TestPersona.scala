@@ -101,7 +101,7 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   }
   it should "return A list of length N when gets the stipendi for persona with id 2" in {
     val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(2)
-    stipendi map {stip => assert(stip.head.length == 3)}
+    stipendi map {stip => assert(stip.head.length == 4)}
   }
   it should "return A None stipendi for persona not in the db" in {
     val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(277)
