@@ -110,7 +110,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * getRecruitData method retrieves all data needed to recruit employee
    *
    */
-  def getRecruitData(): Unit
+  def dataToRecruit(): Unit
 
   /**
    * Return all terminals in a zone
@@ -124,20 +124,20 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * getAllPersona asks model for the employees list
    *
    */
-  def getAllPersona(callingView: String): Unit
-  def getAllPersona(): Unit
+  def dataToFireAndIll(callingView: String): Unit
+  def dataToHoliday(): Unit
 
   /**
    * getZonaData method retrieves all data needed to draw zona view
    *
    */
-  def getZonaData(): Unit
+  def dataToZone(): Unit
 
   /**
    * getTerminalData method retrieves all data needed to draw zona view
    *
    */
-  def getTerminalData(): Unit
+  def dataToTerminal(): Unit
 
   /**
    *
@@ -168,7 +168,7 @@ object HumanResourceController {
         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
           val login: Login = result.payload.get
           myView.dialog("new credential:\n user: " + login.user + "\n psw: " + login.password)
-          getRecruitData()
+          dataToRecruit()
         case Failure(_) => myView.dialog("error")
         case _ => myView.message("errore sconosciuto")
       }
@@ -184,15 +184,15 @@ object HumanResourceController {
       future.onComplete {
         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
           myView.dialog("operazione completata")
-          getAllPersona(EmployeeView.fire)
+          dataToFireAndIll(EmployeeView.fire)
         case Failure(_) =>
           myView.dialog("ritenta!")
-          getAllPersona(EmployeeView.fire)
+          dataToFireAndIll(EmployeeView.fire)
         case _ => myView.dialog("errore sconosciuto")
       }
     }
 
-    override def getAllPersona(callingView: String): Unit = {
+    override def dataToFireAndIll(callingView: String): Unit = {
        model.getAllPersone.onComplete(employees =>
               myView.drawEmployeeView(employees.get.payload.head, callingView))
       /*val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
@@ -203,7 +203,7 @@ object HumanResourceController {
       myView.drawEmployeeView(perosne, callingView)*/
     }
 
-    override def getAllPersona(): Unit =
+    override def dataToHoliday(): Unit =
       //myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
       model.getHolidayByPerson.onComplete {
         case Failure(exception) => myView.dialog("error")
@@ -214,10 +214,10 @@ object HumanResourceController {
       model.illnessPeriod(assenza).onComplete {
         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
           myView.dialog("operazione completata")
-          getAllPersona(EmployeeView.ill)
+          dataToFireAndIll(EmployeeView.ill)
         case Failure(_) =>
           myView.dialog("ritenta!")
-          getAllPersona(EmployeeView.ill)
+          dataToFireAndIll(EmployeeView.ill)
         case _ => myView.dialog("errore sconosciuto")
       }
 
@@ -225,10 +225,10 @@ object HumanResourceController {
       model.holidays(assenza).onComplete {
         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
           myView.dialog("operazione completata")
-          getAllPersona()
+          dataToHoliday()
         case Failure(_) =>
           myView.dialog("ritenta!")
-          getAllPersona()
+          dataToHoliday()
         case _ => myView.dialog("errore sconosciuto")
       }
 
@@ -244,7 +244,7 @@ object HumanResourceController {
     private def getContratti: Future[Response[List[Contratto]]] =
       model.getAllContract
 
-    override def getRecruitData(): Unit = {
+    override def dataToRecruit(): Unit = {
       val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
           turns <- getTurni
           contracts <- getContratti
@@ -271,13 +271,13 @@ object HumanResourceController {
       myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))*/
     }
 
-    override def getZonaData(): Unit = {
+    override def dataToZone(): Unit = {
        getZone.onComplete(zones => myView.drawZonaView(zones.get.payload.head))
       /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
       myView.drawZonaView(zone)*/
     }
 
-    override def getTerminalData(): Unit = {
+    override def dataToTerminal(): Unit = {
       val future: Future[(List[Zona], List[Terminale])] = for{
         terminals <- model.getAllTerminale
         zones <- getZone
@@ -293,10 +293,10 @@ object HumanResourceController {
        model.setZona(zone).onComplete {
          case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
            myView.dialog("operazione completata")
-           getZonaData()
+           dataToZone()
          case Failure(_) =>
            myView.dialog("ritenta!")
-           getZonaData()
+           dataToZone()
          case _ => myView.dialog("errore sconosciuto")
        }
 
@@ -310,10 +310,10 @@ object HumanResourceController {
       model.createTerminale(terminal).onComplete {
         case Success(result) if result.statusCode == StatusCodes.SUCCES_CODE =>
           myView.dialog("operazione completata")
-          getTerminalData()
+          dataToTerminal()
         case Failure(_) =>
           myView.dialog("ritenta!")
-          getTerminalData()
+          dataToTerminal()
         case _ => myView.dialog("errore sconosciuto")
       }
 

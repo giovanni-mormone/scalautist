@@ -180,19 +180,19 @@ object HumanResourceView {
 
     /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
-      myController.getRecruitData()
+      myController.dataToRecruit()
  
     override def drawEmployeePanel(viewToDraw: String): Unit =
-      myController.getAllPersona(viewToDraw)
+      myController.dataToFireAndIll(viewToDraw)
 
     override def drawZonePanel: Unit =
-      myController.getZonaData()
+      myController.dataToZone()
 
     override def drawTerminalPanel: Unit =
-      myController.getTerminalData()
+      myController.dataToTerminal()
 
     override def drawHoliday(): Unit =
-      myController.getAllPersona()
+      myController.dataToHoliday()
 
     override def openTerminalModal(terminal: Int): Unit =
       myController.terminalModalData(terminal)
