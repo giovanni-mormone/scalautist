@@ -1,8 +1,8 @@
 package controller
 
-
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
+import messagecodes.StatusCodes
 import model.entity.HumanResourceModel
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.mainview.HumanResourceView
@@ -67,44 +67,50 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   def passwordRecovery(user: Int): Unit
 
   /**
+   * save a new zone into db
    *
    * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]]
+   *             instance of [[caseclass.CaseClassDB.Zona]] to save
    */
   def saveZona(zone: Zona): Unit
 
   /**
+   * update selected zone
    *
    * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]]
+   *             instance of [[caseclass.CaseClassDB.Zona]] to update
    */
   def updateZona(zone: Zona): Unit
 
   /**
+   * delete selected zone
    *
    * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]]
+   *             instance of [[caseclass.CaseClassDB.Zona]] to delete
    */
   def deleteZona(zone: Zona): Unit
 
   /**
+   * insert terminal into db
    *
    * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to save
    */
   def saveTerminal(terminal: Terminale): Unit
 
   /**
+   * update selected terminal
    *
    * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to update
    */
   def updateTerminal(terminal: Terminale): Unit
 
   /**
+   * delete selected terminal
    *
    * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]]
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to delete
    */
   def deleteTerminal(terminal: Terminale): Unit
 
@@ -112,7 +118,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * getRecruitData method retrieves all data needed to recruit employee
    *
    */
-  def getRecruitData(): Unit
+  def dataToRecruit(): Unit
 
   /**
    * Return all terminals in a zone
@@ -125,25 +131,34 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   /**
    * getAllPersona asks model for the employees list
    *
+   * @param callingView
+   *                    String that define which box the view must show
    */
-  def getAllPersona(callingView: String): Unit
-  def getAllPersona(): Unit
+  def dataToFireAndIll(callingView: String): Unit
+
+  /**
+   * asks model for the employees list and their holiday
+   *
+   */
+  def dataToHoliday(): Unit
 
   /**
    * getZonaData method retrieves all data needed to draw zona view
    *
    */
-  def getZonaData(): Unit
+  def dataToZone(): Unit
 
   /**
    * getTerminalData method retrieves all data needed to draw zona view
    *
    */
-  def getTerminalData(): Unit
+  def dataToTerminal(): Unit
 
   /**
+   * draw the terminal modal to manage it
    *
    * @param terminalId
+   *                   terminal id to manage
    */
   def terminalModalData(terminalId: Int): Unit
 
@@ -172,130 +187,149 @@ object HumanResourceController {
    */
   private class HumanResourceControllerImpl extends HumanResourceController {
 
+    //////////////////////////////////////////////////////////////////////////////// general method
+
+    private def responseValutation[A](result: Try[Response[A]],
+                                      successA: A => Unit,
+                                      failurA: String => Unit,
+                                      messageOnModal: Boolean = false): Unit = {
+      result match {
+        case Success(response) if response.statusCode == StatusCodes.SUCCES_CODE =>
+          showResult(messageOnModal, "success")
+          if(response.payload.isDefined)
+            successA(response.payload.get)
+        case Success(response) if response.statusCode == StatusCodes.NOT_FOUND =>
+          failureAction("NotFound", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.BAD_REQUEST =>
+          failureAction("BadRequest", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE1 =>
+          failureAction("Error1", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE2 =>
+          failureAction("Error2", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE3 =>
+          failureAction("Error3", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE4 =>
+          failureAction("Error4", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE5 =>
+          failureAction("Error5", failurA, messageOnModal)
+        case Success(response) if response.statusCode == StatusCodes.ERROR_CODE6 =>
+          failureAction("Error6", failurA, messageOnModal)
+        case Failure(_) =>
+          failureAction("Unknown", failurA, messageOnModal)
+        case _ => failureAction("Unknown", failurA, messageOnModal)
+      }
+    }
+
+    private def failureAction[A](message: String = "Unknown", failurA: String => Unit, messageOnModal: Boolean): Unit = {
+      showResult(messageOnModal, message)
+      failurA(message)
+    }
+
+    private def showResult[A](messageOnModal: Boolean, message: String): Unit = {
+      if (messageOnModal)
+        myView.result(message)
+      else
+        myView.dialog(message)
+    }
+
+    //////////////////////////////////////////////////////////////////////////////// system -> db
+
     override def recruit(persona: Assumi): Unit =
-      model.recruit(persona)
-      //println(persona)
+      model.recruit(persona).onComplete(result =>
+        responseValutation[Login](result,
+          login => showResult(messageOnModal = false, login.user + ": " + login.password),
+          _ => None))
 
     override def fires(ids: Set[Int]): Unit = {
-      /*println(ids)*/
-      if(ids.size > 1)
-        model.firesAll(ids)
+      //println(ids)
+      val future: Future[Response[Int]] =
+          if(ids.size > 1)
+            model.firesAll(ids)
+          else
+            model.fires(ids.head)
+
+      future.onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+    }
+
+    override def illness(assenza: Assenza): Unit =
+      model.illnessPeriod(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+
+    override def holiday(assenza: Assenza): Unit =
+      model.holidays(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+
+    override def saveZona(zone: Zona): Unit =
+      model.setZona(zone).onComplete(result => responseValutation[Zona](result, _ => None, _ => None))
+
+    override def updateZona(zone: Zona): Unit =
+      model.updateZona(zone)
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+
+    override def deleteZona(zone: Zona): Unit =
+      model.deleteZona(zone.idZone.head)
+        .onComplete(result => responseValutation[Zona](result, _ => None, _ => None, messageOnModal = true))
+
+    override def saveTerminal(terminal: Terminale): Unit =
+      model.createTerminale(terminal).onComplete(result => responseValutation[Terminale](result, _ => None, _ => None))
+
+    override def updateTerminal(terminal: Terminale): Unit =
+      model.updateTerminale(terminal)
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+
+    override def deleteTerminal(terminal: Terminale): Unit =
+      model.deleteTerminale(terminal.idTerminale.head)
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+
+    override def saveAbsence(absence: Assenza): Unit = {
+      if(absence.malattia)
+        model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
       else
-        model.fires(ids.head)
-
-      getAllPersona(EmployeeView.fire)
+        model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
     }
 
-    override def getAllPersona(callingView: String): Unit = {
-       model.getAllPersone.onComplete(employees =>
-              myView.drawEmployeeView(employees.get.payload.head, callingView))
-      /*val perosne = List(Persona("azer","baijan","123", None, 3, false, "gne", Some(2), matricola = Some(14)),
-        Persona("ajeje","brazorf","123", None, 3, false, "gne", Some(2), matricola = Some(16)),
-        Persona("samir","kebab","123", None, 3, false, "gne", Some(2), matricola = Some(18)),
-        Persona("mangiapane","atradimento","123", None, 3, false, "gne", Some(2), matricola = Some(32)),
-      )
-      myView.drawEmployeeView(perosne, callingView)*/
+    private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
+      case (Failure(_),true)  =>  myView.result("errore-malattie")
+      case (Failure(_),false) => myView.result("Error assignando vacaciones")
+      case (Success(value),true)  =>myView.result("Malattia Inserite Correttamente")
+      case (Success(value),false)  =>myView.result("Ferie Assegnate Correttamente")
+      case (Success(_),_)  => myView.result("utente no encontrado")
     }
 
-    override def getAllPersona(): Unit =
-      //myView.drawHolidayView(List(Ferie(1,"Fabain Andres",20)))
+    //////////////////////////////////////////////////////////////////////////////// db -> system
+
+    override def dataToFireAndIll(callingView: String): Unit = {
+      model.getAllPersone.onComplete(employees =>
+        myView.drawEmployeeView(employees.get.payload.head, callingView))
+    }
+
+    override def dataToHoliday(): Unit =
       model.getHolidayByPerson.onComplete {
-        case Failure(exception) => myView.message("error")
+        case Failure(exception) => myView.dialog("error")
         case Success(value) => myView.drawHolidayView(value.payload.head)
       }
 
-    override def illness(assenza: Assenza): Unit =
-      model.illnessPeriod(assenza)
-
-    override def holiday(assenza: Assenza): Unit =
-      model.holidays(assenza)
-
-    override def passwordRecovery(user: Int): Unit =
-       model.passwordRecovery(user)
-
-    def getZone: Future[Response[List[Zona]]] = model.getAllZone
-
-    def getTurni: Future[Response[List[Turno]]] = model.getAllShift
-
-    def getContratti: Future[Response[List[Contratto]]] = model.getAllContract
-
-    override def getRecruitData(): Unit = {
+    override def dataToRecruit(): Unit = {
       val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
           turns <- getTurni
           contracts <- getContratti
           zones <- getZone
         } yield (zones.payload.head, contracts.payload.head, turns.payload.head)
       future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3))
-
-      /*val turni = List(Turno("bho","0-6",true,Some(1)), Turno("bho","6-12",true,Some(2)),
-        Turno("bho","12-18",true,Some(3)), Turno("bho","18-0",true,Some(4)))
-      val contratti = List(
-        Contratto("Full-Time-5x2", turnoFisso = true, partTime = true, 1),
-        Contratto("Part-Time-5x2", turnoFisso = true,partTime = true, 2),
-        Contratto("Part-Time-6x1", turnoFisso = false,partTime = false,3),
-        Contratto("Full-Time-6x1", turnoFisso = true, partTime = false,4)
-      )
-      val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      myView.drawRecruit(zone, contratti, turni)*/
     }
 
-    override def getTerminals(zona: Zona): Unit = {
-      model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.payload.head))
-      /*val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
-        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
-      myView.drawTerminal(terminale.filter(terminale => terminale.idZona == zona.idZone.head))*/
-    }
-
-    override def getZonaData(): Unit = {
+    override def dataToZone(): Unit = {
        getZone.onComplete(zones => myView.drawZonaView(zones.get.payload.head))
-      /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      myView.drawZonaView(zone)*/
     }
 
-    override def getTerminalData(): Unit = {
+    override def dataToTerminal(): Unit = {
       val future: Future[(List[Zona], List[Terminale])] = for{
         terminals <- model.getAllTerminale
         zones <- getZone
       } yield (zones.payload.head, terminals.payload.head)
       future.onComplete(data => myView.drawTerminaleView(data.get._1, data.get._2))
-      /*val zone = List(Zona("ciao", Some(3)), Zona("stronzo", Some(10)))
-      val terminale = List(Terminale("minestra", 3, Some(18)), Terminale("bistecca", 3, Some(81)),
-        Terminale("occhio", 10, Some(108)), Terminale("lingua", 10, Some(180)), Terminale("maschera", 10, Some(8)))
-      myView.drawTerminaleView(zone, terminale)*/
     }
 
-    override def saveZona(zone: Zona): Unit =
-       model.setZona(zone).onComplete(_ => getZonaData())
-
-    override def updateZona(zone: Zona): Unit =
-      model.updateZona(zone).onComplete(_ => myView.showMessage("Completato"))
-
-    override def deleteZona(zone: Zona): Unit =
-      model.deleteZona(zone.idZone.head).onComplete(_ => myView.showMessage("Completato"))
-
-    override def saveTerminal(terminal: Terminale): Unit =
-      model.createTerminale(terminal).onComplete(_ => getTerminalData())
-
-    override def updateTerminal(terminal: Terminale): Unit =
-      model.updateTerminale(terminal).onComplete(_ => myView.showMessage("Completato"))
-
-    override def deleteTerminal(terminal: Terminale): Unit =
-      model.deleteTerminale(terminal.idTerminale.head).onComplete(_ => myView.showMessage("Completato"))
-
-    override def saveAbsence(absence: Assenza): Unit = {
-       if(absence.malattia)
-         model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
-       else
-         model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
-    }
-
-    private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
-      case (Failure(_),true)  if -1== -1=>  myView.result("errore-malattie")
-      case (Failure(_),false) => myView.result("Error assignando vacaciones")
-      case (Success(value),true)  =>myView.result("Malattia Inserite Correttamente")
-      case (Success(value),false)  =>myView.result("Ferie Assegnate Correttamente")
-      case (Success(_),_)  => myView.result("utente no encontrado")
-    }
+    override def getTerminals(zona: Zona): Unit =
+      model.getTerminalByZone(zona.idZone.head).onComplete(terminals => myView.drawTerminal(terminals.get.payload.head))
 
     override def terminalModalData(terminalId: Int): Unit = {
       val future: Future[(List[Zona], Terminale)] = for{
@@ -311,5 +345,17 @@ object HumanResourceController {
         case Failure(exception) =>   myView.result("errore-malattie")
         case Success(value) =>value.payload.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
       }
+    override def passwordRecovery(user: Int): Unit =
+      model.passwordRecovery(user)
+
+    private def getZone: Future[Response[List[Zona]]] =
+      model.getAllZone
+
+    private def getTurni: Future[Response[List[Turno]]] =
+      model.getAllShift
+
+    private def getContratti: Future[Response[List[Contratto]]] =
+      model.getAllContract
+
   }
 }

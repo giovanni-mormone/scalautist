@@ -213,7 +213,6 @@ object HumanResourceModel {
 
     override def holidays(assenza: Assenza): Future[Response[Int]] = createRequest(assenza)
 
-
     override def fires(ids: Int): Future[Response[Int]] = {
       val request = Post(getURI("deletepersona"), transform(ids))
       callRequest(request)

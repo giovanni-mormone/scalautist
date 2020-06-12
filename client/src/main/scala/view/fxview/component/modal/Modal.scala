@@ -60,8 +60,9 @@ object Modal {
       this.close()
     }
 
-    override def close(): Unit =
+    override def close(): Unit = {
       myStage.close()
+    }
   }
 }
 
