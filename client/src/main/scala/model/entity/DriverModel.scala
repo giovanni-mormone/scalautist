@@ -42,7 +42,7 @@ trait DriverModel extends AbstractModel{
    * @param id id that represent  id of salary
    * @return Option of List of Stipendio that represent all salary of a persona
    */
-  def getInfoForSalary(id:Int)
+  def getInfoForSalary(id:Int):Future[Response[List[StipendioInformations]]]
 
 }
 
@@ -61,9 +61,9 @@ object DriverModel {
     private def callServerSalary(request: HttpRequest)=
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
-    override def getInfoForSalary(id: Int): Unit = {
+    override def getInfoForSalary(id: Int):Future[Response[List[StipendioInformations]]] = {
       val request = Post(getURI("getinfostipendio"),transform(id))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[StipendioInformations]]])
     }
   }
 

@@ -5,6 +5,7 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Stipendio
 import controller.DriverController
+import javafx.application.Platform
 import javafx.stage.Stage
 import view.DialogView
 import view.fxview.AbstractFXDialogView
@@ -12,9 +13,27 @@ import view.fxview.component.driver.DriverHome
 import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 
 trait DriverView extends DialogView{
+  /**
+   *
+   */
   def drawHomeView():Unit
+
+  /**
+   * method which draw view that contains all shift of a driver into 7 days
+   */
   def drawShiftView():Unit
+
+  /**
+   * method that draw view for salary for a driver
+   * @param list list of all salary for a driver
+   */
   def drawSalaryView(list:List[Stipendio]):Unit
+
+  /**
+   * method which enable view information for a salary in the specific month
+   * @param information case class with all presenze, absence and salary for a month
+   */
+  def informationSalary(information:StipendioInformations):Unit
 }
 object DriverView {
   def apply(stage: Stage): DriverView = new DriverViewHomeFX(stage)
@@ -50,15 +69,23 @@ object DriverView {
     override def drawTurnoPanel(): Unit = myController.drawShiftPanel()
 
     override def drawStipendioPanel(): Unit = myController.drawSalaryPanel()
+
     ///////////////////////////////////////////////////////////////// Fine VIEW A CONTROLLER impl DriverView
+
+    ///////////////////////////////////////////////////////////////// Da VIEW STIPENDIO A CONTROLLER impl DriverView
+    override def infoSalary(idSalary:Int): Unit = myController.drawInfoSalary(idSalary)
+
+    ///////////////////////////////////////////////////////////////// Fine VIEW STIPENDIO A CONTROLLER impl DriverView
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
     override def drawHomeView(): Unit = driverHome.drawHome()
 
     override def drawShiftView(): Unit = driverHome.drawShift()
 
-    override def drawSalaryView(list:List[Stipendio]): Unit = driverHome.drawSalary(list)
-    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
+    override def drawSalaryView(list:List[Stipendio]): Unit = Platform.runLater(()=>driverHome.drawSalary(list))
 
+    override def informationSalary(information: StipendioInformations): Unit = driverHome.informationSalary(information)
+
+    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
   }
 }

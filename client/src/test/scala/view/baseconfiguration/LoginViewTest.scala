@@ -5,7 +5,7 @@ import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
 import org.junit.{Before, Test}
 import org.junit.runner.RunWith
-import view.LoginLaunch
+import view.launchview.LoginLaunch
 import view.mainviewoperations.LoginOperations
 
 @RunWith(classOf[JUnitParamsRunner])

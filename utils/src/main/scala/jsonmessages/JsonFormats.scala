@@ -38,4 +38,5 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
 
+
 }

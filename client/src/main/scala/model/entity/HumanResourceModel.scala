@@ -183,7 +183,7 @@ trait HumanResourceModel extends AbstractModel{
    * Method that obtains all day of holiday of a persona
    * @return Option of List with all day of holiday of a persona
    */
-  def getAbsenceInYearForPerson:Future[Response[List[Assenza]]]
+  def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 
 }
 
@@ -209,9 +209,6 @@ object HumanResourceModel {
       callServer(request)
     }
 
-    private def callServer(request: HttpRequest):Future[Response[Login]] =
-      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
-
     override def illnessPeriod(assenza: Assenza): Future[Response[Int]] = createRequest(assenza)
 
     override def holidays(assenza: Assenza): Future[Response[Int]] = createRequest(assenza)
@@ -231,9 +228,6 @@ object HumanResourceModel {
       val request = Post(getURI("addabsence"), transform(absence))
       callRequest(request)
     }
-
-    private def callRequest(request:HttpRequest):Future[Response[Int]] =
-      callHtpp(request).flatMap(unMarshall)
 
     override def getTerminalByZone(id: Int): Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getterminalebyzona"), transform(id))
@@ -264,8 +258,6 @@ object HumanResourceModel {
       val request = Post(getURI("calcolostipendio"),transform(Dates(new Date(System.currentTimeMillis()))))
       callServerSalary(request)
     }
-    private def callServerSalary(request: HttpRequest)=
-        callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
     override def setZona(zona: Zona): Future[Response[Zona]] = {
       val request = Post(getURI("createzona"),transform(zona))
@@ -273,13 +265,9 @@ object HumanResourceModel {
     }
 
     override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
-      val year = Calendar.getInstance()
-      year.setTime(new Date(System.currentTimeMillis()))
-      val request = Post(getURI("getholidaybyperson"),Request(Some(year.get(Calendar.YEAR))))
+      val request = Post(getURI("getholidaybyperson"),Request(Some(getYear)))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
-
-    
 
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))
@@ -315,10 +303,29 @@ object HumanResourceModel {
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
-    override def getAbsenceInYearForPerson: Future[Response[List[Assenza]]] = {
-      val request: HttpRequest = Post(getURI("getAbsenceInYearForPerson"))
+    override def getAbsenceInYearForPerson(idPersona:Int): Future[Response[List[Assenza]]] = {
+      val request: HttpRequest = Post(getURI("getAbsenceInYearForPerson"),Request(Some((idPersona,getYear))))
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Assenza]]])
     }
+
+
+    private def callServer(request: HttpRequest):Future[Response[Login]] =
+      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
+
+    private def callRequest(request:HttpRequest):Future[Response[Int]] =
+      callHtpp(request).flatMap(unMarshall)
+
+    private def callServerSalary(request: HttpRequest)=
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+
+    private def getCalendar:Calendar={
+      val year = Calendar.getInstance()
+      year.setTime(new Date(System.currentTimeMillis()))
+      year
+    }
+
+    private def getYear:Int=getCalendar.get(Calendar.YEAR)
+
   }
 
 }

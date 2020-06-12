@@ -17,6 +17,8 @@ import scala.util.{Failure, Success, Try}
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
 
+
+
   /**
    * Absence saves a new absence on the db
    *
@@ -144,6 +146,8 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * @param terminalId
    */
   def terminalModalData(terminalId: Int): Unit
+
+  def absencePerson(item: Ferie,isMalattia:Boolean): Unit
 }
 
 /**
@@ -296,5 +300,11 @@ object HumanResourceController {
       future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2))
     }
 
+    override def absencePerson(item:Ferie,isMalattia:Boolean): Unit =
+      model.getAbsenceInYearForPerson(item.idPersona)
+      .onComplete {
+        case Failure(exception) =>   myView.result("errore-malattie")
+        case Success(value) =>value.payload.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
+      }
   }
 }

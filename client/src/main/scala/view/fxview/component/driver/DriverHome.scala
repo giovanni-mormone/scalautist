@@ -13,9 +13,27 @@ import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait DriverHome extends Component[DriverHomeParent]{
+  /**
+   *
+   */
   def drawHome():Unit
+
+  /**
+   *
+   */
   def drawShift():Unit
+
+  /**
+   * method that call his parent and send list with all salary of a person
+   * @param list list of all salary for a person
+   */
   def drawSalary(list:List[Stipendio]):Unit
+
+  /**
+   * method which enable view information for a salary in the specific month
+   * @param information case class with all presenze, absence and salary for a month
+   */
+  def informationSalary(information:StipendioInformations):Unit
 }
 object DriverHome{
   def apply(): DriverHome = new DriverHomeFX()
@@ -81,5 +99,6 @@ object DriverHome{
       salaryBox.pane
     }
 
+    override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
   }
 }

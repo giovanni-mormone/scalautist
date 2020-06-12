@@ -1,8 +1,13 @@
 package dbfactory.setting
 
+import java.sql.Date
+
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceAssenza
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.SQLServerProfile.api._
 import slick.lifted.{FlatShapeLevel, Shape}
+
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 

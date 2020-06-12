@@ -38,7 +38,7 @@ object AssenzaRoute{
   def absenceInYearForPerson(): Route =
     post{
       entity(as[Request[(Int,Int)]]) {
-        case Request(Some(value)) => onComplete(AssenzaOperation.getAbsenceInYearForPerson(value._1,value._2)){
+        case Request(Some(value)) =>onComplete(AssenzaOperation.getAssenzeInYearForPerson(value._2,value._1)){
           case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
           case t => anotherSuccessAndFailure(t)
         }

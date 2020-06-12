@@ -39,7 +39,7 @@ abstract class AbstractModel extends Model{
 
 
   private val found: PartialFunction[HttpResponse, Option[HttpResponse]] = new PartialFunction[HttpResponse, Option[HttpResponse]] {
-    override def isDefinedAt(x: HttpResponse): Boolean = x.status==StatusCodes.OK || x.status==StatusCodes.Created || x.status==StatusCodes.NotFound || x.status==StatusCodes.BadRequest
+    override def isDefinedAt(x: HttpResponse): Boolean = x.status==StatusCodes.OK || x.status==StatusCodes.Created || x.status==StatusCodes.NotFound || x.status==StatusCodes.BadRequest || x.status==StatusCodes.InternalServerError
     override def apply(response: HttpResponse): Option[HttpResponse] = Some(response)
   }
 

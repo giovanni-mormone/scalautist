@@ -8,6 +8,7 @@ import servermodel.routes.masterroute.MasterRouteTurno.routeTurno
 import servermodel.routes.masterroute.MasterRouteTerminale.routeTerminale
 import servermodel.routes.masterroute.MasterRouteZona.routeZona
 import servermodel.routes.masterroute.MasterRouteContratto.routeContratto
+import servermodel.routes.masterroute.MasterRouteAssenza.routeAssenza
 import swagger.SwaggerDocService
 
 /**
@@ -16,5 +17,5 @@ import swagger.SwaggerDocService
 object RouteServer{
   
   val route: Route = cors() (concat(routePersona, routeTurno, routeZona,
-    routeTerminale,routeContratto,SwaggerDocService.routes))
+    routeTerminale,routeContratto,routeAssenza,SwaggerDocService.routes))
 }
