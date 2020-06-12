@@ -23,5 +23,4 @@ class TestStipendi extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
     val stipendiReq: Future[Option[Int]] = StipendioOperation.calculateStipendi(goodDateToCompute)
     stipendiReq map {list => assert(list.head == StatusCodes.ERROR_CODE1)}
   }
-
 }

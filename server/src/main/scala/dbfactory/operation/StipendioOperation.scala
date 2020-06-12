@@ -65,12 +65,20 @@ object StipendioOperation extends StipendioOperation{
     }yield result
   }
 
-  private def insertStipendiInDB (date: Date):Future[Some[Int]] = {
+  private def insertStipendiInDB (date: Date):Future[Option[Int]] =
+    createStipendi(date).flatMap{
+      case None => Future.successful(Some(StatusCodes.ERROR_CODE3))
+      case Some(stipendi) => insertAll(stipendi).collect{
+        case None => Some(StatusCodes.ERROR_CODE3)
+        case _ => Some(StatusCodes.SUCCES_CODE)
+      }
+    }
+    /*
     for{
       createStipendi <- createStipendi(date)
       insertStipendi <- if (createStipendi.isDefined) insertAll(createStipendi.head) else Future.successful(None)
     }yield if(insertStipendi.isDefined) Some(StatusCodes.SUCCES_CODE) else Some(StatusCodes.ERROR_CODE3)
-  }
+    */
 
   override def getstipendiForPersona(idPersona: Int): Future[Option[List[Stipendio]]] = {
     InstanceStipendio.operation().selectFilter(f => f.personaId === idPersona)
