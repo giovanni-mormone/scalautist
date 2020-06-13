@@ -4,7 +4,6 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import messagecodes.StatusCodes
 import model.entity.HumanResourceModel
-import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.mainview.HumanResourceView
 
 import scala.concurrent.Future
@@ -173,6 +172,8 @@ object HumanResourceController {
 
   def apply(): HumanResourceController = instance
 
+  val UNKNOWN = "Unknown"
+
   /**
    * HumanResourceController implementation
    */
@@ -191,6 +192,12 @@ object HumanResourceController {
             showResult(messageOnModal, "success")
           if(response.payload.isDefined)
             successA(response.payload.get)
+        case _ => notSuccessCodes[A](result, failurA, messageOnModal)
+      }
+    }
+
+    private def notSuccessCodes[A](result: Try[Response[A]], failurA: String => Unit, messageOnModal: Boolean = false): Unit =
+      result match {
         case Success(response) if response.statusCode == StatusCodes.NOT_FOUND =>
           failureAction("NotFound", failurA, messageOnModal)
         case Success(response) if response.statusCode == StatusCodes.BAD_REQUEST =>
@@ -208,12 +215,11 @@ object HumanResourceController {
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE6 =>
           failureAction("Error6", failurA, messageOnModal)
         case Failure(_) =>
-          failureAction("Unknown", failurA, messageOnModal)
-        case _ => failureAction("Unknown", failurA, messageOnModal)
+          failureAction(UNKNOWN, failurA, messageOnModal)
+        case _ => failureAction(UNKNOWN, failurA, messageOnModal)
       }
-    }
 
-    private def failureAction[A](message: String = "Unknown", failurA: String => Unit, messageOnModal: Boolean): Unit = {
+    private def failureAction[A](message: String = UNKNOWN, failurA: String => Unit, messageOnModal: Boolean): Unit = {
       showResult(messageOnModal, message)
       failurA(message)
     }
@@ -305,12 +311,25 @@ object HumanResourceController {
       )
 
     override def dataToRecruit(): Unit = {
-      val future: Future[(List[Zona], List[Contratto], List[Turno])] = for{
+      case class recruitData(zoneL: Response[List[Zona]], contractL: Response[List[Contratto]], shiftL: Response[List[Turno]])
+      val future: Future[recruitData] = for {
           turns <- getTurni
           contracts <- getContratti
           zones <- getZone
-        } yield (zones.payload.head, contracts.payload.head, turns.payload.head)
-      future.onComplete(data => myView.drawRecruit(data.get._1, data.get._2, data.get._3)) //TODO
+        } yield recruitData(zones, contracts, turns)
+      future.onComplete {
+        case Success(data) if data.contractL.statusCode == StatusCodes.SUCCES_CODE &&
+            data.shiftL.statusCode == StatusCodes.SUCCES_CODE &&
+            data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.drawRecruit(data.zoneL.payload.get, data.contractL.payload.get, data.shiftL.payload.get)
+        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.zoneL), _ => None)
+        case Success(data) if data.shiftL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.shiftL), _ => None)
+        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.zoneL), _ => None)
+        case _ => showResult(messageOnModal = false, UNKNOWN)
+      }
     }
 
     override def dataToZone(): Unit =
@@ -322,11 +341,21 @@ object HumanResourceController {
        )
 
     override def dataToTerminal(): Unit = {
-      val future: Future[(List[Zona], List[Terminale])] = for{
+      case class TerminalData(zoneL: Response[List[Zona]], terminalL: Response[List[Terminale]])
+      val future: Future[TerminalData] = for {
         terminals <- model.getAllTerminale
         zones <- getZone
-      } yield (zones.payload.head, terminals.payload.head)
-      future.onComplete(data => myView.drawTerminaleView(data.get._1, data.get._2)) //TODO
+      } yield TerminalData(zones, terminals)
+      future.onComplete {
+        case Success(data) if data.terminalL.statusCode == StatusCodes.SUCCES_CODE &&
+            data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.drawTerminaleView(data.zoneL.payload.head, data.terminalL.payload.head)
+        case Success(data) if data.terminalL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.terminalL), _ => None)
+        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.zoneL), _ => None)
+        case _ => showResult(messageOnModal = false, UNKNOWN)
+      }
     }
 
     override def getTerminals(zona: Zona): Unit =
@@ -338,11 +367,21 @@ object HumanResourceController {
       )
 
     override def terminalModalData(terminalId: Int): Unit = {
-      val future: Future[(List[Zona], Terminale)] = for{
+      case class terminalMData(zoneL: Response[List[Zona]], terminalS: Response[Terminale])
+      val future: Future[terminalMData] = for{
         zones <- getZone
         terminal <- model.getTerminale(terminalId)
-      } yield (zones.payload.head, terminal.payload.head)
-      future.onComplete(data => myView.openTerminalModal(data.get._1, data.get._2)) //TODO
+      } yield terminalMData(zones, terminal)
+      future.onComplete {
+        case Success(data) if data.terminalS.statusCode == StatusCodes.SUCCES_CODE &&
+          data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.openTerminalModal(data.zoneL.payload.head, data.terminalS.payload.head)
+        case Success(data) if data.terminalS.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.terminalS), _ => None)
+        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.zoneL), _ => None)
+        case _ => showResult(messageOnModal = false, UNKNOWN)
+      }
     }
 
     override def passwordRecovery(user: Int): Unit =
