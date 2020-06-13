@@ -1,6 +1,5 @@
 package jsonmessages
 
-import java.sql.Date
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import caseclass.CaseClassDB._
@@ -33,10 +32,10 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat3(Disponibilita)
     implicit val assumiJsonFormat:RootJsonFormat[Assumi] = jsonFormat3(Assumi)
     implicit val ferieJsonFormat:RootJsonFormat[Ferie] = jsonFormat3(Ferie)
-    implicit val stipendioInformationsJsonFormat:RootJsonFormat[StipendioInformations] = jsonFormat4(StipendioInformations)
+
+    implicit val stipendioInformationsJsonFormat:RootJsonFormat[StipendioInformations] = jsonFormat3(StipendioInformations)
     implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
 
-    StipendioInformations
 }
