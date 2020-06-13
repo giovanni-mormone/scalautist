@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage._
-import dbfactory.operation.{AssenzaOperation, PersonaOperation, StipendioOperation}
+import dbfactory.operation.PersonaOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.RouteException
 import servermodel.routes.exception.SuccessAndFailure._
@@ -118,35 +118,4 @@ object PersonaRoute{
       }
     }
 
-  def getStipendio: Route =
-    post{
-      entity(as[Request[Int]]) {
-        case Request(Some(value)) => onComplete(StipendioOperation.getstipendiForPersona(value)){
-          case Success(Some(salary))  =>  complete(Response(statusCodes.SUCCES_CODE, Some(salary)))
-          case t => anotherSuccessAndFailure(t)
-        }
-        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
-      }
-    }
-  def salaryCalculus(): Route =
-    post{
-      entity(as[Request[Dates]]) {
-        case Request(Some(value)) => onComplete(StipendioOperation.calculateStipendi(value.date)){
-          case Success(Some(id)) if id>0 =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(id)))
-          case t => anotherSuccessAndFailure(t)
-        }
-        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
-      }
-    }
-
-  def holidayByPerson(): Route =
-    post{
-      entity(as[Request[Int]]) {
-        case Request(Some(value)) => onComplete(AssenzaOperation.getAllFerie(value)){
-          case Success(Some(ferie))  =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE, Some(ferie)))
-          case t => anotherSuccessAndFailure(t)
-        }
-        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
-      }
-    }
 }

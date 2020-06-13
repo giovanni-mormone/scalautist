@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
 import org.junit.{Before, Test}
 import org.junit.runner.RunWith
-import view.ChangePasswordLaunch
+import view.launchview.ChangePasswordLaunch
 import view.mainviewoperations.ChangePasswordOperations
 
 @RunWith(classOf[JUnitParamsRunner])

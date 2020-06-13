@@ -443,7 +443,6 @@ CREATE INDEX [IX_FK_AssenzaPersoneSet]
     ON [dbo].[AssenzaSets]
         ([PersoneSet_Matricola]);
 
-
 -- Creating foreign key on [Contrato_IdContratto] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
     ADD CONSTRAINT [FK_StoricoContrattoContrato]

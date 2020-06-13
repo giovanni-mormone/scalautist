@@ -108,6 +108,13 @@ trait HumanResourceView extends DialogView {
    */
   def message(message: String): Unit
 
+  /**  
+   * method that send list of assenza for a person within a year
+   * @param item represent ferie of a person, this case class contains day that remain to the person and your name and surname and idPerson
+   * @param isMalattia boolean that represent if modal is open for illness or holiday
+   * @param assenza list of assenza for one person
+   */
+  def drawModalAbsenceHoliday(item:Ferie,isMalattia:Boolean,assenza: List[Assenza]): Unit
   /**
    * show a message in the main view
    *
@@ -198,6 +205,10 @@ object HumanResourceView {
     override def updateTerminal(terminal: Terminale): Unit =
       myController.updateTerminal(terminal)
 
+    /////////////////////////////////////////////////////////ModalAbsence
+    override def openModal(item:Ferie, isMalattia: Boolean): Unit =myController.absencePerson(item,isMalattia)
+
+
     /////////////////////////////////////////////////////////   disegni pannelli
     override def drawRecruitPanel: Unit =
       myController.dataToRecruit()
@@ -244,21 +255,21 @@ object HumanResourceView {
     override def drawChangePassword: Unit =
       Platform.runLater(() => ChangePasswordView(stage, Some(stage.getScene)))
 
-    /////////////////////////////////////////////////////////   disegni modal
-
-    override def openModal(item:Ferie, isMalattia: Boolean): Unit = {
+    override def drawModalAbsenceHoliday(item:Ferie,isMalattia:Boolean,assenza: List[Assenza]): Unit =
       Platform.runLater(() => {
-        homeView()
-        modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia))
+        modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia,assenza))
         modalResource.show()
       })
-    }
+    /////////////////////////////////////////////////////////   disegni modal
+
+
+    /////////////////////////////////////////////////////////   disegni modal
 
     override def openZonaModal(zona: Zona): Unit = {
       Platform.runLater(() => {
         homeView()
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
-        modalResource.show()
+
       })
     }
 
