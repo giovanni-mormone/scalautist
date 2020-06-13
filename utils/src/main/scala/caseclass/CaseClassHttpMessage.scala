@@ -83,9 +83,34 @@ object CaseClassHttpMessage {
    */
   final case class InfoPresenza(valoreTurno:Double,durataTurno:String, nomeTurno:String,data:Date, straordinario: Boolean)
 
+  /**
+   * case class that represents the informations of presenze for a Stipendio
+   * @param giorniLavorati
+   *                       Total days worked in the month of the stipendio
+   * @param valoreTotaleTurni
+   *                          Money earned for normal turni
+   * @param valoreTotaleStraordinari
+   *                                 Money earned for turni straordinari
+   */
   final case class InfoValorePresenza(giorniLavorati: Int, valoreTotaleTurni: Double,valoreTotaleStraordinari:Double)
 
+  /**
+   * case class that represents the informations of Assenze for a Stipendio
+   * @param assenzePerFerie
+   *                        Total days of ferie in the month of the stipendio
+   * @param assenzePerMalattia
+   *                           Total day of malattie in the month of the stipendio
+   */
   final case class InfoAssenza(assenzePerFerie: Int, assenzePerMalattia: Int)
 
+  /**
+   * case class that represents the informations of a given stipendio
+   * @param turni
+   *              The List of turni worked in the month of the stipendio, of type [[caseclass.CaseClassHttpMessage.InfoPresenza]]
+   * @param infoValore
+   *                   The [[caseclass.CaseClassHttpMessage.InfoValorePresenza]] for the stipendio
+   * @param infoAssenza
+   *                    The [[caseclass.CaseClassHttpMessage.InfoAssenza]] for the stipendio
+   */
   final case class StipendioInformations(turni:List[InfoPresenza], infoValore: InfoValorePresenza, infoAssenza: InfoAssenza)
 }
