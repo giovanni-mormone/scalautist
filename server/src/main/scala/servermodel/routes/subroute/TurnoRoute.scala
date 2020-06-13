@@ -39,7 +39,7 @@ object TurnoRoute {
       entity(as[Request[Turno]]) {
         case Request(Some(turno))=> onComplete(TurnoOperation.insert(turno)) {
           case Success(Some(idTurno))  =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,
-            Some(Turno(turno.nomeTurno,turno.fasciaOraria,turno.notturno,Some(idTurno)))))
+            Some(Turno(turno.nomeTurno,turno.fasciaOraria,turno.paga,Some(idTurno)))))
           case t => anotherSuccessAndFailure(t)
         }
         case _ => complete(StatusCodes.BadRequest,badHttpRequest)

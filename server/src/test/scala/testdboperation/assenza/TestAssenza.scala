@@ -14,7 +14,7 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
 
   import AssenzaOperationTestValues._
 
-  behavior of "Assenze"
+  behavior of "GetAllFerie"
   it should "return the given the list when tries to get all ferie for that year" in {
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2020)
     ferie map {list => assert(list.head.equals(remainingFerieList))}
@@ -23,6 +23,7 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2021)
     ferie map {list => assert(list.head.equals(remainingFerieListNext))}
   }
+  behavior of "Insert"
   it should "return ERROR_CODE1 when adding an assenza when the period has already an assenza" in {
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(alreadyAssenzaInPeriod)
     assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE1) }
@@ -59,6 +60,7 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(goodFerie)
     assenza map { ass => assert(ass.head >0) }
   }
+  behavior of "getAssenzeInYearForPerson"
   it should "return the provided list of Assenze when getting it for a person in a year " in {
     val assenza: Future[Option[List[Assenza]]] = AssenzaOperation.getAssenzeInYearForPerson(2020,2)
     assenza map { ass => assert(ass.head.equals(assenzaListId2)) }

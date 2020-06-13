@@ -9,7 +9,7 @@ import slick.lifted.{ForeignKeyQuery, ProvenShape}
 
 object StipendioTable {
 
-  class StipendioTableRep(tag:Tag) extends GenericTable[Stipendio](tag,"StipendioSet","IdStipendio"){
+  class StipendioTableRep(tag:Tag) extends GenericTable[Stipendio](tag,"StipendioSets","IdStipendio"){
     def personaId: Rep[Int] = column[Int]("PersoneSet_Matricola")
     def data: Rep[Date] = column[Date]("Data")
     def valore: Rep[Double] = column[Double]("Valore")

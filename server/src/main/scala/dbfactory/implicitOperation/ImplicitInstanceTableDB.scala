@@ -17,7 +17,6 @@ import dbfactory.table.RisultatoTable.RisultatoTableRep
 import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StipendioTable.StipendioTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
-import dbfactory.table.StraordinarioTable.StraordinarioTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
@@ -105,11 +104,7 @@ object ImplicitInstanceTableDB {
 
     override def operation(): GenericOperation[StoricoContratto, StoricoContrattoTableRep] = GenericOperation[StoricoContratto, StoricoContrattoTableRep]()
   }
-  implicit object InstanceStraordinario extends ImplicitInstanceTableDB[Straordinario,StraordinarioTableRep] {
-    override private[implicitOperation] def typeDB(): GenericCRUD[Straordinario, StraordinarioTableRep] = GenericCRUD[Straordinario, StraordinarioTableRep]()
 
-    override def operation(): GenericOperation[Straordinario, StraordinarioTableRep] = GenericOperation[Straordinario, StraordinarioTableRep]()
-  }
   implicit object InstanceTerminale extends ImplicitInstanceTableDB[Terminale,TerminaleTableRep] {
     override private[implicitOperation] def typeDB(): GenericCRUD[Terminale, TerminaleTableRep] = GenericCRUD[Terminale, TerminaleTableRep]()
 
