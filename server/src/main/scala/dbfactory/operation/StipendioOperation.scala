@@ -26,7 +26,9 @@ trait StipendioOperation extends OperationCrud[Stipendio]{
    *         A [[messagecodes.StatusCodes.SUCCES_CODE]] if the stipendi are computed with succes or code messages:
    *         [[messagecodes.StatusCodes.ERROR_CODE1]] if stipendi have been already computed for the month provided in input
    *         [[messagecodes.StatusCodes.ERROR_CODE2]] if the month cannot be calculated, i.e. there is not a [[caseclass.CaseClassDB.Presenza]]
-   *         for the last day of the month.
+   *                                                  for the last day of the month.
+   *         [[messagecodes.StatusCodes.ERROR_CODE3]] if it cannot calculate the stipendi
+   *
    *
    */
   def calculateStipendi(date: Date): Future[Option[Int]]
@@ -44,13 +46,12 @@ trait StipendioOperation extends OperationCrud[Stipendio]{
    * @param idStipendio
    *                    The id of the stipendio.
    * @return
-   *         A [[caseclass.CaseClassHttpMessage.StipendioInformations]]
+   *         A [[caseclass.CaseClassHttpMessage.StipendioInformations]] or None if there is not that Stipendio
    */
   def getStipendioInformations(idStipendio: Int): Future[Option[StipendioInformations]]
 }
 
 object StipendioOperation extends StipendioOperation {
-
   import utils.DateConverter._
 
   private val DEFAULT_PAGA: Double = 8
@@ -78,17 +79,6 @@ object StipendioOperation extends StipendioOperation {
     InstanceStipendio.operation().selectFilter(f => f.personaId === idPersona)
   }
 
-  /*override def getStipendioInformations(idStipendio: Int): Future[Option[StipendioInformations]] =
-    select(idStipendio).flatMap{
-      case None => Future.successful(None)
-      case Some(stipendio) =>
-        for{
-          assenze <- InstanceAssenza.operation().selectFilter(f => f.personaId === stipendio.personaId && f.dataInizio >= stipendio.data && f.dataFine < nextMonthDate(stipendio.data))
-          presenze <- InstancePresenza.operation().selectFilter(f => f.personeId === stipendio.personaId && f.data >= stipendio.data && f.data < nextMonthDate(stipendio.data))
-          straordinari <- InstanceStraordinario.operation().selectFilter(f => f.personaId === stipendio.personaId && f.data >= stipendio.data && f.data < nextMonthDate(stipendio.data))
-        }yield presenze.map(x => StipendioInformations(assenze,x,straordinari,stipendio))
-    }*/
-
   override def getStipendioInformations(idStipendio: Int): Future[Option[StipendioInformations]] ={
     select(idStipendio).flatMap{
       case None => Future.successful(None)
@@ -105,37 +95,40 @@ object StipendioOperation extends StipendioOperation {
   }
 
   private def getInfoPresenze(presenze:Option[List[Presenza]], turni:Option[List[Turno]]):Future[List[InfoPresenza]]={
-    Future.successful(presenze.toList.flatMap(_.flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId)).map(turno => InfoPresenza(turno.paga * multiplier(x.isStraordinario),turno.nomeTurno,turno.fasciaOraria,x.data,x.isStraordinario))))))
+    Future.successful(presenze.toList.flatMap(_.flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId))
+      .map(turno => InfoPresenza(turno.paga * multiplier(x.isStraordinario),turno.nomeTurno,turno.fasciaOraria,x.data,x.isStraordinario))))))
   }
 
   private def getInfoValore(presenze:Option[List[Presenza]], turni:Option[List[Turno]]):Future[InfoValorePresenza]={
-    var giorni: Int = presenze.toList.flatten.groupBy(_.data).keys.size
-    var straordinariMoney: Double = presenze.toList.flatten.filter(_.isStraordinario).flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId)).map(t => t.paga * MUL_STRAORDINARIO))).sum
-    var normali: Double = presenze.toList.flatten.filter(!_.isStraordinario).flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId)).map(t => t.paga))).sum
-    Future.successful(InfoValorePresenza(giorni,straordinariMoney,normali))
+    val moneyMap = presenze.toList.flatten.groupBy(_.isStraordinario)
+      .map(t => t._1 -> t._2.flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId))
+        .map(t => t.paga * multiplier(x.isStraordinario)))).sum)
+    val isStraordinario = true
+    Future.successful(InfoValorePresenza(presenze.toList.flatten.groupBy(_.data).keys.size,
+                                          moneyMap.getOrElse(isStraordinario,0.0),moneyMap.getOrElse(!isStraordinario,0.0)))
   }
 
   private def getInfoAssenza(assenze:Option[List[Assenza]]):Future[InfoAssenza]={
-    val totalDays: (Int,Assenza) => Int = (_,ass) => computeDaysBetweenDates(ass.dataInizio,ass.dataFine)
-    var giornimalattia:Int = assenze.toList.flatten.filter(_.malattia).foldLeft(0)(totalDays)
-    var giorniferie:Int = assenze.toList.flatten.filter(!_.malattia).foldLeft(0)(totalDays)
-    Future.successful(InfoAssenza(giorniferie,giornimalattia))
+    val totalDays: (Int,Assenza) => Int = (x,ass) => x + computeDaysBetweenDates(ass.dataInizio,ass.dataFine)
+    val daysMap = assenze.toList.flatten.groupBy(malattia => malattia.malattia).map(t => t._1 -> t._2.foldLeft(0)(totalDays))
+    val malattia = true
+    Future.successful(InfoAssenza(daysMap(!malattia),daysMap(malattia)))
   }
-
 
   private def createStipendi(date: Date): Future[Option[List[Stipendio]]] = {
     for{
       turni <- TurnoOperation.selectAll
-      presenze <- InstancePresenza.operation()execQueryFilter (c => (c.personeId,c.turnoId,c.isStraordinario),f => f.data >= startMonthDate(date) && f.data < nextMonthDate(date))
+      presenze <- InstancePresenza.operation().execQueryFilter(c => (c.personeId,c.turnoId,c.isStraordinario),
+                                                                f => f.data >= startMonthDate(date) && f.data < nextMonthDate(date))
       stipendi <- calculateMoney(presenze,turni,date)
     }yield stipendi
   }
 
   private def calculateMoney(presenzeList: Option[List[(Int,Int,Boolean)]],turni:Option[List[Turno]],date:Date): Future[Option[List[Stipendio]]] = {
     val sumStipendi:(Map[Int,Double],(Int,Double)) => Map[Int,Double] = (map,couple) => map.updated(couple._1,couple._2 + map.getOrElse(couple._1,0.0))
-//    println("SECOND" + presenzeList.map(_.groupBy(_._1).map(t=>t._1-> t._2.map{case (_,v,true)=>pagaTurno(turni,v) *MUL_STRAORDINARIO;case(_,v,false)=>pagaTurno(turni,v)}.sum)))
     Future.successful(stipendi(presenzeList.map(_.map(x => x._1 -> pagaTurno(turni,x._2,x._3)).foldLeft(Map[Int,Double]())(sumStipendi)),date))
   }
+
   private val pagaTurno: (Option[List[Turno]],Int,Boolean) => Double = (turni,idTurno,straordinario) =>
     turni.flatMap(_.find(_.id.contains(idTurno))).map(x => x.paga * multiplier(straordinario)).getOrElse(DEFAULT_PAGA)
 
@@ -143,14 +136,5 @@ object StipendioOperation extends StipendioOperation {
 
   private def stipendi(soldi:Option[Map[Int,Double]],date:Date):Option[List[Stipendio]] = {
     soldi.map(_.map(x => Stipendio(x._1,x._2,date)).toList)
-  }
-}
-
-object A extends App{
-  StipendioOperation.getStipendioInformations(23).collect{
-    case x => println("MMMMMMMMM" + x)
-  }
-
-  while(true){
   }
 }

@@ -90,10 +90,11 @@ object AssenzaOperation extends AssenzaOperation{
   }
 
   private def tryInsert(assenza:Assenza): Future[Option[Int]] = {
-    val d:(Int,Assenza) => Int = (x,assenz) => x + computeDaysBetweenDates(assenz.dataInizio,assenz.dataFine)
+    val addDays:(Int,Assenza) => Int = (x,assenz) => x + computeDaysBetweenDates(assenz.dataInizio,assenz.dataFine)
+
     InstanceAssenza.operation()
-      .selectFilter(filter => filter.personaId === assenza.personaId)
-      .map(_.map(_.foldLeft(0)(d))).map(days => days.exists(_ + computeDaysBetweenDates(assenza.dataInizio,assenza.dataFine) > GIORNI_FERIE_ANNUI))
+      .selectFilter(filter => filter.personaId === assenza.personaId && filter.malattia === false)
+      .map(_.map(_.foldLeft(0)(addDays))).map(days => days.exists(_ + computeDaysBetweenDates(assenza.dataInizio,assenza.dataFine) > GIORNI_FERIE_ANNUI))
       .flatMap(outOfDays =>if(outOfDays) Future.successful(Option(StatusCodes.ERROR_CODE5)) else super.insert(assenza))
   }
 
@@ -109,7 +110,7 @@ object AssenzaOperation extends AssenzaOperation{
       if assenza.dataFine < nextYear && assenza.dataInizio >= currentYear && !assenza.malattia
     }yield (assenza.dataInizio,assenza.dataFine,persona.id,persona.nome,persona.cognome)
     val ferieReduction: (Ferie,Ferie) => Ferie = (x,y) => Ferie(x.idPersona,x.nomeCognome,x.giorniVacanza + y.giorniVacanza)
-    val toFerie: JoinResult => Ferie = join =>
+    val joinResultToFerie: JoinResult => Ferie = join =>
       Ferie(join.idPersona,join.nomePersona.concat(join.cognomePersona).concat(join.idPersona.toString),computeDaysBetweenDates(join.dataInizio,join.dataFine))
     val setFerieDays: (List[Ferie],Ferie) => Int = (value, startingFerie)=> GIORNI_FERIE_ANNUI - value.find(_.idPersona == startingFerie.idPersona).getOrElse(Ferie(0,"",0)).giorniVacanza
 
@@ -117,7 +118,7 @@ object AssenzaOperation extends AssenzaOperation{
       .flatMap(ferie => {
         InstanceAssenza.operation()
           .execJoin(filterJoin)
-          .map(_.map(ass => ass.map(x => toFerie(x)).groupBy(_.idPersona).values.map(_.reduce(ferieReduction)).toList))
+          .map(_.map(ass => ass.map(x => joinResultToFerie(x)).groupBy(_.idPersona).values.map(_.reduce(ferieReduction)).toList))
           .collect{
             case None => ferie
             case Some(value) => ferie.map(_.map(startingFerie => Ferie(startingFerie.idPersona,startingFerie.nomeCognome, setFerieDays(value,startingFerie))))
@@ -132,7 +133,6 @@ object AssenzaOperation extends AssenzaOperation{
   private def startingPersoneFerie(): Future[Option[List[Ferie]]] = {
     //prende id-nome-cognome e li concatena
     val tupToNameSurname: ((Int,String,String)) => String = x => x._2.concat(x._3).concat(x._1.toString)
-
     InstancePersona.operation()
       .execQueryFilter(field => (field.id,field.nome,field.cognome),_.ruolo === CODICE_CONDUCENTE)
       .map(_.map(_.map(x => Ferie(x._1,tupToNameSurname(x),GIORNI_FERIE_ANNUI))))
