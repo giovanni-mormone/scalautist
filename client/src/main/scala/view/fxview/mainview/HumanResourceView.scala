@@ -115,6 +115,16 @@ trait HumanResourceView extends DialogView {
    *                String of message to show
    */
   def dialog(message: String): Unit
+
+  /**
+   * show a specific message in the main view
+   *
+   * @param className
+   *                  String of the entity name
+   * @param message
+   *                String of type of message to print
+   */
+  def dialog(className: String, message: String): Unit
 }
 
 /**
@@ -140,6 +150,7 @@ object HumanResourceView {
     private var modalResource: Modal = _
     private var hrHome: HRHome = _
     private var popup: Popup = _
+    private var resourceBundle: ResourceBundle = _
 
     /**
      * Closes the view.
@@ -148,6 +159,7 @@ object HumanResourceView {
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      resourceBundle = resources
       myController = HumanResourceController()
       myController.setView(this)
       homeView()
@@ -287,6 +299,11 @@ object HumanResourceView {
       })
     }
 
-
+    override def dialog(className: String, message: String): Unit =
+      Platform.runLater(() => {
+        homeView()
+        popup = new Popup(myStage)
+        popup.showMessage(resourceBundle.getString(className + "-" + message))
+      })
   }
 }
