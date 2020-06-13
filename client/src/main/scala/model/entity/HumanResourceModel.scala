@@ -206,10 +206,11 @@ object HumanResourceModel {
     private def callServer(request: HttpRequest):Future[Response[Login]] =
       callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
-    override def illnessPeriod(assenza: Assenza): Future[Response[Int]] = createRequest(assenza)
+    override def illnessPeriod(assenza: Assenza): Future[Response[Int]] =
+      createRequest(assenza)
 
-    override def holidays(assenza: Assenza): Future[Response[Int]] = createRequest(assenza)
-
+    override def holidays(assenza: Assenza): Future[Response[Int]] =
+      createRequest(assenza)
 
     override def fires(ids: Int): Future[Response[Int]] = {
       val request = Post(getURI("deletepersona"), transform(ids))
@@ -272,8 +273,6 @@ object HumanResourceModel {
       val request = Post(getURI("getholidaybyperson"),Request(Some(year.get(Calendar.YEAR))))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
-
-    
 
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))
