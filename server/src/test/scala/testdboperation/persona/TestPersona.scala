@@ -54,26 +54,10 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
     val updatePersonaP: Future[Option[Int]] = PersonaOperation.update(updatePersona)
     updatePersonaP map {update => assert(update.isEmpty) }
   }
-  behavior of "PersoneManagment"
-  it should "return a login with credential of user when good parameters inserted" in {
-    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
-    assumi map {login => assert(login.head == 12)}
-  }
-  it should "return a login with credential of user2" in {
-    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
-    assumi map {login => assert(login.head == 13)}
-  }
-  it should "return a 1 int when removed from db" in {
-    val fire: Future[Option[Int]] = PersonaOperation.delete(6)
-    fire map {login => assert(login.head == 1)}
-  }
-  it should "return None if not finds the person to delete" in {
-    val fire: Future[Option[Int]] = PersonaOperation.delete(26)
-    fire map {login => assert(login.isEmpty)}
-  }
-  it should "return a List of Persona with length 2 and nome Mattia when searchs in the db with that name" in {
-    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Mattia")
-    searchName map {list => assert(list.head.length == 2 && list.head.count(_.nome.equals("Mattia")) == 2 )}
+  behavior of "FilterBy"
+  it should "return a List of Persona with length 1 and nome Matto when searchs in the db with that name" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("MAtto")
+    searchName map {list => assert(list.head.length == 1 && list.head.head.nome.equals("MAtto"))}
   }
   it should "return None when search by name not present in the db" in {
     val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Gevgvtia")
@@ -81,11 +65,16 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   }
   it should "return a List of Persona with length 1 and cognome Mattesi when searchs in the db with that surname" in {
     val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Mattesi")
-    searchName map {list => assert(list.head.length == 1)}
+    searchName map {list => assert(list.head.length == 1 && list.head.head.cognome.equals("Mattesi"))}
   }
-  it should "return None when search by surname not present in the db" in {
-    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Gevgvtia")
-    searchName map {list => assert(list.isEmpty)}
+  behavior of "Delete and DeleteAll"
+  it should "return a 1 int when removed from db" in {
+    val fire: Future[Option[Int]] = PersonaOperation.delete(6)
+    fire map {login => assert(login.head == 1)}
+  }
+  it should "return None if not finds the person to delete" in {
+    val fire: Future[Option[Int]] = PersonaOperation.delete(26)
+    fire map {login => assert(login.isEmpty)}
   }
   it should "return a 2 when removes a list of 2 persons present db" in {
     val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(7,8))
@@ -99,13 +88,30 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
     val fire: Future[Option[Int]] = PersonaOperation.deleteAll(List(101,80))
     fire map {login => assert(login.isEmpty)}
   }
-  it should "return A list of length N when gets the stipendi for persona with id 2" in {
-    val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(2)
-    stipendi map {stip => assert(stip.head.length == 4)}
+  behavior of "Assumi"
+  it should "return None when search by name before inserting in the database" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Mattia")
+    searchName map {list => assert(list.isEmpty)}
   }
-  it should "return A None stipendi for persona not in the db" in {
-    val stipendi: Future[Option[List[Stipendio]]] = StipendioOperation.getstipendiForPersona(277)
-    stipendi map {stip => assert(stip.isEmpty)}
+  it should "return None when search by surname not present in the db" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterBySurname("Gevgvtia")
+    searchName map {list => assert(list.isEmpty)}
+  }
+  it should "return the id of the assumed user when good parameters inserted" in {
+    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
+    assumi map {login => assert(login.head == 12)}
+  }
+  it should "return a list of length 1 when search by name after inserting in the database" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Mattia")
+    searchName map {list => assert(list.head.length == 1 && list.head.head.nome.equals("Mattia"))}
+  }
+  it should "return the id of the assumed user when inserting it a second time (omonimous people)" in {
+    val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaGood)
+    assumi map {login => assert(login.head == 13)}
+  }
+  it should "return a list of length 2 when search by name after inserting in the database the same person another time" in {
+    val searchName: Future[Option[List[Persona]]] = PersonaOperation.filterByName("Mattia")
+    searchName map {list => assert(list.head.length == 2 && list.head.head.nome.equals("Mattia"))}
   }
   it should "return an ERROR_CODE1 when tries to insert a persona but the contratto not exist in the db" in {
     val assumi: Future[Option[Int]] = PersonaOperation.assumi(insertPersonaNoSuchContratto)
