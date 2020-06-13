@@ -85,8 +85,6 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (3,N'20201222',N'20201231',0,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (4,N'20200220',N'20200325',0,6)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (5,N'20200622',N'20200629',0,7)
-<<<<<<< HEAD
-=======
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (6,N'20200522',N'20200529',0,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (7,N'20200522',N'20200529',0,4)
@@ -106,7 +104,6 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (23,N'20200507',N'20200510',0,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (24,N'20200523',N'20200529',1,5)
 
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 SET IDENTITY_INSERT [dbo].[AssenzaSets] OFF
 
 --//ASSENZA
@@ -376,10 +373,7 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (260,N'20200227',2,2,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (261,N'20200228',2,2,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (262,N'20200229',5,2,0)
-<<<<<<< HEAD
-=======
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (263,N'20200211',6,2,0)
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (264,N'20200201',6,2,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (265,N'20200202',6,2,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (266,N'20200222',6,4,0)
@@ -390,10 +384,7 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (271,N'20200227',5,4,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (272,N'20200228',6,4,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (273,N'20200229',6,4,0)
-<<<<<<< HEAD
-=======
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (274,N'20200212',5,4,0)
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (275,N'20200201',4,4,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (276,N'20200202',4,4,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (277,N'20200222',3,5,0)
@@ -404,10 +395,7 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (282,N'20200227',4,5,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (283,N'20200228',5,5,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (284,N'20200229',4,5,0)
-<<<<<<< HEAD
-=======
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (285,N'20200212',3,5,0)
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (286,N'20200202',3,5,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (287,N'20200203',3,5,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (288,N'20200222',3,6,0)
@@ -418,10 +406,7 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (293,N'20200227',5,6,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (294,N'20200228',4,6,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (295,N'20200229',3,6,0)
-<<<<<<< HEAD
-=======
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (296,N'20200212',2,6,0)
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (297,N'20200202',2,6,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (298,N'20200205',1,6,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (299,N'20200201',6,7,0)
@@ -434,10 +419,7 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (306,N'20200227',2,7,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (307,N'20200228',2,7,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (308,N'20200229',2,7,0)
-<<<<<<< HEAD
-=======
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (309,N'20200212',2,7,0)
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (310, N'20200622',2,2,1)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (311, N'20200619',4,4,1)
@@ -520,10 +502,7 @@ SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 --//STORICOCONTRATTO
 select * from [dbo].[PresenzaSets] where data < '2020-06-06'
 select * from AssenzaSets;
-<<<<<<< HEAD
-=======
 select * from StipendioSets
->>>>>>> ae5a37e2acd972be4c0887eacc60e7c7c8269541
 select * from PersoneSets
 select * from PersoneSets full join AssenzaSets on Matricola=PersoneSet_Matricola
 
