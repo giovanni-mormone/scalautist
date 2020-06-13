@@ -271,7 +271,7 @@ object HumanResourceView {
       Platform.runLater(() => {
         homeView()
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
-        modalResource.show()
+
       })
     }
 

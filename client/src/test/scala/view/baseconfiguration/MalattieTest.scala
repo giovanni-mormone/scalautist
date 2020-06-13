@@ -5,9 +5,10 @@ import java.time.LocalDate
 import javafx.application.Platform
 import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
-import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
-import view.driverviewoperations.{FerieOperation, MalattieOperation}
+import org.junit.{After, Before, Test}
+import utils.scriptCallServer.ScriptServer
+import view.driverviewoperations.MalattieOperation
 import view.launchview.HumanResourceLaunch
 
 @RunWith(classOf[JUnitParamsRunner])
@@ -29,6 +30,7 @@ class MalattieTest extends BaseTest {
 
   @Test
   def goodInsertAbsence(): Unit = {
+    ScriptServer.result
     malattie.clickButtonIllness()
     ensureEventQueueComplete()
     sleep(5000)
