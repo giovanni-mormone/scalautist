@@ -1,9 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 cd ../../../../../../
 echo "hello"
-start sbt "project server; run" &
-echo "Ok"
-sleep 20
-kill -9 $!
-exit
+exec sbt "project server; run" &
+cd  client/src/test/scala/utils/scriptCallServer
+echo $! > save_pid_java.txt

@@ -205,8 +205,6 @@ object HumanResourceView {
     override def updateTerminal(terminal: Terminale): Unit =
       myController.updateTerminal(terminal)
 
-      modalResource.showMessage("modificato")
-
     /////////////////////////////////////////////////////////ModalAbsence
     override def openModal(item:Ferie, isMalattia: Boolean): Unit =myController.absencePerson(item,isMalattia)
 
