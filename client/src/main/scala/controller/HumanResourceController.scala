@@ -237,7 +237,7 @@ object HumanResourceController {
         if (className.equals(""))
           myView.dialog(message)
         else
-          myView.dialog(className, message)//myView.dialog(className + "-" + message)
+          myView.dialog(className, message)
     }
 
     //////////////////////////////////////////////////////////////////////////////// system -> db
@@ -251,7 +251,6 @@ object HumanResourceController {
           showSuccess = false))
 
     override def fires(ids: Set[Int]): Unit = {
-      //println(ids)
       val future: Future[Response[Int]] =
           if(ids.size > 1)
             model.firesAll(ids)
