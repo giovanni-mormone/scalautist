@@ -43,7 +43,7 @@ abstract class AbstractModel extends Model{
     override def apply(response: HttpResponse): Option[HttpResponse] = Some(response)
   }
 
-  def callHtpp(request: HttpRequest):Future[Option[HttpResponse]] =
+  protected def callHtpp(request: HttpRequest):Future[Option[HttpResponse]] =
     doHttp(request).collect(found)
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)

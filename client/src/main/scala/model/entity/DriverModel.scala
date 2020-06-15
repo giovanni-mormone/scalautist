@@ -15,7 +15,7 @@ import scala.concurrent.Future
  * DriverModel extends [[model.Model]].
  * Interface for driver's operation on data
  */
-trait DriverModel extends AbstractModel{
+trait DriverModel{
   /**
    * Return a set of one driver's turn
    * @param id
@@ -50,7 +50,7 @@ object DriverModel {
 
   def apply(): DriverModel = new DriverResourceHttp()
 
-  private class DriverResourceHttp extends DriverModel {
+  private class DriverResourceHttp extends AbstractModel with DriverModel{
 
     override def getWorkshift(id: Int, startData: String, endData: String): Future[List[Turno]] = ???
 

@@ -18,7 +18,7 @@ import scala.concurrent.Future
  * RisorseUmaneModel extends [[model.Model]].
  * Interface for Human Resource Manager's operation on data
  */
-trait HumanResourceModel extends AbstractModel{
+trait HumanResourceModel{
   /**
    * Recruit operations, add people on the database
    * @param persona
@@ -185,20 +185,36 @@ trait HumanResourceModel extends AbstractModel{
    */
   def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 
-}
-
+} 
 /**
  * Companin object of [[model.entity.HumanResourceModel]]. [Singleton]
  * Human Resource Model interface implementation with http request.
  */
 object HumanResourceModel {
 
-  private val instance = new HumanResourceHttp()
+  def apply(): HumanResourceModel = new HumanResourceHttp()
 
-  def apply(): HumanResourceModel = instance
+  object HumanResourceHttp extends AbstractModel{
 
-  private class HumanResourceHttp extends HumanResourceModel{
+    private def callServer(request: HttpRequest):Future[Response[Login]] =
+      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
+    private def callRequest(request:HttpRequest):Future[Response[Int]] =
+      callHtpp(request).flatMap(unMarshall)
+
+    private def callServerSalary(request: HttpRequest)=
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+
+    private def getCalendar:Calendar={
+      val year = Calendar.getInstance()
+      year.setTime(new Date(System.currentTimeMillis()))
+      year
+    }
+
+    private def getYear:Int=getCalendar.get(Calendar.YEAR)
+  }
+  private class HumanResourceHttp  extends  HumanResourceModel{
+    import HumanResourceHttp._
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), transform(assumi))
       callServer(request)
@@ -308,22 +324,7 @@ object HumanResourceModel {
     }
 
 
-    private def callServer(request: HttpRequest):Future[Response[Login]] =
-      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
-    private def callRequest(request:HttpRequest):Future[Response[Int]] =
-      callHtpp(request).flatMap(unMarshall)
-
-    private def callServerSalary(request: HttpRequest)=
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
-
-    private def getCalendar:Calendar={
-      val year = Calendar.getInstance()
-      year.setTime(new Date(System.currentTimeMillis()))
-      year
-    }
-
-    private def getYear:Int=getCalendar.get(Calendar.YEAR)
 
   }
 
