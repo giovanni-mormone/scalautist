@@ -10,6 +10,7 @@ import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.DatePicker
 import javafx.scene.layout.{AnchorPane, VBox}
+import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker
 import view.fxview.component.driver.subcomponent.parent.HomeBoxParent
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -35,9 +36,9 @@ object HomeBox{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       val date_picker:DatePicker = new DatePicker(LocalDate.now())
-      val datePickerSkin:DatePickerSkin = new DatePickerSkin(date_picker)
+      val datePickerSkin:DatePickerSkin = CreateDatePicker.createDatePickerSkin(date_picker)
       val node:Node = datePickerSkin.getPopupContent
-      datepicker.getChildren.addAll(node)
+      datepicker.getChildren.add(node)
 
     }
   }

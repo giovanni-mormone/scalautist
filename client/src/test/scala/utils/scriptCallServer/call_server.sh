@@ -2,4 +2,5 @@
 
 cd ../../../../../../
 echo "hello"
-exec sbt "project server; run"
+start sbt "project server; run" &
+echo $! > save_pid.txt
