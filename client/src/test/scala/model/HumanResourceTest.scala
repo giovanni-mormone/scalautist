@@ -75,8 +75,8 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureZona:Future[Response[List[Zona]]]=terminale.getAllZone
     futureZona map { zona => assert(zona.payload.head.length==5)}
   }
-  it should "shutdown System" in {
+  /*it should "shutdown System" in {
     val futureTerminated:Future[Terminated]=terminale.shutdownActorSystem()
     futureTerminated map { terminated => assert(true)}
-  }
+  }*/
 }
