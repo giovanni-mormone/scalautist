@@ -1,5 +1,7 @@
 package view.mainviewoperations
 
+import view.baseconfiguration.BaseTest
+
 trait HumanResourceOperations {
   //home operations
   def openRescruit(): Unit
@@ -13,21 +15,29 @@ trait HumanResourceOperations {
 
 object HumanResourceOperations {
 
-  def apply(): HumanResourceOperations = new HumanResourceOperationsImpl()
+  def apply(toTest: BaseTest): HumanResourceOperations = new HumanResourceOperationsImpl(toTest)
 
-  private class HumanResourceOperationsImpl extends HumanResourceOperations {
-    override def openRescruit(): Unit = ???
+  private class HumanResourceOperationsImpl(toTest: BaseTest) extends HumanResourceOperations {
 
-    override def openFire(): Unit = ???
+    override def openRescruit(): Unit =
+      toTest.clickOn("#recruitButton")
 
-    override def openSick(): Unit = ???
+    override def openFire(): Unit =
+      toTest.clickOn("#firesButton")
 
-    override def openHoliday(): Unit = ???
+    override def openSick(): Unit =
+      toTest.clickOn("#illness")
 
-    override def openChangePassword(): Unit = ???
+    override def openHoliday(): Unit =
+      toTest.clickOn("#holidays")
 
-    override def openZona(): Unit = ???
+    override def openChangePassword(): Unit =
+      toTest.clickOn("#changePassword")
 
-    override def openTerminal(): Unit = ???
+    override def openZona(): Unit =
+      toTest.clickOn("#zonaManage")
+
+    override def openTerminal(): Unit =
+      toTest.clickOn("#terminalManger")
   }
 }
