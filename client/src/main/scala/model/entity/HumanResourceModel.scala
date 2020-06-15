@@ -185,7 +185,8 @@ trait HumanResourceModel{
    */
   def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 
-} 
+}
+
 /**
  * Companin object of [[model.entity.HumanResourceModel]]. [Singleton]
  * Human Resource Model interface implementation with http request.
@@ -194,27 +195,8 @@ object HumanResourceModel {
 
   def apply(): HumanResourceModel = new HumanResourceHttp()
 
-  object HumanResourceHttp extends AbstractModel{
+  private class HumanResourceHttp extends AbstractModel with HumanResourceModel{
 
-    private def callServer(request: HttpRequest):Future[Response[Login]] =
-      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
-
-    private def callRequest(request:HttpRequest):Future[Response[Int]] =
-      callHtpp(request).flatMap(unMarshall)
-
-    private def callServerSalary(request: HttpRequest)=
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
-
-    private def getCalendar:Calendar={
-      val year = Calendar.getInstance()
-      year.setTime(new Date(System.currentTimeMillis()))
-      year
-    }
-
-    private def getYear:Int=getCalendar.get(Calendar.YEAR)
-  }
-  private class HumanResourceHttp  extends  HumanResourceModel{
-    import HumanResourceHttp._
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), transform(assumi))
       callServer(request)
@@ -324,7 +306,22 @@ object HumanResourceModel {
     }
 
 
+    private def callServer(request: HttpRequest):Future[Response[Login]] =
+      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
+    private def callRequest(request:HttpRequest):Future[Response[Int]] =
+      callHtpp(request).flatMap(unMarshall)
+
+    private def callServerSalary(request: HttpRequest)=
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+
+    private def getCalendar:Calendar={
+      val year = Calendar.getInstance()
+      year.setTime(new Date(System.currentTimeMillis()))
+      year
+    }
+
+    private def getYear:Int=getCalendar.get(Calendar.YEAR)
 
   }
 

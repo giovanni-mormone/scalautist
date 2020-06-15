@@ -21,6 +21,6 @@ object SuccessAndFailure {
 
   private def failure[A](result:Try[A]): StandardRoute =result match {
     case Success(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
-    case Failure(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
+    case Failure(exception) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
   }
 }
