@@ -30,7 +30,9 @@ object ShiftBox{
     @FXML
     var title:Label =_
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-          Days.createAccordion(resources,shiftAccordion,List(Turno("Manana","8:00-12:00",40,Some(1)),
+      title.setText("title")
+          Days.createAccordion(resources,shiftAccordion,List(
+            Turno("Manana","8:00-12:00",40,Some(1)),
             Turno("Manana","12:00-16:00",40,Some(1)),
             Turno("Manana","8:00-12:00",40,Some(1)),
             Turno("Manana","12:00-16:00",40,Some(1)),
