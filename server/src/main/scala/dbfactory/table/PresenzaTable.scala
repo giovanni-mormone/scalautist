@@ -11,7 +11,8 @@ object PresenzaTable {
     def data: Rep[Date] = column[Date]("Data")
     def personeId: Rep[Int] = column[Int]("Persone_Matricola")
     def turnoId: Rep[Int] = column[Int]("Turno_IdTurno")
-    override def * : ProvenShape[Presenza] = (data,personeId,turnoId,id.?).mapTo[Presenza]
+    def isStraordinario: Rep[Boolean] = column[Boolean]("IsStraordinario")
+    override def * : ProvenShape[Presenza] = (data,personeId,turnoId,isStraordinario,id.?).mapTo[Presenza]
     def persone: ForeignKeyQuery[PersonaTableRep, Persona] = foreignKey("Persone_Matricola", personeId, TableQuery[PersonaTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
     def turno: ForeignKeyQuery[TurnoTableRep, Turno] = foreignKey("Turno_IdTurno", turnoId, TableQuery[TurnoTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
 

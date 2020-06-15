@@ -15,7 +15,6 @@ import dbfactory.table.RichiestaTeoricaTable.RichiestaTeoricaTableRep
 import dbfactory.table.RisultatoTable.RisultatoTableRep
 import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
-import dbfactory.table.StraordinarioTable.StraordinarioTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
@@ -75,9 +74,6 @@ object Table{
   }
   object StoricoContrattoTableQuery extends Table[StoricoContratto,StoricoContrattoTableRep]{
     override def tableQuery():TableQuery[StoricoContrattoTableRep] = tableDB()
-  }
-  object StraordinarioTableQuery extends Table[Straordinario,StraordinarioTableRep]{
-    override def tableQuery():TableQuery[StraordinarioTableRep] = tableDB()
   }
   object TerminaleTableQuery extends Table[Terminale,TerminaleTableRep]{
     override def tableQuery(): TableQuery[TerminaleTableRep] = tableDB()

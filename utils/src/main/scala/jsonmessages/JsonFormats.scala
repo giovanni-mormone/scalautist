@@ -1,6 +1,5 @@
 package jsonmessages
 
-import java.sql.Date
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import caseclass.CaseClassDB._
@@ -13,13 +12,12 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
     implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
     implicit val terminaleJsonFormat: RootJsonFormat[Terminale] = jsonFormat3(Terminale)
-    implicit val straordinarioJsonFormat: RootJsonFormat[Straordinario] = jsonFormat4(Straordinario)
     implicit val storicoContrattoJsonFormat: RootJsonFormat[StoricoContratto] = jsonFormat7(StoricoContratto)
     implicit val settimanaJsonFormat: RootJsonFormat[Settimana] = jsonFormat2(Settimana)
     implicit val risultatoJsonFormat: RootJsonFormat[Risultato] = jsonFormat4(Risultato)
     implicit val richiestaTeoricaJsonFormat: RootJsonFormat[RichiestaTeorica] = jsonFormat3(RichiestaTeorica)
     implicit val richiestaJsonFormat: RootJsonFormat[Richiesta] = jsonFormat4(Richiesta)
-    implicit val presenzaJsonFormat: RootJsonFormat[Presenza] = jsonFormat4(Presenza)
+    implicit val presenzaJsonFormat: RootJsonFormat[Presenza] = jsonFormat5(Presenza)
     implicit val personaJsonFormat: RootJsonFormat[Persona] = jsonFormat10(Persona)
     implicit val parametroJsonFormat: RootJsonFormat[Parametro] = jsonFormat3(Parametro)
     implicit val gruppoTerminaleJsonFormat: RootJsonFormat[GruppoTerminale] = jsonFormat2(GruppoTerminale)
@@ -34,8 +32,11 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat3(Disponibilita)
     implicit val assumiJsonFormat:RootJsonFormat[Assumi] = jsonFormat3(Assumi)
     implicit val ferieJsonFormat:RootJsonFormat[Ferie] = jsonFormat3(Ferie)
+    implicit val infoPresenzaJsonFormat:RootJsonFormat[InfoPresenza] = jsonFormat5(InfoPresenza)
+    implicit val InfoAssenzaJsonFormat:RootJsonFormat[InfoAssenza] = jsonFormat2(InfoAssenza)
+    implicit val infoValorePresenzaJsonFormat:RootJsonFormat[InfoValorePresenza] = jsonFormat3(InfoValorePresenza)
+    implicit val stipendioInformationsJsonFormat:RootJsonFormat[StipendioInformations] = jsonFormat3(StipendioInformations)
     implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
-
 }

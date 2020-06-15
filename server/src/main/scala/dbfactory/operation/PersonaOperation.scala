@@ -3,7 +3,7 @@ import java.sql.Date
 
 import dbfactory.table.PersonaTable.PersonaTableRep
 import slick.jdbc.SQLServerProfile.api._
-import caseclass.CaseClassDB.{Login, Persona, StoricoContratto}
+import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
@@ -111,22 +111,19 @@ object PersonaOperation extends PersonaOperation {
     }yield credentials
   }
 
-
   override def assumi(personaDaAssumere:Assumi): Future[Option[Int]] = {
     val persona = personaDaAssumere.persona
     val disponibilita = personaDaAssumere.disponibilita
     val newContratto = personaDaAssumere.storicoContratto
-    for{
-      contratto <- ContrattoOperation.select(newContratto.contrattoId)
-      result <- if (contratto.isEmpty) completeCall(StatusCodes.ERROR_CODE1) else if
-      (disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE) completeCall(StatusCodes.ERROR_CODE2) else if
-      (disponibilita.isDefined && !contratto.head.turnoFisso) completeCall(StatusCodes.ERROR_CODE3) else if
-      (disponibilita.isEmpty && contratto.head.turnoFisso) completeCall(StatusCodes.ERROR_CODE4) else if
-      (contratto.head.turnoFisso && wrongTurni(contratto.head.partTime,newContratto.turnoId,newContratto.turnoId1)) completeCall(StatusCodes.ERROR_CODE5) else if
-      (persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty) insertPersona(constructPersona(persona,None),newContratto) else
-        for{dispId <- DisponibilitaOperation.insert(disponibilita.head)
-            idPers <- insertPersona(constructPersona(persona,dispId),newContratto)} yield idPers
-    }yield result
+    ContrattoOperation.select(newContratto.contrattoId).flatMap{
+      case None => completeCall(StatusCodes.ERROR_CODE1)
+      case Some(_) if disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE => completeCall(StatusCodes.ERROR_CODE2)
+      case Some(contratto) if disponibilita.isDefined && !contratto.turnoFisso =>completeCall(StatusCodes.ERROR_CODE3)
+      case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
+      case Some(contratto) if contratto .turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
+      case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None),newContratto)
+      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita("",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
+    }
   }
 
   private def wrongTurni(partTime:Boolean,turno1:Option[Int],turno2:Option[Int]): Boolean = (partTime,turno1,turno2) match{

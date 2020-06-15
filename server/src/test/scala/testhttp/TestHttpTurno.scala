@@ -13,9 +13,9 @@ object TestHttpTurno{
   private def startServer():Unit=MainServer
   private val getTurno: (String,Request[Int]) = ("/getturno",Request(Some(1)))
   private val getAllTurno: String = "/getallturno"
-  private val updateTurno: (String,Request[Turno]) = ("/updateturno",Request(Some(Turno("%x12","10-10",notturno = true))))
+  private val updateTurno: (String,Request[Turno]) = ("/updateturno",Request(Some(Turno("%x12","10-10",35))))
   private val deleteTurno: (String,Request[Int]) = ("/deleteturno",Request(Some(1)))
-  private val createTurno: (String,Request[Turno]) = ("/createturno",Request(Some(Turno("%x12","10-10",notturno = true))))
+  private val createTurno: (String,Request[Turno]) = ("/createturno",Request(Some(Turno("%x12","10-10",35))))
 }
 
 class TestHttpTurno extends AnyWordSpec with ScalatestRouteTest with StartServer{

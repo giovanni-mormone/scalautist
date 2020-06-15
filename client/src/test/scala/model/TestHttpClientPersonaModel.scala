@@ -1,3 +1,5 @@
+package model
+
 import akka.http.scaladsl.model.StatusCodes
 import caseclass.CaseClassDB.Persona
 import model.entity.PersonaModel

@@ -28,8 +28,7 @@ trait ModalAbsence extends Component[ModalAbsenceParent]{
  */
 object ModalAbsence{
 
-  def apply(item:Ferie, isMalattia:Boolean=true): ModalAbsence =new ModalAbsenceFX(item,isMalattia)
-
+  def apply(item:Ferie, isMalattia:Boolean=true,assenza: List[Assenza]): ModalAbsence =new ModalAbsenceFX(item,isMalattia,assenza)
   /**
    * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.ModalAbsence]]
    *
@@ -38,7 +37,7 @@ object ModalAbsence{
    * @param isMalattia
    *                   boolean to specify if day off is sickness or vacation
    */
-  private class ModalAbsenceFX(item:Ferie, isMalattia:Boolean)
+  private class ModalAbsenceFX(item:Ferie, isMalattia:Boolean,assenza: List[Assenza])
     extends AbstractComponent[ModalAbsenceParent]("humanresources/subcomponent/ModalAbsence")
       with ModalAbsence {
 
@@ -55,6 +54,7 @@ object ModalAbsence{
       if(isMalattia)button.setText(resources.getString("absence-button")) else button.setText(resources.getString("holiday-button"))
       nameSurname.setText(s"${item.nomeCognome}")
       setInitDate()
+      initDate.setOnShowing(t=>println(initDate.getProperties))
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
       button.setOnAction(_=>saveAbscence())

@@ -3,7 +3,7 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Login, Persona}
-import caseclass.CaseClassHttpMessage.{ChangePassword, Id, Request, Response}
+import caseclass.CaseClassHttpMessage.{ChangePassword, Request, Response}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
@@ -15,7 +15,7 @@ import scala.util.{Failure, Success}
  * PersonaModel extends [[model.Model]].
  * Interface for Persona Entity operation
  */
-trait PersonaModel extends AbstractModel {
+trait PersonaModel{
 
   /**
    * Check credential on the database, if the result is positive it returns personal data, else empty.
@@ -55,7 +55,7 @@ object PersonaModel {
 
   def apply(): PersonaModel = instance
 
-  private class PersonaModelHttp extends PersonaModel{
+  private class PersonaModelHttp extends AbstractModel with PersonaModel{
 
 
     override def login(user: String, password: String): Future[Response[Persona]] = {

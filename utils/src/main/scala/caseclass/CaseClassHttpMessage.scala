@@ -2,7 +2,7 @@ package caseclass
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Persona, Presenza, Stipendio, StoricoContratto, Straordinario}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Persona, Presenza, Stipendio, StoricoContratto, Turno}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone
@@ -69,16 +69,48 @@ object CaseClassHttpMessage {
   final case class Ferie(idPersona:Int,nomeCognome:String,giorniVacanza:Int=0)
 
   /**
-   * case class that represent the informations of a person's Stipendio
-   *
-   * @param assenze
-   *                  The Optional List of all the Assenza for the relative Stipendio
-   * @param presenze
-   *                  The List of all the Presenza for the relative Stipendio
-   * @param straordinari
-   *                  The Optional List of all the Straordinari for the relative Stipendio
-   * @param stipendio
-   *                  The Stipendio
+   * case class that represents the informations of a Presenza for a Stipendio
+   * @param valoreTurno
+   *                    The money value of the turno
+   * @param durataTurno
+   *                    A representation of the duration of the turno
+   * @param nomeTurno
+   *                  The name of the turno
+   * @param data
+   *             The Date of the turno
+   * @param straordinario
+   *                      Wheter or not is a straordinario
    */
-  final case class StipendioInformations(assenze:Option[List[Assenza]] , presenze:List[Presenza], straordinari:Option[List[Straordinario]] = None, stipendio: Stipendio)
+  final case class InfoPresenza(valoreTurno:Double,durataTurno:String, nomeTurno:String,data:Date, straordinario: Boolean)
+
+  /**
+   * case class that represents the informations of presenze for a Stipendio
+   * @param giorniLavorati
+   *                       Total days worked in the month of the stipendio
+   * @param valoreTotaleTurni
+   *                          Money earned for normal turni
+   * @param valoreTotaleStraordinari
+   *                                 Money earned for turni straordinari
+   */
+  final case class InfoValorePresenza(giorniLavorati: Int, valoreTotaleTurni: Double,valoreTotaleStraordinari:Double)
+
+  /**
+   * case class that represents the informations of Assenze for a Stipendio
+   * @param assenzePerFerie
+   *                        Total days of ferie in the month of the stipendio
+   * @param assenzePerMalattia
+   *                           Total day of malattie in the month of the stipendio
+   */
+  final case class InfoAssenza(assenzePerFerie: Int, assenzePerMalattia: Int)
+
+  /**
+   * case class that represents the informations of a given stipendio
+   * @param turni
+   *              The List of turni worked in the month of the stipendio, of type [[caseclass.CaseClassHttpMessage.InfoPresenza]]
+   * @param infoValore
+   *                   The [[caseclass.CaseClassHttpMessage.InfoValorePresenza]] for the stipendio
+   * @param infoAssenza
+   *                    The [[caseclass.CaseClassHttpMessage.InfoAssenza]] for the stipendio
+   */
+  final case class StipendioInformations(turni:List[InfoPresenza], infoValore: InfoValorePresenza, infoAssenza: InfoAssenza)
 }

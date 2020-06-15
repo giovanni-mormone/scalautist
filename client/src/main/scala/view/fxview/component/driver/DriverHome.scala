@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Stipendio, Turno}
+import caseclass.CaseClassHttpMessage.StipendioInformations
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, Menu}
 import javafx.scene.input.MouseEvent
@@ -13,9 +14,27 @@ import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait DriverHome extends Component[DriverHomeParent]{
+  /**
+   *
+   */
   def drawHome():Unit
+
+  /**
+   *
+   */
   def drawShift():Unit
+
+  /**
+   * method that call his parent and send list with all salary of a person
+   * @param list list of all salary for a person
+   */
   def drawSalary(list:List[Stipendio]):Unit
+
+  /**
+   * method which enable view information for a salary in the specific month
+   * @param information case class with all presenze, absence and salary for a month
+   */
+  def informationSalary(information:StipendioInformations):Unit
 }
 object DriverHome{
   def apply(): DriverHome = new DriverHomeFX()
@@ -56,9 +75,9 @@ object DriverHome{
       labelStipendio.setOnMouseClicked((_:MouseEvent)=>parent.drawStipendioPanel())
     }
 
-    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12",notturno = true))))
+    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12",49))))
 
-    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12",notturno = true))))
+    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12",49))))
 
     override def drawSalary(list:List[Stipendio]): Unit = driverHome.setCenter(salary(list))
 
@@ -81,5 +100,6 @@ object DriverHome{
       salaryBox.pane
     }
 
+    override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
   }
 }

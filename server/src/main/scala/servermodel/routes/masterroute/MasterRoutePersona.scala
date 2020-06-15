@@ -1,17 +1,16 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassDB.{Assenza, Login, Persona, Stipendio}
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Dates, Id}
+import caseclass.CaseClassDB.{Login, Persona}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Id}
 import io.swagger.v3.oas.annotations.enums.ParameterIn
-import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.PersonaRoute._
-import servermodel.routes.subroute.AssenzaRoute.addAbsence
 /**
  * @author Francesco Cassano, Fabian Aspée Encina
  * This object manage routes that act on the persona entity and its related entities
@@ -167,73 +166,12 @@ object MasterRoutePersona extends Directives{
       recoveryPassword()
     }
 
-  @Path("/calcolostipendio")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Salary Calculus", description = "calculus all salary for all person into database, this operation is make one time in the month",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Dates])))),
-    responses = Array(
-      new ApiResponse(responseCode = "201", description = "calculus salary create"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def salaryCalculusAll: Route =
-    path("calcolostipendio"){
-      salaryCalculus()
-    }
 
-  @Path("/getstipendio")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Salary", description = "get salary for a person by id",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Id])))),
-    responses = Array(
-      new ApiResponse(responseCode = "302", description = "Found person and return stipendio",
-        content = Array(new Content(schema = new Schema(implementation = classOf[Stipendio])))),
-      new ApiResponse(responseCode = "404", description = "Not Found person and return None"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def getSalaryPersona: Route =
-    path("getstipendio"){
-      getStipendio
-    }
 
-  @Path("/addabsence")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Add Absence", description = "Add Absence into database. this can be illness or holidays",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
-    responses = Array(
-      new ApiResponse(responseCode = "201", description = "Insert Absence correctly into database"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def addAbsencePersona(): Route =
-    path("addabsence") {
-      addAbsence()
-    }
-
-  @Path("/addabsence")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Add Absence", description = "Add Absence into database. this can be illness or holidays",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
-    responses = Array(
-      new ApiResponse(responseCode = "201", description = "Insert Absence correctly into database"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def getHolidayByPerson: Route =
-    path("getholidaybyperson") {
-      holidayByPerson()
-    }
 
   val routePersona: Route =
     concat(
       getAllPersonaDatabase,getPersonaDatabase,getHirePersonDatabase,
       deletePersonaDatabase(),deleteAllPersonaDatabase(),updatePersonaDatabase(),
-      loginPersonaDatabase,changePasswordPersona,recoveryPasswordPersona,
-      salaryCalculusAll,getSalaryPersona,addAbsencePersona(),getHolidayByPerson
-    )
+      loginPersonaDatabase,changePasswordPersona,recoveryPasswordPersona)
 }
