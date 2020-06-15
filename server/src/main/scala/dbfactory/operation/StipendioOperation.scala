@@ -96,7 +96,7 @@ object StipendioOperation extends StipendioOperation {
 
   private def getInfoPresenze(presenze:Option[List[Presenza]], turni:Option[List[Turno]]):Future[List[InfoPresenza]]={
     Future.successful(presenze.toList.flatMap(_.flatMap(x => turni.flatMap(_.find(_.id.contains(x.personaId))
-      .map(turno => InfoPresenza(turno.paga * multiplier(x.isStraordinario),turno.nomeTurno,turno.fasciaOraria,x.data,x.isStraordinario))))))
+      .map(turno => InfoPresenza(turno.paga * multiplier(x.isStraordinario),turno.fasciaOraria,turno.nomeTurno,x.data,x.isStraordinario))))))
   }
 
   private def getInfoValore(presenze:Option[List[Presenza]], turni:Option[List[Turno]]):Future[InfoValorePresenza]={
@@ -112,7 +112,7 @@ object StipendioOperation extends StipendioOperation {
     val totalDays: (Int,Assenza) => Int = (x,ass) => x + computeDaysBetweenDates(ass.dataInizio,ass.dataFine)
     val daysMap = assenze.toList.flatten.groupBy(malattia => malattia.malattia).map(t => t._1 -> t._2.foldLeft(0)(totalDays))
     val malattia = true
-    Future.successful(InfoAssenza(daysMap(!malattia),daysMap(malattia)))
+    Future.successful(InfoAssenza(daysMap.getOrElse(!malattia,0),daysMap.getOrElse(malattia,0)))
   }
 
   private def createStipendi(date: Date): Future[Option[List[Stipendio]]] = {
