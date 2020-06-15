@@ -4,6 +4,7 @@ import javafx.application.Platform
 import model.entity.DriverModel
 import view.fxview.mainview.DriverView
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait DriverController  extends AbstractController[DriverView] {
@@ -32,9 +33,17 @@ object DriverController{
   def apply(): DriverController = new DriverControllerImpl()
   private class DriverControllerImpl() extends DriverController {
     private val model = DriverModel()
-    override def drawHomePanel(): Unit = myView.drawHomeView()
+    override def drawHomePanel(): Unit =
+      Future.successful( myView.drawHomeView()).onComplete {
+      case Failure(_) => myView.showMessage("Error")
+      case Success(value) => ???
+    }
 
-    override def drawShiftPanel(): Unit = myView.drawShiftView()
+    override def drawShiftPanel(): Unit =
+      Future.successful(myView.drawShiftView()).onComplete {
+        case Failure(_) => myView.showMessage("Error")
+        case Success(value) => ???
+      }
 
     override def drawSalaryPanel(): Unit =
       model.getSalary(5) onComplete {
