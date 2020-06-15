@@ -1,4 +1,4 @@
-package view.baseconfiguration
+package view.baseconfiguration.humanresource
 
 import java.time.LocalDate
 
@@ -7,7 +7,8 @@ import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
-import view.driverviewoperations.FerieOperation
+import view.baseconfiguration.BaseTest
+import view.humanresourceoperation.FerieOperation
 import view.launchview.HumanResourceLaunch
 
 @RunWith(classOf[JUnitParamsRunner])

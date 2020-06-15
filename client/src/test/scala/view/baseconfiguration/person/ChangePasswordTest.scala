@@ -1,11 +1,12 @@
-package view.baseconfiguration
+package view.baseconfiguration.person
 
 import controller.LoginController
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
-import org.junit.{Before, Test}
 import org.junit.runner.RunWith
+import org.junit.{Before, Test}
+import view.baseconfiguration.BaseTest
 import view.launchview.ChangePasswordLaunch
 import view.mainviewoperations.ChangePasswordOperations
 

@@ -1,4 +1,4 @@
-package view.baseconfiguration
+package view.baseconfiguration.humanresource
 
 import java.time.LocalDate
 
@@ -8,7 +8,8 @@ import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
 import utils.scriptCallServer.ScriptServer
-import view.driverviewoperations.MalattieOperation
+import view.baseconfiguration.BaseTest
+import view.humanresourceoperation.MalattieOperation
 import view.launchview.HumanResourceLaunch
 
 @RunWith(classOf[JUnitParamsRunner])
