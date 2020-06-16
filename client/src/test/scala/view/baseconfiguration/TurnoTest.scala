@@ -1,7 +1,7 @@
 package view.baseconfiguration
 
 import junitparams.JUnitParamsRunner
-import org.junit.{After, Before}
+import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
 import view.driverviewoperations.TurnoDriver
 import view.launchview.DriverLaunch
@@ -15,9 +15,9 @@ class TurnoTest extends BaseTest {
     setUp(classOf[DriverLaunch])
     driverTurno = TurnoDriver(this)
   }
+
   @After
   def closeScene():Unit={
     closeCurrentWindow()
   }
-
 }

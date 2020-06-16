@@ -1,11 +1,13 @@
 package servermodel.routes.subroute
 
+import java.sql.Date
+
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import caseclass.CaseClassDB.Turno
-import messagecodes.{StatusCodes=>statusCodes}
-import caseclass.CaseClassHttpMessage.{ Request, Response}
+import messagecodes.{StatusCodes => statusCodes}
+import caseclass.CaseClassHttpMessage.{Dates, Request, Response}
 import servermodel.routes.exception.RouteException
 import dbfactory.operation.TurnoOperation
 import jsonmessages.JsonFormats._
@@ -85,6 +87,28 @@ object TurnoRoute {
         case Request(Some(turno))=>onComplete(TurnoOperation.update(turno)) {
           case Success(None) =>complete(Response[Int](statusCodes.SUCCES_CODE))
           case Success(Some(id)) =>  complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE,Some(id)))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
+
+  def getTurniInDay: Route =
+    post {
+      entity(as[Request[(Int,Dates)]]) {
+        case Request(Some(turno))=>onComplete(TurnoOperation.getTurniInDate(turno._1,turno._2.date)) {
+          case Success(Some(infoHome)) =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE,Some(infoHome)))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
+
+  def getTurniSettimanali: Route =
+    post {
+      entity(as[Request[(Int,Dates)]]) {
+        case Request(Some(turno))=>onComplete(TurnoOperation.getTurniSettimanali(turno._1,turno._2.date)) {
+          case Success(Some(weeklyInfo)) =>  complete(StatusCodes.OK,Response(statusCodes.SUCCES_CODE,Some(weeklyInfo)))
           case t => anotherSuccessAndFailure(t)
         }
         case _ => complete(StatusCodes.BadRequest,badHttpRequest)
