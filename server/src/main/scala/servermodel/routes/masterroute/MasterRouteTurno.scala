@@ -52,7 +52,7 @@ object MasterRouteTurno{
       getTurniInDay
     }
 
-  @Path("/getturnisettimanali")
+  @Path("/getturniinweek")
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
@@ -64,7 +64,7 @@ object MasterRouteTurno{
       new ApiResponse(responseCode = "404", description = "Not Found Turni"),
       new ApiResponse(responseCode = "500", description = "Internal server error")))
   def getTurniSettimanaliDatabase: Route =
-    path("getturnisettimanali"){
+    path("getturniinweek"){
       getTurniSettimanali
     }
 

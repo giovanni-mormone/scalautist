@@ -78,7 +78,7 @@ object DriverModel {
     }
 
     override def getTurniSettimanali(userId: Int): Future[Response[List[InfoHome]]] = {
-      val request = Post(getURI("getturnisettimanali"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
+      val request = Post(getURI("getturniinweek"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[InfoHome]]])
     }
   }
