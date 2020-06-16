@@ -1,6 +1,7 @@
 package view.mainviewoperations
 
 import view.baseconfiguration.BaseTest
+import view.fxview.mainview.HumanResourceView
 
 trait HumanResourceOperations {
   //home operations
@@ -39,5 +40,6 @@ object HumanResourceOperations {
 
     override def openTerminal(): Unit =
       toTest.clickOn("#terminalManger")
+
   }
 }

@@ -201,7 +201,7 @@ object HumanResourceController {
       result match {
         case Success(response) if response.statusCode == StatusCodes.SUCCES_CODE =>
           if(showSuccess)
-            showResult(messageOnModal, "success")
+            showResult(messageOnModal, "Success", GEN_ERR)
           if(response.payload.isDefined)
             successA(response.payload.get)
         case _ => notSuccessCodes[A](result, failurA, className, messageOnModal)
