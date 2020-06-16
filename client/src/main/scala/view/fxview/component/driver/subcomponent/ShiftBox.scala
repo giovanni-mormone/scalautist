@@ -2,7 +2,7 @@ package view.fxview.component.driver.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
-
+import view.fxview.component.driver.subcomponent.util.Days._
 import caseclass.CaseClassDB.Turno
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Label}
@@ -31,7 +31,7 @@ object ShiftBox{
     var title:Label =_
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
 
-      title.setText(resources.getString("title"))
+      title.setText(resources.getResource("title"))
       Days.createAccordion(resources,shiftAccordion,shift)
     }
   }

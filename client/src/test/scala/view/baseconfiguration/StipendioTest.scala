@@ -1,7 +1,7 @@
 package view.baseconfiguration
 
 import caseclass.CaseClassDB.Stipendio
-import javafx.scene.control.ListView
+import javafx.scene.control.{Label, ListView}
 import junitparams.JUnitParamsRunner
 import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
@@ -12,6 +12,8 @@ import view.launchview.DriverLaunch
 class StipendioTest extends BaseTest {
   var driverStipendio:StipendioDriver=_
   val TOTAL_STIPENDI = 4
+  val NORMAL_DAY = "Giorni Normali : 0"
+  val EXTRA_DAY = "Giorni Straordinari : 11"
   @Before
   def beforeEachFerieTest(): Unit = {
 
@@ -34,14 +36,28 @@ class StipendioTest extends BaseTest {
   def quantityNormalDayWork():Unit={
     driverStipendio.clickStipendioMenu()
     sleep(4000)
-    val list:ListView[Stipendio] = find("#salaryList")
-    assert(list.getItems.parallelStream().count()==TOTAL_STIPENDI)
+    driverStipendio.clickElementListView("2020-05-01")
+    sleep(3000)
+    val normalDay:Label = find("#normalDay")
+    print(normalDay.getText)
+    assert(normalDay.getText.equals(NORMAL_DAY))
   }
   @Test
   def quantityExtraDayWork():Unit={
     driverStipendio.clickStipendioMenu()
     sleep(4000)
-    val list:ListView[Stipendio] = find("#salaryList")
-    assert(list.getItems.parallelStream().count()==TOTAL_STIPENDI)
+    driverStipendio.clickElementListView("2020-05-01")
+    sleep(3000)
+    val extraDay:Label = find("#dayM")
+    assert(extraDay.getText.equals(EXTRA_DAY))
+  }
+  @Test
+  def notInfoForDate():Unit={
+    driverStipendio.clickStipendioMenu()
+    sleep(4000)
+    driverStipendio.clickElementListView("2020-04-01")
+    sleep(3000)
+    val extraDay:Label = find("#dayM")
+    assert(extraDay.getText.equals(EXTRA_DAY))
   }
 }

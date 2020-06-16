@@ -297,7 +297,7 @@ object HumanResourceController {
       case (Failure(_),true)  =>  myView.result("errore-malattie")
       case (Failure(_),false) => myView.result("Error assignando vacaciones")
       case (Success(value),true)  =>myView.result("Malattia Inserite Correttamente")
-      case (Success(value),false)  =>myView.result("Ferie Assegnate Correttamente")
+      case (Success(value),false)  =>myView.result(value+"Ferie Assegnate Correttamente")
       case (Success(_),_)  => myView.result("utente no encontrado")
     }
 

@@ -21,4 +21,10 @@ object Days {
     })
 
   }
+
+    implicit class Resource(resource:ResourceBundle){
+      def println[A](key:A,any2:A):String= resource.getString(key.toString).concat(" ").concat(any2.toString)
+      def getResource(key:String):String = resource.getString(key)
+    }
+
 }

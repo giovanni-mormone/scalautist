@@ -49,7 +49,7 @@ object HolidayBox {
       initializeSearch(resources)
       CreateTable.clickListener[FerieTable](
         employeeTable,
-        item => parent.openModal(Ferie(item.getId,item.getNameSurname,item.getHoliday),isMalattia = false))
+        item =>if(item.getHoliday!=0) parent.openModal(Ferie(item.getId,item.getNameSurname,item.getHoliday),isMalattia = false) else "parent.showMessage()")
 
     }
 

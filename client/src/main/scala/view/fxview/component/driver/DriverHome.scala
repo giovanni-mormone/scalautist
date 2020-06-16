@@ -2,7 +2,7 @@ package view.fxview.component.driver
 
 import java.net.URL
 import java.util.ResourceBundle
-
+import view.fxview.component.driver.subcomponent.util.Days._
 import caseclass.CaseClassDB.{Stipendio, Turno}
 import caseclass.CaseClassHttpMessage.{InfoHome, StipendioInformations}
 import javafx.fxml.FXML
@@ -36,6 +36,8 @@ trait DriverHome extends Component[DriverHomeParent]{
    * @param information case class with all presenze, absence and salary for a month
    */
   def informationSalary(information:StipendioInformations):Unit
+
+  def showMessage(message:String):Unit
 }
 object DriverHome{
   def apply(): DriverHome = new DriverHomeFX()
@@ -65,9 +67,9 @@ object DriverHome{
     var salaryBox:SalaryBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      labelHome.setText(resources.getString("home-label"))
-      labelTurni.setText(resources.getString("turno-label"))
-      labelStipendio.setText(resources.getString("stipendi-label"))
+      labelHome.setText(resources.getResource("home-label"))
+      labelTurni.setText(resources.getResource("turno-label"))
+      labelStipendio.setText(resources.getResource("stipendi-label"))
       home.setGraphic(labelHome)
       turni.setGraphic(labelTurni)
       stipendi.setGraphic(labelStipendio)
@@ -105,5 +107,7 @@ object DriverHome{
     }
 
     override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
+
+    override def showMessage(message: String): Unit = salaryBox.showMessage(message)
   }
 }

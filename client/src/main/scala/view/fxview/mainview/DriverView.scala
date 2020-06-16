@@ -89,7 +89,7 @@ object DriverView {
     override def informationSalary(information: StipendioInformations): Unit =
       Platform.runLater(()=>driverHome.informationSalary(information))
 
-    override def showMessage(message: String): Unit = Platform.runLater(()=>super.showMessage(message))
+    override def showMessage(message: String): Unit = Platform.runLater(()=>driverHome.showMessage(message))
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
   }
 }

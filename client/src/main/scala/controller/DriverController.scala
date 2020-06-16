@@ -1,7 +1,7 @@
 package controller
 
 import caseclass.CaseClassDB.{Disponibilita, Turno}
-import caseclass.CaseClassHttpMessage.InfoHome
+import caseclass.CaseClassHttpMessage.{InfoHome, Response}
 import javafx.application.Platform
 import model.entity.DriverModel
 import view.fxview.mainview.DriverView
@@ -69,7 +69,8 @@ object DriverController{
     override def drawInfoSalary(idSalary: Int): Unit =
       model.getInfoForSalary(idSalary).onComplete {
         case Failure(_) => myView.showMessage("Error")
-        case Success(value) =>value.payload.foreach(result=>myView.informationSalary(result))
+        case Success(Response(_, None))=> myView.showMessage("Not Found")
+        case Success(Response(_, payload)) =>payload.foreach(result=>myView.informationSalary(result))
       }
   }
 
