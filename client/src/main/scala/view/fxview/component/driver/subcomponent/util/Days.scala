@@ -15,7 +15,11 @@ object Days {
       val firstTitled = new TitledPane
       firstTitled.setText(resourceBundle.getString(day._1))
       val content = new VBox
-      day._2.foreach(result=>content.getChildren.add(new Label(result.orario)))
+      day._2.foreach(result=>{
+        val label = new Label(result.orario)
+        label.setId(result.orario+result.idGiorno)
+        content.getChildren.add(new Label(result.orario))
+      })
       firstTitled.setContent(content)
       shiftAccordion.getPanes.add(firstTitled)
     })
