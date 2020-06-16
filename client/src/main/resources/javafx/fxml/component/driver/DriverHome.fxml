@@ -4,7 +4,9 @@
 <?import javafx.scene.layout.*?>
 
 
-<BorderPane fx:id="driverHome" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="driverHome" prefHeight="800.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@../../../css/component/driver/DriverHome.css">
    <top>
        <MenuBar fx:id="menu" BorderPane.alignment="CENTER">
            <Menu fx:id="home" mnemonicParsing="false"/>

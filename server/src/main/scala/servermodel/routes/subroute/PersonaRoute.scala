@@ -66,7 +66,7 @@ object PersonaRoute{
   def deleteAllPersona(): Route =
     post {
       entity(as[Request[List[Int]]]) {
-        case Request(Some(value))=> onComplete(PersonaOperation.deleteAll(value)) {
+        case Request(Some(value))=>print(222222); onComplete(PersonaOperation.deleteAll(value)) {
           case Success(Some(result)) =>  complete(Response(statusCodes.SUCCES_CODE, Some(result)))
           case t => anotherSuccessAndFailure(t)
         }

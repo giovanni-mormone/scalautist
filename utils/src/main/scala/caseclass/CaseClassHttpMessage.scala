@@ -113,4 +113,12 @@ object CaseClassHttpMessage {
    *                    The [[caseclass.CaseClassHttpMessage.InfoAssenza]] for the stipendio
    */
   final case class StipendioInformations(turni:List[InfoPresenza], infoValore: InfoValorePresenza, infoAssenza: InfoAssenza)
+
+  /**
+   * Case class that represent informations of a given day
+   * @param turno list lenght two that contains the shift that the person must make in the day
+   * @param disponibilita availability that the person has indicated as
+   *                      possible days that they can make extra shifts
+   */
+  final case class InfoHome(turno:List[Turno],disponibilita: Disponibilita)
 }

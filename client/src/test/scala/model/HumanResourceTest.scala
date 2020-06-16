@@ -51,6 +51,11 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     futureDelete map { recruit => assert(recruit.statusCode==statusCodes.SUCCES_CODE)}
 
   }
+  it should "return ok when delete more of one person" in {
+    val futureDelete:Future[Response[Int]]=terminale.firesAll(Set(7,8))
+    futureDelete map { recruit => assert(recruit.statusCode==statusCodes.SUCCES_CODE)}
+
+  }
   it should "return list of terminal lenght 2" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(1)
     futureTerminale map { terminale => assert(terminale.payload.head.length==2)}

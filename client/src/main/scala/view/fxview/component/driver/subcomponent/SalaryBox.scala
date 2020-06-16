@@ -1,21 +1,17 @@
 package view.fxview.component.driver.subcomponent
 
 import java.net.URL
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.time.{LocalDate, MonthDay}
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Stipendio
-import caseclass.CaseClassHttpMessage.{InfoAssenza, InfoPresenza, InfoValorePresenza, StipendioInformations}
-import com.sun.javafx.scene.control.skin.DatePickerSkin
+import caseclass.CaseClassHttpMessage.{InfoPresenza, StipendioInformations}
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
 import javafx.scene.Node
-import javafx.scene.control.{DateCell, DatePicker, Label, ListView, Tooltip}
+import javafx.scene.control.{Label, ListView}
 import javafx.scene.layout.{HBox, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker
-import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.{MoveDatePeriod, sqlDateToCalendar}
 import view.fxview.component.driver.subcomponent.parent.SalaryBoxParent
 import view.fxview.component.driver.utils.StipendiCellFactory
 import view.fxview.component.{AbstractComponent, Component}
@@ -59,46 +55,56 @@ object SalaryBox{
     var Illness:Label=_
     @FXML
     var holiday:Label=_
+
     var resources:ResourceBundle=_
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
+
       this.resources=resources
       salary.foreach(stipendi => salaryList.getItems.add(stipendi))
-
       salaryList.setCellFactory(StipendiCellFactory)
+      listenerListView()
+
+    }
+    private def listenerListView():Unit={
+
       salaryList.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[Stipendio]()
       {
         def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio)
         {
-          newValue.idStipendio.foreach(x=>parent.infoSalary(x))
+          newValue.idStipendio.foreach(x=>{
+            salaryInfo.getChildren.add(FXHelperFactory.loadingBox)
+            parent.infoSalary(x)
+          })
         }
       })
+
     }
     override def paneInfoSalary(information: StipendioInformations): Unit = {
-      val finishDate = dimensionDatePicker(new DatePicker())
-      val myCalendar = information.turni.map(value=>Option(value,CreateDatePicker.sqlDateToCalendar(value.data)))
-      finishDate.setDayCellFactory(_=>CreateDatePicker.drawDatePicker(myCalendar))
-      val datePickerSkin:DatePickerSkin = CreateDatePicker.createDatePickerSkin(finishDate)
-      val node:Node = datePickerSkin.getPopupContent
-      salaryInfo.getChildren.add(node)
+      salaryInfo.getChildren.remove(FXHelperFactory.loadingBox)
+      salaryInfo.getChildren.add(createDatePicker(information))
       generalInfo(information)
     }
-    private def dimensionDatePicker(finishDate:DatePicker):DatePicker={
-      finishDate.setPrefSize(389,195)
-      finishDate.setLayoutX(7)
-      finishDate.setLayoutY(10)
-      finishDate
+    private def createDatePicker(information: StipendioInformations):Node={
+
+      val myCalendar = information.turni.map(value=>Option(value,CreateDatePicker.sqlDateToCalendar(value.data)))
+      val (datePickerSkin,finishDate) = CreateDatePicker.createDatePickerSkin()
+      finishDate.setDayCellFactory(_=>CreateDatePicker.drawDatePicker(myCalendar))
+      datePickerSkin.getPopupContent
     }
 
     private def generalInfo(informations: StipendioInformations): Unit ={
+
       tittle.setText(resources.getString("general-info"))
       val (extra,normal) = totalExtraAndNormal(informations.turni)
       dayM.setText(resources.getString("extra-day") +extra)
       normalDay.setText(resources.getString("normal-day") +normal)
-
       infoShiftAndExtra(extra,normal,informations)
       infoAssenza(informations)
     }
+
     private def infoShiftAndExtra(normal:Int,extra:Int,informations: StipendioInformations):Unit={
+
       shiftValue.setText(resources.getString("shift-value") +informations.infoValore.valoreTotaleTurni/normal)
       extraValue.setText(resources.getString("extra-value") +informations.infoValore.valoreTotaleTurni/extra)
       shiftValue.setText(resources.getString("shift-total-value") +informations.infoValore.valoreTotaleTurni)
@@ -107,14 +113,17 @@ object SalaryBox{
 
     }
     private def infoAssenza(informations: StipendioInformations):Unit={
+
       Illness.setText(resources.getString("illness-day") +informations.infoAssenza.assenzePerMalattia)
       holiday.setText(resources.getString("holiday") +informations.infoAssenza.assenzePerFerie)
 
     }
     private def totalExtraAndNormal(turni:List[InfoPresenza]):(Int,Int)= {
+
       val isStraordinario=true
       val map = turni.groupBy(_.straordinario).map(key=>key._1->key._2.length)
       (map.getOrElse(!isStraordinario,0),map.getOrElse(isStraordinario,0))
+
     }
   }
 }

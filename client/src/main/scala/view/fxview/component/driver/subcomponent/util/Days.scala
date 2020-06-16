@@ -15,8 +15,9 @@ object Days {
       firstTitled.setText(resourceBundle.getString(day._1))
       val content = new VBox
       content.getChildren.add(new Label(day._2.nomeTurno))
-
-
+      content.getChildren.add(new Label(day._2.fasciaOraria))
+      firstTitled.setContent(content)
+      shiftAccordion.getPanes.add(firstTitled)
     })
 
   }

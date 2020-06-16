@@ -1,0 +1,20 @@
+#anchorPane{
+    -fx-padding: 50;
+    -fx-height: 100%;
+    -fx-width: 100%;
+}
+#datepicker{
+    -fx-height: 100%;
+    -fx-width: 100%;
+    -fx-padding: 15,50;
+
+}
+.datepicker-skin{
+    -fx-height: 100%;
+    -fx-width: 100%;
+}
+#info{
+    -fx-background-color: #2f4f4f;
+    -fx-padding: 15,50;
+    -fx-spacing: 10;
+}

@@ -1,0 +1,9 @@
+.table-view {
+    -fx-background-color: dimgrey;
+}
+
+.table-row-cell:selected{
+    -fx-background-color: cadetblue;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}

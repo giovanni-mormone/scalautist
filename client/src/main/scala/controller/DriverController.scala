@@ -1,5 +1,7 @@
 package controller
 
+import caseclass.CaseClassDB.{Disponibilita, Turno}
+import caseclass.CaseClassHttpMessage.InfoHome
 import javafx.application.Platform
 import model.entity.DriverModel
 import view.fxview.mainview.DriverView
@@ -34,15 +36,29 @@ object DriverController{
   private class DriverControllerImpl() extends DriverController {
     private val model = DriverModel()
     override def drawHomePanel(): Unit =
-      Future.successful( myView.drawHomeView()).onComplete {
+      Future.successful().onComplete {
       case Failure(_) => myView.showMessage("Error")
-      case Success(value) => ???
+      case Success(value) => myView.drawHomeView(InfoHome(
+        List(
+          Turno("Seconda Mattinata","8:00-12:00",40.0,Some(1)),
+          Turno("Primo Pomeriggio","12:00-16:00",40.0,Some(1))),
+        Disponibilita("Lunedi","Martedi",Some(1))))
     }
 
     override def drawShiftPanel(): Unit =
-      Future.successful(myView.drawShiftView()).onComplete {
+      Future.successful().onComplete {
         case Failure(_) => myView.showMessage("Error")
-        case Success(value) => ???
+        case Success(value) => myView.drawShiftView(List(
+          Turno("Manana","8:00-12:00",40,Some(1)),
+          Turno("Manana","12:00-16:00",40,Some(1)),
+          Turno("Manana","8:00-12:00",40,Some(1)),
+          Turno("Manana","12:00-16:00",40,Some(1)),
+          Turno("Manana","8:00-12:00",40,Some(1)),
+          Turno("Manana","12:00-16:00",40,Some(1)),
+          Turno("Manana","8:00-12:00",40,Some(1)),
+          Turno("Manana","12:00-16:00",40,Some(1)),
+          Turno("Manana","8:00-12:00",40,Some(1)),
+          Turno("Manana","12:00-16:00",40,Some(1))))
       }
 
     override def drawSalaryPanel(): Unit =

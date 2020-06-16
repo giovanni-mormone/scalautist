@@ -46,7 +46,6 @@ object HolidayBox {
 
       CreateTable.createColumns[FerieTable](employeeTable, columnFields)
       CreateTable.fillTable[FerieTable](employeeTable, employees)
-
       initializeSearch(resources)
       CreateTable.clickListener[FerieTable](
         employeeTable,
