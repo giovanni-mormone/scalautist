@@ -56,8 +56,8 @@ object SalaryBox{
     var Illness:Label=_
     @FXML
     var holiday:Label=_
-
-    var resources:ResourceBundle=_
+    private var datepicker:Node=_
+    private var resources:ResourceBundle=_
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
 
@@ -74,6 +74,7 @@ object SalaryBox{
         def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio)
         {
           newValue.idStipendio.foreach(x=>{
+            salaryInfo.getChildren.remove(datepicker)
             salaryInfo.getChildren.add(FXHelperFactory.loadingBox)
             parent.infoSalary(x)
           })
@@ -83,7 +84,8 @@ object SalaryBox{
     }
     override def paneInfoSalary(information: StipendioInformations): Unit = {
       salaryInfo.getChildren.remove(FXHelperFactory.loadingBox)
-      salaryInfo.getChildren.add(createDatePicker(information))
+      datepicker=createDatePicker(information)
+      salaryInfo.getChildren.add(datepicker)
       generalInfo(information)
     }
     private def createDatePicker(information: StipendioInformations):Node={
