@@ -1,6 +1,7 @@
 package view.fxview.component.driver.subcomponent
 
 import java.net.URL
+import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassHttpMessage.InfoHome
@@ -59,7 +60,7 @@ object HomeBox{
     }
     private def costructDatePicker():Unit={
 
-      val datePickerSkin:DatePickerSkin = CreateDatePicker.createDatePickerSkin()._1
+      val datePickerSkin:DatePickerSkin = CreateDatePicker.createDatePickerSkin(LocalDate.now())._1
       val node:Node = datePickerSkin.getPopupContent
       datepicker.getChildren.add(node)
 

@@ -13,11 +13,13 @@ object Days {
     val finalResult = days.filter(dayIn=>result.contains(dayIn._1)).map(day=>day._2->result(day._1))
     finalResult.foreach(day=>{
       val firstTitled = new TitledPane
+      firstTitled.setId(day._1)
       firstTitled.setText(resourceBundle.getString(day._1))
       val content = new VBox
       day._2.foreach(result=>{
         val label = new Label(result.orario)
         label.setId(result.orario+result.idGiorno)
+        println(label.getId)
         content.getChildren.add(new Label(result.orario))
       })
       firstTitled.setContent(content)

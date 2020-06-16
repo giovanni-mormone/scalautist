@@ -1,5 +1,6 @@
 package view.baseconfiguration
 
+import javafx.scene.control.{Label, TitledPane}
 import junitparams.JUnitParamsRunner
 import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
