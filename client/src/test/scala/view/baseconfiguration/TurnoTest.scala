@@ -1,7 +1,12 @@
 package view.baseconfiguration
 
+import javafx.scene.control.Label
 import junitparams.JUnitParamsRunner
+<<<<<<< Updated upstream
 import org.junit.Before
+=======
+import org.junit.{After, Before, Test}
+>>>>>>> Stashed changes
 import org.junit.runner.RunWith
 import view.driverviewoperations.TurnoDriver
 import view.launchview.DriverLaunch
@@ -15,4 +20,13 @@ class TurnoTest extends BaseTest {
     setUp(classOf[DriverLaunch])
     driverTurno = TurnoDriver(this)
   }
+<<<<<<< Updated upstream
+=======
+
+  @After
+  def closeScene():Unit={
+    closeCurrentWindow()
+  }
+
+>>>>>>> Stashed changes
 }
