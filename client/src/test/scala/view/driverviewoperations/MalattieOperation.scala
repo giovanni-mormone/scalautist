@@ -22,6 +22,7 @@ object MalattieOperation {
       val initDate:DatePicker = toTest.find("#initDate")
       toTest.clickOn(initDate)
       initDate.setValue(day)
+
     }
     override def enterSecondDate(day: LocalDate): Unit = {
       val finishDate:DatePicker = toTest.find("#finishDate")

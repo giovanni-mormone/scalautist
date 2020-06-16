@@ -36,6 +36,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val InfoAssenzaJsonFormat:RootJsonFormat[InfoAssenza] = jsonFormat2(InfoAssenza)
     implicit val infoValorePresenzaJsonFormat:RootJsonFormat[InfoValorePresenza] = jsonFormat3(InfoValorePresenza)
     implicit val stipendioInformationsJsonFormat:RootJsonFormat[StipendioInformations] = jsonFormat3(StipendioInformations)
+    implicit val infoHomeJsonFormat:RootJsonFormat[InfoHome] = jsonFormat2(InfoHome)
     implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
