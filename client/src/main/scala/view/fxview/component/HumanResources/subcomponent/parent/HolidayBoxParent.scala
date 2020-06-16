@@ -8,6 +8,12 @@ import caseclass.CaseClassHttpMessage.Ferie
  * It is the interface of the methods used by holiday views to make requests to main view
  */
 trait HolidayBoxParent{
+  /**
+   * show a message error
+   * @param message message that contain the error
+   */
+  def errorMessage(message: String): Unit
+
 
   /**
    * Request to open Modal to add an employee's holiday period

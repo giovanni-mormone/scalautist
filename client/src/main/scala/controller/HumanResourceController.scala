@@ -305,16 +305,20 @@ object HumanResourceController {
       if(absence.malattia)
         model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
       else
-        model.holidays(absence).onComplete{result => sendMessageModal(result,isMalattia = false)}
+        model.holidays(absence).onComplete{result => sendMessageModal(result)}
     }
 
-    private def sendMessageModal(t:Try[Response[Int]], isMalattia:Boolean=true):Unit = (t,isMalattia) match {
-      case (Failure(_),true)  =>  myView.result("errore-malattie")
-      case (Failure(_),false) => myView.result("Error assignando vacaciones")
-      case (Success(value),true)  =>myView.result("Malattia Inserite Correttamente")
-      case (Success(value),false)  =>myView.result("Ferie Assegnate Correttamente")
-      case (Success(_),_)  => myView.result("utente no encontrado")
+    private def sendMessageModal(t:Try[Response[Int]]):Unit = t match {
+      case Success(Response(StatusCodes.SUCCES_CODE,_))=>myView.result("insert-absence-ok")
+      case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.result("bad-request-error")
+      case Success(Response(StatusCodes.ERROR_CODE1,_))=>myView.result("already-exist-error")
+      case Success(Response(StatusCodes.ERROR_CODE2,_))=>myView.result("greater-day-holiday-error")
+      case Success(Response(StatusCodes.ERROR_CODE3,_))=>myView.result("year-error")
+      case Success(Response(StatusCodes.ERROR_CODE4,_))=>myView.result("init-date-error")
+      case Success(Response(StatusCodes.ERROR_CODE5,_))=>myView.result("greater-day-error")
+      case Failure(_)  => myView.result("general-error")
     }
+
 
     //////////////////////////////////////////////////////////////////////////////// db -> system
 
@@ -427,8 +431,10 @@ object HumanResourceController {
     override def absencePerson(item:Ferie,isMalattia:Boolean): Unit =
       model.getAbsenceInYearForPerson(item.idPersona)
       .onComplete {
-        case Failure(exception) =>   myView.result("errore-malattie")
-        case Success(value) =>value.payload.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
+        case Success(Response(StatusCodes.SUCCES_CODE,value))=>value.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.result("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.result("not-found-error")
+        case Failure(_)  => myView.result("general-error")
       }
     override def passwordRecovery(user: Int): Unit =
       model.passwordRecovery(user)

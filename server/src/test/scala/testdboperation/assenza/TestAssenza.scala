@@ -17,7 +17,7 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
   behavior of "GetAllFerie"
   it should "return the given the list when tries to get all ferie for that year" in {
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2020)
-    ferie map {list => assert(list.head.equals(remainingFerieList))}
+    ferie map {list =>println(list); assert(list.head.equals(remainingFerieList))}
   }
   it should "return the given the list when tries to get all ferie for next year" in {
     val ferie: Future[Option[List[Ferie]]] = AssenzaOperation.getAllFerie(2021)
@@ -48,9 +48,9 @@ class TestAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServe
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(startAfterEnd)
     assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE4) }
   }
-  it should "return an ERROR_CODE4 when adding an assenza that starts the same day of the end" in {
+  it should "return an int >0 when adding an assenza that starts the same day of the end" in {
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(startSameAsEnd)
-    assenza map { ass => assert(ass.head == StatusCodes.ERROR_CODE4) }
+    assenza map { ass => assert(ass.head > 0) }
   }
   it should "return an ERROR_CODE5 when adding ferie days greater than remaining ferie for the year" in {
     val assenza: Future[Option[Int]] = AssenzaOperation.insert(notSoManyFerie)

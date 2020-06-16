@@ -9,9 +9,9 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Button, DatePicker, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent
 import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker
-import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.MoveDatePeriod
+import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.{DatePickerC, MoveDatePeriod}
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Fabian Aspee Encina
  *
@@ -51,9 +51,9 @@ object ModalAbsence{
     var button:Button = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      if(isMalattia)button.setText(resources.getString("absence-button")) else button.setText(resources.getString("holiday-button"))
+      if(isMalattia)button.setText(resources.getResource("absence-button")) else button.setText(resources.getResource("holiday-button"))
       nameSurname.setText(s"${item.nomeCognome}")
-      setInitDate()
+      setInitDate(assenza)
       initDate.setOnShowing(t=>println(initDate.getProperties))
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
@@ -77,12 +77,13 @@ object ModalAbsence{
         sickness = 3
       else
         holiday = item.giorniVacanza
-      CreateDatePicker.createDataPicker(finishDate, MoveDatePeriod(), MoveDatePeriod(years = sickness, days = holiday), initDate.getValue)
+      CreateDatePicker.createDataPicker(DatePickerC(finishDate,MoveDatePeriod(),MoveDatePeriod(years = sickness, days = holiday),initDate.getValue))
       finishDate.setDisable(false)
     }
 
-    private def setInitDate(): Unit ={
-      CreateDatePicker.createDataPicker(initDate, MoveDatePeriod(days = 3),MoveDatePeriod(years = 5))
+    private def setInitDate(assenza:List[Assenza]): Unit ={
+      val datesToDisable = assenza.map(value=>Option(CreateDatePicker.sqlDateToCalendar(value.dataInizio),CreateDatePicker.sqlDateToCalendar(value.dataFine)))
+      CreateDatePicker.createDataPicker(DatePickerC(initDate, MoveDatePeriod(days = 3),MoveDatePeriod(years = 5)),Some(datesToDisable))
     }
 
     private def enableButton(): Unit ={

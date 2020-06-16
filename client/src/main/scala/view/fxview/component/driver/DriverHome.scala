@@ -3,12 +3,14 @@ package view.fxview.component.driver
 import java.net.URL
 import java.util.ResourceBundle
 
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.StipendioInformations
+import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformations}
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, Menu}
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.driver.subcomponent.{HomeBox, SalaryBox, ShiftBox}
 import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 import view.fxview.component.{AbstractComponent, Component}
@@ -17,12 +19,12 @@ trait DriverHome extends Component[DriverHomeParent]{
   /**
    *
    */
-  def drawHome():Unit
+  def drawHome(infoHome: InfoHome):Unit
 
   /**
    *
    */
-  def drawShift():Unit
+  def drawShift(shift: InfoShift):Unit
 
   /**
    * method that call his parent and send list with all salary of a person
@@ -35,6 +37,7 @@ trait DriverHome extends Component[DriverHomeParent]{
    * @param information case class with all presenze, absence and salary for a month
    */
   def informationSalary(information:StipendioInformations):Unit
+  def stopLoading():Unit
 }
 object DriverHome{
   def apply(): DriverHome = new DriverHomeFX()
@@ -64,32 +67,35 @@ object DriverHome{
     var salaryBox:SalaryBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      labelHome.setText(resources.getString("home-label"))
-      labelTurni.setText(resources.getString("turno-label"))
-      labelStipendio.setText(resources.getString("stipendi-label"))
+      labelHome.setText(resources.getResource("home-label"))
+      labelTurni.setText(resources.getResource("turno-label"))
+      labelStipendio.setText(resources.getResource("stipendi-label"))
       home.setGraphic(labelHome)
       turni.setGraphic(labelTurni)
       stipendi.setGraphic(labelStipendio)
       labelHome.setOnMouseClicked((_:MouseEvent)=>parent.drawHomePanel())
-      labelTurni.setOnMouseClicked((_:MouseEvent)=>parent.drawTurnoPanel())
-      labelStipendio.setOnMouseClicked((_:MouseEvent)=>parent.drawStipendioPanel())
+      labelTurni.setOnMouseClicked((_:MouseEvent)=>parent.drawShiftPanel())
+      labelStipendio.setOnMouseClicked((_:MouseEvent)=>{
+        driverHome.setCenter(FXHelperFactory.loadingBox)
+        parent.drawSalaryPanel()
+      })
     }
 
-    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12",49))))
+    override def drawHome(infoHome: InfoHome): Unit = driverHome.setCenter(home(infoHome))
 
-    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12",49))))
+    override def drawShift(shift: InfoShift): Unit = driverHome.setCenter(this.shift(shift))
 
     override def drawSalary(list:List[Stipendio]): Unit = driverHome.setCenter(salary(list))
 
 
-    private def home(list:List[Turno]):Pane = {
-      homeBox = HomeBox(list)
+    private def home(infoHome: InfoHome):Pane = {
+      homeBox = HomeBox(infoHome)
       homeBox.setParent(parent)
       homeBox.pane
     }
 
-    private def shift(list:List[Turno]):Pane = {
-      shiftBox = ShiftBox(list)
+    private def shift(shift: InfoShift):Pane = {
+      shiftBox = ShiftBox(shift)
       shiftBox.setParent(parent)
       shiftBox.pane
     }
@@ -101,5 +107,7 @@ object DriverHome{
     }
 
     override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
+
+    override def stopLoading(): Unit = driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
   }
 }

@@ -314,5 +314,7 @@ object HumanResourceView {
         popup = new Popup(myStage)
         popup.showMessage(resourceBundle.getString(className + "-" + message))
       })
+      
+    override def errorMessage(message: String): Unit = showMessage(message)
   }
 }

@@ -2,14 +2,14 @@ package view.fxview.mainview
 
 import java.net.URL
 import java.util.ResourceBundle
-
-import caseclass.CaseClassDB.Stipendio
-import caseclass.CaseClassHttpMessage.StipendioInformations
+import view.fxview.util.ResourceBundleUtil._
+import caseclass.CaseClassDB.{Stipendio, Turno}
+import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformations}
 import controller.DriverController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.DialogView
-import view.fxview.AbstractFXDialogView
+import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.driver.DriverHome
 import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 
@@ -17,12 +17,12 @@ trait DriverView extends DialogView{
   /**
    *
    */
-  def drawHomeView():Unit
+  def drawHomeView(infoHome: InfoHome):Unit
 
   /**
    * method which draw view that contains all shift of a driver into 7 days
    */
-  def drawShiftView():Unit
+  def drawShiftView(shift: InfoShift):Unit
 
   /**
    * method that draw view for salary for a driver
@@ -35,6 +35,8 @@ trait DriverView extends DialogView{
    * @param information case class with all presenze, absence and salary for a month
    */
   def informationSalary(information:StipendioInformations):Unit
+
+  def messageErrorSalary(message:String):Unit
 }
 object DriverView {
   def apply(stage: Stage): DriverView = new DriverViewHomeFX(stage)
@@ -67,9 +69,10 @@ object DriverView {
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl DriverView
     override def drawHomePanel(): Unit = myController.drawHomePanel()
 
-    override def drawTurnoPanel(): Unit = myController.drawShiftPanel()
+    override def drawShiftPanel(): Unit = myController.drawShiftPanel()
 
-    override def drawStipendioPanel(): Unit = myController.drawSalaryPanel()
+
+    override def drawSalaryPanel(): Unit =  myController.drawSalaryPanel()
 
     ///////////////////////////////////////////////////////////////// Fine VIEW A CONTROLLER impl DriverView
 
@@ -79,16 +82,20 @@ object DriverView {
     ///////////////////////////////////////////////////////////////// Fine VIEW STIPENDIO A CONTROLLER impl DriverView
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
-    override def drawHomeView(): Unit = driverHome.drawHome()
+    override def drawHomeView(infoHome: InfoHome): Unit =  Platform.runLater(()=>driverHome.drawHome(infoHome))
 
-    override def drawShiftView(): Unit = driverHome.drawShift()
+    override def drawShiftView(shift: InfoShift): Unit =  Platform.runLater(()=> driverHome.drawShift(shift))
 
-    override def drawSalaryView(list:List[Stipendio]): Unit = Platform.runLater(()=>driverHome.drawSalary(list))
+    override def drawSalaryView(list:List[Stipendio]): Unit = Platform.runLater(()=> driverHome.drawSalary(list))
 
     override def informationSalary(information: StipendioInformations): Unit =
       Platform.runLater(()=>driverHome.informationSalary(information))
-
-    override def showMessage(message: String): Unit = Platform.runLater(()=>super.showMessage(message))
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
+    override def messageErrorSalary(message: String): Unit = {
+      Platform.runLater(()=>{
+        super.showMessage(generalResources.getResource(message))
+        driverHome.stopLoading()
+      })
+    }
   }
 }
