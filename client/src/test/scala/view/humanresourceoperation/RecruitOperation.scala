@@ -2,9 +2,7 @@ package view.humanresourceoperation
 
 import java.time.LocalDate
 
-import akka.parboiled2.RuleTrace.Terminal
-import javafx.scene.control.{Button, ComboBox, DatePicker, Label, TextField}
-import javafx.scene.input.KeyCode
+import javafx.scene.control._
 import view.baseconfiguration.BaseTest
 
 trait RecruitOperation {

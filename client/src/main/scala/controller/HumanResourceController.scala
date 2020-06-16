@@ -260,13 +260,17 @@ object HumanResourceController {
           showSuccess = false))
 
     override def fires(ids: Set[Int]): Unit = {
-      val future: Future[Response[Int]] =
-          if(ids.size > 1)
+      if(!ids.isEmpty) {
+        val future: Future[Response[Int]] =
+          if (ids.size > 1)
             model.firesAll(ids)
           else
             model.fires(ids.head)
 
-      future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
+        future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
+      }
+      else
+        showResult(false, "Error6", EmployeeView.fire)
     }
 
     override def illness(assenza: Assenza): Unit =
