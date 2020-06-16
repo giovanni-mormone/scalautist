@@ -1,13 +1,11 @@
 package view.baseconfiguration.humanresource
 
 import javafx.application.Platform
-import javafx.scene.control.Label
 import javafx.scene.layout.{BorderPane, VBox}
 import junitparams.JUnitParamsRunner
-import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
+import org.junit.{After, Before, Test}
 import view.baseconfiguration.BaseTest
-import view.humanresourceoperation.FerieOperation
 import view.launchview.HumanResourceLaunch
 import view.mainviewoperations.HumanResourceOperations
 

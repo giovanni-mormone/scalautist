@@ -45,9 +45,8 @@ object FireOperation {
     override def getLabel: Label =
       toTest.find("#messageLabel")
 
-    override def searchSomeone(string: String): Unit = {
+    override def searchSomeone(string: String): Unit =
       toTest.clickOn(searchBoxId).write(string)
-    }
 
     override def pressFireButton(): Unit =
       toTest.clickOn(buttonId)

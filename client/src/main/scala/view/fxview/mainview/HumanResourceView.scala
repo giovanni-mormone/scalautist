@@ -272,8 +272,6 @@ object HumanResourceView {
         modalResource = Modal[ModalAbsenceParent, Component[ModalAbsenceParent], HRModalBoxParent](myStage, this, ModalAbsence(item, isMalattia,assenza))
         modalResource.show()
       })
-    /////////////////////////////////////////////////////////   disegni modal
-
 
     /////////////////////////////////////////////////////////   disegni modal
 
@@ -281,7 +279,7 @@ object HumanResourceView {
       Platform.runLater(() => {
         homeView()
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
-
+        modalResource.show()
       })
     }
 
