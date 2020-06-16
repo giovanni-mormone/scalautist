@@ -17,12 +17,13 @@ import view.fxview.component.{AbstractComponent, Component}
 
 trait DriverHome extends Component[DriverHomeParent]{
   /**
-   *
+   * draw common information for a driver, for example, shift in the day
+   * extra day in week and calendar
    */
   def drawHome(infoHome: InfoHome):Unit
 
   /**
-   *
+   * draw all shifth of a driver in the week
    */
   def drawShift(shift: InfoShift):Unit
 
@@ -37,6 +38,10 @@ trait DriverHome extends Component[DriverHomeParent]{
    * @param information case class with all presenze, absence and salary for a month
    */
   def informationSalary(information:StipendioInformations):Unit
+
+  /**
+   * set a Vbox in the center of the DriverHome, this happens if is present a error
+   */
   def stopLoading():Unit
 }
 object DriverHome{

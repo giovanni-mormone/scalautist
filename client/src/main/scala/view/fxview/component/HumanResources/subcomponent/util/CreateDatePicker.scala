@@ -55,8 +55,8 @@ case object CreateDatePicker{
   }
   def sqlDateToCalendar(date:dateSql):LocalDate=date.toLocalDate
 
-  def createDatePickerSkin(): (DatePickerSkin,DatePicker) ={
-    val datepicker= new DatePicker(LocalDate.now())
+  def createDatePickerSkin(localDate:LocalDate): (DatePickerSkin,DatePicker) ={
+    val datepicker= new DatePicker(localDate)
     (new DatePickerSkin(datepicker),datepicker)
   }
 
