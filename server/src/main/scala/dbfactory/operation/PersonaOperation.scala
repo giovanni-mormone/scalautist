@@ -60,7 +60,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * generate the relative dependences in the db, e.g. assuming a driver add in the db the
    * type of contract and eventually the disponibility of the driver to do extra work.
  *
-   * @param personaDaAssumere
+   * @param personToHire
    *                          The data of the person to hire
    * @return
    * An option with the id of the hired person or an error code:
@@ -70,7 +70,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * [[messagecodes.StatusCodes.ERROR_CODE4]] if the contratto is fisso but there is not a disponibilità present
    * [[messagecodes.StatusCodes.ERROR_CODE5]] if the turni are not right according to the contratto
    */
-  def assumi(personaDaAssumere: Assumi): Future[Option[Int]]
+  def assumi(personToHire: Assumi): Future[Option[Int]]
 }
 
 object PersonaOperation extends PersonaOperation {
@@ -111,10 +111,10 @@ object PersonaOperation extends PersonaOperation {
     }yield credentials
   }
 
-  override def assumi(personaDaAssumere:Assumi): Future[Option[Int]] = {
-    val persona = personaDaAssumere.persona
-    val disponibilita = personaDaAssumere.disponibilita
-    val newContratto = personaDaAssumere.storicoContratto
+  override def assumi(personToHire:Assumi): Future[Option[Int]] = {
+    val persona = personToHire.persona
+    val disponibilita = personToHire.disponibilita
+    val newContratto = personToHire.storicoContratto
     ContrattoOperation.select(newContratto.contrattoId).flatMap{
       case None => completeCall(StatusCodes.ERROR_CODE1)
       case Some(_) if disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE => completeCall(StatusCodes.ERROR_CODE2)
