@@ -47,10 +47,11 @@ object DateConverter {
   }
 
   /**
-   * Returns the number of days between two dates
+   * Returns the number of days between two dates.
+   * It Counts the starting day as a whole day, i.e. between the same day there is 1 day.
    */
   val computeDaysBetweenDates: (Date,Date) => Int = (dateStart,dateStop) =>
-    ChronoUnit.DAYS.between(dateStart.toLocalDate,dateStop.toLocalDate).toInt
+    ChronoUnit.DAYS.between(dateStart.toLocalDate,dateStop.toLocalDate).toInt + 1
 
   /**
    * Returns whether or not two date have different year
