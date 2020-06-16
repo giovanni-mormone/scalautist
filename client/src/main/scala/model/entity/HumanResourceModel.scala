@@ -315,14 +315,6 @@ object HumanResourceModel {
     private def callServerSalary(request: HttpRequest)=
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
-    private def getCalendar:Calendar={
-      val year = Calendar.getInstance()
-      year.setTime(new Date(System.currentTimeMillis()))
-      year
-    }
-
-    private def getYear:Int=getCalendar.get(Calendar.YEAR)
-
   }
 
 }
