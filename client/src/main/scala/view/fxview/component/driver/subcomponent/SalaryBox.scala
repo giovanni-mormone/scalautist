@@ -2,7 +2,7 @@ package view.fxview.component.driver.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
-import view.fxview.component.driver.subcomponent.util.Days._
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.Stipendio
 import caseclass.CaseClassHttpMessage.{InfoPresenza, StipendioInformations}
 import javafx.beans.value.{ChangeListener, ObservableValue}
@@ -17,7 +17,6 @@ import view.fxview.component.driver.utils.StipendiCellFactory
 import view.fxview.component.{AbstractComponent, Component}
 
 trait SalaryBox extends Component[SalaryBoxParent]{
-  def showMessage(message: String): Unit
 
   def paneInfoSalary(information:StipendioInformations):Unit
 }
@@ -128,9 +127,5 @@ object SalaryBox{
 
     }
 
-    override def showMessage(message: String): Unit = {
-      salaryInfo.getChildren.remove(FXHelperFactory.loadingBox)
-
-    }
   }
 }

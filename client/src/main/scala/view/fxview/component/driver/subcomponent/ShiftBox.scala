@@ -2,19 +2,20 @@ package view.fxview.component.driver.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
-import view.fxview.component.driver.subcomponent.util.Days._
-import caseclass.CaseClassDB.Turno
+
+import caseclass.CaseClassHttpMessage.InfoShift
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Label}
 import view.fxview.component.driver.subcomponent.parent.ShiftBoxParent
 import view.fxview.component.driver.subcomponent.util.Days
 import view.fxview.component.{AbstractComponent, Component}
+import view.fxview.util.ResourceBundleUtil._
 
 trait ShiftBox extends Component[ShiftBoxParent]{
 
 }
 object ShiftBox{
-  def apply(shift: List[Turno]): ShiftBox = new ShiftBoxFX(shift)
+  def apply(shift: InfoShift): ShiftBox = new ShiftBoxFX(shift)
 
   /**
    * ShiftBox Fx implementation. It shows Salary for one person, all salary for one person
@@ -22,7 +23,7 @@ object ShiftBox{
    * @param shift
    *                  list of shift in db
    */
-  private class ShiftBoxFX(shift: List[Turno])
+  private class ShiftBoxFX(shift: InfoShift)
     extends AbstractComponent[ShiftBoxParent]("driver/subcomponent/ShiftBox") with ShiftBox {
 
     @FXML

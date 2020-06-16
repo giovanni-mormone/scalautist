@@ -12,7 +12,7 @@ import javafx.scene.control._
 import regularexpressionutilities.{NameChecker, NumberChecker}
 import utils.UserType._
 import view.fxview.component.HumanResources.subcomponent.parent.RecruitParent
-import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.MoveDatePeriod
+import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker.{DatePickerC, MoveDatePeriod}
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, TextFieldControl}
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -117,7 +117,7 @@ object RecruitBox {
     }
 
     private def setRecruitDate(): Unit = {
-      CreateDatePicker.createDataPicker(recruitDate, MoveDatePeriod(months = 1), MoveDatePeriod(months = 1))
+      CreateDatePicker.createDataPicker(DatePickerC(recruitDate, MoveDatePeriod(months = 1), MoveDatePeriod(months = 1)))
       recruitDate.setOnAction(_ => ableSave())
     }
 

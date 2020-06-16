@@ -11,7 +11,7 @@ object TurnoDriver {
   def apply(toTest: BaseTest): TurnoDriver = new TurnoDriverImpl(toTest)
 
   private class TurnoDriverImpl(toTest: BaseTest) extends TurnoDriver{
-    override def clickTurnoMenu(): Unit = ???
+    override def clickTurnoMenu(): Unit = toTest.clickOn("labelTurni")
 
     override def clickLunedi(): Unit = ???
 
