@@ -80,4 +80,9 @@ class ZonaTest extends BaseTest {
     assert(updateB.isDisable)
   }
 
+  @Test
+  def notSaveZone(): Unit = {
+    val saveB: Button = zona.getSaveButton
+    assert(saveB.isDisable)
+  }
 }

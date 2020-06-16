@@ -18,6 +18,7 @@ trait ZonaOperation {
   def getMessage: Label
   def getTable: TableView[PersonaTable]
   def getUpdateButton: Button
+  def getSaveButton: Button
 }
 
 object ZonaOperation {
@@ -90,6 +91,9 @@ object ZonaOperation {
 
     override def getUpdateButton: Button =
       toTest.find(updateId)
+
+    override def getSaveButton: Button =
+      toTest.find(addButtonId)
 
     override def openZona(): Unit =
       toTest.clickOn("#zonaManage")
