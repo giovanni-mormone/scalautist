@@ -298,6 +298,6 @@ object HumanResourceView {
       })
     }
 
-
+    override def errorMessage(message: String): Unit = showMessage(message)
   }
 }

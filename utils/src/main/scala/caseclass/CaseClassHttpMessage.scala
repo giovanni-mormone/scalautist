@@ -121,4 +121,18 @@ object CaseClassHttpMessage {
    *                      possible days that they can make extra shifts
    */
   final case class InfoHome(turno:List[Turno],disponibilita: Disponibilita)
+
+  /**
+   * Case class that represent information for one shift in a day
+   * @param idGiorno represent id for a day in week
+   * @param orario represent working hours of a shift
+   */
+  final case class ShiftDay(idGiorno:Int,orario:String)
+  /**
+   * Case class that represent informations of a given day
+   * @param shiftDay list that contains the shift that the person must make in the week
+   * @param disponibilita availability that the person has indicated as
+   *                      possible days that they can make extra shifts
+   */
+  final case class InfoShift(shiftDay:List[ShiftDay],disponibilita: Disponibilita)
 }

@@ -2,9 +2,9 @@ package view.fxview.mainview
 
 import java.net.URL
 import java.util.ResourceBundle
-
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.{InfoHome, StipendioInformations}
+import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformations}
 import controller.DriverController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -22,7 +22,7 @@ trait DriverView extends DialogView{
   /**
    * method which draw view that contains all shift of a driver into 7 days
    */
-  def drawShiftView(shift:List[Turno]):Unit
+  def drawShiftView(shift: InfoShift):Unit
 
   /**
    * method that draw view for salary for a driver
@@ -35,6 +35,8 @@ trait DriverView extends DialogView{
    * @param information case class with all presenze, absence and salary for a month
    */
   def informationSalary(information:StipendioInformations):Unit
+
+  def messageErrorSalary(message:String):Unit
 }
 object DriverView {
   def apply(stage: Stage): DriverView = new DriverViewHomeFX(stage)
@@ -82,14 +84,18 @@ object DriverView {
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
     override def drawHomeView(infoHome: InfoHome): Unit =  Platform.runLater(()=>driverHome.drawHome(infoHome))
 
-    override def drawShiftView(shift:List[Turno]): Unit =  Platform.runLater(()=> driverHome.drawShift(shift))
+    override def drawShiftView(shift: InfoShift): Unit =  Platform.runLater(()=> driverHome.drawShift(shift))
 
     override def drawSalaryView(list:List[Stipendio]): Unit = Platform.runLater(()=> driverHome.drawSalary(list))
 
     override def informationSalary(information: StipendioInformations): Unit =
       Platform.runLater(()=>driverHome.informationSalary(information))
-
-    override def showMessage(message: String): Unit = Platform.runLater(()=>super.showMessage(message))
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
+    override def messageErrorSalary(message: String): Unit = {
+      Platform.runLater(()=>{
+        super.showMessage(generalResources.getResource(message))
+        driverHome.stopLoading()
+      })
+    }
   }
 }

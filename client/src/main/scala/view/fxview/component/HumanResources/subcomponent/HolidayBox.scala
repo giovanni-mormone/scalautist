@@ -9,7 +9,7 @@ import javafx.scene.control.{TableView, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.HolidayBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, FerieTable}
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Fabian Aspee Encina
  *
@@ -49,12 +49,12 @@ object HolidayBox {
       initializeSearch(resources)
       CreateTable.clickListener[FerieTable](
         employeeTable,
-        item => parent.openModal(Ferie(item.getId,item.getNameSurname,item.getHoliday),isMalattia = false))
+        item =>if(item.getHoliday!=0) parent.openModal(Ferie(item.getId,item.getNameSurname,item.getHoliday),isMalattia = false) else parent.errorMessage(resources.getResource("fine-giorni")))
 
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
-      searchBox.setPromptText(resourceBundle.getString("search"))
+      searchBox.setPromptText(resourceBundle.getResource("search"))
 
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[FerieTable](

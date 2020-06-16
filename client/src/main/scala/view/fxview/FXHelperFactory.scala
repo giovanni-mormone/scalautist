@@ -4,7 +4,9 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import javafx.fxml.{FXML, Initializable}
+import javafx.geometry.Pos
 import javafx.scene.control.{Button, Label}
+import javafx.scene.layout.VBox
 import javafx.stage.{Modality, Stage}
 import view.BaseView
 import view.fxview.loader.FXLoader
@@ -33,7 +35,7 @@ object FXHelperFactory {
   /**
    * A simple javafx box to containing [[javafx.scene.control.ProgressIndicator]].
    */
-  val loadingBox = {
+  val loadingBox: VBox = {
     import javafx.geometry.Pos
     import javafx.scene.control.ProgressIndicator
     import javafx.scene.layout.VBox
@@ -43,7 +45,12 @@ object FXHelperFactory {
     box.setAlignment(Pos.CENTER)
     box
   }
-
+  val defaultErrorPanel = {
+    val box = new VBox()
+    box.setId("error")
+    box.setAlignment(Pos.CENTER)
+    box
+  }
   private class FXModal(parent:Stage, message:String) extends Initializable with BaseView{
 
     @FXML
@@ -60,26 +67,26 @@ object FXHelperFactory {
     override def show(): Unit = {
       myStage.initModality(Modality.APPLICATION_MODAL)
       myStage initOwner parent
-      myStage showAndWait
+      myStage.showAndWait()
     }
 
     /**
      * Hides the view. If alredy hidden does nothing
      */
     override def hide(): Unit =
-      myStage hide
+      myStage.hide()
 
     /**
      * Closes the view.
      */
     override def close(): Unit =
-      myStage close
+      myStage.close()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       myStage.setTitle(resources.getString("title"))
       messageLabel.setText(message)
       confirmationButton.setText(resources.getString("confirm-button"))
-      confirmationButton.setOnAction(_ => close)
+      confirmationButton.setOnAction(_ => close())
 
       myStage.setOnCloseRequest(e => e.consume())
     }

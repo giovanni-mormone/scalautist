@@ -2,7 +2,7 @@ package view.fxview.component.HumanResources
 
 import java.net.URL
 import java.util.ResourceBundle
-
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
@@ -129,13 +129,13 @@ object HRHome{
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("I am HR king, and I BENEDICO to you!")
 
-      recruitButton.setText(resources.getString("recruit-button"))
-      firesButton.setText(resources.getString("fire-button"))
-      illness.setText(resources.getString("illness-button"))
-      holidays.setText(resources.getString("holiday-button"))
-      zonaManage.setText(resources.getString("zonaManage"))
-      terminalManger.setText(resources.getString("terminalManager"))
-      changePassword.setText(resources.getString("changePassword"))
+      recruitButton.setText(resources.getResource("recruit-button"))
+      firesButton.setText(resources.getResource("fire-button"))
+      illness.setText(resources.getResource("illness-button"))
+      holidays.setText(resources.getResource("holiday-button"))
+      zonaManage.setText(resources.getResource("zonaManage"))
+      terminalManger.setText(resources.getResource("terminalManager"))
+      changePassword.setText(resources.getResource("changePassword"))
 
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
