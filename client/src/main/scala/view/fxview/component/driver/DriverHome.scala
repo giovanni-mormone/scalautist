@@ -4,11 +4,12 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.StipendioInformations
+import caseclass.CaseClassHttpMessage.{InfoHome, StipendioInformations}
 import javafx.fxml.FXML
 import javafx.scene.control.{Label, Menu}
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.driver.subcomponent.{HomeBox, SalaryBox, ShiftBox}
 import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 import view.fxview.component.{AbstractComponent, Component}
@@ -17,12 +18,12 @@ trait DriverHome extends Component[DriverHomeParent]{
   /**
    *
    */
-  def drawHome():Unit
+  def drawHome(infoHome: InfoHome):Unit
 
   /**
    *
    */
-  def drawShift():Unit
+  def drawShift(shift:List[Turno]):Unit
 
   /**
    * method that call his parent and send list with all salary of a person
@@ -71,19 +72,22 @@ object DriverHome{
       turni.setGraphic(labelTurni)
       stipendi.setGraphic(labelStipendio)
       labelHome.setOnMouseClicked((_:MouseEvent)=>parent.drawHomePanel())
-      labelTurni.setOnMouseClicked((_:MouseEvent)=>parent.drawTurnoPanel())
-      labelStipendio.setOnMouseClicked((_:MouseEvent)=>parent.drawStipendioPanel())
+      labelTurni.setOnMouseClicked((_:MouseEvent)=>parent.drawShiftPanel())
+      labelStipendio.setOnMouseClicked((_:MouseEvent)=>{
+        driverHome.setCenter(FXHelperFactory.loadingBox)
+        parent.drawSalaryPanel()
+      })
     }
 
-    override def drawHome(): Unit = driverHome.setCenter(home(List(Turno("Manana","10-12",49))))
+    override def drawHome(infoHome: InfoHome): Unit = driverHome.setCenter(home(infoHome))
 
-    override def drawShift(): Unit = driverHome.setCenter(shift(List(Turno("Manana","10-12",49))))
+    override def drawShift(shift:List[Turno]): Unit = driverHome.setCenter(this.shift(shift))
 
     override def drawSalary(list:List[Stipendio]): Unit = driverHome.setCenter(salary(list))
 
 
-    private def home(list:List[Turno]):Pane = {
-      homeBox = HomeBox(list)
+    private def home(infoHome: InfoHome):Pane = {
+      homeBox = HomeBox(infoHome)
       homeBox.setParent(parent)
       homeBox.pane
     }

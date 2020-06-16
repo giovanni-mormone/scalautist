@@ -25,12 +25,12 @@ class MalattieTest extends BaseTest {
   }
   @After
   def closeStage():Unit={
-    Platform.runLater(()=>myStage.close())
+    closeCurrentWindow()
   }
 
   @Test
   def goodInsertAbsence(): Unit = {
-    ScriptServer.result
+
     malattie.clickButtonIllness()
     ensureEventQueueComplete()
     sleep(5000)

@@ -25,7 +25,7 @@ class FerieTest extends BaseTest {
   }
   @After
   def closeStage():Unit={
-    Platform.runLater(()=>myStage.close())
+    closeCurrentWindow()
   }
 
   @Test
