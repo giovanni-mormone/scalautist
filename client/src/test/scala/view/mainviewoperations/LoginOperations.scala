@@ -1,6 +1,6 @@
 package view.mainviewoperations
 
-import view.baseconfiguration.{BaseTest, LoginViewTest}
+import view.baseconfiguration.BaseTest
 
 trait LoginOperations {
   def login(user:String, pass: String):Unit

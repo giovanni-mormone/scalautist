@@ -1,10 +1,11 @@
-package view.baseconfiguration
+package view.baseconfiguration.driver
 
 import caseclass.CaseClassDB.Stipendio
 import javafx.scene.control.{Label, ListView}
 import junitparams.JUnitParamsRunner
 import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
+import view.baseconfiguration.BaseTest
 import view.driverviewoperations.StipendioDriver
 import view.launchview.DriverLaunch
 
