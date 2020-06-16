@@ -1,12 +1,12 @@
 package view.baseconfiguration.humanresource
 
 import javafx.application.Platform
-import javafx.scene.control.TextField
+import javafx.scene.control.{Label, TableView}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
-import org.scalacheck.Prop.True
 import view.baseconfiguration.BaseTest
+import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 import view.humanresourceoperation.FireOperation
 import view.launchview.HumanResourceLaunch
 
@@ -16,6 +16,8 @@ class LicenziaTest extends BaseTest {
   var licenzia: FireOperation = _
 
   val nameToSearch: String = "f"
+  val resultOk: String = "Operazione riuscita con successo"
+  val resultFail: String = "Errore! Seleziona un utente"
 
   @Before
   def beforeEachFerieTest(): Unit = {
@@ -35,8 +37,39 @@ class LicenziaTest extends BaseTest {
   def checkOne(): Unit = {
     licenzia.fireOne()
     ensureEventQueueComplete()
+    licenzia.pressFireButton()
+    ensureEventQueueComplete()
     sleep(2000)
-    assert(true)
+    val text: Label = licenzia.getLabel
+    assert(text.getText.equals(resultOk))
   }
 
+  @Test
+  def checkMore(): Unit = {
+    licenzia.fireMore()
+    ensureEventQueueComplete()
+    licenzia.pressFireButton()
+    ensureEventQueueComplete()
+    sleep(2000)
+    val text: Label = licenzia.getLabel
+    assert(!text.getText.equals(""))
+  }
+
+  @Test
+  def checkNobody(): Unit = {
+    licenzia.pressFireButton()
+    ensureEventQueueComplete()
+    sleep(2000)
+    val text: Label = licenzia.getLabel
+    assert(text.getText.equals(resultFail))
+  }
+
+  @Test
+  def searchSomeone(): Unit = {
+    licenzia.searchSomeone(nameToSearch)
+    ensureEventQueueComplete()
+    sleep(2000)
+    val table: TableView[PersonaTableWithSelection] = licenzia.getTable
+    assert(table.getItems.size() == 3)
+  }
 }

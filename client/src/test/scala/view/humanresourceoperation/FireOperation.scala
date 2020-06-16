@@ -1,14 +1,16 @@
 package view.humanresourceoperation
 
-import javafx.scene.control.Label
+import javafx.scene.control.{Label, TableColumn, TableView}
 import view.baseconfiguration.BaseTest
+import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 
 trait FireOperation {
   def openFireBox(): Unit
   def fireOne(): Unit
   def fireMore(): Unit
-  def searchSomeone(): Unit
+  def searchSomeone(string: String): Unit
   def pressFireButton(): Unit
+  def getTable: TableView[PersonaTableWithSelection]
   def getLabel: Label
 }
 
@@ -26,16 +28,31 @@ object FireOperation {
     override def openFireBox(): Unit =
       toTest.clickOn(nameId)
 
-    override def fireOne(): Unit = {
-      toTest.clickOn("Fabian")
+    override def fireOne(): Unit =
+      toTest.find(tableNameId).asInstanceOf[TableView[PersonaTableWithSelection]]
+                              .getItems.get(0)
+                              .selected.setSelected(true)
+
+    override def fireMore(): Unit = {
+      toTest.find(tableNameId).asInstanceOf[TableView[PersonaTableWithSelection]]
+        .getItems.get(0)
+        .selected.setSelected(true)
+      toTest.find(tableNameId).asInstanceOf[TableView[PersonaTableWithSelection]]
+        .getItems.get(1)
+        .selected.setSelected(true)
     }
 
-    override def fireMore(): Unit = ???
+    override def getLabel: Label =
+      toTest.find("#messageLabel")
 
-    override def getLabel: Label = ???
+    override def searchSomeone(string: String): Unit = {
+      toTest.clickOn(searchBoxId).write(string)
+    }
 
-    override def searchSomeone(): Unit = ???
+    override def pressFireButton(): Unit =
+      toTest.clickOn(buttonId)
 
-    override def pressFireButton(): Unit = ???
+    override def getTable: TableView[PersonaTableWithSelection] =
+      toTest.find(tableNameId)
   }
 }
