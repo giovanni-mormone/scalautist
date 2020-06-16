@@ -16,9 +16,9 @@ class TurnoTest extends BaseTest {
     setUp(classOf[DriverLaunch])
     driverTurno = TurnoDriver(this)
   }
+
   @After
   def closeScene():Unit={
     closeCurrentWindow()
   }
-
 }

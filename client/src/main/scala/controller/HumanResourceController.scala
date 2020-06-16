@@ -1,9 +1,11 @@
 package controller
 
+import akka.stream.{ConnectionException, StreamTcpException}
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import messagecodes.StatusCodes
 import model.entity.HumanResourceModel
+import view.fxview.component.HumanResources.subcomponent.util.{EmployeeView, ErrorName}
 import view.fxview.mainview.HumanResourceView
 
 import scala.concurrent.Future
@@ -181,7 +183,7 @@ object HumanResourceController {
 
   def apply(): HumanResourceController = instance
 
-  val UNKNOWN = "Unknown"
+  val GEN_ERR:  String = "GeneralError"
 
   /**
    * HumanResourceController implementation
@@ -193,51 +195,58 @@ object HumanResourceController {
     private def responseValutation[A](result: Try[Response[A]],
                                       successA: A => Unit,
                                       failurA: String => Unit,
+                                      className: String,
                                       messageOnModal: Boolean = false,
                                       showSuccess: Boolean = true): Unit = {
       result match {
         case Success(response) if response.statusCode == StatusCodes.SUCCES_CODE =>
           if(showSuccess)
-            showResult(messageOnModal, "success")
+            showResult(messageOnModal, "Success", GEN_ERR)
           if(response.payload.isDefined)
             successA(response.payload.get)
-        case _ => notSuccessCodes[A](result, failurA, messageOnModal)
+        case _ => notSuccessCodes[A](result, failurA, className, messageOnModal)
       }
     }
 
-    private def notSuccessCodes[A](result: Try[Response[A]], failurA: String => Unit, messageOnModal: Boolean = false): Unit =
+    private def notSuccessCodes[A](result: Try[Response[A]], failurA: String => Unit,
+                                   className: String, messageOnModal: Boolean = false): Unit =
       result match {
         case Success(response) if response.statusCode == StatusCodes.NOT_FOUND =>
-          failureAction("NotFound", failurA, messageOnModal)
+          failureAction(ErrorName.NOTFOUND, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.BAD_REQUEST =>
-          failureAction("BadRequest", failurA, messageOnModal)
+          failureAction(ErrorName.BADREQUEST, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE1 =>
-          failureAction("Error1", failurA, messageOnModal)
+          failureAction(ErrorName.ERROR1, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE2 =>
-          failureAction("Error2", failurA, messageOnModal)
+          failureAction(ErrorName.ERROR2, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE3 =>
-          failureAction("Error3", failurA, messageOnModal)
+          failureAction(ErrorName.ERROR3, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE4 =>
-          failureAction("Error4", failurA, messageOnModal)
+          failureAction(ErrorName.ERROR4, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE5 =>
-          failureAction("Error5", failurA, messageOnModal)
+          failureAction(ErrorName.ERROR5, failurA, messageOnModal, className)
         case Success(response) if response.statusCode == StatusCodes.ERROR_CODE6 =>
-          failureAction("Error6", failurA, messageOnModal)
-        case Failure(_) =>
-          failureAction(UNKNOWN, failurA, messageOnModal)
-        case _ => failureAction(UNKNOWN, failurA, messageOnModal)
+          failureAction(ErrorName.ERROR6, failurA, messageOnModal, className)
+        case Failure(_: ConnectionException) =>
+          failureAction(ErrorName.NOTCONN, failurA, messageOnModal, GEN_ERR)
+        case Failure(_ : StreamTcpException) =>
+          failureAction(ErrorName.NOTCONN, failurA, messageOnModal, GEN_ERR)
+        case _ => failureAction(ErrorName.UNKNOWN, failurA, messageOnModal, GEN_ERR)
       }
 
-    private def failureAction[A](message: String = UNKNOWN, failurA: String => Unit, messageOnModal: Boolean): Unit = {
-      showResult(messageOnModal, message)
+    private def failureAction[A](message: String = ErrorName.UNKNOWN, failurA: String => Unit, messageOnModal: Boolean, className: String): Unit = {
+      showResult(messageOnModal, message, className)
       failurA(message)
     }
 
-    private def showResult[A](messageOnModal: Boolean, message: String): Unit = {
+    private def showResult[A](messageOnModal: Boolean, message: String, className: String = ""): Unit = {
       if (messageOnModal)
         myView.result(message)
       else
-        myView.dialog(message)
+        if (className.equals(""))
+          myView.dialog(message)
+        else
+          myView.dialog(className, message)
     }
 
     //////////////////////////////////////////////////////////////////////////////// system -> db
@@ -245,46 +254,52 @@ object HumanResourceController {
     override def recruit(persona: Assumi): Unit =
       model.recruit(persona).onComplete(result =>
         responseValutation[Login](result,
-          login => showResult(messageOnModal = false, login.user + ": " + login.password), _ => None, showSuccess = false))
+          login => showResult(messageOnModal = false, login.user + ": " + login.password),
+          _ => None,
+          EmployeeView.recruit,
+          showSuccess = false))
 
     override def fires(ids: Set[Int]): Unit = {
-      //println(ids)
-      val future: Future[Response[Int]] =
-          if(ids.size > 1)
+      if(!ids.isEmpty) {
+        val future: Future[Response[Int]] =
+          if (ids.size > 1)
             model.firesAll(ids)
           else
             model.fires(ids.head)
 
-      future.onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+        future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
+      }
+      else
+        showResult(false, "Error6", EmployeeView.fire)
     }
 
     override def illness(assenza: Assenza): Unit =
-      model.illnessPeriod(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+      model.illnessPeriod(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.ill))
 
     override def holiday(assenza: Assenza): Unit =
-      model.holidays(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None))
+      model.holidays(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.holiday))
 
     override def saveZona(zone: Zona): Unit =
-      model.setZona(zone).onComplete(result => responseValutation[Zona](result, _ => None, _ => None))
+      model.setZona(zone).onComplete(result => responseValutation[Zona](result, _ => None, _ => None, EmployeeView.zone))
 
     override def updateZona(zone: Zona): Unit =
       model.updateZona(zone)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.zone, messageOnModal = true))
 
     override def deleteZona(zone: Zona): Unit =
       model.deleteZona(zone.idZone.head)
-        .onComplete(result => responseValutation[Zona](result, _ => None, _ => None, messageOnModal = true))
+        .onComplete(result => responseValutation[Zona](result, _ => None, _ => None, EmployeeView.zone, messageOnModal = true))
 
     override def saveTerminal(terminal: Terminale): Unit =
-      model.createTerminale(terminal).onComplete(result => responseValutation[Terminale](result, _ => None, _ => None))
+      model.createTerminale(terminal).onComplete(result => responseValutation[Terminale](result, _ => None, _ => None, EmployeeView.terminal))
 
     override def updateTerminal(terminal: Terminale): Unit =
       model.updateTerminale(terminal)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.terminal, messageOnModal = true))
 
     override def deleteTerminal(terminal: Terminale): Unit =
       model.deleteTerminale(terminal.idTerminale.head)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, messageOnModal = true))
+        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.terminal, messageOnModal = true))
 
     override def saveAbsence(absence: Assenza): Unit = {
       if(absence.malattia)
@@ -312,6 +327,7 @@ object HumanResourceController {
             responseValutation[List[Persona]](employees,
               employeeList => myView.drawEmployeeView(employeeList, callingView),
               _ => None,
+              callingView,
               showSuccess = false)
       )
 
@@ -320,6 +336,7 @@ object HumanResourceController {
         responseValutation[List[Ferie]](employees,
           employeeList => myView.drawHolidayView(employeeList),
           _ => None,
+          EmployeeView.holiday,
           showSuccess = false)
       )
 
@@ -336,12 +353,16 @@ object HumanResourceController {
             data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
           myView.drawRecruit(data.zoneL.payload.get, data.contractL.payload.get, data.shiftL.payload.get)
         case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None)
+          notSuccessCodes(Try(data.zoneL), _ => None, EmployeeView.zone)
         case Success(data) if data.shiftL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.shiftL), _ => None)
-        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None)
-        case _ => showResult(messageOnModal = false, UNKNOWN)
+          notSuccessCodes(Try(data.shiftL), _ => None, EmployeeView.shift)
+        case Success(data) if data.contractL.statusCode != StatusCodes.SUCCES_CODE =>
+          notSuccessCodes(Try(data.contractL), _ => None, EmployeeView.contract)
+        case Failure(_: ConnectionException) =>
+          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
+        case Failure(_ : StreamTcpException) =>
+          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
+        case _ => showResult(messageOnModal = false, ErrorName.UNKNOWN, GEN_ERR)
       }
     }
 
@@ -350,6 +371,7 @@ object HumanResourceController {
          responseValutation[List[Zona]](zones,
            zone => myView.drawZonaView(zone),
            _ => None,
+           EmployeeView.zone,
            showSuccess = false)
        )
 
@@ -364,10 +386,14 @@ object HumanResourceController {
             data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
           myView.drawTerminaleView(data.zoneL.payload.head, data.terminalL.payload.head)
         case Success(data) if data.terminalL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.terminalL), _ => None)
+          notSuccessCodes(Try(data.terminalL), _ => None, EmployeeView.terminal)
         case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None)
-        case _ => showResult(messageOnModal = false, UNKNOWN)
+          notSuccessCodes(Try(data.zoneL), _ => None, EmployeeView.zone)
+        case Failure(_: ConnectionException) =>
+          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
+        case Failure(_ : StreamTcpException) =>
+          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
+        case _ => showResult(messageOnModal = false, ErrorName.UNKNOWN, GEN_ERR)
       }
     }
 
@@ -376,6 +402,7 @@ object HumanResourceController {
         responseValutation[List[Terminale]](terminals,
           terminal => myView.drawTerminal(terminal),
           _ => None,
+          EmployeeView.terminal,
           showSuccess = false)
       )
 
@@ -390,10 +417,14 @@ object HumanResourceController {
           data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
           myView.openTerminalModal(data.zoneL.payload.head, data.terminalS.payload.head)
         case Success(data) if data.terminalS.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.terminalS), _ => None)
+          notSuccessCodes(Try(data.terminalS), _ => None, EmployeeView.terminal)
         case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None)
-        case _ => showResult(messageOnModal = false, UNKNOWN)
+          notSuccessCodes(Try(data.zoneL), _ => None, EmployeeView.zone)
+        case Failure(_: ConnectionException) =>
+          showResult(messageOnModal = true, ErrorName.NOTCONN, GEN_ERR)
+        case Failure(_ : StreamTcpException) =>
+          showResult(messageOnModal = true, ErrorName.NOTCONN, GEN_ERR)
+        case _ => showResult(messageOnModal = false, ErrorName.UNKNOWN, GEN_ERR)
       }
     }
 

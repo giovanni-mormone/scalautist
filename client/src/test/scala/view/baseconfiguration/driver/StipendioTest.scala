@@ -1,12 +1,13 @@
-package view.baseconfiguration
+package view.baseconfiguration.driver
 
 import caseclass.CaseClassDB.Stipendio
 import com.sun.javafx.scene.control.skin.DatePickerContent
 import javafx.scene.control.{Label, ListView}
 import javafx.scene.layout.{BorderPane, HBox}
 import junitparams.JUnitParamsRunner
-import org.junit.runner.RunWith
+import org.junit.runner.RunWith 
 import org.junit.{After, Before, Test}
+import view.baseconfiguration.BaseTest
 import view.driverviewoperations.StipendioDriver
 import view.launchview.DriverLaunch
 

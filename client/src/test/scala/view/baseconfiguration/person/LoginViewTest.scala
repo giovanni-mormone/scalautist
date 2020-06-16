@@ -1,10 +1,11 @@
-package view.baseconfiguration
+package view.baseconfiguration.person
 
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
-import org.junit.{Before, Test}
 import org.junit.runner.RunWith
+import org.junit.{Before, Test}
+import view.baseconfiguration.BaseTest
 import view.launchview.LoginLaunch
 import view.mainviewoperations.LoginOperations
 
