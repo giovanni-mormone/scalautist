@@ -331,9 +331,9 @@ object RecruitBox {
     }
 
     private def refillDays(): Unit = {
-      var baseDays  = List("Lun","Mar","Mer","Gio","Ven")
+      var baseDays  = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi")
       if(!contractTypeFI5FU.week5x2)
-        baseDays = baseDays.appended("Sab")
+        baseDays = baseDays.appended("Sabato")
       refillComponent(day2, baseDays)
       refillComponent(day1, baseDays)
     }
