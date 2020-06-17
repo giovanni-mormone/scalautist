@@ -7,6 +7,7 @@ import controller.LoginController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.BaseView
+import view.fxview.component.Login.LoginParent
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.login.LoginBox
 
@@ -29,24 +30,17 @@ trait LoginView extends BaseView{
    *
    */
   def firstUserAccess(): Unit
-}
 
-/**
- * @author Giovanni Mormone.
- *
- *         A LoginParent is the container of a [[view.fxview.component.login.LoginBox]] [[view.fxview.component.Component]]
- *
- */
-trait LoginParent{
   /**
-   * Method called to submit user credentials. It should be called by a [[view.fxview.component.login.LoginBox]]
- *
-   * @param username
-   *                 The username of the user.
-   * @param password
-   *                 The password of the user.
+   * Method called to notify a login by a conducente user; it opens a
+   * [[view.fxview.mainview.DriverView]].
+   *
    */
-  def login(username: String, password: String): Unit
+  def driverAccess(): Unit
+
+  def humanResourcesAccess(): Unit
+
+
 }
 
 /**
@@ -95,6 +89,18 @@ object LoginView{
         ChangePasswordView(myStage,Some(myStage.getScene))
       })
     }
+
+    override def driverAccess(): Unit =
+      Platform.runLater(() =>{
+        stopLoading()
+        DriverView(myStage)
+      })
+
+    override def humanResourcesAccess(): Unit =
+      Platform.runLater(() =>{
+        stopLoading()
+        HumanResourceView(myStage)
+      })
 
     private def stopLoading():Unit = {
       loginBox.enable()

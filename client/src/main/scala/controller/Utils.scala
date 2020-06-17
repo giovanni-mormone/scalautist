@@ -8,6 +8,6 @@ package controller
  *
  */
 private[controller] object Utils {
-  var userId:Int = _
-  var username:String = _
+  var userId: Option[Int] = None
+  var username: Option[String] = None
 }
