@@ -5,7 +5,7 @@ import com.sun.javafx.scene.control.skin.DatePickerContent
 import javafx.scene.control.{Label, ListView}
 import javafx.scene.layout.{BorderPane, HBox}
 import junitparams.JUnitParamsRunner
-import org.junit.runner.RunWith 
+import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
 import view.baseconfiguration.BaseTest
 import view.driverviewoperations.StipendioDriver
@@ -44,7 +44,6 @@ class StipendioTest extends BaseTest {
     driverStipendio.clickElementListView("2020-05-01")
     sleep(3000)
     val normalDay:Label = find("#normalDay")
-    print(normalDay.getText)
     assert(normalDay.getText.equals(NORMAL_DAY))
   }
   @Test
