@@ -107,9 +107,10 @@ object CaseClassDB{
    *
    * @param dataInizio init date of a request
    * @param dataFine finish date of a request
+   * @param terminaleId represent terminal which request is associate
    * @param idRichiestaTeorica represent unambiguous for every request (for insert operation this is not mandatory)
    */
-  final case class RichiestaTeorica(dataInizio:Date,dataFine:Option[Date],idRichiestaTeorica:Option[Int]=None)
+  final case class RichiestaTeorica(dataInizio:Date,dataFine:Option[Date],terminaleId:Int,idRichiestaTeorica:Option[Int]=None)
 
   /**
    * Risultato is a case class that represent a instance of table into database that contains all result
@@ -210,6 +211,8 @@ object CaseClassDB{
 
   /**
    * Representation of an instance of table Disponibilità in the DB
+   * @param settimana
+   *                  reference week
    * @param giorno1
    *                first day of disponibilita
    * @param giorno2
@@ -217,7 +220,7 @@ object CaseClassDB{
    * @param idDisponibilita
    *                        represent unambiguous for every disponibilita (for insert operation this is not mandatory)
    */
-  final case class Disponibilita(giorno1: String, giorno2: String, idDisponibilita: Option[Int] = None)
+  final case class Disponibilita(settimana: Int, giorno1: String, giorno2: String, idDisponibilita: Option[Int] = None)
 
 }
 

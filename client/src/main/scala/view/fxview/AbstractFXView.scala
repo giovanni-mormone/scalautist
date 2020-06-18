@@ -14,7 +14,7 @@ import view.{BaseView, DialogView, GoBackView}
 import view.fxview.loader.FXLoader
 
 import scala.util.Success
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Giovanni Mormone.
  *
@@ -37,7 +37,7 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
   FXLoader.loadScene(myStage,this,"Base")
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
-    myStage.setTitle(resources.getString("nome"))
+    myStage.setTitle(resources.getResource("nome"))
     generalResources = resources
   }
 
@@ -90,7 +90,7 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
   FXLoader.loadScene(myStage,this,"Base")
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
-    myStage.setTitle(resources.getString("nome"))
+    myStage.setTitle(resources.getResource("nome"))
     generalResources = resources
   }
 

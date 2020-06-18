@@ -49,7 +49,7 @@ object DriverController{
         List(
           Turno("Seconda Mattinata","8:00-12:00",40.0,Some(1)),
           Turno("Primo Pomeriggio","12:00-16:00",40.0,Some(1))),
-        Disponibilita("Lunedi","Martedi",Some(1))))
+        Disponibilita(1,"Lunedi","Martedi",Some(1))))
     }
     /* case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
            case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessage("bad-request-error")
@@ -71,7 +71,7 @@ object DriverController{
           ShiftDay(5,"12:00-16:00"),
           ShiftDay(6,"8:00-12:00"),
           ShiftDay(6,"12:00-16:00")),
-          Disponibilita("Lunedi","Martedi",Some(1))))
+          Disponibilita(1,"Lunedi","Martedi",Some(1))))
       }
 
     override def drawSalaryPanel(): Unit =

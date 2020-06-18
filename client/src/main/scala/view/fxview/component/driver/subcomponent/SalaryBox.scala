@@ -71,7 +71,7 @@ object SalaryBox{
 
       salaryList.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[Stipendio]()
       {
-        def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio)
+        def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio):Unit=
         {
           newValue.idStipendio.foreach(x=>{
             salaryInfo.getChildren.remove(datepicker)
@@ -91,7 +91,7 @@ object SalaryBox{
     private def createDatePicker(information: StipendioInformations):Node={
 
       val myCalendar = information.turni.map(value=>Option(value,CreateDatePicker.sqlDateToCalendar(value.data)))
-      val (datePickerSkin,finishDate) = CreateDatePicker.createDatePickerSkin()
+      val (datePickerSkin,finishDate) = myCalendar.head.map(day=>CreateDatePicker.createDatePickerSkin(day._2)).head
       finishDate.setDayCellFactory(_=>CreateDatePicker.drawDatePicker(myCalendar))
       datePickerSkin.getPopupContent
     }

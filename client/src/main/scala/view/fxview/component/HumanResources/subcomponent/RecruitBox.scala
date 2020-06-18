@@ -3,8 +3,9 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.sql.Date
 import java.time.LocalDate
-import java.util.ResourceBundle
+import java.util.{Calendar, ResourceBundle}
 
+import akka.http.scaladsl.model.headers
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML
@@ -307,8 +308,11 @@ object RecruitBox {
     }
 
     def getDisponibilita: Option[Disponibilita] = {
-      if(isDriver && contractTypeFI5FU.fix)
-        Some(Disponibilita(getComboSelected(day1), getComboSelected(day2)))
+      if(isDriver && contractTypeFI5FU.fix) {
+        val day = Calendar.getInstance()
+        day.setTime(Date.valueOf(recruitDate.getValue))
+        Some(Disponibilita(day.getWeekYear, getComboSelected(day1), getComboSelected(day2)))
+      }
       else
         None
     }
@@ -331,9 +335,9 @@ object RecruitBox {
     }
 
     private def refillDays(): Unit = {
-      var baseDays  = List("Lun","Mar","Mer","Gio","Ven")
+      var baseDays  = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi")
       if(!contractTypeFI5FU.week5x2)
-        baseDays = baseDays.appended("Sab")
+        baseDays = baseDays.appended("Sabato")
       refillComponent(day2, baseDays)
       refillComponent(day1, baseDays)
     }

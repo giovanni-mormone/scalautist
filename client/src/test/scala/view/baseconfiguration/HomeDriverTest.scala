@@ -114,7 +114,6 @@ class HomeDriverTest extends BaseTest {
       .getChildren.get(0).asInstanceOf[BorderPane].getChildren.get(0).asInstanceOf[HBox]
       .getChildren.get(1).asInstanceOf[Label]
     assert(datepicker.getText.equals(MONTH))
-
   }
 
   private def month(): String ={

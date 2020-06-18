@@ -1,11 +1,10 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
 import java.sql.{Date => dateSql}
-import java.time.{Instant, LocalDate, MonthDay, ZoneId}
+import java.time.{Instant, LocalDate, ZoneId}
 import java.util.{Calendar, Date => dateUtil}
 
-import caseclass.CaseClassDB.Assenza
-import caseclass.CaseClassHttpMessage.{InfoPresenza, StipendioInformations}
+import caseclass.CaseClassHttpMessage.InfoPresenza
 import com.sun.javafx.scene.control.skin.DatePickerSkin
 import javafx.scene.control.{DateCell, DatePicker, Tooltip}
 
@@ -21,10 +20,10 @@ case object CreateDatePicker{
   private def setDate(dataPicker: DatePickerC,assenza: Option[List[Option[(LocalDate,LocalDate)]]]=None): DateCell = new DateCell() {
     val minDate: LocalDate = dataPicker.today.minusYears(dataPicker.behind.years).minusMonths(dataPicker.behind.months).minusDays(dataPicker.behind.days)
     val maxDate: LocalDate = dataPicker.today.plusYears(dataPicker.after.years).plusMonths(dataPicker.after.months).plusDays(dataPicker.after.days)
-    override def updateItem(date:LocalDate, empty:Boolean) {
+    override def updateItem(date:LocalDate, empty:Boolean):Unit={
       super.updateItem(date, empty)
-      val finalDayInYear = LocalDate.of(Calendar.getInstance().get(Calendar.YEAR), 12, 31);
-      val ifExist: Option[List[(LocalDate, LocalDate)]] = assenza.map(_.flatten.filter(myDate=>date.compareTo(myDate._1)>=0 && date.compareTo(myDate._2)<=0)).filter(result=>result.nonEmpty)orElse(None)
+      val finalDayInYear = LocalDate.of(Calendar.getInstance().get(Calendar.YEAR), 12, 31)
+      val ifExist: Option[List[(LocalDate, LocalDate)]] = assenza.map(_.flatten.filter(myDate=>date.compareTo(myDate._1)>=0 && date.compareTo(myDate._2)<=0)).filter(result=>result.nonEmpty)orElse None
 
       setDisable(date.isBefore(minDate) || date.isAfter(maxDate) || empty || ifExist.isDefined || date.isAfter(finalDayInYear))
     }
@@ -55,8 +54,8 @@ case object CreateDatePicker{
   }
   def sqlDateToCalendar(date:dateSql):LocalDate=date.toLocalDate
 
-  def createDatePickerSkin(): (DatePickerSkin,DatePicker) ={
-    val datepicker= new DatePicker(LocalDate.now())
+  def createDatePickerSkin(localDate:LocalDate): (DatePickerSkin,DatePicker) ={
+    val datepicker= new DatePicker(localDate)
     (new DatePickerSkin(datepicker),datepicker)
   }
 

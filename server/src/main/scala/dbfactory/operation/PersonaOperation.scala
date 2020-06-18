@@ -1,19 +1,15 @@
 package dbfactory.operation
-import java.sql.Date
-
-import dbfactory.table.PersonaTable.PersonaTableRep
-import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
-import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword, Ferie}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceStoricoContratto}
+import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
 import dbfactory.implicitOperation.OperationCrud
+import dbfactory.table.PersonaTable.PersonaTableRep
+import dbfactory.util.Helper._
+import messagecodes.StatusCodes
+import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import dbfactory.util.Helper._
-import messagecodes.StatusCodes
-
-import scala.concurrent
 
 /** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
@@ -122,7 +118,7 @@ object PersonaOperation extends PersonaOperation {
       case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
       case Some(contratto) if contratto .turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
       case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None),newContratto)
-      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita("",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
+      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita(-1,"",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
     }
   }
 

@@ -59,6 +59,17 @@ object DateConverter {
   val notSameYear: (Date,Date) => Boolean = (start,end) =>
     start.toLocalDate.getYear != end.toLocalDate.getYear
 
+  val nextWeek: Date => Date = today => converter(today, now => {
+    now.add(Calendar.WEEK_OF_YEAR, 1)
+    now
+  })
+
+  val getWeekNumber: Date => Int = date => {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    calendar.getWeekYear
+  }
+
   private val converter: (Date, Calendar => Calendar) => Date = (date, function) =>{
     var calendar = Calendar.getInstance()
     calendar.setTime(date)
@@ -66,4 +77,10 @@ object DateConverter {
     new Date(calendar.getTimeInMillis)
   }
 
+  val nameOfDay:Date=>String = date=>{
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
+    days(calendar.get(Calendar.DAY_OF_WEEK)-1)
+  }
 }
