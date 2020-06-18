@@ -1,7 +1,8 @@
+
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/12/2020 21:52:46
+-- Date Created: 06/18/2020 14:44:55
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\ViroliDatabase.edmx
 -- --------------------------------------------------
 
@@ -19,11 +20,23 @@ IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 IF OBJECT_ID(N'[dbo].[FK_AssenzaPersoneSet]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[AssenzaSets] DROP CONSTRAINT [FK_AssenzaPersoneSet];
 
+IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoContrato]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoContrato];
+
 IF OBJECT_ID(N'[dbo].[FK_DisponibilitaStraordinarioPersoneSet]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PersoneSets] DROP CONSTRAINT [FK_DisponibilitaStraordinarioPersoneSet];
 
 IF OBJECT_ID(N'[dbo].[FK_GiornoSettimana]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_GiornoSettimana];
+
+IF OBJECT_ID(N'[dbo].[FK_SettimanaTurno]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimanaTurno];
+
+IF OBJECT_ID(N'[dbo].[FK_SettimaneSettimanaSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimaneSettimanaSet];
+
+IF OBJECT_ID(N'[dbo].[FK_RichiestaGiorno]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaGiorno];
 
 IF OBJECT_ID(N'[dbo].[FK_ParametriGruppiTerminali]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[GruppiTerminaliSets] DROP CONSTRAINT [FK_ParametriGruppiTerminali];
@@ -34,11 +47,20 @@ ALTER TABLE [dbo].[SettimaneSets] DROP CONSTRAINT [FK_ParametriSetSettimane];
 IF OBJECT_ID(N'[dbo].[FK_PresenzaPersone]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PresenzaSets] DROP CONSTRAINT [FK_PresenzaPersone];
 
+IF OBJECT_ID(N'[dbo].[FK_RisultatoPersone]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_RisultatoPersone];
+
+IF OBJECT_ID(N'[dbo].[FK_StipendioPersoneSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[StipendioSets] DROP CONSTRAINT [FK_StipendioPersoneSet];
+
+IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoPersone]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoPersone];
+
+IF OBJECT_ID(N'[dbo].[FK_TerminalePersone]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[PersoneSets] DROP CONSTRAINT [FK_TerminalePersone];
+
 IF OBJECT_ID(N'[dbo].[FK_PresenzaTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[PresenzaSets] DROP CONSTRAINT [FK_PresenzaTurno];
-
-IF OBJECT_ID(N'[dbo].[FK_RichiestaGiorno]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaGiorno];
 
 IF OBJECT_ID(N'[dbo].[FK_RichiestaTeoricaRichiesta]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaTeoricaRichiesta];
@@ -46,38 +68,20 @@ ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaTeoricaRichiesta]
 IF OBJECT_ID(N'[dbo].[FK_RichiestaTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[RichiestaSets] DROP CONSTRAINT [FK_RichiestaTurno];
 
-IF OBJECT_ID(N'[dbo].[FK_RisultatoPersone]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_RisultatoPersone];
-
-IF OBJECT_ID(N'[dbo].[FK_SettimanaTurno]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimanaTurno];
-
-IF OBJECT_ID(N'[dbo].[FK_SettimaneSettimanaSet]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[GiornoInSettimanaSets] DROP CONSTRAINT [FK_SettimaneSettimanaSet];
-
-IF OBJECT_ID(N'[dbo].[FK_StipendioPersoneSet]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[StipendioSets] DROP CONSTRAINT [FK_StipendioPersoneSet];
-
-IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoContrato]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoContrato];
-
-IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoPersone]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoPersone];
+IF OBJECT_ID(N'[dbo].[FK_TurnoRisultato]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_TurnoRisultato];
 
 IF OBJECT_ID(N'[dbo].[FK_StoricoContrattoTurno]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_StoricoContrattoTurno];
-
-IF OBJECT_ID(N'[dbo].[FK_TerminalePersone]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[PersoneSets] DROP CONSTRAINT [FK_TerminalePersone];
-
-IF OBJECT_ID(N'[dbo].[FK_TurnoRisultato]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[RisultatoSets] DROP CONSTRAINT [FK_TurnoRisultato];
 
 IF OBJECT_ID(N'[dbo].[FK_TurnoStoricoContratto]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_TurnoStoricoContratto];
 
 IF OBJECT_ID(N'[dbo].[FK_ZonaTerminale]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[TerminalSets] DROP CONSTRAINT [FK_ZonaTerminale];
+
+IF OBJECT_ID(N'[dbo].[FK_RichiestaTeoricaSetTerminalSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[RichiestaTeoricaSets] DROP CONSTRAINT [FK_RichiestaTeoricaSetTerminalSet];
 
 
 -- --------------------------------------------------
@@ -90,6 +94,11 @@ IF OBJECT_ID(N'[dbo].[AssenzaSets]', 'U') IS NOT NULL
 IF OBJECT_ID(N'[dbo].[ContratoeSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ContratoeSets];
 
+IF OBJECT_ID(N'[dbo].[database_firewall_rules]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[database_firewall_rules];
+
+IF OBJECT_ID(N'[dbo].[database_firewall_rules1]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[database_firewall_rules1];
 
 IF OBJECT_ID(N'[dbo].[DisponibilitaStraordinarioSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[DisponibilitaStraordinarioSets];
@@ -142,6 +151,8 @@ IF OBJECT_ID(N'[dbo].[TurnoSets]', 'U') IS NOT NULL
 IF OBJECT_ID(N'[dbo].[ZonaSets]', 'U') IS NOT NULL
     DROP TABLE [dbo].[ZonaSets];
 
+IF OBJECT_ID(N'[dbo].[database_firewall_rules2]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[database_firewall_rules2];
 
 
 -- --------------------------------------------------
@@ -166,6 +177,29 @@ CREATE TABLE [dbo].[ContratoeSets] (
                                        [PartTime] bit  NOT NULL,
                                        [Ruolo] int  NOT NULL
 );
+
+
+-- Creating table 'database_firewall_rules'
+CREATE TABLE [dbo].[database_firewall_rules] (
+                                                 [id] int IDENTITY(1,1) NOT NULL,
+                                                 [name] nvarchar(128)  NOT NULL,
+                                                 [start_ip_address] varchar(45)  NOT NULL,
+                                                 [end_ip_address] varchar(45)  NOT NULL,
+                                                 [create_date] datetime  NOT NULL,
+                                                 [modify_date] datetime  NOT NULL
+);
+
+
+-- Creating table 'database_firewall_rules1'
+CREATE TABLE [dbo].[database_firewall_rules1] (
+                                                  [id] int IDENTITY(1,1) NOT NULL,
+                                                  [name] nvarchar(128)  NOT NULL,
+                                                  [start_ip_address] varchar(45)  NOT NULL,
+                                                  [end_ip_address] varchar(45)  NOT NULL,
+                                                  [create_date] datetime  NOT NULL,
+                                                  [modify_date] datetime  NOT NULL
+);
+
 
 -- Creating table 'DisponibilitaStraordinarioSets'
 CREATE TABLE [dbo].[DisponibilitaStraordinarioSets] (
@@ -247,7 +281,8 @@ CREATE TABLE [dbo].[RichiestaSets] (
 CREATE TABLE [dbo].[RichiestaTeoricaSets] (
                                               [IdRichiestaTeorica] int IDENTITY(1,1) NOT NULL,
                                               [DataInizio] datetime  NOT NULL,
-                                              [DataFine] datetime  NULL
+                                              [DataFine] datetime  NULL,
+                                              [TerminalSetIdTerminale] int  NOT NULL
 );
 
 
@@ -288,6 +323,16 @@ CREATE TABLE [dbo].[StoricoContrattoSets] (
 );
 
 
+-- Creating table 'sysdiagrams'
+CREATE TABLE [dbo].[sysdiagrams] (
+                                     [name] nvarchar(128)  NOT NULL,
+                                     [principal_id] int  NOT NULL,
+                                     [diagram_id] int IDENTITY(1,1) NOT NULL,
+                                     [version] int  NULL,
+                                     [definition] varbinary(max)  NULL
+);
+
+
 -- Creating table 'TerminalSets'
 CREATE TABLE [dbo].[TerminalSets] (
                                       [IdTerminale] int IDENTITY(1,1) NOT NULL,
@@ -312,6 +357,16 @@ CREATE TABLE [dbo].[ZonaSets] (
 );
 
 
+-- Creating table 'database_firewall_rules2'
+CREATE TABLE [dbo].[database_firewall_rules2] (
+                                                  [id] int IDENTITY(1,1) NOT NULL,
+                                                  [name] nvarchar(128)  NOT NULL,
+                                                  [start_ip_address] varchar(45)  NOT NULL,
+                                                  [end_ip_address] varchar(45)  NOT NULL,
+                                                  [create_date] datetime  NOT NULL,
+                                                  [modify_date] datetime  NOT NULL
+);
+
 
 -- --------------------------------------------------
 -- Creating all PRIMARY KEY constraints
@@ -327,6 +382,18 @@ ALTER TABLE [dbo].[AssenzaSets]
 ALTER TABLE [dbo].[ContratoeSets]
     ADD CONSTRAINT [PK_ContratoeSets]
         PRIMARY KEY CLUSTERED ([IdContratto] ASC);
+
+
+-- Creating primary key on [id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] in table 'database_firewall_rules'
+ALTER TABLE [dbo].[database_firewall_rules]
+    ADD CONSTRAINT [PK_database_firewall_rules]
+        PRIMARY KEY CLUSTERED ([id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] ASC);
+
+
+-- Creating primary key on [id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] in table 'database_firewall_rules1'
+ALTER TABLE [dbo].[database_firewall_rules1]
+    ADD CONSTRAINT [PK_database_firewall_rules1]
+        PRIMARY KEY CLUSTERED ([id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] ASC);
 
 
 -- Creating primary key on [IdDisponibilitaStraordinario] in table 'DisponibilitaStraordinarioSets'
@@ -407,6 +474,11 @@ ALTER TABLE [dbo].[StoricoContrattoSets]
         PRIMARY KEY CLUSTERED ([IdStoricoContratto] ASC);
 
 
+-- Creating primary key on [diagram_id] in table 'sysdiagrams'
+ALTER TABLE [dbo].[sysdiagrams]
+    ADD CONSTRAINT [PK_sysdiagrams]
+        PRIMARY KEY CLUSTERED ([diagram_id] ASC);
+
 
 -- Creating primary key on [IdTerminale] in table 'TerminalSets'
 ALTER TABLE [dbo].[TerminalSets]
@@ -426,6 +498,12 @@ ALTER TABLE [dbo].[ZonaSets]
         PRIMARY KEY CLUSTERED ([IdZona] ASC);
 
 
+-- Creating primary key on [id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] in table 'database_firewall_rules2'
+ALTER TABLE [dbo].[database_firewall_rules2]
+    ADD CONSTRAINT [PK_database_firewall_rules2]
+        PRIMARY KEY CLUSTERED ([id], [name], [start_ip_address], [end_ip_address], [create_date], [modify_date] ASC);
+
+
 -- --------------------------------------------------
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
@@ -443,6 +521,7 @@ ALTER TABLE [dbo].[AssenzaSets]
 CREATE INDEX [IX_FK_AssenzaPersoneSet]
     ON [dbo].[AssenzaSets]
         ([PersoneSet_Matricola]);
+
 
 -- Creating foreign key on [Contrato_IdContratto] in table 'StoricoContrattoSets'
 ALTER TABLE [dbo].[StoricoContrattoSets]
@@ -742,6 +821,21 @@ ALTER TABLE [dbo].[TerminalSets]
 CREATE INDEX [IX_FK_ZonaTerminale]
     ON [dbo].[TerminalSets]
         ([ZonaIdZona]);
+
+
+-- Creating foreign key on [TerminalSetIdTerminale] in table 'RichiestaTeoricaSets'
+ALTER TABLE [dbo].[RichiestaTeoricaSets]
+    ADD CONSTRAINT [FK_TerminalSetRichiestaTeoricaSet]
+        FOREIGN KEY ([TerminalSetIdTerminale])
+            REFERENCES [dbo].[TerminalSets]
+                ([IdTerminale])
+            ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_TerminalSetRichiestaTeoricaSet'
+CREATE INDEX [IX_FK_TerminalSetRichiestaTeoricaSet]
+    ON [dbo].[RichiestaTeoricaSets]
+        ([TerminalSetIdTerminale]);
 
 
 -- --------------------------------------------------

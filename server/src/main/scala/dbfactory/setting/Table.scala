@@ -4,6 +4,7 @@ import caseclass.CaseClassDB._
 import dbfactory.setting.GenericCRUD.GenericOperationCRUD
 import dbfactory.table.AssenzaTable.AssenzaTableRep
 import dbfactory.table.ContrattoTable.ContrattoTableRep
+import dbfactory.table.DisponibilitaTable.DisponibilitaTableRep
 import dbfactory.table.GiornoInSettimanaTable.GiornoInSettimanaTableRep
 import dbfactory.table.GiornoTable.GiornoTableRep
 import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
@@ -83,6 +84,9 @@ object Table{
   }
   object ZonaTableQuery extends Table[Zona,ZonaTableRep]{
     override def tableQuery(): TableQuery[ZonaTableRep] = tableDB()
+  }
+  object DisponibilitaTableQuery extends Table[Disponibilita,DisponibilitaTableRep]{
+    override def tableQuery(): TableQuery[DisponibilitaTableRep] = tableDB()
   }
 }
 

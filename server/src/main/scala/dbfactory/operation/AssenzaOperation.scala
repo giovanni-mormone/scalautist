@@ -158,11 +158,10 @@ object AssenzaOperation extends AssenzaOperation{
     }yield createListInfoAbsence(mergeResultTurno,mergeResultTerminal)
 
   private def joinAbsencePerson(date:Date): Future[Option[List[(Int, Option[Int])]]] ={
-    val isMalattia = true
     val queryJoin = for {
       assenza<- AssenzaTableQuery.tableQuery()
       persona<- PersonaTableQuery.tableQuery()
-      if assenza.personaId===persona.id && assenza.malattia===isMalattia && assenza.dataInizio===date
+      if assenza.personaId===persona.id && assenza.dataInizio<=date && assenza.dataFine>=date
     } yield (persona.id,persona.terminaleId)
     InstanceAssenza.operation().execJoin(queryJoin).collect {
       case Some(value) => Some(value)
