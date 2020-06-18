@@ -59,6 +59,17 @@ object DateConverter {
   val notSameYear: (Date,Date) => Boolean = (start,end) =>
     start.toLocalDate.getYear != end.toLocalDate.getYear
 
+  val nextWeek: Date => Date = today => converter(today, now => {
+    now.add(Calendar.WEEK_OF_YEAR, 1)
+    now
+  })
+
+  val getWeekNumber: Date => Int = day => {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(day)
+    calendar.getWeekYear
+  }
+
   private val converter: (Date, Calendar => Calendar) => Date = (date, function) =>{
     var calendar = Calendar.getInstance()
     calendar.setTime(date)

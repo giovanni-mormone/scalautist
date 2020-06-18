@@ -19,6 +19,7 @@ import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
+import slick.jdbc.SQLServerProfile
 import slick.jdbc.SQLServerProfile.api._
 
 /**
@@ -39,7 +40,9 @@ object Table{
   object AssenzaTableQuery extends Table[Assenza,AssenzaTableRep]{
     override def tableQuery(): TableQuery[AssenzaTableRep] = tableDB()
   }
-
+  object DisponibilitaTableQuery extends Table[Disponibilita, DisponibilitaTableRep]{
+    override def tableQuery(): TableQuery[DisponibilitaTableRep] = tableDB()
+  }
   object ContrattoTableQuery extends Table[Contratto,ContrattoTableRep]{
     override def tableQuery(): TableQuery[ContrattoTableRep] = tableDB()
   }

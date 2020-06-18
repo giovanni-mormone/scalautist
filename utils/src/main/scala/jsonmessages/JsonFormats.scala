@@ -29,7 +29,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val assenzaJsonFormat: RootJsonFormat[Assenza] = jsonFormat5(Assenza)
     implicit val changePasswordJsonFormat: RootJsonFormat[ChangePassword] = jsonFormat3(ChangePassword)
     implicit val intJsonFormat:RootJsonFormat[Id] = jsonFormat1(Id)
-    implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat3(Disponibilita)
+    implicit val disponibilitaJsonFormat:RootJsonFormat[Disponibilita] = jsonFormat4(Disponibilita)
     implicit val assumiJsonFormat:RootJsonFormat[Assumi] = jsonFormat3(Assumi)
     implicit val ferieJsonFormat:RootJsonFormat[Ferie] = jsonFormat3(Ferie)
     implicit val infoPresenzaJsonFormat:RootJsonFormat[InfoPresenza] = jsonFormat5(InfoPresenza)

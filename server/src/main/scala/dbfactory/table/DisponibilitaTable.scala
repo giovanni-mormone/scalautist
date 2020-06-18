@@ -18,9 +18,10 @@ object DisponibilitaTable {
    * @param tag it's like a SQL alias. It distinguishes different instances of the same table within a query.
    */
   class DisponibilitaTableRep(tag:Tag) extends GenericTable[Disponibilita](tag, "DisponibilitaStraordinarioSets","IdDisponibilitaStraordinario"){
+    def settimana: Rep[Int] = column[Int]("Settimana")
     def giorno1: Rep[String] = column[String]("Giorno1")
     def giorno2: Rep[String] = column[String]("Giorno2")
-    override def * : ProvenShape[Disponibilita] = (giorno1,giorno2,id.?).mapTo[Disponibilita]
+    override def * : ProvenShape[Disponibilita] = (settimana,giorno1,giorno2,id.?).mapTo[Disponibilita]
   }
 
 }
