@@ -66,4 +66,9 @@ object DateConverter {
     new Date(calendar.getTimeInMillis)
   }
 
+  val getWeekNumber:Date=>Int = date=>{
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    calendar.get(Calendar.WEEK_OF_YEAR)
+  }
 }

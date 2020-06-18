@@ -71,7 +71,7 @@ object SalaryBox{
 
       salaryList.getSelectionModel.selectedItemProperty().addListener(new ChangeListener[Stipendio]()
       {
-        def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio)
+        def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio):Unit=
         {
           newValue.idStipendio.foreach(x=>{
             salaryInfo.getChildren.remove(datepicker)

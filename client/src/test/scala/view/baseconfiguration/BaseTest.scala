@@ -1,12 +1,10 @@
 package view.baseconfiguration
 
-import java.util.ResourceBundle
-
 import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.input.{KeyCode, MouseButton}
 import javafx.stage.Stage
-import org.junit.{After, Before}
+import org.junit.After
 import org.testfx.framework.junit.ApplicationTest
 import org.testfx.util.WaitForAsyncUtils
 
@@ -19,7 +17,7 @@ class BaseTest extends ApplicationTest{
 
   override def start(stage: Stage): Unit = {
     myStage = stage
-    stage.show
+    stage.show()
   }
 
   @After

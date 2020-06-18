@@ -8,7 +8,7 @@ import slick.lifted.{ForeignKeyQuery, ProvenShape}
 import caseclass.CaseClassDB.{Persona, Risultato, Turno}
 object RisultatoTable {
   class RisultatoTableRep(tag: Tag) extends GenericTable[Risultato](tag, "RisultatoSets","IdRisultato") {
-    def data: Rep[Date] = column[Date]("NomeTerminale")
+    def data: Rep[Date] = column[Date]("Data")
     def personeId: Rep[Int] = column[Int]("Persone_Matricola")
     def turnoId: Rep[Int] = column[Int]("Turno_IdTurno")
     override def * : ProvenShape[Risultato] = (data,personeId,turnoId,id.?).mapTo[Risultato]

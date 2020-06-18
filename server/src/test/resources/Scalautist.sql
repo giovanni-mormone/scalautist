@@ -171,7 +171,8 @@ CREATE TABLE [dbo].[ContratoeSets] (
 CREATE TABLE [dbo].[DisponibilitaStraordinarioSets] (
                                                         [IdDisponibilitaStraordinario] int IDENTITY(1,1) NOT NULL,
                                                         [Giorno1] nvarchar(max)  NOT NULL,
-                                                        [Giorno2] nvarchar(max)  NOT NULL
+                                                        [Giorno2] nvarchar(max)  NOT NULL,
+                                                        [Settimana] int  NOT NULL
 );
 
 

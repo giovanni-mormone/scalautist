@@ -135,4 +135,14 @@ object CaseClassHttpMessage {
    *                      possible days that they can make extra shifts
    */
   final case class InfoShift(shiftDay:List[ShiftDay],disponibilita: Disponibilita)
+
+  /**
+   * Case class that represent information for all terminal that contains absence
+   * @param nomeTerminale name of terminal that contains absence
+   * @param nomeTurno shift that contains absence
+   * @param idTerminale id that is unique key for terminal table
+   * @param idTurno id that is unique key for turno table
+   * @param idRisultato id that is unique key for risultato table
+   */
+  final case class InfoAbsence(nomeTerminale:String,nomeTurno:String,idTerminale:Int,idTurno:Int,idRisultato:Int)
 }
