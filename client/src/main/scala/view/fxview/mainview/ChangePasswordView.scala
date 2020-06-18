@@ -8,7 +8,7 @@ import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.stage.Stage
 import view.GoBackView
-import view.fxview.component.Login.ChangePasswordParent
+import view.fxview.component.login.ChangePasswordParent
 import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.login.ChangePasswordBox
 

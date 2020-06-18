@@ -7,7 +7,7 @@ import controller.LoginController
 import javafx.application.Platform
 import javafx.stage.Stage
 import view.BaseView
-import view.fxview.component.Login.LoginParent
+import view.fxview.component.login.LoginParent
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.login.LoginBox
 

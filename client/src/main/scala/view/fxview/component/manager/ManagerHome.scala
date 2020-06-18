@@ -2,15 +2,18 @@ package view.fxview.component.manager
 
 import java.net.URL
 import java.util.ResourceBundle
+
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.component.manager.subcomponent.FillHolesBox
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait ManagerHome extends Component[ManagerHomeParent]{
 
+  def drawManageAbsence(): Unit
 }
 
 object ManagerHome{
@@ -40,6 +43,9 @@ object ManagerHome{
     @FXML
     var idLabel: Label = _
 
+
+    var fillHolesView: FillHolesBox = _
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
       idLabel.setText(resources.getResource("id-label"))
@@ -50,6 +56,19 @@ object ManagerHome{
       printResultButton.setText(resources.getResource("print-result-button"))
       manageZoneButton.setText(resources.getResource("manage-zone-button"))
       manageTerminalButton.setText(resources.getResource("manage-terminal-button"))
+
+      manageAbsenceButton.setOnAction(_ => drawManageAbsence())
+    }
+
+    override def drawManageAbsence(): Unit =
+      baseManager.setCenter(fillHolesBox())
+
+    private def fillHolesBox(): Pane = {
+      fillHolesView = FillHolesBox()
+//      fillHolesBox.setParent(this)?????
+      fillHolesView.pane
     }
   }
+
+
 }

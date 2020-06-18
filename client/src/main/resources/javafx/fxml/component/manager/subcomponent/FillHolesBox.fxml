@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="fillHolesBox" prefHeight="425.0" prefWidth="794.0" stylesheets="@../../../../css/component/manager/FillHolesBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <TextField fx:id="searchField" />
+        <HBox fx:id="tablesBox" prefHeight="400.0" prefWidth="1989.0">
+            <children>
+                <TableView fx:id="terminalsAndTurnsTable" prefHeight="400.0" prefWidth="361.0">
+                    <columns>
+                    </columns>
+                </TableView>
+                <TableView fx:id="substitutesTable" prefHeight="400.0" prefWidth="392.0">
+                    <columns>
+                    </columns>
+                </TableView>
+            </children>
+        </HBox>
+    </children>
+</VBox>

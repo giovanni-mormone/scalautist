@@ -6,13 +6,13 @@ import java.util.ResourceBundle
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, PasswordField, TextField}
 import javafx.scene.input.KeyCode
-import view.fxview.component.Login.LoginParent
+import view.fxview.component.login.LoginParent
 import view.fxview.component.{AbstractComponent, Component}
 
 /**
  * @author Giovanni Mormone.
  *
- * Component for the LoginBox contained in a [[view.fxview.component.Login.LoginParent]]
+ * Component for the LoginBox contained in a [[view.fxview.component.login.LoginParent]]
  *
  */
 trait LoginBox extends Component[LoginParent]{
