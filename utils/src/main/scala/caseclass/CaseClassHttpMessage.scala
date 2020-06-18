@@ -144,5 +144,5 @@ object CaseClassHttpMessage {
    * @param idTurno id that is unique key for turno table
    * @param idRisultato id that is unique key for risultato table
    */
-  final case class InfoAbsence(nomeTerminale:String,nomeTurno:String,idTerminale:Int,idTurno:Int,idRisultato:Int)
+  final case class InfoAbsenceOnDay(nomeTerminale:String,nomeTurno:String,idTerminale:Int,idTurno:Int,idRisultato:Int)
 }
