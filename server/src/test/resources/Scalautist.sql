@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 06/18/2020 14:44:55
+-- Date Created: 06/18/2020 17:30:48
 -- Generated from EDMX file: C:\Users\faspe\source\repos\ViroliDataBases\ViroliDataBases\ViroliDatabase.edmx
 -- --------------------------------------------------
 
@@ -80,8 +80,8 @@ ALTER TABLE [dbo].[StoricoContrattoSets] DROP CONSTRAINT [FK_TurnoStoricoContrat
 IF OBJECT_ID(N'[dbo].[FK_ZonaTerminale]', 'F') IS NOT NULL
 ALTER TABLE [dbo].[TerminalSets] DROP CONSTRAINT [FK_ZonaTerminale];
 
-IF OBJECT_ID(N'[dbo].[FK_RichiestaTeoricaSetTerminalSet]', 'F') IS NOT NULL
-ALTER TABLE [dbo].[RichiestaTeoricaSets] DROP CONSTRAINT [FK_RichiestaTeoricaSetTerminalSet];
+IF OBJECT_ID(N'[dbo].[FK_TerminalSetRichiestaTeoricaSet]', 'F') IS NOT NULL
+ALTER TABLE [dbo].[RichiestaTeoricaSets] DROP CONSTRAINT [FK_TerminalSetRichiestaTeoricaSet];
 
 
 -- --------------------------------------------------
@@ -224,7 +224,8 @@ CREATE TABLE [dbo].[GiornoInSettimanaSets] (
 CREATE TABLE [dbo].[GiornoSets] (
                                     [IdGiorno] int IDENTITY(1,1) NOT NULL,
                                     [Quantita] int  NOT NULL,
-                                    [NomeGiorno] nvarchar(max)  NOT NULL
+                                    [NomeGiorno] nvarchar(max)  NOT NULL,
+                                    [IdGiornoInSettimana] nvarchar(max)  NOT NULL
 );
 
 

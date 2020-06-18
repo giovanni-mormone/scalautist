@@ -65,22 +65,27 @@ object DateConverter {
   })
 
   val getWeekNumber: Date => Int = date => {
-    val calendar = Calendar.getInstance()
-    calendar.setTime(date)
-    calendar.getWeekYear
+    dateToCalendar(date).getWeekYear
+  }
+
+  val getDayNumber: Date => Int = date => {
+    dateToCalendar(date).get(Calendar.DAY_OF_WEEK)
   }
 
   private val converter: (Date, Calendar => Calendar) => Date = (date, function) =>{
-    var calendar = Calendar.getInstance()
-    calendar.setTime(date)
+    var calendar = dateToCalendar(date)
     calendar = function(calendar)
     new Date(calendar.getTimeInMillis)
   }
 
   val nameOfDay:Date=>String = date=>{
+    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
+    days(dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1)
+  }
+
+  private val dateToCalendar:Date=>Calendar=date=>{
     val calendar = Calendar.getInstance()
     calendar.setTime(date)
-    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
-    days(calendar.get(Calendar.DAY_OF_WEEK)-1)
+    calendar
   }
 }
