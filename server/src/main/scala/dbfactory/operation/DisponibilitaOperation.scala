@@ -36,6 +36,7 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
 
 object DisponibilitaOperation extends DisponibilitaOperation{
 
+  // TODO Controllare anche la settimana :) \(-_-)/
   override def insert(element:Disponibilita): Future[Option[Int]] = {
     for{
       disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)

@@ -28,7 +28,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
 
     val daAssumere:Persona = Persona("JuanitoS","PerezS","569918598",Some(""),3,isNew = true,"")
     val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(1),Some(2))
-    val disp:Disponibilita = Disponibilita("Lunes","Sabato")
+    val disp:Disponibilita = Disponibilita(1,"Lunes","Sabato")
     insertPersona = Assumi(daAssumere,contratto,Some(disp))
   }
 

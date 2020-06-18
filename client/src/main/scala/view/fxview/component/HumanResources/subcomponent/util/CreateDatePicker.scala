@@ -1,6 +1,6 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
-import java.sql.{Date, Date => dateSql}
+import java.sql.{Date => dateSql}
 import java.time.{Instant, LocalDate, ZoneId}
 import java.util.{Calendar, Date => dateUtil}
 

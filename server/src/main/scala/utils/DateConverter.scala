@@ -64,9 +64,9 @@ object DateConverter {
     now
   })
 
-  val getWeekNumber: Date => Int = day => {
+  val getWeekNumber: Date => Int = date => {
     val calendar = Calendar.getInstance()
-    calendar.setTime(day)
+    calendar.setTime(date)
     calendar.getWeekYear
   }
 
@@ -75,12 +75,6 @@ object DateConverter {
     calendar.setTime(date)
     calendar = function(calendar)
     new Date(calendar.getTimeInMillis)
-  }
-
-  val getWeekNumber:Date=>Int = date=>{
-    val calendar = Calendar.getInstance()
-    calendar.setTime(date)
-    calendar.get(Calendar.WEEK_OF_YEAR)
   }
 
   val nameOfDay:Date=>String = date=>{

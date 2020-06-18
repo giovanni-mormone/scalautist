@@ -118,7 +118,7 @@ object PersonaOperation extends PersonaOperation {
       case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
       case Some(contratto) if contratto .turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
       case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None),newContratto)
-      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita("",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
+      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita(-1,"",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
     }
   }
 

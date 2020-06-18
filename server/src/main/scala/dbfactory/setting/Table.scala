@@ -88,8 +88,5 @@ object Table{
   object ZonaTableQuery extends Table[Zona,ZonaTableRep]{
     override def tableQuery(): TableQuery[ZonaTableRep] = tableDB()
   }
-  object DisponibilitaTableQuery extends Table[Disponibilita,DisponibilitaTableRep]{
-    override def tableQuery(): TableQuery[DisponibilitaTableRep] = tableDB()
-  }
 }
 

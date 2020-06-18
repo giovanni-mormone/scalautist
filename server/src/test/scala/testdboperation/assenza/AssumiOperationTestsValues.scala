@@ -21,7 +21,7 @@ object AssumiOperationTestsValues {
   private var contrattoFissoGoodFullTimeLastFirstTurno:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,5,Some(6),Some(1))
   private var contrattoFissoGoodPartTime:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,3,Some(6),None)
   private var contrattoFissoBadPartTimeOnlySecondTurno:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,5,None,Some(1))
-  private var disp:Disponibilita = Disponibilita("Lunes","Martes")
+  private var disp:Disponibilita = Disponibilita(1,"Lunes","Martes")
 
   val insertPersonaGood:Assumi = Assumi(daAssumere,contrattoFissoGoodFullTime,Some(disp))
   val insertPersonaNoSuchContratto: Assumi = Assumi(daAssumere,contrattoBad,Some(disp))

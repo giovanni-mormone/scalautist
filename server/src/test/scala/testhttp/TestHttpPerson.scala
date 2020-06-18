@@ -33,7 +33,7 @@ object TestHttpPerson{
 
   private val daAssumere:Persona = Persona("JuanitoS","PerezS","569918598",Some(""),3,isNew = true,"")
   private val contratto:StoricoContratto = StoricoContratto(new Date(System.currentTimeMillis()),None,None,1,Some(1),Some(2))
-  private val disp:Disponibilita = Disponibilita("Lunes","Sabato")
+  private val disp:Disponibilita = Disponibilita(1,"Lunes","Sabato")
   private val insertPersona = Assumi(daAssumere,contratto,Some(disp))
   private val hirePerson: (String,Request[Assumi]) = ("/hireperson",Request(Some(insertPersona)))
 }
