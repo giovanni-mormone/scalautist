@@ -85,7 +85,7 @@ object RisultatoOperation extends RisultatoOperation {
 
     InstanceRisultato.operation().execJoin(filter).collect{
       case Some(shifts) => Some(shifts.map(shift => Shift(shift._1, shift._2)))
-      case _ => None 
+      case _ => None
     }
   }
 }
