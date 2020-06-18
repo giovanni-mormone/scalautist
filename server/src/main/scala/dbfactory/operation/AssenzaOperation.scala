@@ -11,6 +11,7 @@ import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.impl.Promise
 import scala.util.{Failure, Success}
 
 /** @author Giovanni Mormone
@@ -156,7 +157,7 @@ object AssenzaOperation extends AssenzaOperation{
     for{
       resultJoin <- joinAbsencePerson(date)
       risultato<-queryFilterForRisultatoTable(date,resultJoin)
-      //t<-availableGreaterThanRequested(date,getTerminalAndTurno(resultJoin,risultato))
+      t<-availableGreaterThanRequested(date,getTerminalAndTurno(resultJoin,risultato))
       turnoResult<-queryToTurnoWithRisultatoTable(risultato)
       personTerminale <-queryRisultatoPerson(risultato)
       terminaleResult<- queryToTerminale(personTerminale.map(_.map(_._2)))
@@ -184,21 +185,31 @@ object AssenzaOperation extends AssenzaOperation{
           case None => None
         }))
   }
-  /*private def availableGreaterThanRequested(date:Date,terminalAndTurno:Map[Int, List[Int]]): Future[Option[List[(Int, Int, Int)]]] = {
-    terminalAndTurno.map(values=>{
-      values._2.map(idTurno=> {
-        for{
-          resultFirstJoin <- countAvailableForShiftOnDay(values._1,date,idTurno)
-          resultSecondJoin<-joinTeoricRequestedWithRequestedWithGiorno(date,idTurno,values._1).collect {
-            case Some(value) if value.filter(quantita=>quantita>resultFirstJoin.toList.flatten.length) => resultFirstJoin
-            case Some(value) if value.filter(quantita=>quantita<resultFirstJoin.toList.flatten.length) => None
-            case None =>resultFirstJoin
+  private def availableGreaterThanRequested(date:Date,terminalAndTurno:Map[Int, List[Int]]): Future[Option[List[(Int, Int, Int)]]] = {
+    terminalAndTurno.flatMap(values=>
+      values._2.map(idTurno=>{
+        val t = countAvailableForShiftOnDay(values._1,date,idTurno).flatMap {
+          case Some(value) => joinTeoricRequestedWithRequestedWithGiorno(date,idTurno,values._1).collect {
+            case Some(values) if values.exists(quantita => quantita > Some(value).toList.flatten.length) => Some(value)
+            case Some(values) if values.exists(quantita => quantita < Some(value).toList.flatten.length) => None
+            case None =>Some(value)
           }
-        }yield resultFirstJoin
-      })
-    })
-  }*/
-
+          case None => Future.successful(None)
+        }
+        println(t)
+        t
+      }
+      )
+    ).toList.foldLeft(Future.successful(Option(List((0,0,0))))) {
+      case (defaulFuture,future)=>defaulFuture.zip(future).map {
+        case (option, option1) => Some((option1.toList.flatten::option.toList.flatten::List.empty).flatten)
+      }
+    }.collect {
+      case Some(List((0,0,0))) => None
+      case Some(value)=>Some(value)
+      case None =>None
+    }
+  }
 
   private def countAvailableForShiftOnDay(idTerminal:Int,date:Date,idTurno:Int): Future[Option[List[(Int, Int, Int)]]] ={
     val queryJoin = for{
@@ -274,7 +285,7 @@ object AssenzaOperation extends AssenzaOperation{
 
   private def createListInfoAbsence(mergeResultTurno: Option[Map[Int, Option[(Int, String)]]], mergeResultTerminal: Option[Map[Int, Option[(Int, String)]]]): Response[List[InfoAbsenceOnDay]] = {
      val merged = mergeResultTerminal.zip(mergeResultTurno).map(values=>(values._1.toList++values._2).groupMap(_._1)(_._2))
-     Response(StatusCodes.SUCCES_CODE,Some(merged.map(_.map(values=>convertListToTuple(values._1,values._2).head)).getOrElse(List.empty).toList))
+     Response(StatusCodes.SUCCES_CODE,Some(merged.map(_.map(values=>convertListToTuple(values._1,values._2).toList).toList.flatten).getOrElse(List.empty)))
   }
   private def convertListToTuple(id:Int,values:List[Option[(Int,String)]]): Option[InfoAbsenceOnDay] = (id,values) match {
     case (id:Int,List(a,b)) => a.zip(b).map(result=>InfoAbsenceOnDay(result._1._2,result._2._2,result._1._1,result._2._1,id))
