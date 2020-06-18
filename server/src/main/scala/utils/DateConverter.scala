@@ -64,9 +64,9 @@ object DateConverter {
     now
   })
 
-  val getWeekNumber: Date => Int = day => {
+  val getWeekNumber: Date => Int = date => {
     val calendar = Calendar.getInstance()
-    calendar.setTime(day)
+    calendar.setTime(date)
     calendar.getWeekYear
   }
 
@@ -77,4 +77,10 @@ object DateConverter {
     new Date(calendar.getTimeInMillis)
   }
 
+  val nameOfDay:Date=>String = date=>{
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
+    days(calendar.get(Calendar.DAY_OF_WEEK)-1)
+  }
 }

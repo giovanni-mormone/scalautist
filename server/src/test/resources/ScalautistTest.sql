@@ -51,6 +51,14 @@ SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 --DISPONIBILITA
 
 SET IDENTITY_INSERT [dbo].[DisponibilitaStraordinarioSets] ON
+<<<<<<< HEAD
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (1, N'Lunes', N'Sabato',25)
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (2, N'Martes', N'Venerdi',25)
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (3, N'Miercoles', N'Giovedi',25)
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (4, N'Jueves', N'Mercoledi',25)
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (5, N'Viernes Serata',N'Martedi',25)
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2],[Settimana]) VALUES (6, N'Sabado',N'Lunedi',25)
+=======
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1, N'Lunedi', N'Martedi', 1)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (2, N'Lunedi', N'Mercoledi', 1)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (3, N'Lunedi', N'Giovedi', 1)
@@ -1143,6 +1151,7 @@ INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinari
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1090, N'Venerdi', N'Sabato', 52)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1091, N'Venerdi', N'Domenica', 52)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1092, N'Sabato', N'Domenica', 52)
+>>>>>>> b0c17f295c3d0f31f58891d68650f81b48c3ce3a
 SET IDENTITY_INSERT [dbo].[DisponibilitaStraordinarioSets] OFF
 
 --//DISPONIBILITA
