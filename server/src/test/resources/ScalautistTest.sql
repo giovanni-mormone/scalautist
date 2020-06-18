@@ -239,13 +239,13 @@ INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinari
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (186, N'Giovedi', N'Domenica', 9)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (187, N'Venerdi', N'Sabato', 9)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (188, N'Venerdi', N'Domenica', 9)
-INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (189, N'Sabato', N'Domenica', 9
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (189, N'Sabato', N'Domenica', 9)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (190, N'Lunedi', N'Martedi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (191, N'Lunedi', N'Mercoledi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (192, N'Lunedi', N'Giovedi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (193, N'Lunedi', N'Venerdi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (194, N'Lunedi', N'Sabato', 10)
-INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (195, N'Lunedi', N'Domenica', 10
+INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (195, N'Lunedi', N'Domenica', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (196, N'Martedi', N'Mercoledi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (197, N'Martedi', N'Giovedi', 10)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (198, N'Martedi', N'Venerdi', 10)
@@ -1584,6 +1584,7 @@ INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [D
 INSERT INTO [dbo].[StoricoContrattoSets] ([IdStoricoContratto], [DataInizio], [DataFine], [Persone_Matricola], [Contrato_IdContratto], [Turno_IdTurno], [Turno1_IdTurno]) VALUES (15, N'20200602',N'20201222',7,5,5,6)
 
 SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
+
 
 --//STORICOCONTRATTO
 select * from [dbo].[PresenzaSets] where data < '2020-06-06'
