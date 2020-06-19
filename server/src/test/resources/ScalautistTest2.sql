@@ -68,7 +68,7 @@ INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], 
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (2, N'Francesco', N'Cassano',N'9184756',3, 1,  N'admin2',1,N'admin2')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (3, N'Giovanni', N'Mormone',N'394562358',2, null,  N'root',1,  N'root')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (4, N'Luciano',  N'Fuentes',N'365478962',3,2,  N'yoyo',1,  N'yoyo')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (5, N'Valerio', N'Vigliano',N'91485236',3,3,  N'tutu',1,  N'tutu')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (5, N'Valerio', N'Vigliano',N'91485236',3,1,  N'tutu',1,  N'tutu')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (6, N'Conducente', N'Maestro',N'91485236',3,3,  N'tutu2',1,  N'tutu2',1)
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (7, N'Pro', N'Va',N'91485236',3,3,  N'tutu2',1,  N'tutu2',1)
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (8, N'MAtto', N'Mattesi',N'91485236',3,3,  N'tutu2',1,  N'tutu2',1)
@@ -102,7 +102,7 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (11,N'20200422',N'20200429',1,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (12,N'20200422',N'20200429',0,4)
-INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (13,N'20200422',N'20200431',1,5)
+INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (13,N'20200422',N'20200430',1,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (15,N'20200422',N'20200429',1,7)
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (16,N'20200322',N'20200629',1,2)
@@ -114,6 +114,7 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (24,N'20200523',N'20200529',1,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (25,N'20200618',N'20200629',1,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (26,N'20200618',N'20200629',1,4)
+INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (27,N'20200618',N'20200629',1,6)
 
 SET IDENTITY_INSERT [dbo].[AssenzaSets] OFF
 
@@ -1438,7 +1439,6 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (919,  N'20200729',9,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (920,  N'20200730',9,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (921,  N'20200731',9,5)
-INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (921,  N'20200601',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (922,  N'20200602',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (923,  N'20200603',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (924,  N'20200604',9,6)
@@ -1499,7 +1499,6 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (979,  N'20200729',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (980,  N'20200730',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (981,  N'20200731',9,6)
-INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (981,  N'20200601',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (982,  N'20200602',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (983,  N'20200603',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (984,  N'20200604',10,5)
@@ -2475,6 +2474,10 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1954, N'20200729',17,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1955, N'20200730',17,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1956, N'20200731',17,6)
+INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1957, N'20200618',6,4)
+INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1958,  N'20200601',10,5)
+INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1959,  N'20200601',9,6)
+
 SET IDENTITY_INSERT [dbo].[RisultatoSets] OFF
 
 --//RISULTATOSETS
@@ -2482,7 +2485,10 @@ SET IDENTITY_INSERT [dbo].[RisultatoSets] OFF
 --RICHIESTATEORICASETS
 
 SET IDENTITY_INSERT [dbo].[RichiestaTeoricaSets] ON
-INSERT INTO [dbo].[RichiestaTeoricaSets] ([IdRichiestaTeorica], [DataInizio],[DataFine]) VALUES (1, N'20200601',N'20200731')
+INSERT INTO [dbo].[RichiestaTeoricaSets] ([IdRichiestaTeorica], [DataInizio],[DataFine],[TerminalSetIdTerminale]) VALUES (1, N'20200601',N'20200731',1)
+INSERT INTO [dbo].[RichiestaTeoricaSets] ([IdRichiestaTeorica], [DataInizio],[DataFine],[TerminalSetIdTerminale]) VALUES (2, N'20200601',N'20200731',2)
+INSERT INTO [dbo].[RichiestaTeoricaSets] ([IdRichiestaTeorica], [DataInizio],[DataFine],[TerminalSetIdTerminale]) VALUES (3, N'20200601',N'20200731',3)
+
 SET IDENTITY_INSERT [dbo].[RichiestaTeoricaSets] OFF
 
 --//RICHIESTATEORICASETS
@@ -2490,13 +2496,13 @@ SET IDENTITY_INSERT [dbo].[RichiestaTeoricaSets] OFF
 --GIORNOSETS
 
 SET IDENTITY_INSERT [dbo].[GiornoSets] ON
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (1, 2,N'Lunedi')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (2, 2,N'Martedi')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (3, 2,N'Mercoledi')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (4, 2,N'Giovedi')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (5, 2,N'Venerdi')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (6, 2,N'Sabato')
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno]) VALUES (7, 2,N'Domenica')
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (1, 2,N'Lunedi',1)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (2, 2,N'Martedi',2)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (3, 2,N'Mercoledi',3)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (4, 2,N'Giovedi',4)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (5, 2,N'Venerdi',5)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (6, 2,N'Sabato',6)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (7, 2,N'Domenica',7)
 SET IDENTITY_INSERT [dbo].[GiornoSets] OFF
 
 --//GIORNOSETS
@@ -2549,15 +2555,3 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
-
-select top 2000 * from RisultatoSets
-
-
-select * from AssenzaSets where DataInizio>=N'20200618'
-select * from StoricoContrattoSets where Persone_Matricola=2
-select s24.Matricola, s24.Terminale_IdTerminale from AssenzaSets s23, PersoneSets s24 where ((s23.PersoneSet_Matricola = s24.Matricola) and (s23.IsMalattia = 1)) and (s23.DataInizio = (convert(date, {d '2020-06-18'})))
-
-select gs.Quantita from RichiestaTeoricaSets rt,RichiestaSets rs ,GiornoSets gs, TurnoSets ts, RisultatoSets rss, PersoneSets ps, TerminalSets tss where rt.DataInizio<=N'20200618' and rt.DataFine>=N'20200618'
-and rs.Turno_IdTurno=2 and rs.Turno_IdTurno=ts.IdTurno and ts.IdTurno=rss.Turno_IdTurno and rss.Persone_Matricola=2 and
-rss.Data=N'20200618' and ps.Matricola=rss.Persone_Matricola and tss.IdTerminale=ps.Terminale_IdTerminale and rs.Giorno_IdGiorno=gs.IdGiorno
-

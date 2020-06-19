@@ -1,11 +1,12 @@
 package dbfactory.operation
 import java.sql.Date
+import java.time.LocalDate
 
 import caseclass.CaseClassDB.Assenza
-import caseclass.CaseClassHttpMessage.{Ferie, InfoAbsence, Response}
+import caseclass.CaseClassHttpMessage.{Ferie, InfoAbsenceOnDay}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRichiestaTeorica, InstanceRisultato, InstanceTerminale, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{AssenzaTableQuery, GiornoTableQuery, PersonaTableQuery, RichiestaTableQuery, RichiestaTeoricaTableQuery}
+import dbfactory.setting.Table._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 
@@ -13,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-/** @author Giovanni Mormone
+/** @author Giovanni Mormone, Fabian Aspee
  *  Trait which allows to perform operations on the assenze table.
  */
 trait AssenzaOperation extends OperationCrud[Assenza]{
@@ -38,10 +39,30 @@ trait AssenzaOperation extends OperationCrud[Assenza]{
 
   /**
    *  Method that search all driver that contains absence and return his terminal and shift
+   *  and if the request for this shift in this terminal is > of driver available, that is, those who are working
+   *  (which appear in the risultato table with one shift and do not exist in assenza table for the date sought),
+   *  then this terminal and shift will be within the return message, in the case that request< for driver
+   *  available, then this terminal and shift not will be within the return message.
+   *  a driver may be have a shift with first condition and another shift with second condition,
+   *  so one shift of the driver will be sent within return message and the another shift not
+   *
    * @param date data to which the number of the week in the year must be extracted
-   * @return Future of response of list of infoabsence
+   * @return Future of Option of list of infoAbsenceOnDay [[caseclass.CaseClassHttpMessage.InfoAbsenceOnDay]]
    */
-  def getAllAbsence(date:Date):Future[Response[List[InfoAbsence]]]
+  def getAllAbsence(date:Date):Future[Option[List[InfoAbsenceOnDay]]]
+
+  /**
+   * Method which allow update absence of the driver with another driver that contains availability.
+   * may be verified if driver that are received, really contains availability in this idRisultato
+   *
+   * @param idRisultato represent point where absence exist
+   * @param idPersona person that replace the driver absenced
+   * @return Future of Option with status code of operation
+   *         [[messagecodes.StatusCodes.SUCCES_CODE]] if operation of update finish with success
+   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if idRisultato not exist
+   *         [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
+   */
+  def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]
 }
 
 object AssenzaOperation extends AssenzaOperation{
@@ -57,6 +78,14 @@ object AssenzaOperation extends AssenzaOperation{
   private val GIORNI_FERIE_ANNUI: Int = 35
   //anche questo si può caricare da qualche parte
   private val CODICE_CONDUCENTE: Int = 3
+  //Terminal not exist
+  private val NOT_TERMINAL:Int=0
+  //countAvailableForShiftOnDay not contain idRisultato
+  private val NOT_RISULTATO_ID:Int=0
+  //countAvailableForShiftOnDay not contain idTurno
+  private val NOT_RISULTATO_TURNO_ID:Int=0
+  //countAvailableForShiftOnDay not contain idPersone
+  private val NOT_RISULTATO_PERSONE_ID:Int=0
 
   override def getAllFerie(data: Int):Future[Option[List[Ferie]]] = {
     val nextYear = dateFromYear(data+1)
@@ -144,12 +173,19 @@ object AssenzaOperation extends AssenzaOperation{
       .map(_.map(_.map(x => Ferie(x._1,tupToNameSurname(x),GIORNI_FERIE_ANNUI))))
   }
 
+  private def getTerminalAndTurno(persona: Option[List[(Int, Option[Int])]], risultato: Option[List[(Int, Int, Int)]]): Map[Int, List[Int]] = {
+    mergeResultWithPersona(persona,risultato).map(values=> values._1 match {
+      case Some(value) => value-> values._2
+      case None =>NOT_TERMINAL-> values._2
+    }).map(values=>values._1->values._2.flatMap(_.toList)).filter(_._1!=NOT_TERMINAL)
+  }
 
-  override def getAllAbsence(date: Date): Future[Response[List[InfoAbsence]]] =
+  override def getAllAbsence(date: Date): Future[Option[List[InfoAbsenceOnDay]]] =
     for{
       resultJoin <- joinAbsencePerson(date)
       risultato<-queryFilterForRisultatoTable(date,resultJoin)
-      turnoResult<-queryToTurnoWithRisultatoTable(risultato)
+      resultJoinWithRisult<-availableGreaterThanRequested(date,getTerminalAndTurno(resultJoin,risultato))
+      turnoResult<-queryToTurnoWithRisultatoTable(resultJoinWithRisult)
       personTerminale <-queryRisultatoPerson(risultato)
       terminaleResult<- queryToTerminale(personTerminale.map(_.map(_._2)))
       mergeResultTurno<-mergeResultWithTurno(risultato.map(_.map(value=>(value._1,value._2))),turnoResult)
@@ -163,38 +199,9 @@ object AssenzaOperation extends AssenzaOperation{
       persona<- PersonaTableQuery.tableQuery()
       if assenza.personaId===persona.id && assenza.dataInizio<=date && assenza.dataFine>=date
     } yield (persona.id,persona.terminaleId)
-    InstanceAssenza.operation().execJoin(queryJoin).collect {
-      case Some(value) => Some(value)
-      case None =>None
-    }
+    executor(queryJoin)
   }
 
-  private def availableGreaterThanRequested(date:Date,idTurno:Int)={
-    countAvailableForShiftOnDay(date:Date,idTurno:Int)
-    joinTeoricRequestedWithRequestedWithGiorno(date:Date,idTurno:Int)
-  }
-
-  private def countAvailableForShiftOnDay(date:Date,idTurno:Int): Future[Option[Int]] ={
-    InstanceRisultato.operation()
-      .execQueryFilter(risultato=>risultato.personeId,risultato=>risultato.data===date && risultato.turnoId===idTurno)
-      .collect {
-        case Some(value) =>Some(value.size)
-        case None =>None
-      }
-  }
-  private def joinTeoricRequestedWithRequestedWithGiorno(date:Date,idTurno:Int): Future[Option[List[Int]]] ={
-    val queryJoin = for {
-      richTeorica<- RichiestaTeoricaTableQuery.tableQuery()
-      richiesta<- RichiestaTableQuery.tableQuery()
-      giorno <- GiornoTableQuery.tableQuery()
-      if(richTeorica.dataInizio<=date && richTeorica.dataFine>=date
-      && richiesta.turnoId===idTurno && richiesta.giornoId===giorno.id)
-    } yield giorno.quantita
-    InstanceRichiestaTeorica.operation().execJoin(queryJoin).collect {
-      case Some(value) => Some(value)
-      case None =>None
-    }
-  }
   private def queryFilterForRisultatoTable(date: Date,join:Option[List[(Int, Option[Int])]]): Future[Option[List[(Int, Int, Int)]]] ={
     InstanceRisultato.operation()
       .execQueryFilter(risultato=>(risultato.id,risultato.turnoId,risultato.personeId), risultato=>risultato.data ===date && risultato.personeId
@@ -202,6 +209,62 @@ object AssenzaOperation extends AssenzaOperation{
           case Some(value) => value.map(_._1).distinct
           case None => None
         }))
+  }
+
+  private def availableGreaterThanRequested(date:Date,terminalAndTurno:Map[Int, List[Int]]): Future[Option[List[(Int, Int, Int)]]] = {
+    terminalAndTurno.flatMap(values=>
+      values._2.map(idTurno=>countAvailableForShiftOnDay(values._1,date,idTurno).flatMap {
+          case Some(avaiForDay) => functionJoin(date,idTurno,values._1,avaiForDay)
+          case None => Future.successful(None)
+        })
+    ).toList.foldLeft(Future.successful(Option(List((NOT_RISULTATO_ID,NOT_RISULTATO_TURNO_ID,NOT_RISULTATO_PERSONE_ID))))) {
+      case (defaulFuture,future)=>defaulFuture.zip(future).map {
+        case (option, option1) => Some((option1.toList.flatten::option.toList.flatten::List.empty).flatten)
+      }
+    }.collect {
+      case Some(List((NOT_RISULTATO_ID,NOT_RISULTATO_TURNO_ID,NOT_RISULTATO_PERSONE_ID))) => None
+      case Some(value)=>Some(value)
+      case None =>None
+    }
+  }
+
+  private def functionJoin(date:Date,idTurno:Int,values:Int,avaiForDay:List[(Int, Int, Int)])=
+    joinTeoricRequestedWithRequestedWithGiorno(date,idTurno,values).collect {
+      case Some(resultJoin) if resultJoin.exists(quantita => quantita > Some(avaiForDay).toList.flatten.length) => Some(avaiForDay)
+      case Some(resultJoin) if resultJoin.exists(quantita => quantita < Some(avaiForDay).toList.flatten.length) =>
+        resultJoin.map(result => result - avaiForDay.map(_._2).length) match {
+          case List(a) => Some(avaiForDay.dropRight(a))
+          case Nil => None
+        }
+      case None =>Some(avaiForDay)
+    }
+
+  private def countAvailableForShiftOnDay(idTerminal:Int,date:Date,idTurno:Int): Future[Option[List[(Int, Int, Int)]]] ={
+    val queryJoin = for{
+      persona<-PersonaTableQuery.tableQuery()
+      risultato<-RisultatoTableQuery.tableQuery()
+      if(persona.terminaleId===idTerminal && risultato.personeId===persona.id && risultato.turnoId===idTurno
+        && risultato.data===date)
+    }yield (risultato.id,risultato.turnoId,risultato.personeId)
+    executor(queryJoin)
+  }
+
+  private def joinTeoricRequestedWithRequestedWithGiorno(date:Date,idTurno:Int,idTerminal:Int): Future[Option[List[Int]]] ={
+    val queryJoin = for {
+      richTeorica<- RichiestaTeoricaTableQuery.tableQuery()
+      richiesta<- RichiestaTableQuery.tableQuery()
+      giorno <- GiornoTableQuery.tableQuery()
+      if(richTeorica.dataInizio<=date && richTeorica.dataFine>=date && richTeorica.terminaleId===idTerminal
+        && richiesta.turnoId===idTurno && richiesta.giornoId===giorno.id && giorno.idGiornoSettimana===getDayNumber(date))
+    } yield giorno.quantita
+    executor(queryJoin)
+  }
+
+  private def executor[A,B](queryJoin:Query[A,B,Seq]):Future[Option[List[B]]]={
+    InstanceRichiestaTeorica.operation().execJoin(queryJoin).collect {
+      case Some(value) => Some(value)
+      case None =>None
+    }
   }
 
   private def queryToTurnoWithRisultatoTable(risultato:Option[List[(Int, Int, Int)]])={
@@ -212,7 +275,7 @@ object AssenzaOperation extends AssenzaOperation{
     }
   }
 
-  private def queryRisultatoPerson(risultato:Option[List[(Int, Int, Int)]])={
+  private def queryRisultatoPerson(risultato:Option[List[(Int, Int, Int)]]): Future[Option[List[(Int, Option[Int])]]] ={
     risultato match{
       case Some(value) => InstancePersona.operation()
         .execQueryFilter(persona=>(persona.id,persona.terminaleId),persona=>persona.id.inSet(value.map(_._3)))
@@ -220,7 +283,7 @@ object AssenzaOperation extends AssenzaOperation{
     }
   }
 
-  private def queryToTerminale(personTerminale:Option[List[Option[Int]]])={
+  private def queryToTerminale(personTerminale:Option[List[Option[Int]]]): Future[Option[List[(Int, String)]]] ={
     InstanceTerminale.operation()
       .execQueryFilter(terminale=>(terminale.id,terminale.nomeTerminale),terminale=>terminale.id
         .inSet(returnListIdTerminal(personTerminale)))
@@ -236,35 +299,86 @@ object AssenzaOperation extends AssenzaOperation{
     Future.successful(merge)
   }
 
+  private def mergeResultWithPersona(persona: Option[List[(Int, Option[Int])]], risultato: Option[List[(Int, Int, Int)]]): Map[Option[Int], List[Option[Int]]] ={
+    persona.toList.flatten.map(values=>values._2->risultato.toList.flatten.find(_._3==values._1)).filter(_._2.isDefined)
+      .map(values=>values._1->values._2.map(_._2)).groupMap(_._1)(_._2).filter(_._1.isDefined)
+  }
+
   private def mergeResultTerminal(risultato: Option[List[(Int,Int)]],terminaleResult: Option[List[(Int,String)]],persona:Option[List[(Int,Option[Int])]]): Future[Option[Map[Int, Option[(Int, String)]]]] ={
     val merge = risultato.zip(mergeTerminalWithPersona(terminaleResult,persona)).map(result=>result._1
       .map(value=>value._1->result._2.getOrElse(value._2,None)).toMap)
     Future.successful(merge)
   }
+
   private def mergeTerminalWithPersona(terminaleResult: Option[List[(Int,String)]],persona:Option[List[(Int,Option[Int])]]): Option[Map[Int, Option[(Int, String)]]] =
     persona.zip(terminaleResult).map(values=>values._1.map(result=>{
       result._1->values._2.find(terminal=>result._2.contains(terminal._1))
     }).toMap)
 
-  private def createListInfoAbsence(mergeResultTurno: Option[Map[Int, Option[(Int, String)]]], mergeResultTerminal: Option[Map[Int, Option[(Int, String)]]]): Response[List[InfoAbsence]] = {
+  private def createListInfoAbsence(mergeResultTurno: Option[Map[Int, Option[(Int, String)]]], mergeResultTerminal: Option[Map[Int, Option[(Int, String)]]]): Option[List[InfoAbsenceOnDay]] = {
      val merged = mergeResultTerminal.zip(mergeResultTurno).map(values=>(values._1.toList++values._2).groupMap(_._1)(_._2))
-
-     Response(StatusCodes.SUCCES_CODE,Some(merged.map(_.map(values=>convertListToTuple(values._1,values._2).head)).getOrElse(List.empty).toList))
+     merged.map(_.map(values=>convertListToTuple(values._1,values._2).toList).toList.flatten)
   }
-  private def convertListToTuple(id:Int,values:List[Option[(Int,String)]]): Option[InfoAbsence] = (id,values) match {
-    case (id:Int,List(a,b)) => a.zip(b).map(result=>InfoAbsence(result._1._2,result._2._2,result._1._1,result._2._1,id)) //aggiungere se ha tre turni
+
+  private def convertListToTuple(id:Int,values:List[Option[(Int,String)]]): Option[InfoAbsenceOnDay] = (id,values) match {
+    case (id:Int,List(a,b)) => a.zip(b).map(result=>InfoAbsenceOnDay(result._1._2,result._2._2,result._1._1,result._2._1,id))
     case (_,Nil) => None
   }
+
+  override def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]={
+      val result = InstanceRisultato.operation().execQueryFilter(risultato=>risultato.id,
+        risultato=>risultato.id===idRisultato)
+      val persona = InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idPersona)
+      result.zip(persona).flatMap{
+        case (_, None) => Future.successful(Some(StatusCodes.ERROR_CODE2))
+        case (None, _) => Future.successful(Some(StatusCodes.ERROR_CODE1))
+        case (_, _) => update(idRisultato,idPersona)
+      }
+  }
+
+  private def update(idRisultato:Int,idPersona:Int)={
+    InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
+      idPersona).collect {
+      case Some(value) => Some(value)
+      case None =>None
+    }
+  }
+
 }
-
 object tryAbsence extends App{
+  //idRisultato:Int, idTemrinale:Int, idTurno:Int
+  val local = LocalDate.of(2020,6,18)
 
-  AssenzaOperation.getAllAbsence(new Date(System.currentTimeMillis())).onComplete {
-    case Failure(exception) => println("QUEWEA"+exception)
-    case Success(Response(statusCode, None)) => println("HOLA JUANITO" + statusCode)
-    case Success(Response(StatusCodes.SUCCES_CODE, payload)) => println("HOLA PEDRITO" + payload)
+  def driveravai():Unit={
+    AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
+      case Failure(exception) => println("PRIMO FAIL :C",exception)
+      case Success(value) =>println("STO QUI ssas",value); value.toList.flatten.map(result=>DisponibilitaOperation
+        .allDriverWithAvailabilityForADate(result.idRisultato,result.idTerminale,result.idTurno).onComplete {
+        case Failure(exception) => println("SECONDO FAIL :(",exception)
+        case Success(values) =>println("STO QUI",result); println("STOQUI 2"); println(values);
+          values match {
+            case Some(value) =>value.filter(_._1==12).map(persona=>AssenzaOperation.updateAbsence(result.idRisultato,persona._1).onComplete {
+              case Failure(exception) => println(exception, "NOT AGGIORNATO")
+              case Success(value) =>println(value, "AGGIORNATO");AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
+                case Failure(exception) => println("PRIMO FAIL :C",exception)
+                case Success(value) =>println("NEW ABSENCE",value);}
+            })
+            case None => println("SOY NONE")
+          }
+      })
+    }
   }
+  /*
+  (STO QUI ssas,Some(List(InfoAbsenceOnDay(Florida,Tarda Serata,3,5,140),
+  InfoAbsenceOnDay(Cansas,Tarda Mattinata,1,2,79),
+  InfoAbsenceOnDay(Florida,Sera,3,4,1957), InfoAbsenceOnDay(Casablanca,Sera,2,4,818))))
 
-  while (true){
+  (STO QUI ssas,Some(List(InfoAbsenceOnDay(Florida,Notte,3,6,574), InfoAbsenceOnDay(Cansas,Tarda Mattinata,1,2,79),
+  InfoAbsenceOnDay(Florida,Sera,3,4,1957), InfoAbsenceOnDay(Casablanca,Sera,2,4,818))))
+   */
+  AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
+    case Failure(exception) => println("PRIMO FAIL :C", exception)
+    case Success(value) => println("STO QUI ssas", value);
   }
+  while(true){}
 }
