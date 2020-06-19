@@ -3,7 +3,7 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassHttpMessage.InfoAbsence
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -14,7 +14,20 @@ import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
 
-  def drawAbsence(absences: List[InfoAbsence]): Unit
+  /**
+   * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
+   * a replacement
+   * @param absences
+   */
+  def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit
+
+  /**
+   * Method used by a [[controller.ManagerController]] to tell the view to draw the list of people that needs
+   * a replacement
+   * @param replacement
+   */
+  def drawReplacement(replacement: List[InfoReplacement]): Unit
+
 }
 
 object ManagerView {
@@ -43,12 +56,18 @@ object ManagerView {
 
 
     ////////CALLS FROM CHILDREN TO MAKE THINGS -> ASK TO CONTROLLER
-    override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
+    override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit =
       myController.absenceSelected(idRisultato, idTerminale, idTurno)
-    }
+
+    override def replacementSelected(idRisultato: Int, idPersona: Int): Unit =
+      myController.replacementSelected(idRisultato, idPersona)
+
 
     //////CALLS FROM CONTROLLER////////////
-    override def drawAbsence(absences: List[InfoAbsence]): Unit =
+    override def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit =
       Platform.runLater(() => managerHome.drawManageAbsence(absences))
+
+    override def drawReplacement(replacement: List[InfoReplacement]): Unit =
+      Platform.runLater(() => managerHome.drawManageReplacement(replacement))
   }
 }

@@ -1,6 +1,6 @@
 package controller
 
-import caseclass.CaseClassHttpMessage.InfoAbsence
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import view.fxview.mainview.ManagerView
 
 import scala.concurrent.ExecutionContextExecutor
@@ -19,6 +19,8 @@ trait ManagerController extends AbstractController[ManagerView]{
    * @param idTurno
    */
   def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit
+
+  def replacementSelected(idRisultato: Int, idPersona: Int)
 }
 
 object ManagerController {
@@ -30,13 +32,21 @@ object ManagerController {
   private class ManagerControllerImpl extends ManagerController {
 
     override def dataToAbsencePanel(): Unit = {
-      val a = List(InfoAbsence("Cesena","Notte",1,2,3),InfoAbsence("Cesena","Notte",1,2,3),InfoAbsence("Cesena","Notte",1,2,3),InfoAbsence("Cesena","Notte",1,2,3),InfoAbsence("Cesena","Notte",1,2,3))
+      val a = List(InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3))
 
       myView.drawAbsence(a)
     }
 
     override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
       //model!
+      val a = List(InfoReplacement(1,2,"Francesco","Cassano"),InfoReplacement(1,3,"Giorgo","Cassano"),InfoReplacement(1,3,"Francesco","Valenti"))
+      myView.drawReplacement(a)
+    }
+
+    override def replacementSelected(idRisultato: Int, idPersona: Int): Unit = {
+      //model
+      val a = List(InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3))
+      myView.drawAbsence(a)
     }
   }
 }

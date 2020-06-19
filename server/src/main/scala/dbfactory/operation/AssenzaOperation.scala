@@ -357,7 +357,7 @@ object tryAbsence extends App{
         case Failure(exception) => println("SECONDO FAIL :(",exception)
         case Success(values) =>println("STO QUI",result); println("STOQUI 2"); println(values);
           values match {
-            case Some(value) =>value.filter(_._1==12).map(persona=>AssenzaOperation.updateAbsence(result.idRisultato,persona._1).onComplete {
+            case Some(value) =>value.filter(_.idPersona==12).map(persona=>AssenzaOperation.updateAbsence(result.idRisultato,persona.idPersona).onComplete {
               case Failure(exception) => println(exception, "NOT AGGIORNATO")
               case Success(value) =>println(value, "AGGIORNATO");AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
                 case Failure(exception) => println("PRIMO FAIL :C",exception)

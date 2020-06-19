@@ -3,30 +3,36 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.Persona
-import caseclass.CaseClassHttpMessage.InfoAbsence
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import javafx.fxml.FXML
-import javafx.scene.control.{Label, TableView, TextField}
+import javafx.scene.control.Label
 import javafx.scene.layout.VBox
-import view.fxview.component.HumanResources.subcomponent.util.CreateTable
-import view.fxview.component.manager.subcomponent.parent.TerminalAndTurnsParent
+import view.fxview.component.manager.subcomponent.parent.FillHolesParent
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
 
-trait FillHolesBox extends Component[TerminalAndTurnsParent]{
+trait FillHolesBox extends Component[FillHolesParent]{
+  /**
+   * Method used to draw the List of turns that needs a replacement
+   * @param terminalsAndTurn
+   *                         The turns and terminals that needs a replacement
+   */
+  def drawAbsenceList(terminalsAndTurn: List[InfoAbsenceOnDay]): Unit
 
-  def drawAbsenceList(terminalsAndTurn: List[InfoAbsence]): Unit
-
+  /**
+   * Method used to draw the List of avaliable people for the selected turn to replace
+   * @param substitutes
+   *                     The avaliable people for the selected turn to replace
+   */
   def drawSubstituteList(substitutes: List[InfoReplacement]): Unit
-
 }
 
 object FillHolesBox{
 
   def apply(): FillHolesBox = new FillHolesFX()
 
-  private class FillHolesFX extends AbstractComponent[TerminalAndTurnsParent]("manager/subcomponent/FillHolesBox")
+  private class FillHolesFX extends AbstractComponent[FillHolesParent]("manager/subcomponent/FillHolesBox")
     with FillHolesBox{
     @FXML
     var terminalsAndTurnsBox: VBox= _
@@ -49,14 +55,10 @@ object FillHolesBox{
 
     }
 
-    override def drawAbsenceList(terminalsAndTurn: List[InfoAbsence]): Unit = {
-     terminalsAndTurn.foreach(absence => {
-       terminalsAndTurnsBox.getChildren.add(TerminalAndTurnsBox(absence).setParent(parent).pane)
-     })
-    }
+    override def drawAbsenceList(terminalsAndTurn: List[InfoAbsenceOnDay]): Unit =
+     terminalsAndTurn.foreach(absence => terminalsAndTurnsBox.getChildren.add(TerminalAndTurnsBox(absence).setParent(parent).pane))
 
-    override def drawSubstituteList(substitutes: List[Any]): Unit = {
-
-    }
+    override def drawSubstituteList(substitutes: List[InfoReplacement]): Unit =
+      substitutes.foreach(replacement => substitutesBox.getChildren.add(ReplacementsBox(replacement).setParent(parent).pane))
   }
 }

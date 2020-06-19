@@ -1,9 +1,9 @@
 package view.fxview.component.manager.subcomponent.parent
 
-trait ManagerHomeParent extends TerminalAndTurnsParent with ReplacementParent{
+trait ManagerHomeParent extends FillHolesParent{
 
   /**
-   * Method use when is needed to draw the absence panel
+   * Method used when is needed to draw the absence panel
    */
   def drawAbsencePanel(): Unit
   

@@ -3,19 +3,29 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassHttpMessage.InfoAbsence
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.{BorderPane, Pane}
-import view.fxview.FXHelperFactory
+import javafx.scene.layout.BorderPane
 import view.fxview.component.manager.subcomponent.FillHolesBox
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait ManagerHome extends Component[ManagerHomeParent]{
+  /**
+   * Method used to draw the list of turns that needs a replacement
+   * @param absences
+   *                 The list of turns that needs a replacement
+   */
+  def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit
 
-  def drawManageAbsence(absences: List[InfoAbsence]): Unit
+  /**
+   * Method used to draw the list of people avalaible for the turn that needs a replacement
+   * @param replacement
+   *                    The people avalaible for the turn that needs a replacement
+   */
+  def drawManageReplacement(replacement: List[InfoReplacement]): Unit
 }
 
 object ManagerHome{
@@ -45,7 +55,6 @@ object ManagerHome{
     @FXML
     var idLabel: Label = _
 
-
     var fillHolesView: FillHolesBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -62,13 +71,15 @@ object ManagerHome{
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
     }
 
-    override def drawManageAbsence(absences: List[InfoAbsence]): Unit = {
-      val a = FillHolesBox()
-      a.setParent(parent)
-      baseManager.setCenter(a.pane)
-      a.drawAbsenceList(absences)
+    override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
+      fillHolesView = FillHolesBox()
+      baseManager.setCenter(fillHolesView.setParent(parent).pane)
+      fillHolesView.drawAbsenceList(absences)
     }
 
+    override def drawManageReplacement(replacement: List[InfoReplacement]): Unit = {
+      fillHolesView.drawSubstituteList(replacement)
+    }
   }
 
 }
