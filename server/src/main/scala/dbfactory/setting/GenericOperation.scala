@@ -1,13 +1,9 @@
 package dbfactory.setting
 
-import java.sql.Date
-
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceAssenza
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.SQLServerProfile.api._
 import slick.lifted.{FlatShapeLevel, Shape}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 
@@ -77,7 +73,7 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
    * @return    List of case class that satisfies condition f. The List is a List of Tuples that has the types of the selected fields
    *            of the query.
    */
-  def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Option[Boolean]])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
+  def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
 
   /**
    * Generic Operation which enable make operation of type update, in this method you have send field that you want
@@ -103,7 +99,7 @@ object GenericOperation{
     override def execJoin[A,B](join:Query[A,B,Seq]): Future[Option[List[B]]] = super.run(join.result.transactionally).result()
     override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().map(selectField).result.transactionally).result()
     override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption.transactionally)
-    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Option[Boolean]])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).result.transactionally).result()
+    override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).result.transactionally).result()
     override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
 
   }
