@@ -8,7 +8,8 @@ object GiornoTable{
   class GiornoTableRep(tag: Tag) extends GenericTable[Giorno](tag, "GiornoSets","IdGiorno"){
     def quantita: Rep[Int] = column[Int]("Quantita")
     def nomeGiorno: Rep[String] = column[String]("NomeGiorno")
+    def idGiornoSettimana:Rep[Int]=column[Int]("IdGiornoInSettimana")
     // Every table needs a * projection with the same type as the table's type parameter
-    override def * : ProvenShape[Giorno] = ( quantita,nomeGiorno,id.?).mapTo[Giorno]
+    override def * : ProvenShape[Giorno] = ( quantita,nomeGiorno,idGiornoSettimana,id.?).mapTo[Giorno]
   }
 }

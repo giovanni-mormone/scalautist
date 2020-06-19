@@ -36,7 +36,7 @@ object CaseClassDB{
    * @param nomeGiorno day into week
    * @param idGiorno identifies day into database (for insert operation this is not mandatory)
    */
-  final case class Giorno(quantita:Int,nomeGiorno:String,idGiorno:Option[Int]=None)
+  final case class Giorno(quantita:Int,nomeGiorno:String,idGiornoSettimana:Int,idGiorno:Option[Int]=None)
 
   /**
    * GruppoTerminale is a case class that represent a instance of table into database that contains
