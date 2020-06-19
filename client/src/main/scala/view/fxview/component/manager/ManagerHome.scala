@@ -3,17 +3,19 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
+import caseclass.CaseClassHttpMessage.InfoAbsence
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.manager.subcomponent.FillHolesBox
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait ManagerHome extends Component[ManagerHomeParent]{
 
-  def drawManageAbsence(): Unit
+  def drawManageAbsence(absences: List[InfoAbsence]): Unit
 }
 
 object ManagerHome{
@@ -57,18 +59,16 @@ object ManagerHome{
       manageZoneButton.setText(resources.getResource("manage-zone-button"))
       manageTerminalButton.setText(resources.getResource("manage-terminal-button"))
 
-      manageAbsenceButton.setOnAction(_ => drawManageAbsence())
+      manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
     }
 
-    override def drawManageAbsence(): Unit =
-      baseManager.setCenter(fillHolesBox())
-
-    private def fillHolesBox(): Pane = {
-      fillHolesView = FillHolesBox()
-//      fillHolesBox.setParent(this)?????
-      fillHolesView.pane
+    override def drawManageAbsence(absences: List[InfoAbsence]): Unit = {
+      val a = FillHolesBox()
+      a.setParent(parent)
+      baseManager.setCenter(a.pane)
+      a.drawAbsenceList(absences)
     }
+
   }
-
 
 }

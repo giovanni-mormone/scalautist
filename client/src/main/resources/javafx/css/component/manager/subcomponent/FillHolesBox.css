@@ -1,0 +1,16 @@
+#fillHolesBox{
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+}
+
+#tablesBox{
+    -fx-spacing: 100;
+}
+#terminalsAndTurnsHeader{
+    -fx-font-size: 30;
+    -fx-spacing: 50;
+}
+#substitutesHeader{
+    -fx-spacing: 50;
+}
