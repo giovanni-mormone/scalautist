@@ -145,4 +145,13 @@ object CaseClassHttpMessage {
    * @param idRisultato id that is unique key for risultato table
    */
   final case class InfoAbsenceOnDay(nomeTerminale:String,nomeTurno:String,idTerminale:Int,idTurno:Int,idRisultato:Int)
+
+  /**
+   *
+   * @param idRisultato
+   * @param idPersona
+   * @param nome
+   * @param cognome
+   */
+  final case class InfoReplacement(idRisultato:Int,idPersona:Int,nome:String,cognome:String)
 }

@@ -18,12 +18,12 @@ object SuccessAndFailure {
     case Success(Some(statusCodes.ERROR_CODE3)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE3))
     case Success(Some(statusCodes.ERROR_CODE4)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE4))
     case Success(Some(statusCodes.ERROR_CODE5)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE5))
-    case Success(Some(statusCodes.ERROR_CODE5)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE6))
+    case Success(Some(statusCodes.ERROR_CODE6)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE6))
     case t => failure(t)
   }
 
   private def failure[A](result:Try[A]): StandardRoute =result match {
     case Success(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
-    case Failure(exception) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
+    case Failure(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
   }
 }
