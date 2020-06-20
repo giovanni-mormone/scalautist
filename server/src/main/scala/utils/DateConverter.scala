@@ -65,7 +65,7 @@ object DateConverter {
   })
 
   val getWeekNumber: Date => Int = date => {
-    dateToCalendar(date).getWeekYear
+    dateToCalendar(date).get(Calendar.WEEK_OF_YEAR)
   }
 
   val getDayNumber: Date => Int = date => {

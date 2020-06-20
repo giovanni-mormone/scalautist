@@ -102,7 +102,7 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (11,N'20200422',N'20200429',1,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (12,N'20200422',N'20200429',0,4)
-INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (13,N'20200422',N'20200431',1,5)
+INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (13,N'20200422',N'20200430',1,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (15,N'20200422',N'20200429',1,7)
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (16,N'20200322',N'20200629',1,2)
@@ -1439,7 +1439,6 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (919,  N'20200729',9,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (920,  N'20200730',9,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (921,  N'20200731',9,5)
-INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (921,  N'20200601',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (922,  N'20200602',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (923,  N'20200603',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (924,  N'20200604',9,6)
@@ -1500,7 +1499,6 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (979,  N'20200729',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (980,  N'20200730',9,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (981,  N'20200731',9,6)
-INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (981,  N'20200601',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (982,  N'20200602',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (983,  N'20200603',10,5)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (984,  N'20200604',10,5)
@@ -2477,6 +2475,9 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1955, N'20200730',17,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1956, N'20200731',17,6)
 INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1957, N'20200618',6,4)
+INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1958,  N'20200601',10,5)
+INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [Turno_IdTurno]) VALUES (1959,  N'20200601',9,6)
+
 SET IDENTITY_INSERT [dbo].[RisultatoSets] OFF
 
 --//RISULTATOSETS
@@ -2554,23 +2555,3 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
-
-select top 2000 * from RisultatoSets
-
-
-select * from AssenzaSets where DataInizio>=N'20200618'
-select * from StoricoContrattoSets where Persone_Matricola=2
-select s24.Matricola, s24.Terminale_IdTerminale from AssenzaSets s23, PersoneSets s24 where ((s23.PersoneSet_Matricola = s24.Matricola) and (s23.IsMalattia = 1)) and (s23.DataInizio = (convert(date, {d '2020-06-18'})))
-
-select rs.Giorno_IdGiorno from RichiestaTeoricaSets rt,RichiestaSets rs
-where rt.DataInizio<=N'20200618' and rt.DataFine>=N'20200618'
-  and rt.TerminalSetIdTerminale=1 and rs.Turno_IdTurno=2
-
-select * from PersoneSets ps, RisultatoSets rs where ps.Terminale_IdTerminale=3
-and rs.Persone_Matricola=ps.Matricola and rs.Turno_IdTurno=5 and rs.Data=N'20200618'
-
-select gs.Quantita from RichiestaTeoricaSets rt,RichiestaSets rs ,GiornoSets gs
-where rt.DataInizio<=N'20200618' and rt.DataFine>=N'20200618'
-and rt.TerminalSetIdTerminale=3 and rs.Turno_IdTurno=5
-and rs.Giorno_IdGiorno=gs.IdGiorno and gs.IdGiorno=1
-
