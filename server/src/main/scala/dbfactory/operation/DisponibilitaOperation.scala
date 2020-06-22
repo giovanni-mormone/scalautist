@@ -87,6 +87,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
    *         [[messagecodes.StatusCodes.ERROR_CODE1]] if idResult not exist in database
    *         [[messagecodes.StatusCodes.ERROR_CODE2]]  if idTerminal not exist in database
    *        [[messagecodes.StatusCodes.ERROR_CODE3]] if idTurno not exist in database
+   *        [[messagecodes.StatusCodes.SUCCES_CODE]] if idResult, idTerminal and idTurno exist in database
    *
    */
   override def verifyIdRisultatoAndTerminalAndShift(idRisultato:Int, idTerminal:Int, idTurno:Int): Future[Option[Int]] =

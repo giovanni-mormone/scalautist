@@ -16,4 +16,9 @@ object AssenzaReplaceOperationValues {
   val idNewPerson = 12
   val idRisultatoForUpdateNotExist = 8888
   val idNewPersonNotExist = 88
+  val idRisultato=18
+  val idTerminal=3
+  val idTurno=2
+  val idTerminalNotExist= 100
+  val idTurnoNotExist = 200
 }

@@ -49,5 +49,25 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
     val idPersonNotExist: Future[Option[Int]] = AssenzaOperation.updateAbsence(idRisultatoForUpdate,idNewPersonNotExist)
     idPersonNotExist map {person => assert(person.contains(-2))}
   }
+  it should "return StatusCodes.ERROR_CODE1 if idResult not exist in database" in {
+    val getAllAvailabilityIdResultNotExist: Future[Option[Int]] = DisponibilitaOperation
+      .verifyIdRisultatoAndTerminalAndShift(idRisultatoForUpdateNotExist,idTerminal,idTurno)
+    getAllAvailabilityIdResultNotExist map {allAvailability =>  assert(allAvailability.contains(-1))}
+  }
+  it should "return StatusCodes.ERROR_CODE2  if idTerminal not exist in database" in {
+    val getAllAvailabilityIdTerminalNotExist: Future[Option[Int]] = DisponibilitaOperation
+      .verifyIdRisultatoAndTerminalAndShift(idRisultato,idTerminalNotExist,idTurno)
+    getAllAvailabilityIdTerminalNotExist map {allAvailability =>  assert(allAvailability.contains(-2))}
+  }
+  it should "return StatusCodes.ERROR_CODE3 if idTurno not exist in database" in {
+    val getAllAvailabilityIdTurnoNotExist: Future[Option[Int]] = DisponibilitaOperation
+      .verifyIdRisultatoAndTerminalAndShift(idRisultato,idTerminal,idTurnoNotExist)
+    getAllAvailabilityIdTurnoNotExist map {allAvailability =>  assert(allAvailability.contains(-3))}
+  }
 
+  it should "return StatusCodes.SUCCESS_CODE if idResult, idTerminal and idTurno exist in database" in {
+    val getAllAvailabilitySuccessCode: Future[Option[Int]] = DisponibilitaOperation
+      .verifyIdRisultatoAndTerminalAndShift(idRisultato,idTerminal,idTurno)
+    getAllAvailabilitySuccessCode map {allAvailability =>  assert(allAvailability.contains(1))}
+  }
 }
