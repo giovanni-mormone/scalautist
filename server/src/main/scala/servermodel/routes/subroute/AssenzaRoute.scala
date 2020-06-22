@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, onComplete, post}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.Assenza
-import caseclass.CaseClassHttpMessage.{Request, Response}
+import caseclass.CaseClassHttpMessage.{Dates, Request, Response}
 import dbfactory.operation.AssenzaOperation
 import jsonmessages.JsonFormats._
 import messagecodes.{StatusCodes => statusCodes}
@@ -43,6 +43,13 @@ object AssenzaRoute{
           case t => anotherSuccessAndFailure(t)
         }
         case _ => complete(StatusCodes.BadRequest,badHttpRequest)
+      }
+    }
+
+  def absenceOnDay(): Route =
+    post{
+      entity(as[Request[Dates]]) {
+        case Request(Some)
       }
     }
 }

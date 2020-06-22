@@ -3,7 +3,7 @@ package jsonmessages
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage._
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, _}
 import jsonmessages.ImplicitDate._
 import spray.json._
 
@@ -39,8 +39,10 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val infoHomeJsonFormat:RootJsonFormat[InfoHome] = jsonFormat2(InfoHome)
     implicit val shifDayJsonFormat:RootJsonFormat[ShiftDay] = jsonFormat2(ShiftDay)
     implicit val infoShifDayJsonFormat:RootJsonFormat[InfoShift] = jsonFormat2(InfoShift)
-    implicit val dateJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
-    implicit val infoVacantShift: RootJsonFormat[InfoVacantShift] = jsonFormat2(InfoVacantShift)
+    implicit val dateJsonFormatJsonFormat:RootJsonFormat[Dates] = jsonFormat1(Dates)
+    implicit val infoVacantShiftJsonFormat: RootJsonFormat[InfoVacantShift] = jsonFormat2(InfoVacantShift)
+    implicit val infoReplacementJsonFormat: RootJsonFormat[InfoReplacement] = jsonFormat4(InfoReplacement)
+    implicit val infoAbsenceOnDayJsonFormat: RootJsonFormat[InfoAbsenceOnDay] = jsonFormat5(InfoAbsenceOnDay)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
 }

@@ -1,17 +1,20 @@
 package servermodel.routes.subroute
 
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.Directives.{as, complete, entity, get, post, _}
 import caseclass.CaseClassDB.Risultato
 import caseclass.CaseClassHttpMessage.Id
-import jsonmessages.JsonFormats._
-import servermodel.routes.exception.RouteException
 import dbfactory.operation.RisultatoOperation
+import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 
 import scala.util.Success
 
+/**
+ * @author Francesco Cassano
+ * RisultatoRoute is an object that manage methods that act on the persona entity
+ */
 object RisultatoRoute {
 
   def getRisultato: Route =
@@ -40,4 +43,5 @@ object RisultatoRoute {
         }
       }
     }
+
 }
