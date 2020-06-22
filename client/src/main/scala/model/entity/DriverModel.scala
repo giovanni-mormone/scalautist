@@ -6,7 +6,7 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.{Dates, InfoHome, Response, StipendioInformations}
+import caseclass.CaseClassHttpMessage.{Dates, InfoHome, InfoShift, Response, StipendioInformations}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
@@ -48,8 +48,7 @@ trait DriverModel {
    * @param userId
    * @return
    */
-  def getTurniSettimanali(userId: Int): Future[Response[List[InfoHome]]]
-
+  def getTurniSettimanali(userId: Int):  Future[Response[InfoShift]]
 }
 
 
@@ -77,9 +76,9 @@ object DriverModel {
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoHome]])
     }
 
-    override def getTurniSettimanali(userId: Int): Future[Response[List[InfoHome]]] = {
+    override def getTurniSettimanali(userId: Int): Future[Response[InfoShift]] = {
       val request = Post(getURI("getturniinweek"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[InfoHome]]])
+      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoShift]])
     }
   }
 

@@ -5,7 +5,7 @@ import java.sql.Date
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import caseclass.CaseClassDB.{Disponibilita, Turno}
-import caseclass.CaseClassHttpMessage.InfoHome
+import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift}
 import servermodel.routes.subroute.TurnoRoute._
 import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
@@ -60,7 +60,7 @@ object MasterRouteTurno{
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Date,Int)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Disponibilita for the persona selected",
-        content = Array(new Content(schema = new Schema(implementation = classOf[List[InfoHome]])))),
+        content = Array(new Content(schema = new Schema(implementation = classOf[InfoShift])))),
       new ApiResponse(responseCode = "404", description = "Not Found Turni"),
       new ApiResponse(responseCode = "500", description = "Internal server error")))
   def getTurniSettimanaliDatabase: Route =
