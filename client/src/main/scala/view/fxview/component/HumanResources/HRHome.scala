@@ -198,7 +198,7 @@ object HRHome{
 
     private def illBox(employees: List[Persona]): Pane = {
       illBox = IllBox(employees)
-      illBox.setParent(parent)
+      illBox.setParent(parent).pane
       illBox.pane
     }
 

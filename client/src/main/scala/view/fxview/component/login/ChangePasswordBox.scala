@@ -6,11 +6,11 @@ import java.util.ResourceBundle
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, PasswordField, TextField}
 import regularexpressionutilities.PasswordHelper
+import view.fxview.component.login.ChangePasswordParent
 import view.fxview.component.{AbstractComponent, Component}
-import view.fxview.mainview.ChangePasswordParent
 
 /**
- * Component for the ChangePasswordBox contained in a [[view.fxview.mainview.ChangePasswordParent]]
+ * Component for the ChangePasswordBox contained in a [[view.fxview.component.login.ChangePasswordParent]]
  *
  *  @author Giovanni Mormone.
  */

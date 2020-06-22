@@ -2,11 +2,13 @@ package controller
 
 import caseclass.CaseClassDB.Persona
 import caseclass.CaseClassHttpMessage.{Request, Response}
+import com.typesafe.config.ConfigFactory
 import model.entity.PersonaModel
 import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.LoginView
 
-import scala.util.{Failure, Success}
+import scala.sys.Prop
+import scala.util.{Failure, Properties, Success}
 
 /**
  * @author Giovanni Mormone.
@@ -37,26 +39,34 @@ object LoginController {
 
   def apply(): LoginController = instance
 
-  private class LoginControllerImpl extends LoginController{
+  private class LoginControllerImpl extends LoginController {
 
-    override def login(username: String, password: String): Unit = (username,password) match{
-      case (s1,s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin()
+    override def login(username: String, password: String): Unit = (username, password) match {
+      case (s1, s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin()
       case _ =>
-        myModel.login(username,password).onComplete{
-          case Success(Response(int,persona)) => checkLoginResult(persona)
+        myModel.login(username, password).onComplete {
+          case Success(Response(int, persona)) => checkLoginResult(persona)
           case Failure(exception) => println(exception)
         }
     }
 
-    private val checkLoginResult:Option[Persona] => Unit = {
+    private val checkLoginResult: Option[Persona] => Unit = {
       case Some(user) if user.isNew =>
-        Utils.userId = user.matricola.head //da vedere
-        Utils.username = user.userName
+        storeLoginData(user.matricola, Some(user.userName))
         myView.firstUserAccess()
-      case Some(user) if user.ruolo == 1 => println("ADMIN")//admin
-      case Some(user) if user.ruolo == 2 => println("RISORSE UMANE")//risorse umane
-      case Some(user) if user.ruolo == 3 => println("CONDUCENTE")//conducente
-      case _ => myView.badLogin
+      case Some(user) if user.ruolo == 1 => println("ADMIN") //admin
+      case Some(user) if user.ruolo == 2 =>
+        storeLoginData(user.matricola, Some(user.userName))
+        myView.humanResourcesAccess()
+      case Some(user) if user.ruolo == 3 =>
+        storeLoginData(user.matricola, Some(user.userName))
+        myView.driverAccess()
+      case _ => myView.badLogin()
     }
+  }
+
+  private def storeLoginData(userId: Option[Int], userName: Option[String]): Unit = {
+    Utils.username = userName
+    Utils.userId = userId
   }
 }

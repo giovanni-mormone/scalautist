@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="fillHolesBox" stylesheets="@../../../../css/component/manager/subcomponent/FillHolesBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox fx:id="tablesBox">
+        <VBox fx:id="terminalsAndTurnsBox">
+            <HBox fx:id="terminalsAndTurnsHeader">
+                <Label fx:id="terminalAndTurnsBoxColumn1"/>
+                <Label fx:id="terminalAndTurnsBoxColumn2"/>
+            </HBox>
+        </VBox>
+        <VBox fx:id="substitutesBox">
+            <HBox fx:id="substitutesHeader">
+                <Label fx:id="substitutesBoxColumn1"/>
+                <Label fx:id="substitutesBoxColumn2"/>
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox>
