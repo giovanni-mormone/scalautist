@@ -8,6 +8,7 @@ import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.stage.Stage
 import view.GoBackView
+import view.fxview.component.login.ChangePasswordParent
 import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.login.ChangePasswordBox
 
@@ -23,23 +24,6 @@ trait ChangePasswordView extends GoBackView{
   def errorChange()
 
   def okChange()
-}
-
-/**
- * @author Giovanni Mormone.
- *
- * A ChangePasswordParent is the container of a [[view.fxview.component.login.ChangePasswordBox]]
- *
- */
-trait ChangePasswordParent{
-  /**
-   * Called to submit the new password chosen by the user. It should be called by a
-   * @param oldPassword
-   *                    The oldPassword submitted by the user.
-   * @param newPassword
-   *                    The newPassword submitted by the user.
-   */
-  def changePass(oldPassword:String, newPassword: String)
 }
 
 /**

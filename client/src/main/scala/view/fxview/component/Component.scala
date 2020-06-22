@@ -27,7 +27,7 @@ trait Component[A] {
    * @param parent
    *               The parent to set.
    */
-  def setParent(parent:A):Unit
+  def setParent(parent:A):Component[A]
 
   /**
    * Disables the component, making it not interactive.
@@ -62,8 +62,10 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
     FXLoader.loadComponent(this,path)
   }
 
-  override def setParent(parent: A): Unit =
+  override def setParent(parent: A): Component[A] = {
     this.parent = parent
+    this
+  }
 
   override def disable(): Unit =
     pane.setDisable(true)
