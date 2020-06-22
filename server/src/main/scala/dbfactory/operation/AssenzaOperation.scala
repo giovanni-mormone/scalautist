@@ -53,18 +53,6 @@ trait AssenzaOperation extends OperationCrud[Assenza]{
    */
   def getAllAbsence(date:Date):Future[Option[List[InfoAbsenceOnDay]]]
 
-  /**
-   * Method which allow update absence of the driver with another driver that contains availability.
-   * may be verified if driver that are received, really contains availability in this idRisultato
-   *
-   * @param idRisultato represent point where absence exist
-   * @param idPersona person that replace the driver absenced
-   * @return Future of Option with status code of operation
-   *         [[messagecodes.StatusCodes.SUCCES_CODE]] if operation of update finish with success
-   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if idRisultato not exist
-   *         [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
-   */
-  def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]
 }
 
 object AssenzaOperation extends AssenzaOperation{
@@ -323,74 +311,4 @@ object AssenzaOperation extends AssenzaOperation{
     case (_,Nil) => None
   }
 
-  override def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]=
-    for{
-       result <- InstanceRisultato.operation().execQueryFilter(risultato=>risultato.id,
-        risultato=>risultato.id===idRisultato)
-       persona <- InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idPersona)
-       finalResult<- (result,persona) match{
-         case (None, _) => Future.successful(Some(StatusCodes.ERROR_CODE1))
-         case (_, None) => Future.successful(Some(StatusCodes.ERROR_CODE2))
-         case (_, _) => update(idRisultato,idPersona)
-      }
-  }yield finalResult
-
-  private def update(idRisultato:Int,idPersona:Int)={
-    InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
-      idPersona).result()
-  }
-
-}
-object tryAbsence extends App{
-  //idRisultato:Int, idTemrinale:Int, idTurno:Int
-  val local = LocalDate.of(2020,6,18)
-
-  def driveravai():Unit={
-    AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
-      case Failure(exception) => println("PRIMO FAIL :C",exception)
-      case Success(value) =>println("STO QUI ssas",value); value.toList.flatten.map(result=>DisponibilitaOperation
-        .allDriverWithAvailabilityForADate(result.idRisultato,result.idTerminale,result.idTurno).onComplete {
-        case Failure(exception) => println("SECONDO FAIL :(",exception)
-        case Success(values) =>println("STO QUI",result); println("STOQUI 2"); println(values);
-          values match {
-            case Some(value) =>value.filter(_.idPersona==12).map(persona=>AssenzaOperation.updateAbsence(result.idRisultato,persona.idPersona).onComplete {
-              case Failure(exception) => println(exception, "NOT AGGIORNATO")
-              case Success(value) =>println(value, "AGGIORNATO");AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
-                case Failure(exception) => println("PRIMO FAIL :C",exception)
-                case Success(value) =>println("NEW ABSENCE",value);}
-            })
-            case None => println("SOY NONE")
-          }
-      })
-    }
-  }
-  //TODO meter que si no tiene requerimiento teorico devuelve NONE
-  //TODO verificar porque devuelve 5 en vez de 3 luego de haber reemplazado
-  // TODO verificar terminales y turno, puede ser que neseciten ser cambiados
-  //TODO para poder filtrar mejor
-  /*
-  nome terminale, turno,idterminale,idturno,idrisultato
- (STO QUI ssas,Some(List(InfoAbsenceOnDay(Florida,Tarda Serata,3,5,391),
- InfoAbsenceOnDay(Cansas,Tarda Mattinata,1,2,18), InfoAbsenceOnDay(Florida,Tarda Serata,3,5,262),
- InfoAbsenceOnDay(Cansas,Tarda Mattinata,1,2,201))))
-
-  //driveravai()
-  AssenzaOperation.getAllAbsence(Date.valueOf(local)).onComplete {
-    case Failure(exception) => println("PRIMO FAIL :C", exception)
-    case Success(value) => println("STO QUI ssas", value)
-  }
- */
-/*
- DisponibilitaOperation
-  .allDriverWithAvailabilityForADate(391,3,5).onComplete {
-  case Failure(exception) => println("SECONDO FAIL :(", exception)
-  case Success(values) => println("STO QUI", values); println("STOQUI 2"); println(values);
-}
-DisponibilitaOperation
-  .allDriverWithAvailabilityForADate(452,3,6).onComplete {
-  case Failure(exception) => println("SECONDO FAIL :(", exception)
-  case Success(values) => println("STO QUI", values); println("STOQUI 2"); println(values);
-}*/
-
-  while(true){}
 }

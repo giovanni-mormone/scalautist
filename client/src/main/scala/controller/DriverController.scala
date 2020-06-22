@@ -56,22 +56,9 @@ object DriverController{
            case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessage("not-found-error")
            case Failure(_)  => myView.showMessage("general-error")*/
     override def drawShiftPanel(): Unit =
-      Future.successful().onComplete {
+      model.getTurniSettimanali(1).onComplete {
         case Failure(_) => myView.showMessage("Error")
-        case Success(value) => myView.drawShiftView(InfoShift(List(
-          ShiftDay(1,"8:00-12:00"),
-          ShiftDay(1,"12:00-16:00"),
-          ShiftDay(2,"8:00-12:00"),
-          ShiftDay(2,"12:00-16:00"),
-          ShiftDay(3,"8:00-12:00"),
-          ShiftDay(3,"12:00-16:00"),
-          ShiftDay(4,"8:00-12:00"),
-          ShiftDay(4,"12:00-16:00"),
-          ShiftDay(5,"8:00-12:00"),
-          ShiftDay(5,"12:00-16:00"),
-          ShiftDay(6,"8:00-12:00"),
-          ShiftDay(6,"12:00-16:00")),
-          Disponibilita(1,"Lunedi","Martedi",Some(1))))
+        case Success(value) => value
       }
 
     override def drawSalaryPanel(): Unit =
