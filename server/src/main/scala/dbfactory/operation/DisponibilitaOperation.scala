@@ -43,6 +43,8 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
    * @return Option of List of Int,String,String where Int-> idDriver, String->name, String->surName
    */
   def allDriverWithAvailabilityForADate(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[Option[List[InfoReplacement]]]
+
+  def verifyIdRisultatoAndTerminalAndShift(idRisultato:Int, idTerminal:Int, idTurno:Int): Future[Option[Int]]
 }
 
 object DisponibilitaOperation extends DisponibilitaOperation{
@@ -87,7 +89,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
    *        [[messagecodes.StatusCodes.ERROR_CODE3]] if idTurno not exist in database
    *
    */
-  private def verifyIdRisultatoAndTerminalAndShift(idRisultato:Int, idTerminal:Int, idTurno:Int): Future[Option[Int]] =
+  override def verifyIdRisultatoAndTerminalAndShift(idRisultato:Int, idTerminal:Int, idTurno:Int): Future[Option[Int]] =
     for {
       existRisultato<-RisultatoOperation.verifyResult(idRisultato)
       existTerminal<- existRisultato.filter(_ != StatusCodes.ERROR_CODE1).map(_=>
@@ -107,7 +109,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
   override def allDriverWithAvailabilityForADate(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[Option[List[InfoReplacement]]] = {
-    verifyIdRisultatoAndTerminalAndShift(idRisultato,idTemrinale,idTurno)
     callOperation(idRisultato, idTemrinale, idTurno).collect{
       case (personWithoutShift, allWithAbsence) =>personWithoutShift.toList.flatten.filter(absence=> !allWithAbsence.toList.flatten
         .contains(absence)
