@@ -5,7 +5,7 @@ import java.sql.Date
 import caseclass.CaseClassDB.{Assenza, Disponibilita, Persona, Presenza, Stipendio, StoricoContratto, Turno}
 
 /**
- * @author Fabian Aspee Encina, Giovanni Mormone
+ * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
  * Object that encapsulates case class diverse of encapsulates in [[caseclass.CaseClassDB]],
  * this is util because [[spray.json]] required this for make serialization of the objects
  */
@@ -154,4 +154,11 @@ object CaseClassHttpMessage {
    * @param cognome
    */
   final case class InfoReplacement(idRisultato:Int,idPersona:Int,nome:String,cognome:String)
+
+  /**
+   * Case class that represent information to find the instance of risultato for absent employee
+   * @param idDriver id of absent employee
+   * @param date date of absence
+   */
+  final case class InfoVacantShift(idDriver: Int, date: String)
 }

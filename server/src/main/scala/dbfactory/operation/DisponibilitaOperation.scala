@@ -14,7 +14,7 @@ import utils.DateConverter._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 /**
- * @author Giovanni Mormone,Fabian Aspee Encina
+ * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
  *
  * Allows to perform operations on the table Disponibilita in the DB
  */

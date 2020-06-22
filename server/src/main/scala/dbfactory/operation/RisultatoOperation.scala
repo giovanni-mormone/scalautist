@@ -13,6 +13,11 @@ import utils.DateConverter
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
+/**
+ * @author Francesco Cassano
+ *
+ * Allows to perform operation on RisultatoSet table
+ */
 trait RisultatoOperation extends OperationCrud[Risultato]{
 
   /**
