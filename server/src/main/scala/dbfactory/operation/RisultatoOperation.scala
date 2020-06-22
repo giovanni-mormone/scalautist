@@ -7,6 +7,7 @@ import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, ShiftDay}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstanceRisultato, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{DisponibilitaTableQuery, PersonaTableQuery, RisultatoTableQuery, TurnoTableQuery}
+import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter
 
@@ -46,6 +47,13 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
 }
 
 object RisultatoOperation extends RisultatoOperation {
+  def verifyResult(idRisultato: Int): Future[Option[Int]] = {
+    select(idRisultato).collect{
+      case Some(_) => Option(StatusCodes.SUCCES_CODE)
+      case None =>Option(StatusCodes.ERROR_CODE1)
+    }
+  }
+
 
   private case class Shift(day: Date, name: String)
 

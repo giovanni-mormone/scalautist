@@ -4,6 +4,7 @@ import caseclass.CaseClassDB.Terminale
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceTerminale
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.TerminaleTable.TerminaleTableRep
+import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,6 +32,13 @@ trait TerminaleOperation extends OperationCrud[Terminale]{
 
 
 object TerminaleOperation extends TerminaleOperation {
+  def verifyTerminal(idTerminal: Int): Future[Option[Int]] = {
+    select(idTerminal).collect {
+      case Some(_) => Option(StatusCodes.SUCCES_CODE)
+      case None => Option(StatusCodes.ERROR_CODE2)
+    }
+  }
+
 
   override def getTermininaliInZona(zonaID:Int): Future[Option[List[Terminale]]] = {
    InstanceTerminale.operation().selectFilter(x => x.zonaId === zonaID)
