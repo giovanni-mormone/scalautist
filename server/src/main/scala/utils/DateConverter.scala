@@ -69,7 +69,7 @@ object DateConverter {
   }
 
   val getDayNumber: Date => Int = date => {
-    dateToCalendar(date).get(Calendar.DAY_OF_WEEK)
+    dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1
   }
 
   private val converter: (Date, Calendar => Calendar) => Date = (date, function) =>{

@@ -3,11 +3,13 @@ package dbfactory.operation
 import java.sql.Date
 import java.time.LocalDate
 
+import dbfactory.util.Helper._
 import caseclass.CaseClassDB.Disponibilita
 import caseclass.CaseClassHttpMessage.InfoReplacement
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstancePersona, InstanceRisultato}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{AssenzaTableQuery, DisponibilitaTableQuery, PersonaTableQuery, StoricoContrattoTableQuery}
+import dbfactory.setting.Table.{AssenzaTableQuery, DisponibilitaTableQuery, PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery}
+import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
@@ -44,14 +46,17 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
 }
 
 object DisponibilitaOperation extends DisponibilitaOperation{
+
     private case class QueryPersonStoricAvail(idPerson:Option[List[Int]],week:Int,giorno:String,idTurno:Int,idTerminale:Int,date:Date)
 
     private object convertToQueryPersonStoricAvail{
+
     private val DEFAULT_YEAR = 0
     private val DEFAULT_MONTH = 0
     private val DEFAULT_DAY = 0
     private val DEFAULT_WEEK = 0
     private val DEFAULT_NAME_DAY = ""
+
     implicit def datToQueryPersonStoricAvail(idPerson:(Option[List[Int]],Option[(Date, Int, String)],Int,Int)):QueryPersonStoricAvail = {
       val (date,week,day) = idPerson._2 match {
         case Some(value) => value
@@ -67,15 +72,43 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   override def insert(element:Disponibilita): Future[Option[Int]] = {
     for{
       disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)
-      result<-disponibilita.map(_=>super.insert(element)) match {
-        case Some(value)=>value
-        case None=>Future.successful(None)
-      }
+      result<-disponibilita.map(_=>super.insert(element)).convert()
     } yield result
   }
 
+  /**
+   *
+   * @param idRisultato represent a row in result table, this contains information per one driver in one determinate shift
+   * @param idTerminal represent terminal where the idRisultato was recorded
+   * @param idTurno shift where idRisultato was recorded
+   * @return Future of Option of Int that represent status operation, the result code that can return is :
+   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if idResult not exist in database
+   *         [[messagecodes.StatusCodes.ERROR_CODE2]]  if idTerminal not exist in database
+   *        [[messagecodes.StatusCodes.ERROR_CODE3]] if idTurno not exist in database
+   *
+   */
+  private def verifyIdRisultatoAndTerminalAndShift(idRisultato:Int, idTerminal:Int, idTurno:Int): Future[Option[Int]] =
+    for {
+      existRisultato<-RisultatoOperation.verifyResult(idRisultato)
+      existTerminal<- existRisultato.filter(_ != StatusCodes.ERROR_CODE1).map(_=>
+        TerminaleOperation.verifyTerminal(idTerminal)).convert()
+      existShift<- existTerminal.filter(_ != StatusCodes.ERROR_CODE2).map(_=>
+        TurnoOperation.verifyShift(idTurno)).convert()
+      result <- verifyResult(existRisultato,existTerminal,existShift)
+    }yield result
+
+  private def verifyResult(existRisultato:Option[Int],existTerminal:Option[Int],existShift:Option[Int]): Future[Option[Int]] =Future{
+    (existRisultato,existTerminal,existShift) match{
+      case (None, None, None) => None
+      case (_, None, None) => existRisultato
+      case (_, _, None) => existTerminal
+      case (_, _, Some(StatusCodes.ERROR_CODE3)) => existShift
+      case (_, _, _) => Option(StatusCodes.SUCCES_CODE)
+    }
+  }
   override def allDriverWithAvailabilityForADate(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[Option[List[InfoReplacement]]] = {
-    callOperation(idRisultato:Int, idTemrinale:Int, idTurno:Int).collect{
+    verifyIdRisultatoAndTerminalAndShift(idRisultato,idTemrinale,idTurno)
+    callOperation(idRisultato, idTemrinale, idTurno).collect{
       case (personWithoutShift, allWithAbsence) =>personWithoutShift.toList.flatten.filter(absence=> !allWithAbsence.toList.flatten
         .contains(absence)
        )
@@ -85,14 +118,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private def callOperation(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[(Option[List[Int]], Option[List[Int]])] =
     for {
       risultato <- selectDateAndCreateDayAndWeek(idRisultato)
-      resultJoinPersonaDis<- risultato.map(value => getPersonWithoutAbsence(idTemrinale,value._1)) match {
-        case Some(value) => value
-        case None =>Future.successful(None)
-      }
-      allWithAbsence<- risultato.map(value => selectAllWithAbsence(value._1)) match {
-        case Some(value) => value
-        case None =>Future.successful(None)
-      }
+      resultJoinPersonaDis<- risultato.map(value => getPersonWithoutAbsence(idTemrinale,value._1)).convert()
+      allWithAbsence<- risultato.map(value => selectAllWithAbsence(value._1)).convert()
       personWithoutShift<- getPersonaWithoutShiftAndAvailability(resultJoinPersonaDis,risultato,idTurno,idTemrinale)
     }yield(personWithoutShift,allWithAbsence)
 
@@ -123,13 +150,15 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       persona<- PersonaTableQuery.tableQuery()
       storico<-StoricoContrattoTableQuery.tableQuery()
       disp<-DisponibilitaTableQuery.tableQuery()
-      if( persona.id===storico.personaId && persona.disponibilitaId===disp.id && persona.id.inSet(dat.idPerson.toList.flatten) &&
+      risultato<-RisultatoTableQuery.tableQuery()
+      if( persona.id===storico.personaId && risultato.personeId===persona.id && risultato.data===dat.date &&
+        persona.disponibilitaId===disp.id && persona.id.inSet(dat.idPerson.toList.flatten) &&
         disp.settimana===dat.week && (disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) &&
         (storico.turnoId=!=dat.idTurno || storico.turnoId1=!=dat.idTurno) && persona.terminaleId===dat.idTerminale
         && (storico.dataFine>dat.date || Some(storico.dataFine).isEmpty)
         && Some(persona.disponibilitaId).isDefined)
     } yield storico.personaId
-    InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(_.distinct))
+    InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons.filter(id=>persons.count(_ == id)==2)).map(_.distinct))
   }
 
   private def selectAllDriverNameAndSurname(idPerson:List[Int],idRisultato:Int): Future[Option[List[InfoReplacement]]] ={
