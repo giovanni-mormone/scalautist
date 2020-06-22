@@ -2,18 +2,18 @@ package dbfactory.operation
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Disponibilita, Risultato, Turno}
+import caseclass.CaseClassDB.{Risultato, Turno}
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, ShiftDay}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstanceRisultato, InstanceTurno}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceRisultato, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{DisponibilitaTableQuery, PersonaTableQuery, RisultatoTableQuery, TurnoTableQuery}
+import dbfactory.setting.Table.{RisultatoTableQuery, TurnoTableQuery}
+import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
-
 trait RisultatoOperation extends OperationCrud[Risultato]{
 
   /**
@@ -39,6 +39,19 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
    *         Future of Option of [[InfoShift]] that contains information on shifts of the week
    */
   def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]]
+
+  /**
+   * Method which allow update absence of the driver with another driver that contains availability.
+   * may be verified if driver that are received, really contains availability in this idRisultato
+   *
+   * @param idRisultato represent point where absence exist
+   * @param idPersona person that replace the driver absenced
+   * @return Future of Option with status code of operation
+   *         [[messagecodes.StatusCodes.SUCCES_CODE]] if operation of update finish with success
+   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if idRisultato not exist
+   *         [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
+   */
+  def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]
 }
 
 object RisultatoOperation extends RisultatoOperation {
@@ -95,5 +108,22 @@ object RisultatoOperation extends RisultatoOperation {
       case Some(shifts) => Some(shifts.map(shift => Shift(shift._1, shift._2)))
       case _ => None 
     }
+  }
+
+  override def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]=
+    for{
+      result <- InstanceRisultato.operation().execQueryFilter(risultato=>risultato.id,
+        risultato=>risultato.id===idRisultato)
+      persona <- InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idPersona)
+      finalResult<- (result,persona) match{
+        case (None, _) => Future.successful(Some(StatusCodes.ERROR_CODE1))
+        case (_, None) => Future.successful(Some(StatusCodes.ERROR_CODE2))
+        case (_, _) => update(idRisultato,idPersona)
+      }
+    }yield finalResult
+
+  private def update(idRisultato:Int,idPersona:Int)={
+    InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
+      idPersona).result()
   }
 }

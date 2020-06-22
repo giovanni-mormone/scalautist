@@ -1,7 +1,7 @@
 package testdboperation.assenza
 
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
-import dbfactory.operation.{AssenzaOperation, DisponibilitaOperation}
+import dbfactory.operation.{AssenzaOperation, DisponibilitaOperation, RisultatoOperation}
 import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
 import utils.StartServer2
 
@@ -25,7 +25,7 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
     getAllAvailability map {allAvailability =>  assert(allAvailability.head.length==6)}
   }
   it should "return Some(1) when Driver absence is updated in risultato table" in {
-    val updateAbsence: Future[Option[Int]] = AssenzaOperation.updateAbsence(idRisultatoForUpdate,idNewPerson)
+    val updateAbsence: Future[Option[Int]] = RisultatoOperation.updateAbsence(idRisultatoForUpdate,idNewPerson)
     updateAbsence map {update =>println(update);  assert(update.contains(1))}
   }
   it should "return list length 6 next to update absence with date 20200618" in {
@@ -42,11 +42,11 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
     getAllAbsence map {allAbsence =>  assert(allAbsence.head.length==6)}
   }
   it should "return StatusCodes.ERROR_CODE1 if idRisultato not exist" in {
-    val idResultNotExist:Future[Option[Int]] = AssenzaOperation.updateAbsence(idRisultatoForUpdateNotExist,idNewPerson)
+    val idResultNotExist:Future[Option[Int]] = RisultatoOperation.updateAbsence(idRisultatoForUpdateNotExist,idNewPerson)
     idResultNotExist map {result => assert(result.contains(-1))}
   }
   it should "return StatusCodes.ERROR_CODE2 if idPersona not exist" in {
-    val idPersonNotExist: Future[Option[Int]] = AssenzaOperation.updateAbsence(idRisultatoForUpdate,idNewPersonNotExist)
+    val idPersonNotExist: Future[Option[Int]] = RisultatoOperation.updateAbsence(idRisultatoForUpdate,idNewPersonNotExist)
     idPersonNotExist map {person => assert(person.contains(-2))}
   }
   it should "return StatusCodes.ERROR_CODE1 if idResult not exist in database" in {
