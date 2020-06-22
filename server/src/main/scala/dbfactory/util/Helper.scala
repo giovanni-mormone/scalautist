@@ -1,10 +1,10 @@
 package dbfactory.util
 import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.Persona
+import dbfactory.operation.AssenzaOperation.{NOT_RISULTATO_ID, NOT_RISULTATO_PERSONE_ID, NOT_RISULTATO_TURNO_ID}
 import dbfactory.table.PersonaTable.PersonaTableRep
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import ExecutionContext.Implicits.global
 object Helper {
   val EMPTY_STRING: String =""
@@ -23,5 +23,20 @@ object Helper {
       case 0 => None
       case value => Some(value)
     })
+  }
+  implicit class matchCaseOption[A](f:Option[A]){
+    def result(): Option[A] = f match{
+      case Some(value)=>Some(value)
+      case None =>None
+    }
+  }
+  implicit class matchCaseFuture[A](f:Future[Option[A]]){
+    def result(): Future[Option[A]] =  f.collect(t=>t.result())
+  }
+  implicit class convertOptionFutureToFuture[A](f:Option[Future[Option[A]]]){
+    def convert(): Future[Option[A]] = f match {
+      case Some(value) => value
+      case None =>Future.successful(None)
+    }
   }
 }
