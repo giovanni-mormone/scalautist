@@ -231,8 +231,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
 
   private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date) = {
     map.keySet.toList.sortBy(date=>date).dropWhile(date=>{
-      println( date)
-      println( date.compareTo(dateDay)<0)
       date.compareTo(dateDay)<0
     })
   }
@@ -277,8 +275,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
 
   private def finalResponse(result:Option[List[String]]): Option[List[String]] ={
     result match {
-      case Some(List())=>None
-      case Some(value) if value.length==1=>None
+      case Some(List() | List(_))=>None
       case None => None
       case _ => result
     }

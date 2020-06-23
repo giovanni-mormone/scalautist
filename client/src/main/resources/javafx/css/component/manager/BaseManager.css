@@ -1,0 +1,13 @@
+#baseManager{
+    -fx-alignment: center;
+    -fx-min-height: 700;
+    -fx-fill-width: true;
+    -fx-min-width: 800;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+#optionsBox{
+    -fx-spacing:10;
+    -fx-alignment: center;
+}
