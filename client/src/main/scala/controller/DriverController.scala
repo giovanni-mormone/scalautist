@@ -37,28 +37,16 @@ object DriverController{
   private class DriverControllerImpl() extends DriverController {
     private val model = DriverModel()
 
-    /* case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessage("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessage("not-found-error")
-        case Failure(_)  => myView.showMessage("general-error")*/
     override def drawHomePanel(): Unit =
-      Future.successful().onComplete {
-
+      model.getTurniInDay(1).onComplete {
       case Failure(_) => myView.showMessage("Error")
-      case Success(value) => myView.drawHomeView(InfoHome(
-        List(
-          Turno("Seconda Mattinata","8:00-12:00",40.0,Some(1)),
-          Turno("Primo Pomeriggio","12:00-16:00",40.0,Some(1))),
-        Disponibilita(1,"Lunedi","Martedi",Some(1))))
+      case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
     }
-    /* case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
-           case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessage("bad-request-error")
-           case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessage("not-found-error")
-           case Failure(_)  => myView.showMessage("general-error")*/
+
     override def drawShiftPanel(): Unit =
       model.getTurniSettimanali(1).onComplete {
         case Failure(_) => myView.showMessage("Error")
-        case Success(value) => value
+        case Success(value) =>value.payload.foreach(result=> myView.drawShiftView(result))
       }
 
     override def drawSalaryPanel(): Unit =
