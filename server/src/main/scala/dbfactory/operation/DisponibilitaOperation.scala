@@ -61,6 +61,9 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
 
   /**
    *  Method that having idUser and data return day where driver can have availability in the week
+   *  if driver have assenza in the same day when he open app and assenza finish next week, so this driver
+   *  can't have availability, if driver have absence in various day within week, then this driver can have
+   *  availability only in days without absence, absence is considered illness and holidays
    * @param idUser represent a driver in database
    * @param date represent any date
    * @return Future of Option of List of String with all day where drive can have availability
@@ -88,6 +91,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private val IS_FISSO = true
   private val GIORNI_SETTIMANA=7
   private val UNION=2
+  private val SHIFT_IN_DAY=2
   private object convertToQueryPersonStoricAvail{
 
     private val DEFAULT_YEAR = 0
@@ -184,7 +188,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
         && (storico.dataFine>dat.date || Some(storico.dataFine).isEmpty)
         && Some(persona.disponibilitaId).isDefined)
     } yield storico.personaId
-    InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons.filter(id=>persons.count(_ == id)==2)).map(_.distinct))
+    InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons
+      .filter(id=>persons.count(_ == id)==SHIFT_IN_DAY)).map(_.distinct))
   }
 
   private def selectAllDriverNameAndSurname(idPerson:List[Int],idRisultato:Int): Future[Option[List[InfoReplacement]]] ={
@@ -219,6 +224,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       case map =>deleteDateBefore(map,date)
     }
   }
+
   private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date) = {
     map.keySet.toList.sortBy(date=>date).dropWhile(date=>{
       println( date)
@@ -226,13 +232,17 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       date.compareTo(dateDay)<0
     })
   }
+
   private def operationWhenExistAbsence(listDate:List[Date],idUser:Int,date:Date): Future[Option[List[String]]] ={
     listDate match {
       case element if element.length==GIORNI_SETTIMANA=> Future.successful(None)
       case element if element.length<=GIORNI_SETTIMANA=>
-        getDisponibilitaName(idUser,date).map(_.map(days=>{
-           listDate.map(nameOfDay).filter(day=>days.contains(day))
-        }))
+        getDisponibilitaName(idUser,date).map(_.map(days => {
+          listDate.map(nameOfDay).filter(day => days.contains(day))
+        }) match {
+          case Some(List()) => None
+          case value =>value
+        })
       case Nil =>getDisponibilitaName(idUser,date)
     }
   }
@@ -258,7 +268,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       .flatMap {
         case Some(value) => operationWhenExistAbsence(deleteDayAbsence(value,date),idUser,date)
         case None =>  getDisponibilitaName(idUser,date)
-
       }
   }
 
@@ -267,17 +276,16 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       .execQueryFilter(result=>result.data,result=>result.data>=initDate && result.data<=finishDate && result.personeId===idUser)
       .collect(result=>  Option(result.toList.flatten.distinct.map(nameOfDay)))
   }
+
 //TODO  verificar inserir o actualziar
   override def updateDisponibilita(element: Disponibilita,idUser:Int): Future[Option[Int]] = {
         InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idUser).flatMap{
           case Some(_) =>InstanceDisponibilita.operation().execQueryFilter(disp=>disp.id,disp=>disp.settimana===element.settimana &&
             (disp.giorno1===element.giorno1 && disp.giorno2===element.giorno2) ||
-            (disp.giorno1===element.giorno2 && disp.giorno2===element.giorno1)).flatMap(result=>
-            InstancePersona.operation()
-              .execQueryUpdate(persona=>persona.disponibilitaId,persona=>persona.id===idUser,result.toList.flatten.headOption))
-            .collect {
-              case Some(value) => Some(value)
-              case None =>Some(StatusCodes.ERROR_CODE1)
+            (disp.giorno1===element.giorno2 && disp.giorno2===element.giorno1)).flatMap {
+            case Some(value) if value==1 => InstancePersona.operation()
+                .execQueryUpdate(persona=>persona.disponibilitaId,persona=>persona.id===idUser,value.headOption)
+            case None =>Future.successful(Some(StatusCodes.ERROR_CODE1))
           }
           case None =>Future.successful(Some(StatusCodes.NOT_FOUND))
         }
