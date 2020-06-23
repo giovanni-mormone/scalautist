@@ -40,6 +40,8 @@ trait LoginView extends BaseView{
 
   def humanResourcesAccess(): Unit
 
+  def managerAccess(): Unit
+
 
 }
 
@@ -105,6 +107,13 @@ object LoginView{
     private def stopLoading():Unit = {
       loginBox.enable()
       pane.getChildren.remove(FXHelperFactory.loadingBox)
+    }
+
+    override def managerAccess(): Unit = {
+      Platform.runLater(() =>{
+        stopLoading()
+        ManagerView(myStage)
+      })
     }
   }
 

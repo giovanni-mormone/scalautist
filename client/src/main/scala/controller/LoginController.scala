@@ -54,7 +54,9 @@ object LoginController {
       case Some(user) if user.isNew =>
         storeLoginData(user.matricola, Some(user.userName))
         myView.firstUserAccess()
-      case Some(user) if user.ruolo == 1 => println("ADMIN") //admin
+      case Some(user) if user.ruolo == 1 =>
+        storeLoginData(user.matricola, Some(user.userName))
+        myView.managerAccess()
       case Some(user) if user.ruolo == 2 =>
         storeLoginData(user.matricola, Some(user.userName))
         myView.humanResourcesAccess()
