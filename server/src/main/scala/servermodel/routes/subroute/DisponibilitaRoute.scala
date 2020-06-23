@@ -17,7 +17,7 @@ object DisponibilitaRoute {
   def getAvailability: Route =
     post {
       entity(as[Request[(Int, Dates)]]) {
-        case Request(Some(available)) => onComplete(DisponibilitaOperation.getGiorniDisponibilita(available._1, available._2)){ //todo metodo nuovo
+        case Request(Some(available)) => onComplete(DisponibilitaOperation.getGiorniDisponibilita(available._1, available._2.date)){
           case Success(Some(days)) => complete((StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(days))))
           case t => anotherSuccessAndFailure(t)
         }
