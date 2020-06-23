@@ -2,6 +2,7 @@ package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
 import caseclass.CaseClassDB.Assenza
+import caseclass.CaseClassHttpMessage.Dates
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -57,6 +58,21 @@ object MasterRouteAssenza extends Directives{
       absenceInYearForPerson()
     }
 
+  @Path("/allabsences")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Get all absent employee", description = "Get all absent employee in a chosen date",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Dates])))),
+    responses = Array(
+      new ApiResponse(responseCode = "201", description = "Get all absent people in chosen date"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def absenceOnDay(): Route =
+    path("allabsences") {
+      absenceInYearForPerson()
+    }
+
   val routeAssenza: Route =
-    concat(getHolidayByPerson,addAbsencePersona(),getAbsenceInYearForPerson)
+    concat(getHolidayByPerson,addAbsencePersona(),getAbsenceInYearForPerson, absenceOnDay())
 }

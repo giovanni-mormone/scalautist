@@ -1,6 +1,7 @@
 package model.entity
 
 import java.sql.Date
+import java.util.Calendar
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
@@ -49,6 +50,16 @@ trait DriverModel {
    * @return
    */
   def getTurniSettimanali(userId: Int):  Future[Response[InfoShift]]
+
+  /**
+   * Method that obtains the information about the disponibilita in a week
+   *
+   * @param userId
+   *               id employee to control
+   * @return
+   *         List of day of possible extra
+   */
+  def getDisponibilita(userId: Int): Future[Response[List[String]]]
 }
 
 
@@ -79,6 +90,11 @@ object DriverModel {
     override def getTurniSettimanali(userId: Int): Future[Response[InfoShift]] = {
       val request = Post(getURI("getturniinweek"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoShift]])
+    }
+
+    override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
+      val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(new Date(System.currentTimeMillis()))))
+      callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
   }
 

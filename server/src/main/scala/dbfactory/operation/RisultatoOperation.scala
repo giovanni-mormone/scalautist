@@ -14,6 +14,12 @@ import utils.DateConverter
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
+
+/**
+ * @author Francesco Cassano
+ *
+ * Allows to perform operation on RisultatoSet table
+ */
 trait RisultatoOperation extends OperationCrud[Risultato]{
 
   /**
@@ -106,7 +112,7 @@ object RisultatoOperation extends RisultatoOperation {
 
     InstanceRisultato.operation().execJoin(filter).collect{
       case Some(shifts) => Some(shifts.map(shift => Shift(shift._1, shift._2)))
-      case _ => None 
+      case _ => None
     }
   }
 
