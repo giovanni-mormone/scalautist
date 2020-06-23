@@ -40,8 +40,6 @@ trait DriverView extends DialogView{
    */
   def informationSalary(information:StipendioInformations):Unit
 
-  def drawHomePage(): Unit
-
   def drawDisponibilitaPanel(days: List[String]): Unit
 
   def disponibilityInserted(): Unit
@@ -75,6 +73,7 @@ object DriverView {
       myController.setView(this)
       driverHome = DriverHome()
       driverHome.setParent(this)
+      pane.getChildren.add(driverHome.pane)
       myController.startupDriverCheck()
     }
 
@@ -111,9 +110,6 @@ object DriverView {
       })
     }
 
-    override def drawHomePage(): Unit =
-      Platform.runLater(() => pane.getChildren.add(driverHome.pane))
-
     override def drawDisponibilitaPanel(days: List[String]): Unit =
       Platform.runLater(() => {
         modal = Modal[ModalDisponibilitaParent, Component[ModalDisponibilitaParent], DriverModalBoxParent](myStage, this, ModalDisponibilita(days), closable = false)
@@ -129,7 +125,6 @@ object DriverView {
       Platform.runLater(()=> {
         modal.showMessage(generalResources.getResource("disponibilita-inserted"))
         modal.close()
-        drawHomePage()
         myController.drawHomePanel()
       })
     }
