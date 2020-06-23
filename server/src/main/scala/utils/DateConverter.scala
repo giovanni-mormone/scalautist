@@ -1,8 +1,13 @@
 package utils
 
 import java.sql.Date
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
+
+import utils.DateConverter.{createListDay, createListDayBetween, getEndDayWeek}
+
+import scala.collection.immutable.{AbstractMap, SeqMap, SortedMap}
 
 /**
  * Helper object to work with [[java.sql.Date]]
@@ -71,7 +76,16 @@ object DateConverter {
   val getDayNumber: Date => Int = date => {
     dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1
   }
-
+  val getFirstDayWeek:Date=>Date=date=>{
+    val calendar = dateToCalendar(date)
+    calendar.set(Calendar.DAY_OF_WEEK,calendar.getFirstDayOfWeek+1)
+    new Date(calendar.getTimeInMillis)
+  }
+  val getEndDayWeek:Date=>Date=date=>{
+    val calendar = dateToCalendar(getFirstDayWeek(date))
+    calendar.add(Calendar.DATE,6)
+    new Date(calendar.getTimeInMillis)
+  }
   private val converter: (Date, Calendar => Calendar) => Date = (date, function) =>{
     var calendar = dateToCalendar(date)
     calendar = function(calendar)
@@ -81,6 +95,27 @@ object DateConverter {
   val nameOfDay:Date=>String = date=>{
     val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
     days(dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1)
+  }
+
+  val createListDay:Date=>List[Date]=dateList=>{
+    val calendar = dateToCalendar(dateList)
+    (0 to 6).toList.map(day=>{
+      calendar.setTime(getFirstDayWeek(dateList))
+      getDay(calendar,day)
+    })
+  }
+  val createListDayBetween:(Date,Date)=>List[Date]=(firstDate,endDate)=>{
+      createListBetween(firstDate,endDate,List.empty)
+  }
+  private val createListBetween:(Date,Date,List[Date])=>List[Date]={
+    case (firstDate,endDate,list) if firstDate.compareTo(endDate)<0=>
+      val calendar = dateToCalendar(firstDate)
+      createListBetween(getDay(calendar,1),endDate,list:+getDay(calendar,-1))
+    case (firstDate,endDate,list) if firstDate.compareTo(endDate)==0=>list:+endDate
+  }
+  private val getDay:(Calendar,Int)=>Date=(calendar,day)=>{
+    calendar.add(Calendar.DATE,day)
+    new Date(calendar.getTimeInMillis)
   }
 
   private val dateToCalendar:Date=>Calendar=date=>{
