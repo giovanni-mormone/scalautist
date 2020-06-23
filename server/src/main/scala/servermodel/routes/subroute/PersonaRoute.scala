@@ -8,14 +8,13 @@ import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage._
 import dbfactory.operation.PersonaOperation
 import jsonmessages.JsonFormats._
-import servermodel.routes.exception.RouteException
-import servermodel.routes.exception.SuccessAndFailure._
 import messagecodes.{StatusCodes => statusCodes}
+import servermodel.routes.exception.SuccessAndFailure._
 
 import scala.util.Success
 
 /**
- * @author Francesco Cassano
+ * @author Francesco Cassano, Fabian Aspee
  * PersonaRoute is an object that manage methods that act on the persona entity
  */
 object PersonaRoute{

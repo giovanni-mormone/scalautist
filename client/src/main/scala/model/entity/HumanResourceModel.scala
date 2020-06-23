@@ -1,7 +1,6 @@
 package model.entity
 
 import java.sql.Date
-import java.util.Calendar
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest

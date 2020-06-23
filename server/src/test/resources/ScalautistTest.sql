@@ -1143,7 +1143,6 @@ INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinari
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1090, N'Venerdi', N'Sabato', 52)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1091, N'Venerdi', N'Domenica', 52)
 INSERT INTO [dbo].[DisponibilitaStraordinarioSets] ([IdDisponibilitaStraordinario], [Giorno1], [Giorno2], [Settimana]) VALUES (1092, N'Sabato', N'Domenica', 52)
-
 SET IDENTITY_INSERT [dbo].[DisponibilitaStraordinarioSets] OFF
 
 --//DISPONIBILITA
