@@ -5,8 +5,9 @@ import java.util.ResourceBundle
 
 import javafx.stage.Stage
 import view.DialogView
-import view.fxview.AbstractFXModalView
+import view.fxview.{AbstractFXModalView, FXHelperFactory}
 import view.fxview.component.Component
+import view.fxview.util.ResourceBundleUtil._
 
 /**
  * @author Francesco Cassano
@@ -14,6 +15,10 @@ import view.fxview.component.Component
  * Interface to create modal. It Implements [[view.DialogView]]
  */
 trait Modal extends DialogView {
+
+  def startLoading(): Unit
+
+  def endLoading(): Unit
 }
 
 /**
@@ -22,8 +27,8 @@ trait Modal extends DialogView {
 */
 object Modal {
 
-  def apply[A <: ModalParent, B <: Component[A], C <: A](stage: Stage, caller: C, internalPane: B): Modal =
-    new ModalImpl[A, B, C](stage, caller, internalPane)
+  def apply[A <: ModalParent, B <: Component[A], C <: A](stage: Stage, caller: C, internalPane: B, closable: Boolean = true): Modal =
+    new ModalImpl[A, B, C](stage, caller, internalPane,closable)
 
   /**
    * @author Francesco Cassano
@@ -43,10 +48,11 @@ object Modal {
    * @tparam C
    *           Generic type that implements all modal parents methods
    */
-  private class ModalImpl[A <: ModalParent, B <: Component[A], C <: A](stage: Stage, caller: C, internalPane: B)
+  private class ModalImpl[A <: ModalParent, B <: Component[A], C <: A](stage: Stage, caller: C, internalPane: B, closable: Boolean)
     extends AbstractFXModalView(stage: Stage) with Modal {
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
+      super.initialize(location,resources)
       drawChild()
     }
 
@@ -57,13 +63,30 @@ object Modal {
 
     override def showMessage(message: String): Unit = {
       super.showMessage(message)
-      this.close()
+      if (closable) this.close()
     }
 
     override def close(): Unit = {
       myStage.close()
     }
+
+    myStage.setOnCloseRequest(e => if (!closable) {
+      e.consume()
+      showMessage(generalResources.getResource("not-closable-modal"))
+    })
+
+    override def startLoading(): Unit = {
+      pane.getChildren.add(FXHelperFactory.loadingBox)
+      internalPane.disable()
+    }
+
+    override def endLoading(): Unit = {
+      pane.getChildren.remove(FXHelperFactory.loadingBox)
+      internalPane.enable()
+    }
   }
+
+
 }
 
 

@@ -31,6 +31,10 @@ trait DriverController  extends AbstractController[DriverView] {
    * @param idSalary identifies a salary into database, this salary must be exist
    */
   def drawInfoSalary(idSalary:Int):Unit
+
+  def startupDriverCheck(): Unit
+
+  def sendDisponibility(day1: String, day2: String): Unit
 }
 object DriverController{
   def apply(): DriverController = new DriverControllerImpl()
@@ -88,6 +92,17 @@ object DriverController{
         case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
         case Success(Response(_, payload)) =>payload.foreach(result=>myView.informationSalary(result))
       }
+
+    override def startupDriverCheck(): Unit = {
+      //model?
+      val a = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato","Domenica")
+      myView.drawDisponibilitaPanel(a)
+      //myView.drawHomePage()
+    }
+
+    override def sendDisponibility(day1: String, day2: String): Unit =
+      //model
+    myView.disponibilityInserted()
   }
 
 }

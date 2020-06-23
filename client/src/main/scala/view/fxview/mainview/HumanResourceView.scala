@@ -157,7 +157,6 @@ object HumanResourceView {
     private var modalResource: Modal = _
     private var hrHome: HRHome = _
     private var popup: Popup = _
-    private var resourceBundle: ResourceBundle = _
 
     /**
      * Closes the view.
@@ -166,7 +165,6 @@ object HumanResourceView {
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      resourceBundle = resources
       myController = HumanResourceController()
       myController.setView(this)
       homeView()
@@ -312,7 +310,7 @@ object HumanResourceView {
       Platform.runLater(() => {
         homeView()
         popup = new Popup(myStage)
-        popup.showMessage(resourceBundle.getString(className + "-" + message))
+        popup.showMessage(generalResources.getString(className + "-" + message))
       })
       
     override def errorMessage(message: String): Unit = showMessage(message)

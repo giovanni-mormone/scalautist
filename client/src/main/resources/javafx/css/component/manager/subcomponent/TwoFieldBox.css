@@ -1,0 +1,8 @@
+#baseBox{
+    -fx-spacing: 100;
+    -fx-padding: 10 0 0 50;
+}
+
+#baseBox:hover{
+    -fx-background-color: red;
+}
