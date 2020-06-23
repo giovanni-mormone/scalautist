@@ -36,7 +36,7 @@ object MasterRouteDisponibilita extends Directives {
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
   @Operation(summary = "Return possible days to overtime", description = "Return possible days to assign availability to overtime",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int)])))),
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Dates)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "OK"),
       new ApiResponse (responseCode = "400", description = "Bad Request"),

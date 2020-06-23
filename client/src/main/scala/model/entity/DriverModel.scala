@@ -93,8 +93,7 @@ object DriverModel {
     }
 
     override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
-      val week: Int = Calendar.getInstance().getWeekYear
-      val request = Post(getURI("getdisponibilitainweek"), transform(userId, week))
+      val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(new Date(System.currentTimeMillis()))))
       callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
   }
