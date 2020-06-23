@@ -52,4 +52,25 @@ class TestDisponibilita  extends  AsyncFlatSpec with BeforeAndAfterEach with Sta
       .updateDisponibilita(disponibilitaWithError,idUserExist)
     updateAvailability map {update =>assert(update.contains(StatusCodes.ERROR_CODE1))}
   }
+  it should "return Some(1) if update finish with success" in {
+    val updateAvailability: Future[Option[Int]] = DisponibilitaOperation
+      .updateDisponibilita(disponibilita,idUserExist)
+    updateAvailability map {update =>assert(update.contains(StatusCodes.SUCCES_CODE))}
+  }
+  it should "return None if day is Sunday" in {
+    val availabilitySunday: Future[Option[List[String]]] = DisponibilitaOperation
+      .getGiorniDisponibilita(idUserExist,dateSunday)
+    availabilitySunday map {availability =>assert(availability.isEmpty)}
+  }
+  it should "return None if day is Saturday" in {
+    val availabilitySaturday: Future[Option[List[String]]] = DisponibilitaOperation
+      .getGiorniDisponibilita(idUserExist,dateSaturday)
+    availabilitySaturday map {availability =>assert(availability.isEmpty)}
+  }
+
+  it should "return None if driver contains only one day for availability" in {
+    val availabilitySaturday: Future[Option[List[String]]] = DisponibilitaOperation
+      .getGiorniDisponibilita(idUserWithOneDay,datInit)
+    availabilitySaturday map {availability =>assert(availability.isEmpty)}
+  }
 }

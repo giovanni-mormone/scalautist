@@ -38,19 +38,19 @@ object DriverController{
     private val model = DriverModel()
 
     override def drawHomePanel(): Unit =
-      model.getTurniInDay(1).onComplete {
+      model.getTurniInDay(Utils.userId.head).onComplete {
       case Failure(_) => myView.showMessage("Error")
       case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
     }
 
     override def drawShiftPanel(): Unit =
-      model.getTurniSettimanali(1).onComplete {
+      model.getTurniSettimanali(Utils.userId.head).onComplete {
         case Failure(_) => myView.showMessage("Error")
         case Success(value) =>value.payload.foreach(result=> myView.drawShiftView(result))
       }
 
     override def drawSalaryPanel(): Unit =
-      model.getSalary(5) onComplete {
+      model.getSalary(Utils.userId.head) onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
         case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.messageErrorSalary("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
