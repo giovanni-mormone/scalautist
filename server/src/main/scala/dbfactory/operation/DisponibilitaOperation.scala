@@ -170,7 +170,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  override def getDisponibilita(idUser: Int, week: Int = getWeekNumber(Date.valueOf(LocalDate.now()))): Future[Option[Disponibilita]] = {
+  override def getDisponibilita(idUser: Int, week: Int): Future[Option[Disponibilita]] = {
     val filter = for {
       disponibilita <- PersonaTableQuery.tableQuery() join DisponibilitaTableQuery.tableQuery() on (_.disponibilitaId === _.id)
                       if disponibilita._2.settimana === week && disponibilita._1.id === idUser

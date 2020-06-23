@@ -49,7 +49,11 @@ object AssenzaRoute{
   def absenceOnDay(): Route =
     post{
       entity(as[Request[Dates]]) {
-        case Request(Some)
+        case Request(Some(date)) => onComplete(AssenzaOperation.getAllAbsence(date.date)){
+          case Success(Some(absents)) => complete(StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(absents)))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
       }
     }
 }
