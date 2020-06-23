@@ -73,4 +73,10 @@ class TestDisponibilita  extends  AsyncFlatSpec with BeforeAndAfterEach with Sta
       .getGiorniDisponibilita(idUserWithOneDay,datInit)
     availabilitySaturday map {availability =>assert(availability.isEmpty)}
   }
+
+  it should "return None if contract of the driver init next 18/06/2020" in {
+    val availabilitySaturday: Future[Option[List[String]]] = DisponibilitaOperation
+      .getGiorniDisponibilita(idUserWithContractNotEnable,datInit)
+    availabilitySaturday map {availability =>assert(availability.isEmpty)}
+  }
 }

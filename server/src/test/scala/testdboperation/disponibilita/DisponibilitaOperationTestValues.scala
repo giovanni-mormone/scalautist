@@ -26,4 +26,5 @@ object DisponibilitaOperationTestValues {
   val dateSaturday:Date= Date.valueOf(LocalDate.of(2020,6,20))
   val idUserWithOneDay=21
   val datInit:Date= Date.valueOf(LocalDate.of(2020,6,18))
+  val idUserWithContractNotEnable=22
 }

@@ -179,7 +179,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(_.distinct))
   }
 
-  def getPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail): Future[Option[List[Int]]] ={
+  private def getPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail): Future[Option[List[Int]]] ={
     val joinQuery = for {
       persona<- PersonaTableQuery.tableQuery()
       storico<-StoricoContrattoTableQuery.tableQuery()
@@ -190,7 +190,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
         disp.settimana===dat.week && (disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) &&
         (storico.turnoId=!=dat.idTurno || storico.turnoId1=!=dat.idTurno) && persona.terminaleId===dat.idTerminale
         && (storico.dataFine>dat.date || Some(storico.dataFine).isEmpty)
-        && Some(persona.disponibilitaId).isDefined)
+        && Some(persona.disponibilitaId).isDefined && storico.dataInizio<=dat.date && storico.dataFine>=dat.date)
     } yield storico.personaId
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons
       .filter(id=>persons.count(_ == id)==SHIFT_IN_DAY)).map(_.distinct))
@@ -250,7 +250,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     val join = for{
       contratto<- ContrattoTableQuery.tableQuery()
       storico <- StoricoContrattoTableQuery.tableQuery()
-      if contratto.id===storico.contrattoId && contratto.turnoFisso===IS_FISSO && storico.personaId===idUser
+      if(contratto.id===storico.contrattoId && (contratto.turnoFisso===IS_FISSO || (storico.dataInizio>date || storico.dataFine<date))
+      && storico.personaId===idUser)
     }yield contratto.turnoFisso
     InstanceStoricoContratto.operation().execJoin(join).flatMap {
       case Some(_) => DEFAULT_RESPONSE
