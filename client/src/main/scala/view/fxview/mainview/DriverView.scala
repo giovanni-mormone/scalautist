@@ -44,7 +44,8 @@ trait DriverView extends DialogView{
 
   def disponibilityInserted(): Unit
 
-  def messageErrorSalary(message:String):Unit
+  def showMessageError(message: String): Unit
+
 }
 object DriverView {
   def apply(stage: Stage): DriverView = new DriverViewHomeFX(stage)
@@ -103,9 +104,9 @@ object DriverView {
       Platform.runLater(() => driverHome.informationSalary(information))
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
-    override def messageErrorSalary(message: String): Unit = {
+    override def showMessageError(message: String): Unit = {
       Platform.runLater(() => {
-        super.showMessage(generalResources.getResource(message))
+        super.showMessageFromKey(message)
         driverHome.stopLoading()
       })
     }

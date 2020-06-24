@@ -38,33 +38,33 @@ object ManagerController {
 
       model.allAbsences().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) => payload.foreach(result => myView.drawAbsence(result))
-        case Success(Response(StatusCodes.NOT_FOUND, _)) => print("ok")
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => print("bad requ")
-        case Failure(_) => print("no")
+        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.showMessageFromKey("no-absences-day")
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
       }
     }
 
     override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
       model.extraAvailability(idTerminale,idTurno,idRisultato).onComplete{
-        case Success(Response(StatusCodes.ERROR_CODE1,_)) => print("res no in db")
-        case Success(Response(StatusCodes.ERROR_CODE2,_)) => print("ter no in db")
-        case Success(Response(StatusCodes.ERROR_CODE3,_)) => print("tur no in db")
-        case Success(Response(StatusCodes.NOT_FOUND,_)) => print("no disp")
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("result-error")
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => myView.showMessageFromKey("terminal-error")
+        case Success(Response(StatusCodes.ERROR_CODE3,_)) => myView.showMessageFromKey("turn-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("no-replacement-error")
         case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => print("bad requ")
-        case Failure(e) => print(e)
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(e) => myView.showMessageFromKey("general-error")
       }
     }
 
     override def replacementSelected(idRisultato: Int, idPersona: Int): Unit = {
       model.replaceShift(idRisultato,idPersona).onComplete{
-        case Success(Response(StatusCodes.ERROR_CODE1,_)) => print("res no in db")
-        case Success(Response(StatusCodes.ERROR_CODE2,_)) => print("pers no in db")
-        case Success(Response(StatusCodes.SUCCES_CODE,payload)) =>
-          print("SOSTITUITO")
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("result-error")
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => myView.showMessageFromKey("driver-error")
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
+          myView.showMessageFromKey("replaced-driver")
           dataToAbsencePanel()
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => print("bad requ")
-        case Failure(e) => print(e)
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(e) => myView.showMessageFromKey("general-error")
       }
     }
   }

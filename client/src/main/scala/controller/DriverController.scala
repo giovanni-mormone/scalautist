@@ -56,22 +56,22 @@ object DriverController{
     override def drawSalaryPanel(): Unit =
       model.getSalary(Utils.userId.head) onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.messageErrorSalary("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
-        case Failure(_)  => myView.messageErrorSalary("general-error")
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessageError("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
+        case Failure(_)  => myView.showMessageError("general-error")
       }
     override def drawInfoSalary(idSalary: Int): Unit =
       model.getInfoForSalary(idSalary).onComplete {
-        case Failure(_)  => myView.messageErrorSalary("general-error")
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.messageErrorSalary("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
+        case Failure(_)  => myView.showMessageError("general-error")
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessageError("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
         case Success(Response(_, payload)) =>payload.foreach(result=>myView.informationSalary(result))
       }
 
     override def startupDriverCheck(): Unit = {
       Utils.userId.foreach(e => model.getDisponibilita(e).onComplete{
-        case Failure(_)  => print("Fail")
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=> print("BadRe")
+        case Failure(_)  => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=> myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_))=> drawHomePanel()
         case Success(Response(_, payload)) =>payload.foreach(result=>myView.drawDisponibilitaPanel(result))
       })
