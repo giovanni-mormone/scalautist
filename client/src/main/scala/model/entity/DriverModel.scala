@@ -8,7 +8,7 @@ import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Disponibilita, Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.{Dates, InfoHome, InfoShift, Response, StipendioInformations}
+import caseclass.CaseClassHttpMessage.{Dates, Id, InfoHome, InfoShift, Response, StipendioInformations}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
@@ -70,7 +70,7 @@ trait DriverModel {
    * @param giorno2
    *                String of day two
    */
-  def setDisponibilita(giorno1: String, giorno2: String)
+  def setDisponibilita(giorno1: String, giorno2: String, user: Int)
 }
 
 
@@ -108,8 +108,8 @@ object DriverModel {
       callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
 
-    override def setDisponibilita(giorno1: String, giorno2: String): Unit = {
-      val request = Post(getURI("setdisponibilita"), transform(Disponibilita(Calendar.getInstance().getWeekYear, giorno1, giorno2)))
+    override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Unit = {
+      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(Calendar.getInstance().getWeekYear, giorno1, giorno2), Id(user))))
       callHtpp(request).flatMap(unMarshall)
     }
   }
