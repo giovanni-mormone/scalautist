@@ -1,9 +1,12 @@
 package controller
 
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, Response}
+import messagecodes.StatusCodes
+import model.entity.ManagerModel
 import view.fxview.mainview.ManagerView
 
 import scala.concurrent.ExecutionContextExecutor
+import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
 
@@ -25,28 +28,44 @@ trait ManagerController extends AbstractController[ManagerView]{
 
 object ManagerController {
   private val instance = new ManagerControllerImpl()
-//  private val model = ManagerModel()
+  private val model = ManagerModel()
 
   def apply(): ManagerController = instance
 
   private class ManagerControllerImpl extends ManagerController {
 
     override def dataToAbsencePanel(): Unit = {
-      val a = List(InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3))
 
-      myView.drawAbsence(a)
+      model.allAbsences().onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE, payload)) => payload.foreach(result => myView.drawAbsence(result))
+        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.showMessageFromKey("no-absences-day")
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
+      }
     }
 
     override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
-      //model!
-      val a = List(InfoReplacement(1,2,"Francesco","Cassano"),InfoReplacement(1,3,"Giorgo","Cassano"),InfoReplacement(1,3,"Francesco","Valenti"))
-      myView.drawReplacement(a)
+      model.extraAvailability(idTerminale,idTurno,idRisultato).onComplete{
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("result-error")
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => myView.showMessageFromKey("terminal-error")
+        case Success(Response(StatusCodes.ERROR_CODE3,_)) => myView.showMessageFromKey("turn-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("no-replacement-error")
+        case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(e) => myView.showMessageFromKey("general-error")
+      }
     }
 
     override def replacementSelected(idRisultato: Int, idPersona: Int): Unit = {
-      //model
-      val a = List(InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3),InfoAbsenceOnDay("Cesena","Notte",1,2,3))
-      myView.drawAbsence(a)
+      model.replaceShift(idRisultato,idPersona).onComplete{
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("result-error")
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => myView.showMessageFromKey("driver-error")
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
+          myView.showMessageFromKey("replaced-driver")
+          dataToAbsencePanel()
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Failure(e) => myView.showMessageFromKey("general-error")
+      }
     }
   }
 }

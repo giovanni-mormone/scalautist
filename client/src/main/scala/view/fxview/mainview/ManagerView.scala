@@ -51,13 +51,17 @@ object ManagerView {
     }
 
     /////////CALLS FROM CHILDREN TO DRAW -> SEND TO CONTROLLER/////////////
-    override def drawAbsencePanel(): Unit =
+    override def drawAbsencePanel(): Unit = {
+      managerHome.startLoading()
       myController.dataToAbsencePanel()
+    }
 
 
     ////////CALLS FROM CHILDREN TO MAKE THINGS -> ASK TO CONTROLLER
-    override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit =
+    override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
+      managerHome.loadingReplacements()
       myController.absenceSelected(idRisultato, idTerminale, idTurno)
+    }
 
     override def replacementSelected(idRisultato: Int, idPersona: Int): Unit =
       myController.replacementSelected(idRisultato, idPersona)
@@ -65,9 +69,21 @@ object ManagerView {
 
     //////CALLS FROM CONTROLLER////////////
     override def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit =
-      Platform.runLater(() => managerHome.drawManageAbsence(absences))
+      Platform.runLater(() =>{
+        managerHome.endLoading()
+        managerHome.drawManageAbsence(absences)
+      })
 
     override def drawReplacement(replacement: List[InfoReplacement]): Unit =
       Platform.runLater(() => managerHome.drawManageReplacement(replacement))
+
+    override def showMessageFromKey(message: String): Unit = message match {
+      case "no-replacement-error" =>
+        Platform.runLater(() => {
+          super.showMessageFromKey(message)
+          managerHome.stopLoadingReplacements()
+        })
+      case _ => super.showMessageFromKey(message)
+    }
   }
 }

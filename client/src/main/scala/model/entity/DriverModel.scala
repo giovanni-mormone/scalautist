@@ -70,7 +70,7 @@ trait DriverModel {
    * @param giorno2
    *                String of day two
    */
-  def setDisponibilita(giorno1: String, giorno2: String, user: Int)
+  def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]]
 }
 
 
@@ -108,8 +108,10 @@ object DriverModel {
       callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
 
-    override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Unit = {
-      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(Calendar.getInstance().getWeekYear, giorno1, giorno2), Id(user))))
+    override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]] = {
+      val c = Calendar.getInstance()
+      c.setTime(new Date(System.currentTimeMillis()))
+      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(c.get(Calendar.WEEK_OF_YEAR), giorno1, giorno2), Id(user))))
       callHtpp(request).flatMap(unMarshall)
     }
   }

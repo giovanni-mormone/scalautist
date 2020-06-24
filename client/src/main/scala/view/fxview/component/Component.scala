@@ -2,6 +2,7 @@ package view.fxview.component
 
 import javafx.fxml.Initializable
 import javafx.scene.layout.Pane
+import view.fxview.FXHelperFactory
 import view.fxview.loader.FXLoader
 
 /**
@@ -38,6 +39,10 @@ trait Component[A] {
    * Enables the component, making it interactive
    */
   def enable(): Unit
+
+  def startLoading(): Unit
+
+  def endLoading(): Unit
 }
 
 /**
@@ -72,5 +77,15 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
 
   override def enable(): Unit =
     pane.setDisable(false)
+
+  override def startLoading(): Unit = {
+    pane.getChildren.add(FXHelperFactory.loadingBox)
+    disable()
+  }
+
+  override def endLoading(): Unit = {
+    pane.getChildren.remove(FXHelperFactory.loadingBox)
+    enable()
+  }
 }
 
