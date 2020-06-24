@@ -78,7 +78,7 @@ object DateConverter {
   }
   val getFirstDayWeek:Date=>Date=date=>{
     val calendar = dateToCalendar(date)
-    calendar.set(Calendar.DAY_OF_WEEK,calendar.getFirstDayOfWeek+1)
+    calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY)
     new Date(calendar.getTimeInMillis)
   }
   val getEndDayWeek:Date=>Date=date=>{

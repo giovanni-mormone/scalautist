@@ -302,4 +302,4 @@ object DisponibilitaOperation extends DisponibilitaOperation{
           case None =>Future.successful(Some(StatusCodes.NOT_FOUND))
         }
   }
-}
+} 
