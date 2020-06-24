@@ -298,7 +298,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
                 .execQueryUpdate(persona=>persona.disponibilitaId,persona=>persona.id===idUser,value.headOption)
             case None =>Future.successful(Some(StatusCodes.ERROR_CODE1))
           }
-          case None =>Future.successful(Some(StatusCodes.NOT_FOUND))
+          case None =>  Future.successful(Some(StatusCodes.NOT_FOUND))
         }
   }
-} 
+}
+
