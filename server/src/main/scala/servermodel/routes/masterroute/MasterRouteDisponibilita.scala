@@ -1,7 +1,8 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassHttpMessage.Dates
+import caseclass.CaseClassDB.Disponibilita
+import caseclass.CaseClassHttpMessage.{Dates, Id}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -47,9 +48,25 @@ object MasterRouteDisponibilita extends Directives {
       getAvailability
     }
 
+  @Path("/setdisponibilita")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Set new date of possible day for extra shift", description = "Save the available days to possible extra shift",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Disponibilita, Id)])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "OK"),
+      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def setAvailability(): Route =
+    path("setdisponibilita") {
+      setExtraAvailability
+    }
+
   val routeDisponibilita: Route =
     concat (
-      extraAvailability(), chooseExtra()
+      extraAvailability(), chooseExtra(), setAvailability()
       )
 
 }

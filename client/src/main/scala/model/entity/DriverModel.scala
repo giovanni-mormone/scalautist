@@ -1,13 +1,14 @@
 package model.entity
 
 import java.sql.Date
+import java.time.LocalDate
 import java.util.Calendar
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Stipendio, Turno}
-import caseclass.CaseClassHttpMessage.{Dates, InfoHome, InfoShift, Response, StipendioInformations}
+import caseclass.CaseClassDB.{Disponibilita, Stipendio, Turno}
+import caseclass.CaseClassHttpMessage.{Dates, Id, InfoHome, InfoShift, Response, StipendioInformations}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
@@ -60,6 +61,16 @@ trait DriverModel {
    *         List of day of possible extra
    */
   def getDisponibilita(userId: Int): Future[Response[List[String]]]
+
+  /**
+   * Method that set new availability to extra shift
+   *
+   * @param giorno1
+   *                String of day one
+   * @param giorno2
+   *                String of day two
+   */
+  def setDisponibilita(giorno1: String, giorno2: String, user: Int)
 }
 
 
@@ -95,6 +106,11 @@ object DriverModel {
     override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
       val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(new Date(System.currentTimeMillis()))))
       callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
+    }
+
+    override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Unit = {
+      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(Calendar.getInstance().getWeekYear, giorno1, giorno2), Id(user))))
+      callHtpp(request).flatMap(unMarshall)
     }
   }
 
