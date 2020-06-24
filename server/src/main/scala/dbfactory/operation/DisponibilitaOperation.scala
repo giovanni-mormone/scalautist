@@ -12,10 +12,8 @@ import dbfactory.setting.Table.{AssenzaTableQuery, ContrattoTableQuery, Disponib
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 /**
  * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
  *
@@ -92,6 +90,11 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private val GIORNI_SETTIMANA=7
   private val UNION=2
   private val SHIFT_IN_DAY=2
+  private val SUNDAY = 6
+  private val SATURDAY=0
+  private val SUCCESS_UPDATE = 1
+  private val DEFAULT_RESPONSE = Future.successful(None)
+
   private object convertToQueryPersonStoricAvail{
 
     private val DEFAULT_YEAR = 0
@@ -175,7 +178,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(_.distinct))
   }
 
-  def getPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail): Future[Option[List[Int]]] ={
+  private def getPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail): Future[Option[List[Int]]] ={
     val joinQuery = for {
       persona<- PersonaTableQuery.tableQuery()
       storico<-StoricoContrattoTableQuery.tableQuery()
@@ -186,7 +189,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
         disp.settimana===dat.week && (disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) &&
         (storico.turnoId=!=dat.idTurno || storico.turnoId1=!=dat.idTurno) && persona.terminaleId===dat.idTerminale
         && (storico.dataFine>dat.date || Some(storico.dataFine).isEmpty)
-        && Some(persona.disponibilitaId).isDefined)
+        && Some(persona.disponibilitaId).isDefined && storico.dataInizio<=dat.date && storico.dataFine>=dat.date)
     } yield storico.personaId
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons
       .filter(id=>persons.count(_ == id)==SHIFT_IN_DAY)).map(_.distinct))
@@ -211,7 +214,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def deleteDayAbsence(listDate:List[(Date,Date)], date:Date)={
+  private def deleteDayAbsence(listDate:List[(Date,Date)], date:Date): List[Date] ={
     val days = createListDay(date)
     listDate.map {
       case (date, date1) if date1.compareTo(getEndDayWeek(date)) > 0 => date -> getEndDayWeek(date)
@@ -225,65 +228,71 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date) = {
+  private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date): List[Date] = {
     map.keySet.toList.sortBy(date=>date).dropWhile(date=>{
-      println( date)
-      println( date.compareTo(dateDay)<0)
       date.compareTo(dateDay)<0
     })
   }
 
   private def operationWhenExistAbsence(listDate:List[Date],idUser:Int,date:Date): Future[Option[List[String]]] ={
     listDate match {
-      case element if element.length==GIORNI_SETTIMANA=> Future.successful(None)
+      case element if element.length==GIORNI_SETTIMANA=> DEFAULT_RESPONSE
       case element if element.length<=GIORNI_SETTIMANA=>
         getDisponibilitaName(idUser,date).map(_.map(days => {
           listDate.map(nameOfDay).filter(day => days.contains(day))
-        }) match {
-          case Some(List()) => None
-          case value =>value
-        })
+        })).map(finalResponse)
       case Nil =>getDisponibilitaName(idUser,date)
     }
   }
 
-  private def getDisponibilitaName(idUser: Int, date: Date)={
+  private def getDisponibilitaName(idUser: Int, date: Date): Future[Option[List[String]]] ={
     val join = for{
       contratto<- ContrattoTableQuery.tableQuery()
       storico <- StoricoContrattoTableQuery.tableQuery()
-      if contratto.id===storico.contrattoId && contratto.turnoFisso===IS_FISSO && storico.personaId===idUser
+      if(contratto.id===storico.contrattoId && (contratto.turnoFisso===IS_FISSO || (storico.dataInizio>date || storico.dataFine<date))
+      && storico.personaId===idUser)
     }yield contratto.turnoFisso
     InstanceStoricoContratto.operation().execJoin(join).flatMap {
-      case Some(_) => Future.successful(None)
+      case Some(_) => DEFAULT_RESPONSE
       case None =>getDisponibilita(idUser,getWeekNumber(date)).flatMap{
-        case Some(_) => Future.successful(None)
+        case Some(_) => DEFAULT_RESPONSE
         case None =>getDayWithoutWorking(date,getEndDayWeek(date),idUser)
       }
     }
   }
 
   override def getGiorniDisponibilita(idUser: Int, date: Date):Future[Option[List[String]]]={
-    InstanceAssenza.operation().execQueryFilter(disp=>(disp.dataInizio,disp.dataFine),disp=>
-      disp.dataInizio>=getFirstDayWeek(date) && disp.dataInizio<=getEndDayWeek(date) && disp.personaId===idUser)
-      .flatMap {
-        case Some(value) => operationWhenExistAbsence(deleteDayAbsence(value,date),idUser,date)
-        case None =>  getDisponibilitaName(idUser,date)
-      }
+    getDayNumber(date) match {
+      case SUNDAY | SATURDAY => DEFAULT_RESPONSE
+      case _ => InstanceAssenza.operation().execQueryFilter(disp=>(disp.dataInizio,disp.dataFine),disp=>
+        disp.dataInizio>=getFirstDayWeek(date) && disp.dataInizio<=getEndDayWeek(date) && disp.personaId===idUser)
+        .flatMap {
+          case Some(value) => operationWhenExistAbsence(deleteDayAbsence(value,date),idUser,date).map(finalResponse)
+          case None =>  getDisponibilitaName(idUser,date).map(finalResponse)
+        }
+    }
   }
 
-  private def getDayWithoutWorking(initDate:Date,finishDate:Date,idUser:Int)={
+  private def finalResponse(result:Option[List[String]]): Option[List[String]] ={
+    result match {
+      case Some(List() | List(_))=>None
+      case None => None
+      case _ => result
+    }
+  }
+
+  private def getDayWithoutWorking(initDate:Date,finishDate:Date,idUser:Int): Future[Option[List[String]]] ={
     InstanceRisultato.operation()
       .execQueryFilter(result=>result.data,result=>result.data>=initDate && result.data<=finishDate && result.personeId===idUser)
       .collect(result=>  Option(result.toList.flatten.distinct.map(nameOfDay)))
   }
 
-//TODO  verificar inserir o actualziar
   override def updateDisponibilita(element: Disponibilita,idUser:Int): Future[Option[Int]] = {
         InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idUser).flatMap{
           case Some(_) =>InstanceDisponibilita.operation().execQueryFilter(disp=>disp.id,disp=>disp.settimana===element.settimana &&
             (disp.giorno1===element.giorno1 && disp.giorno2===element.giorno2) ||
             (disp.giorno1===element.giorno2 && disp.giorno2===element.giorno1)).flatMap {
-            case Some(value) if value==1 => InstancePersona.operation()
+            case Some(value) if value.length==SUCCESS_UPDATE => InstancePersona.operation()
                 .execQueryUpdate(persona=>persona.disponibilitaId,persona=>persona.id===idUser,value.headOption)
             case None =>Future.successful(Some(StatusCodes.ERROR_CODE1))
           }

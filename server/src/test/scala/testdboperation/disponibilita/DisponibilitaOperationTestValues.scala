@@ -22,4 +22,9 @@ object DisponibilitaOperationTestValues {
   val idUserNotExist=888
   val disponibilitaWithError: Disponibilita = Disponibilita(26,"Lunedi","Lunedi")
   val idUserExist=18
+  val dateSunday:Date= Date.valueOf(LocalDate.of(2020,6,21))
+  val dateSaturday:Date= Date.valueOf(LocalDate.of(2020,6,20))
+  val idUserWithOneDay=21
+  val datInit:Date= Date.valueOf(LocalDate.of(2020,6,18))
+  val idUserWithContractNotEnable=22
 }
