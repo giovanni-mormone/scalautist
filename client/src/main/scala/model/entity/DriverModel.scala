@@ -109,7 +109,9 @@ object DriverModel {
     }
 
     override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]] = {
-      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(Calendar.getInstance().getWeekYear, giorno1, giorno2), Id(user))))
+      val c = Calendar.getInstance()
+      c.setTime(new Date(System.currentTimeMillis()))
+      val request = Post(getURI("setdisponibilita"), transform((Disponibilita(c.get(Calendar.WEEK_OF_YEAR), giorno1, giorno2), Id(user))))
       callHtpp(request).flatMap(unMarshall)
     }
   }
