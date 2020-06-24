@@ -1,7 +1,7 @@
 package dbfactory.operation
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstancePersona
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstancePersona}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.util.Helper._
@@ -111,14 +111,21 @@ object PersonaOperation extends PersonaOperation {
     val persona = personToHire.persona
     val disponibilita = personToHire.disponibilita
     val newContratto = personToHire.storicoContratto
+    val dispListToDispId: Option[List[Disponibilita]] => Option[Int] = {
+      case Some(List(value)) => value.idDisponibilita
+      case None => None
+    }
     ContrattoOperation.select(newContratto.contrattoId).flatMap{
       case None => completeCall(StatusCodes.ERROR_CODE1)
       case Some(_) if disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE => completeCall(StatusCodes.ERROR_CODE2)
       case Some(contratto) if disponibilita.isDefined && !contratto.turnoFisso =>completeCall(StatusCodes.ERROR_CODE3)
       case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
-      case Some(contratto) if contratto .turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
+      case Some(contratto) if contratto.turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
       case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None),newContratto)
-      case Some(_) => DisponibilitaOperation.insert(disponibilita.getOrElse(Disponibilita(-1,"",""))).flatMap(dispId => insertPersona(constructPersona(persona,dispId),newContratto))
+      case Some(_) => disponibilita.map(disp => InstanceDisponibilita.operation()
+        .selectFilter(filter => filter.settimana === disp.settimana &&
+          (filter.giorno1 === disp.giorno1 && filter.giorno2 === disp.giorno2 ||
+            filter.giorno1 === disp.giorno2 && filter.giorno2 === disp.giorno1)).flatMap(dispId => insertPersona(constructPersona(persona, dispListToDispId(dispId)), newContratto))).convert()
     }
   }
 
