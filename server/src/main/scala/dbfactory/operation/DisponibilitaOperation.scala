@@ -301,11 +301,4 @@ object DisponibilitaOperation extends DisponibilitaOperation{
           case None =>Future.successful(Some(StatusCodes.NOT_FOUND))
         }
   }
-}
-object  t extends App{
-  DisponibilitaOperation.getGiorniDisponibilita(4,Date.valueOf(LocalDate.of(2020,6,24))).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) => println(value)
-  }
-  while(true){}
-}
+} 
