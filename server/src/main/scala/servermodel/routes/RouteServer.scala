@@ -11,6 +11,7 @@ import servermodel.routes.masterroute.MasterRouteContratto.routeContratto
 import servermodel.routes.masterroute.MasterRouteAssenza.routeAssenza
 import servermodel.routes.masterroute.MasterRouteStipendio.routeStipendio
 import servermodel.routes.masterroute.MasterRouteRisultato.routeRisultato
+import servermodel.routes.masterroute.MasterRouteDisponibilita.routeDisponibilita
 import swagger.SwaggerDocService
 
 /**
@@ -18,5 +19,5 @@ import swagger.SwaggerDocService
  */
 object RouteServer{
   val route: Route = cors() (concat(routePersona, routeTurno, routeZona,
-    routeTerminale,routeContratto,routeAssenza,routeStipendio,routeRisultato,SwaggerDocService.routes))
+    routeTerminale,routeContratto,routeAssenza,routeStipendio,routeRisultato,routeDisponibilita,SwaggerDocService.routes))
 }

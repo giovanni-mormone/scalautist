@@ -69,15 +69,17 @@ object DriverController{
       }
 
     override def startupDriverCheck(): Unit = {
-      //model?
-      val a = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato","Domenica")
-      myView.drawDisponibilitaPanel(a)
-      //myView.drawHomePage()
+      Utils.userId.foreach(e => model.getDisponibilita(e).onComplete{
+        case Failure(_)  => print("Fail")
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=> print("BadRe")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=> drawHomePanel()
+        case Success(Response(_, payload)) =>payload.foreach(result=>myView.drawDisponibilitaPanel(result))
+      })
     }
 
     override def sendDisponibility(day1: String, day2: String): Unit =
-      //model
-    myView.disponibilityInserted()
+      //model.
+      myView.disponibilityInserted()
   }
 
 }
