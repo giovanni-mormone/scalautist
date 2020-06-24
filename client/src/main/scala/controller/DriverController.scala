@@ -43,9 +43,9 @@ object DriverController{
 
     override def drawHomePanel(): Unit =
       model.getTurniInDay(Utils.userId.head).onComplete {
-      case Failure(_) => myView.showMessage("Error")
-      case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
-    }
+        case Failure(_) => myView.showMessage("Error")
+        case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
+      }
 
     override def drawShiftPanel(): Unit =
       model.getTurniSettimanali(Utils.userId.head).onComplete {
@@ -76,8 +76,8 @@ object DriverController{
     }
 
     override def sendDisponibility(day1: String, day2: String): Unit =
-      //model
-    myView.disponibilityInserted()
+    //model
+      myView.disponibilityInserted()
   }
 
 }
