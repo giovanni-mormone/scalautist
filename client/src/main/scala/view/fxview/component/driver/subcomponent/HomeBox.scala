@@ -54,7 +54,7 @@ object HomeBox{
 
       val disponibilita=Map("Giorno Disponibilita Straordinari"->List("Giorno", "Disponibilita"))
       CreateTable.createNestedColumns[DisponibilitaTable](tableDisponibilita, disponibilita)
-      val disponibilitaList = List[(String,Boolean)]((infoHome.disponibilita.giorno1,true),(infoHome.disponibilita.giorno2,true))
+      val disponibilitaList =infoHome.disponibilita.map(values=>List[(String,Boolean)]((values.giorno1,true),(values.giorno2,true))).toList.flatten
       CreateTable.fillTable[DisponibilitaTable](tableDisponibilita,disponibilitaList)
 
     }
