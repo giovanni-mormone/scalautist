@@ -129,5 +129,14 @@ object DriverView {
         myController.drawHomePanel()
       })
     }
+
+    override def showMessageFromKey(message: String): Unit = message match {
+      case "update-disponibility-failed" =>
+        Platform.runLater(()=>{
+          super.showMessageFromKey(message)
+          modal.endLoading()
+        })
+      case _ => super.showMessageFromKey(message)
+    }
   }
 }

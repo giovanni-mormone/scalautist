@@ -30,7 +30,7 @@ object DisponibilitaRoute {
     post {
       entity(as[Request[(Disponibilita, Id)]]) {
         case Request(Some(newExtra)) => onComplete(DisponibilitaOperation.updateDisponibilita(newExtra._1, newExtra._2.id)){
-          case Success(Some(days)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+          case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
           case t => anotherSuccessAndFailure(t)
         }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)

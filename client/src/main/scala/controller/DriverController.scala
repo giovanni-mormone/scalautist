@@ -78,7 +78,11 @@ object DriverController{
     }
 
     override def sendDisponibility(day1: String, day2: String): Unit =
-      myView.disponibilityInserted()
+      Utils.userId.foreach(userId =>model.setDisponibilita(day1,day2,userId).onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE,_))=>  myView.disponibilityInserted()
+        case _ => myView.showMessageFromKey("update-disponibility-failed")
+      })
+
   }
 
 }
