@@ -120,7 +120,7 @@ object CaseClassHttpMessage {
    * @param disponibilita availability that the person has indicated as
    *                      possible days that they can make extra shifts
    */
-  final case class InfoHome(turno:List[Turno],disponibilita: Disponibilita)
+  final case class InfoHome(turno:List[Turno],disponibilita: Option[Disponibilita])
 
   /**
    * Case class that represent information for one shift in a day
@@ -134,7 +134,7 @@ object CaseClassHttpMessage {
    * @param disponibilita availability that the person has indicated as
    *                      possible days that they can make extra shifts
    */
-  final case class InfoShift(shiftDay:List[ShiftDay],disponibilita: Disponibilita)
+  final case class InfoShift(shiftDay:List[ShiftDay],disponibilita: Option[Disponibilita])
 
   /**
    * Case class that represent information for all terminal that contains absence

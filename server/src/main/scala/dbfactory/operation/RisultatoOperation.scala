@@ -77,10 +77,7 @@ object RisultatoOperation extends RisultatoOperation {
         filter => filter.data === date && filter.personeId === idUser)
       turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
       disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield if(disponibilita.isDefined)
-      Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita.get))
-    else
-      None
+    } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
   }
 
   override def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]] = {
@@ -89,10 +86,7 @@ object RisultatoOperation extends RisultatoOperation {
     for{
       turni <- getTurnoOfDays(idUser, date, dateEnd)
       disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield if(disponibilita.isDefined && turni.isDefined)
-      Some(InfoShift(turni.get.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfMonth, turno.name)), disponibilita.get))
-    else
-      None
+    } yield Some(InfoShift(turni.get.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfMonth, turno.name)), disponibilita))
   }
 
   /**
