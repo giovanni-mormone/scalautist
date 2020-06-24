@@ -13,9 +13,9 @@ class TestRisultato extends  AsyncFlatSpec with BeforeAndAfterEach with StartSer
 
   behavior of "getTurniInDate"
 
-  it should "return the daily work shift if employee is a driver" in {
+  it should "return the daily work shift if employee is a driver with disponibilità" in {
     val req: Future[Option[InfoHome]] = RisultatoOperation.getTurniInDate(idAutist, date)
-    req map { one => assert(one.isDefined) }
+    req map { one => assert(if (one.isDefined) one.head.disponibilita.isDefined) }
   }
 
   it should "return empty the daily work shift if employee isn't a driver" in {
