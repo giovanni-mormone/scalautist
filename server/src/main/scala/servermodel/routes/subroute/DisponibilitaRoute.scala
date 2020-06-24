@@ -31,7 +31,8 @@ object DisponibilitaRoute {
         case Request(Some(turnoInfo)) =>
           onComplete(DisponibilitaOperation.verifyIdRisultatoAndTerminalAndShift(turnoInfo._3, turnoInfo._1, turnoInfo._2)){
             case Success(Some(statusCodes.SUCCES_CODE)) => onComplete(DisponibilitaOperation.allDriverWithAvailabilityForADate(turnoInfo._3, turnoInfo._1, turnoInfo._2)){
-              case Success(Some(info)) => complete(StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(info)))
+              case Success(Some(info)) if info.nonEmpty => complete(StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(info)))
+              case t => anotherSuccessAndFailure(t)
             }
             case t => anotherSuccessAndFailure(t)
           }
