@@ -59,7 +59,7 @@ trait ManagerModel {
  */
 object ManagerModel {
 
-  def apply(): ManagerModel = new ManagerModelHttp()
+  def apply():ManagerModel = new ManagerModelHttp()
 
   /**
    * HTTP implementation for [[ManagerModel]]

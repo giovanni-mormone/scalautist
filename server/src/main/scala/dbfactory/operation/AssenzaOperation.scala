@@ -312,3 +312,4 @@ object AssenzaOperation extends AssenzaOperation{
   }
 
 }
+ 

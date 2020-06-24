@@ -77,10 +77,7 @@ object RisultatoOperation extends RisultatoOperation {
         filter => filter.data === date && filter.personeId === idUser)
       turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
       disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield if(disponibilita.isDefined)
-      Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita.get))
-    else
-      None
+    } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
   }
 
   override def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]] = {
@@ -89,10 +86,7 @@ object RisultatoOperation extends RisultatoOperation {
     for{
       turni <- getTurnoOfDays(idUser, date, dateEnd)
       disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield if(disponibilita.isDefined && turni.isDefined)
-      Some(InfoShift(turni.get.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfMonth, turno.name)), disponibilita.get))
-    else
-      None
+    } yield Some(InfoShift(turni.toList.flatten.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
   }
 
   /**
@@ -107,8 +101,8 @@ object RisultatoOperation extends RisultatoOperation {
   private def getTurnoOfDays(idUser: Int, initDate: Date, endDate: Date): Future[Option[List[Shift]]] = {
     val filter = for{
       turni <- RisultatoTableQuery.tableQuery() join TurnoTableQuery.tableQuery() on (_.turnoId ===_.id)
-              if turni._1.data >= initDate && turni._1.data < endDate && turni._1.id === idUser
-    } yield (turni._1.data, turni._2.nomeTurno)
+              if turni._1.data >= initDate && turni._1.data < endDate && turni._1.personeId === idUser
+    } yield (turni._1.data, turni._2.fasciaOraria)
 
     InstanceRisultato.operation().execJoin(filter).collect{
       case Some(shifts) => Some(shifts.map(shift => Shift(shift._1, shift._2)))
