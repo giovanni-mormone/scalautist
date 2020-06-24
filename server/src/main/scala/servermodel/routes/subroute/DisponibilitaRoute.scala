@@ -3,7 +3,8 @@ package servermodel.routes.subroute
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, onComplete, post}
 import akka.http.scaladsl.server.Route
-import caseclass.CaseClassHttpMessage.{Dates, Request, Response}
+import caseclass.CaseClassDB.Disponibilita
+import caseclass.CaseClassHttpMessage.{Dates, Id, Request, Response}
 import dbfactory.operation.DisponibilitaOperation
 import jsonmessages.JsonFormats._
 import messagecodes.{StatusCodes => statusCodes}
@@ -25,13 +26,25 @@ object DisponibilitaRoute {
       }
     }
 
+  def setExtraAvailability: Route =
+    post {
+      entity(as[Request[(Disponibilita, Id)]]) {
+        case Request(Some(newExtra)) => onComplete(DisponibilitaOperation.updateDisponibilita(newExtra._1, newExtra._2.id)){
+          case Success(Some(days)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+          case t => anotherSuccessAndFailure(t)
+        }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
+      }
+    }
+
   def getExtraAvailability: Route =
     post {
       entity(as[Request[(Int, Int, Int)]]) {
         case Request(Some(turnoInfo)) =>
           onComplete(DisponibilitaOperation.verifyIdRisultatoAndTerminalAndShift(turnoInfo._3, turnoInfo._1, turnoInfo._2)){
             case Success(Some(statusCodes.SUCCES_CODE)) => onComplete(DisponibilitaOperation.allDriverWithAvailabilityForADate(turnoInfo._3, turnoInfo._1, turnoInfo._2)){
-              case Success(Some(info)) => complete(StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(info)))
+              case Success(Some(info)) if info.nonEmpty => complete(StatusCodes.OK, Response(statusCodes.SUCCES_CODE, Some(info)))
+              case t => anotherSuccessAndFailure(t)
             }
             case t => anotherSuccessAndFailure(t)
           }

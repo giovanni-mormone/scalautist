@@ -46,7 +46,7 @@ object AssenzaRoute{
       }
     }
 
-  def absenceOnDay(): Route =
+  def absencesOnDay(): Route =
     post{
       entity(as[Request[Dates]]) {
         case Request(Some(date)) => onComplete(AssenzaOperation.getAllAbsence(date.date)){

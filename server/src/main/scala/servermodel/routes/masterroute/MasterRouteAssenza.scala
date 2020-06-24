@@ -70,7 +70,7 @@ object MasterRouteAssenza extends Directives{
   )
   def absenceOnDay(): Route =
     path("allabsences") {
-      absenceInYearForPerson()
+      absencesOnDay()
     }
 
   val routeAssenza: Route =
