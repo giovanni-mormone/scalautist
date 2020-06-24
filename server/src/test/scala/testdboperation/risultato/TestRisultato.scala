@@ -32,7 +32,7 @@ class TestRisultato extends  AsyncFlatSpec with BeforeAndAfterEach with StartSer
 
   it should "return the daily work shift if employee is a driver" in {
     val req: Future[Option[InfoShift]] = RisultatoOperation.getTurniSettimanali(idAutist, date)
-    req map { one => assert(one.isDefined) }
+    req map { one => assert(if (one.isDefined) one.head.shiftDay.size > 0 else false) }
   }
 
   it should "return empty the daily work shift if employee isn't a driver" in {
