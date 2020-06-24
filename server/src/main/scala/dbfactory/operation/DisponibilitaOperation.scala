@@ -12,10 +12,8 @@ import dbfactory.setting.Table.{AssenzaTableQuery, ContrattoTableQuery, Disponib
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 /**
  * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
  *
@@ -96,6 +94,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private val SATURDAY=0
   private val SUCCESS_UPDATE = 1
   private val DEFAULT_RESPONSE = Future.successful(None)
+
   private object convertToQueryPersonStoricAvail{
 
     private val DEFAULT_YEAR = 0
@@ -215,7 +214,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def deleteDayAbsence(listDate:List[(Date,Date)], date:Date)={
+  private def deleteDayAbsence(listDate:List[(Date,Date)], date:Date): List[Date] ={
     val days = createListDay(date)
     listDate.map {
       case (date, date1) if date1.compareTo(getEndDayWeek(date)) > 0 => date -> getEndDayWeek(date)
@@ -229,7 +228,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date) = {
+  private def deleteDateBefore(map: Map[Date, List[Date]],dateDay:Date): List[Date] = {
     map.keySet.toList.sortBy(date=>date).dropWhile(date=>{
       date.compareTo(dateDay)<0
     })
@@ -246,7 +245,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def getDisponibilitaName(idUser: Int, date: Date)={
+  private def getDisponibilitaName(idUser: Int, date: Date): Future[Option[List[String]]] ={
     val join = for{
       contratto<- ContrattoTableQuery.tableQuery()
       storico <- StoricoContrattoTableQuery.tableQuery()
@@ -282,7 +281,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def getDayWithoutWorking(initDate:Date,finishDate:Date,idUser:Int)={
+  private def getDayWithoutWorking(initDate:Date,finishDate:Date,idUser:Int): Future[Option[List[String]]] ={
     InstanceRisultato.operation()
       .execQueryFilter(result=>result.data,result=>result.data>=initDate && result.data<=finishDate && result.personeId===idUser)
       .collect(result=>  Option(result.toList.flatten.distinct.map(nameOfDay)))
