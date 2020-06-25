@@ -58,7 +58,9 @@ object FillHolesBox{
     override def drawAbsenceList(terminalsAndTurn: List[InfoAbsenceOnDay]): Unit =
      terminalsAndTurn.foreach(absence => terminalsAndTurnsBox.getChildren.add(TerminalAndTurnsBox(absence).setParent(parent).pane))
 
-    override def drawSubstituteList(substitutes: List[InfoReplacement]): Unit =
+    override def drawSubstituteList(substitutes: List[InfoReplacement]): Unit = {
+      substitutesBox.getChildren.remove(1,substitutesBox.getChildren.size())
       substitutes.foreach(replacement => substitutesBox.getChildren.add(ReplacementsBox(replacement).setParent(parent).pane))
+    }
   }
 }

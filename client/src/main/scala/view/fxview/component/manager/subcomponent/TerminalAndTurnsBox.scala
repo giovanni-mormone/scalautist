@@ -29,7 +29,7 @@ object TerminalAndTurnsBox{
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       field1.setText(absence.nomeTerminale)
       field2.setText(absence.nomeTurno)
-      baseBox.setOnMouseClicked(e => if(e.getClickCount == 2) parent.absenceSelected(absence.idTurno, absence.idRisultato,absence.idTerminale))
+      baseBox.setOnMouseClicked(e => if(e.getClickCount == 2) parent.absenceSelected(absence.idRisultato,absence.idTerminale,absence.idTurno))
     }
   }
 }

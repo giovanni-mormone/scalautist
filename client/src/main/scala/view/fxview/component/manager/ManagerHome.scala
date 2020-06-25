@@ -8,6 +8,7 @@ import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
+import view.fxview.FXHelperFactory
 import view.fxview.component.manager.subcomponent.FillHolesBox
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
@@ -26,6 +27,10 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    *                    The people avalaible for the turn that needs a replacement
    */
   def drawManageReplacement(replacement: List[InfoReplacement]): Unit
+
+  def loadingReplacements(): Unit
+
+  def stopLoadingReplacements(): Unit
 }
 
 object ManagerHome{
@@ -78,8 +83,17 @@ object ManagerHome{
     }
 
     override def drawManageReplacement(replacement: List[InfoReplacement]): Unit = {
+      fillHolesView.endLoading()
       fillHolesView.drawSubstituteList(replacement)
     }
-  }
 
+    override def startLoading(): Unit =
+      baseManager.setCenter(FXHelperFactory.loadingBox)
+
+    override def loadingReplacements(): Unit =
+      fillHolesView.startLoading()
+
+    override def stopLoadingReplacements(): Unit =
+      fillHolesView.endLoading()
+  }
 }

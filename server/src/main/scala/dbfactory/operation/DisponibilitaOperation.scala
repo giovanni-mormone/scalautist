@@ -293,13 +293,13 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   override def updateDisponibilita(element: Disponibilita,idUser:Int): Future[Option[Int]] = {
         InstancePersona.operation().execQueryFilter(persona=>persona.id,persona=>persona.id===idUser).flatMap{
           case Some(_) =>InstanceDisponibilita.operation().execQueryFilter(disp=>disp.id,disp=>disp.settimana===element.settimana &&
-            (disp.giorno1===element.giorno1 && disp.giorno2===element.giorno2) ||
-            (disp.giorno1===element.giorno2 && disp.giorno2===element.giorno1)).flatMap {
+            ((disp.giorno1===element.giorno1 && disp.giorno2===element.giorno2) ||
+            (disp.giorno1===element.giorno2 && disp.giorno2===element.giorno1))).flatMap {
             case Some(value) if value.length==SUCCESS_UPDATE => InstancePersona.operation()
                 .execQueryUpdate(persona=>persona.disponibilitaId,persona=>persona.id===idUser,value.headOption)
             case None =>Future.successful(Some(StatusCodes.ERROR_CODE1))
           }
-          case None =>Future.successful(Some(StatusCodes.NOT_FOUND))
+          case None =>  Future.successful(Some(StatusCodes.NOT_FOUND))
         }
   }
 } 

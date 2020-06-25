@@ -7,7 +7,7 @@ import model.entity.DriverModel
 import view.fxview.mainview.DriverView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait DriverController  extends AbstractController[DriverView] {
   /**
@@ -43,41 +43,47 @@ object DriverController{
 
     override def drawHomePanel(): Unit =
       model.getTurniInDay(Utils.userId.head).onComplete {
-        case Failure(_) => myView.showMessage("Error")
         case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
+        case t => generalSuccessAndError(t)
       }
 
     override def drawShiftPanel(): Unit =
       model.getTurniSettimanali(Utils.userId.head).onComplete {
-        case Failure(_) => myView.showMessage("Error")
         case Success(value) =>value.payload.foreach(result=> myView.drawShiftView(result))
+        case t => generalSuccessAndError(t)
       }
-
+    private def generalSuccessAndError[A](response:Try[A]): Unit = response match {
+      case Failure(_)  => myView.showMessageError("general-error")
+      case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessageError("bad-request-error")
+    }
     override def drawSalaryPanel(): Unit =
       model.getSalary(Utils.userId.head) onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.messageErrorSalary("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
-        case Failure(_)  => myView.messageErrorSalary("general-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
+        case t => generalSuccessAndError(t)
       }
     override def drawInfoSalary(idSalary: Int): Unit =
       model.getInfoForSalary(idSalary).onComplete {
-        case Failure(_)  => myView.messageErrorSalary("general-error")
-        case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.messageErrorSalary("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.messageErrorSalary("not-found-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
         case Success(Response(_, payload)) =>payload.foreach(result=>myView.informationSalary(result))
+        case t => generalSuccessAndError(t)
       }
 
     override def startupDriverCheck(): Unit = {
-      //model?
-      val a = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi","Sabato","Domenica")
-      myView.drawDisponibilitaPanel(a)
-      //myView.drawHomePage()
+      Utils.userId.foreach(e => model.getDisponibilita(e).onComplete{
+        case Failure(_)  => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.BAD_REQUEST,_))=> myView.showMessageFromKey("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=> drawHomePanel()
+        case Success(Response(_, payload)) =>payload.foreach(result=>myView.drawDisponibilitaPanel(result))
+      })
     }
 
     override def sendDisponibility(day1: String, day2: String): Unit =
-    //model
-      myView.disponibilityInserted()
+      Utils.userId.foreach(userId =>model.setDisponibilita(day1,day2,userId).onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE,_))=>  myView.disponibilityInserted()
+        case _ => myView.showMessageFromKey("update-disponibility-failed")
+      })
+
   }
 
 }

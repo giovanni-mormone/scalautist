@@ -78,13 +78,17 @@ object DriverHome{
       home.setGraphic(labelHome)
       turni.setGraphic(labelTurni)
       stipendi.setGraphic(labelStipendio)
-      labelHome.setOnMouseClicked((_:MouseEvent)=>parent.drawHomePanel())
-      labelTurni.setOnMouseClicked((_:MouseEvent)=>parent.drawShiftPanel())
+      labelHome.setOnMouseClicked((_:MouseEvent)=>{
+        callMethod((startLoading,parent.drawHomePanel))
+      })
+      labelTurni.setOnMouseClicked((_:MouseEvent)=>{
+        callMethod((startLoading,parent.drawShiftPanel))
+      })
       labelStipendio.setOnMouseClicked((_:MouseEvent)=>{
-        driverHome.setCenter(FXHelperFactory.loadingBox)
-        parent.drawSalaryPanel()
+        callMethod((startLoading,parent.drawSalaryPanel))
       })
     }
+    private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
 
     override def drawHome(infoHome: InfoHome): Unit = driverHome.setCenter(home(infoHome))
 
