@@ -3,6 +3,8 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
@@ -14,9 +16,15 @@ import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
 
+  def drawShiftRequest(value: List[CaseClassDB.Turno]):Unit
+
+  def drawRichiesta(terminal: List[Terminale]): Unit
+
+
   /**
    * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
    * a replacement
+   *
    * @param absences
    */
   def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit
@@ -84,6 +92,16 @@ object ManagerView {
           managerHome.stopLoadingReplacements()
         })
       case _ => super.showMessageFromKey(message)
+    }
+
+    override def drawRichiestaPanel(): Unit = myController.datatoRichiestaPanel()
+
+    override def drawRichiesta(terminal: List[Terminale]): Unit =  Platform.runLater(() => managerHome.drawRichiesta(terminal))
+
+    override def getShift(idTerminal: Int): Unit = myController.selectShift(idTerminal)
+
+    override def drawShiftRequest(listShift: List[Turno]): Unit = {
+      Platform.runLater(() => managerHome.drawShiftRichiesta(listShift))
     }
   }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="titleDay" text="NOME GIORNO" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="back" mnemonicParsing="false" text="Button" />
+            <Button fx:id="cancel" mnemonicParsing="false" text="Button" />
+            <Button fx:id="next" mnemonicParsing="false" text="Button" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
+

@@ -1,14 +1,24 @@
 package controller
 
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, Response}
+import caseclass.CaseClassHttpMessage.Response
 import messagecodes.StatusCodes
-import model.entity.ManagerModel
+import model.entity.{HumanResourceModel, ManagerModel}
 import view.fxview.mainview.ManagerView
 
-import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+  /**
+   *
+   * @param idTerminal
+   */
+  def selectShift(idTerminal: Int): Unit
+
+  /**
+   *
+   */
+  def datatoRichiestaPanel(): Unit
+
 
   /**
    * Method that asks the model to retrieve the data about the absent people
@@ -67,5 +77,19 @@ object ManagerController {
         case Failure(e) => myView.showMessageFromKey("general-error")
       }
     }
+
+    override def datatoRichiestaPanel(): Unit =
+      HumanResourceModel.apply().getAllTerminale.onComplete {
+        case Failure(exception) =>
+        case Success(value) =>value.payload.foreach(value => myView.drawRichiesta(value))
+      }
+
+
+    override def selectShift(idTerminal: Int): Unit =
+      HumanResourceModel.apply().getAllShift.onComplete {
+        case Failure(exception) =>
+        case Success(value) =>value.payload.foreach(value=>myView.drawShiftRequest(value))
+      }
+
   }
 }
