@@ -5,7 +5,6 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.Risultato
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
