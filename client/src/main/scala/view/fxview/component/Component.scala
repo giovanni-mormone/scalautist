@@ -1,5 +1,8 @@
 package view.fxview.component
 
+import java.net.URL
+import java.util.ResourceBundle
+
 import javafx.fxml.Initializable
 import javafx.scene.layout.Pane
 import view.fxview.FXHelperFactory
@@ -62,10 +65,14 @@ abstract class AbstractComponent[A](val path:String) extends Component[A] with I
    * The parent of the component
    */
   protected var parent:A = _
+  protected var resources:ResourceBundle = _
 
   val pane:Pane = {
     FXLoader.loadComponent(this,path)
   }
+
+  override def initialize(location: URL, resources: ResourceBundle): Unit =
+    this.resources=resources
 
   override def setParent(parent: A): Component[A] = {
     this.parent = parent

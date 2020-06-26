@@ -11,7 +11,7 @@ import view.GoBackView
 import view.fxview.component.login.ChangePasswordParent
 import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.login.ChangePasswordBox
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Giovanni Mormone.
  *
@@ -60,14 +60,14 @@ object ChangePasswordView{
     override def errorChange(): Unit ={
       Platform.runLater(() =>{
         stopLoading()
-        showMessage(generalResources.getString("error-change-pass"))
+        showMessage(generalResources.getResource("error-change-pass"))
       })
     }
 
     override def okChange(): Unit = {
       Platform.runLater(() => {
         stopLoading()
-        showMessage(generalResources.getString("good-change-pass"))
+        showMessage(generalResources.getResource("good-change-pass"))
         back()
       })
     }

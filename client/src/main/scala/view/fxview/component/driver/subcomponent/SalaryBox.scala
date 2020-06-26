@@ -57,11 +57,9 @@ object SalaryBox{
     @FXML
     var holiday:Label=_
     private var datepicker:Node=_
-    private var resources:ResourceBundle=_
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-
-      this.resources=resources
+      super.initialize(location, resources)
       salary.foreach(stipendi => salaryList.getItems.add(stipendi))
       salaryList.setCellFactory(StipendiCellFactory)
       listenerListView()

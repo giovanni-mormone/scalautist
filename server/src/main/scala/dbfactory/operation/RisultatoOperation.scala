@@ -150,7 +150,7 @@ object RisultatoOperation extends RisultatoOperation {
       }
     }yield finalResult
 
-  private def update(idRisultato:Int,idPersona:Int)={
+  private def update(idRisultato:Int,idPersona:Int): Future[Option[Int]] ={
     InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
       idPersona).result()
   }

@@ -8,7 +8,7 @@ import javafx.scene.control.{Button, Label, PasswordField, TextField}
 import javafx.scene.input.KeyCode
 import view.fxview.component.login.LoginParent
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Giovanni Mormone.
  *
@@ -51,10 +51,10 @@ object LoginBox{
       error setVisible true
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      usernameField.setPromptText(resources.getString("user"))
-      passwordField.setPromptText(resources.getString("pass"))
-      loginButton.setText(resources.getString("login"))
-      error.setText(resources.getString("error-message"))
+      usernameField.setPromptText(resources.getResource("user"))
+      passwordField.setPromptText(resources.getResource("pass"))
+      loginButton.setText(resources.getResource("login"))
+      error.setText(resources.getResource("error-message"))
 
       error.setVisible(false)
       loginButton.setOnAction(_ => this.loginSent())
