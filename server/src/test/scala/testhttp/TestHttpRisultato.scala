@@ -11,7 +11,7 @@ import messagecodes.{StatusCodes => statusCodes}
 
 object TestHttpRisultato {
   private def startServer(): Unit = MainServer
-  private val request: (String, Request[(Int, Int)]) = ("/replaceshift", Request(None))
+  private val replaceShift: (String, Request[(Int, Int)]) = ("/replaceshift", Request(None))
 }
 
 class TestHttpRisultato extends AnyWordSpec with ScalatestRouteTest with StartServer {
@@ -20,7 +20,7 @@ class TestHttpRisultato extends AnyWordSpec with ScalatestRouteTest with StartSe
 
   "The service" should {
     "return a bad request for getTurniInDay if a bad request is sent" in {
-      Post(request._1, request._2) ~> routeRisultato ~> check {
+      Post(replaceShift._1, replaceShift._2) ~> routeRisultato ~> check {
         responseAs[Response[Int]].payload.contains(statusCodes.BAD_REQUEST)
       }
     }
