@@ -54,7 +54,7 @@ object SummaryBox{
       terminalLabel.setText("")
     }
 
-    def nextPage(): Unit = { 
+    def nextPage(): Unit = {
       if(infoRequest.info.exists(value=>value._1>=position+1)){
         position=position+1
         shiftInfoLabel.getChildren.clear()
