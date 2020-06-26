@@ -61,7 +61,7 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
 }
 
 object RisultatoOperation extends RisultatoOperation {
-  val driverRole: Int = 3
+  val DRIVER_CODE: Int = 3
 
   def verifyResult(idRisultato: Int): Future[Option[Int]] = {
     select(idRisultato).collect{
@@ -73,12 +73,14 @@ object RisultatoOperation extends RisultatoOperation {
 
   private case class Shift(day: Date, name: String)
 
+  private val future: Int => Future[Option[List[Int]]] = idUser => InstancePersona.operation().execQueryFilter(field => field.ruolo,
+                                      filter => filter.id === idUser && filter.ruolo === DRIVER_CODE)
+
   override def getTurniInDate(idUser: Int, date: Date): Future[Option[InfoHome]] = {
     InstanceAssenza.operation().execQueryFilter(field => field.id, filter => filter.personaId === idUser &&
                                                 filter.dataInizio <= date && filter.dataFine >= date).flatMap {
       case None =>
-        InstancePersona.operation().execQueryFilter(field => field.ruolo, filter => filter.id === idUser &&
-                                                      filter.ruolo === driverRole).flatMap{
+        future(idUser).flatMap{
           case Some(_) => for {
             listTurni <- InstanceRisultato.operation().execQueryFilter(field => field.turnoId,
               filter => filter.data === date && filter.personeId === idUser)
@@ -93,8 +95,7 @@ object RisultatoOperation extends RisultatoOperation {
 
   override def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]] = {
     val dateEnd = DateConverter.nextWeek(date)
-    InstancePersona.operation().execQueryFilter(field => field.ruolo, filter => filter.id === idUser &&
-      filter.ruolo === driverRole).flatMap {
+    future(idUser).flatMap {
       case Some(_) =>
         InstanceAssenza.operation().execQueryFilter(field => (field.dataInizio, field.dataFine),
           filter => filter.personaId === idUser &&
@@ -123,7 +124,9 @@ object RisultatoOperation extends RisultatoOperation {
    * @param idUser
    *               employee
    * @param initDate
+   *                 date of start of the period to search
    * @param endDate
+   *                date of end of the period to search
    * @return
    */
   private def getTurnoOfDays(idUser: Int, initDate: Date, endDate: Date): Future[Option[List[Shift]]] = {

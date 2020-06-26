@@ -1232,7 +1232,6 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (2,N'20200822',N'20200829',0,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (3,N'20201222',N'20201231',0,3)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (4,N'20200220',N'20200325',0,4)
-INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (5,N'20200622',N'20200629',0,5)
 
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (6,N'20200522',N'20200529',0,6)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (7,N'20200522',N'20200529',0,7)
