@@ -5,10 +5,13 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import caseclass.CaseClassDB.{Giorno, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
+import utils.TransferObject.InfoRichiesta
 
+import scala.collection.immutable.HashMap
 import scala.concurrent.Future
 
 /**
@@ -51,6 +54,15 @@ trait ManagerModel {
    *         result of operation
    */
   def replaceShift(idRisultato: Int, idNewDriver: Int): Future[Response[Int]]
+
+  /**
+   * Define theoretical request for shifts
+   * @param info
+   *             information to build request body like an instance of [[InfoRichiesta]]
+   * @return
+   *         result of operation
+   */
+  def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]]
 }
 
 /**
@@ -65,10 +77,12 @@ object ManagerModel {
    */
   private class ManagerModelHttp extends AbstractModel with ManagerModel {
 
-    private val today: Date = Date.valueOf(LocalDate.now())
+    private val TODAY: Date = Date.valueOf(LocalDate.now())
+    private val WEEK: HashMap[Int, String] = HashMap(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi",
+                                                      5 -> "Venerdi", 6 -> "Sabato", 7 -> "Domenica")
 
     override def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]] = {
-      val request = Post(getURI("allabsences"), transform(Dates(today)))
+      val request = Post(getURI("allabsences"), transform(Dates(TODAY)))
       callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoAbsenceOnDay]]])
     }
 
@@ -79,6 +93,17 @@ object ManagerModel {
 
     override def replaceShift(idRisultato: Int, idNewDriver: Int): Future[Response[Int]] = {
       val request = Post(getURI("replaceshift"), transform((idRisultato, idNewDriver)))
+      callHtpp(request).flatMap(unMarshall)
+    }
+
+    override def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]] = {
+      val theoreticalRequest: List[RichiestaTeorica] =
+        info.idTerminal.map(terminal => RichiestaTeorica(info.date, Some(info.dateF), terminal))
+      val dailyRequest: List[RequestGiorno] =
+        info.info.flatMap(giorno => giorno._2.map(needed =>
+          RequestGiorno(Giorno(needed._2, WEEK.get(giorno._1).getOrElse("Vacanza"), giorno._1), needed._1)))
+      val requestBody: AssignRichiestaTeorica = AssignRichiestaTeorica(theoreticalRequest, dailyRequest)
+      val request = Post(getURI("definedailyrequest"), transform(requestBody))
       callHtpp(request).flatMap(unMarshall)
     }
   }
