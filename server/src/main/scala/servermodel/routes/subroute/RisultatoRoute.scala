@@ -55,7 +55,6 @@ object RisultatoRoute {
             case other => anotherSuccessAndFailure(other)
         }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
-
       }
     }
 }
