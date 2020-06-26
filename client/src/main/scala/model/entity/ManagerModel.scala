@@ -101,7 +101,7 @@ object ManagerModel {
         info.idTerminal.map(terminal => RichiestaTeorica(info.date, Some(info.dateF), terminal))
       val dailyRequest: List[RequestGiorno] =
         info.info.flatMap(giorno => giorno._2.map(needed =>
-          RequestGiorno(Giorno(needed._2, WEEK.get(giorno._1).getOrElse("Vacanza"), giorno._1), needed._1)))
+          RequestGiorno(Giorno(needed._2, WEEK.getOrElse(giorno._1, "Vacanza"), giorno._1), needed._1)))
       val requestBody: AssignRichiestaTeorica = AssignRichiestaTeorica(theoreticalRequest, dailyRequest)
       val request = Post(getURI("definedailyrequest"), transform(requestBody))
       callHtpp(request).flatMap(unMarshall)
