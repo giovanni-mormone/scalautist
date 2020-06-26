@@ -33,7 +33,7 @@ class TestHttpDisponibilita extends AnyWordSpec with ScalatestRouteTest with Sta
         responseAs[Response[Int]].payload.contains(statusCodes.BAD_REQUEST)
       }
     }
-    
+
     "return a bad request for extraAvailability if a bad request is sent" in {
       Post(getExtraAvailability._1, getExtraAvailability._2) ~> routeDisponibilita ~> check {
         responseAs[Response[Int]].payload.contains(statusCodes.BAD_REQUEST)
