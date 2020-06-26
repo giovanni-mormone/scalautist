@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.{Modality, Stage}
 import view.BaseView
 import view.fxview.loader.FXLoader
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Giovanni Mormone.
  *
@@ -19,10 +19,13 @@ import view.fxview.loader.FXLoader
  */
 object FXHelperFactory {
 
+
+
   /**
    * Creates a modal that shows a message to the user. The modal is a [[view.BaseView]]
    * and have to be showed. It sits on top of the stage provided and blocks
    * it until the user closes the created modal.
+   *
    * @param parent
    *               The parent stage of the modal.
    * @param message
@@ -31,7 +34,15 @@ object FXHelperFactory {
    *         The created modal.
    */
   def modalWithMessage(parent:Stage, message:String): BaseView = new FXModal(parent,message)
-
+  def modalAlert(myStage: Stage, message: String):Boolean = {
+    import javafx.scene.control.Alert
+    import javafx.scene.control.Alert.AlertType
+    import javafx.scene.control.ButtonType
+    val alert = new Alert(AlertType.WARNING, message, ButtonType.OK, ButtonType.CANCEL)
+    alert.setTitle("ALERT")
+    val result = alert.showAndWait
+    if (result.get eq ButtonType.OK) true else false
+  }
   /**
    * A simple javafx box to containing [[javafx.scene.control.ProgressIndicator]].
    */
@@ -45,7 +56,7 @@ object FXHelperFactory {
     box.setAlignment(Pos.CENTER)
     box
   }
-  val defaultErrorPanel = {
+  val defaultErrorPanel: VBox = {
     val box = new VBox()
     box.setId("error")
     box.setAlignment(Pos.CENTER)
@@ -83,9 +94,9 @@ object FXHelperFactory {
       myStage.close()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      myStage.setTitle(resources.getString("title"))
+      myStage.setTitle(resources.getResource("title"))
       messageLabel.setText(message)
-      confirmationButton.setText(resources.getString("confirm-button"))
+      confirmationButton.setText(resources.getResource("confirm-button"))
       confirmationButton.setOnAction(_ => close())
 
       myStage.setOnCloseRequest(e => e.consume())

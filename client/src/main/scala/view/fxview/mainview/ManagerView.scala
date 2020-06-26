@@ -12,6 +12,8 @@ import javafx.stage.Stage
 import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.manager.ManagerHome
+import view.fxview.component.manager.subcomponent.ManagerRichiestaBox
+import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.InfoRichiesta
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
@@ -103,5 +105,11 @@ object ManagerView {
     override def drawShiftRequest(listShift: List[Turno]): Unit = {
       Platform.runLater(() => managerHome.drawShiftRichiesta(listShift))
     }
+
+    override def showBackMessage(str: String): Unit = {
+       if(alertMessage(str)) managerHome.reDrawRichiesta()
+    }
+
+    override def sendRichiesta(richiesta: InfoRichiesta): Unit = myController.sendRichiesta(richiesta)
   }
 }

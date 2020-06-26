@@ -1,5 +1,5 @@
 package view.fxview.component.login
-
+import view.fxview.util.ResourceBundleUtil._
 import java.net.URL
 import java.util.ResourceBundle
 
@@ -46,13 +46,13 @@ object ChangePasswordBox{
     private val regex = PasswordHelper.passwordRegex()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      title.setText(resources.getString("title"))
-      passError.setText(resources.getString("pass-error-message"))
-      confirmError.setText(resources.getString("confirm-error-message"))
-      passwordField.setPromptText(resources.getString("pass"))
-      oldPasswordField.setPromptText(resources.getString("old-password"))
-      confirmPasswordField.setPromptText(resources.getString("confirm-pass"))
-      changePasswordButton.setText(resources.getString("change-pass"))
+      title.setText(resources.getResource("title"))
+      passError.setText(resources.getResource("pass-error-message"))
+      confirmError.setText(resources.getResource("confirm-error-message"))
+      passwordField.setPromptText(resources.getResource("pass"))
+      oldPasswordField.setPromptText(resources.getResource("old-password"))
+      confirmPasswordField.setPromptText(resources.getResource("confirm-pass"))
+      changePasswordButton.setText(resources.getResource("change-pass"))
       confirmError setVisible false
       passError setVisible false
       changePasswordButton setDisable true

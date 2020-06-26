@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.Terminale
+import caseclass.CaseClassDB.{Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
@@ -16,7 +16,9 @@ import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait ManagerHome extends Component[ManagerHomeParent]{
-  def drawShiftRichiesta(listShift: List[CaseClassDB.Turno]): Unit
+  def reDrawRichiesta(): Unit
+
+  def drawShiftRichiesta(listShift: List[Turno]): Unit
 
   def drawRichiesta(terminal: List[Terminale]): Unit
 
@@ -112,7 +114,12 @@ object ManagerHome{
       baseManager.setCenter(managerRichiestaBoxView.setParent(parent).pane)
     }
 
-    override def drawShiftRichiesta(listShift: List[CaseClassDB.Turno]): Unit = {
+    override def reDrawRichiesta(): Unit = {
+      managerRichiestaBoxView.reDrawRichiesta()
+      baseManager.setCenter(managerRichiestaBoxView.setParent(parent).pane)
+    }
+
+    override def drawShiftRichiesta(listShift: List[Turno]): Unit = {
       managerRichiestaBoxView.drawShiftRequest(listShift)
     }
   }

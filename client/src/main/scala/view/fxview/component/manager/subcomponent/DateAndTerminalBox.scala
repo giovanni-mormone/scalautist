@@ -6,7 +6,7 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Terminale
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, DatePicker, Label}
+import javafx.scene.control.{Button, ChoiceBox, ComboBox, DatePicker, Label}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 trait DateAndTerminalBox extends Component[ManagerRichiestaBox]{
@@ -26,7 +26,7 @@ object DateAndTerminalBox{
     @FXML
     var datepickerFinish: DatePicker = _
     @FXML
-    var terminal: ComboBox[Terminale] = _
+    var terminal: ChoiceBox[Terminale] = _
     @FXML
     var next: Button = _
 
