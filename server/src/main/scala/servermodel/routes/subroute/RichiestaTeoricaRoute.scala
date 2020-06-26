@@ -38,11 +38,11 @@ object RichiestaTeoricaRoute {
   def saveRichiestaTeorica(): Route =
     post {
       entity(as[Request[AssignRichiestaTeorica]]) {
-        case Request(Some(theoReq)) => complete(StatusCodes.BadRequest, badHttpRequest)
-          /*onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
+        case Request(Some(theoReq)) =>
+          onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
             case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
             case other => anotherSuccessAndFailure(other)
-          }*/
+          }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
       }
     }
