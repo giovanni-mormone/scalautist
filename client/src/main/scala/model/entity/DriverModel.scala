@@ -16,6 +16,7 @@ import scala.concurrent.Future
 
 
 /**
+ * @author Giovanni Mormone, Francesco Cassano
  * DriverModel extends [[model.Model]].
  * Interface for driver's operation on data
  */
