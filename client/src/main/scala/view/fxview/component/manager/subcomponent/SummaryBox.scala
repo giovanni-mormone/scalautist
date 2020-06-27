@@ -5,7 +5,7 @@ import java.util.ResourceBundle
 
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.{HBox, Pane, VBox}
+import javafx.scene.layout.{HBox, VBox}
 import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.{ExtraInfo, InfoRichiesta}
 import view.fxview.component.{AbstractComponent, Component}
 
@@ -42,7 +42,7 @@ object SummaryBox{
     var avanti: Button = _
 
     var position:Int=1
-
+    val DEFAULT_INFO: (String, List[(String,String)]) =("",List.empty)
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
       dataI.setText("infoRequest.date.toString")
@@ -78,10 +78,10 @@ object SummaryBox{
 
     private def createInfo():(String,List[(String,String)])=
       infoRequest.info.filter(day => day._1 == position).flatMap(dayInt => extraInfo.days.filter(day => day._1 == dayInt._1)
-        .map(day => day._2 -> dayInt._2)).map(value => value._1 -> value._2.flatMap(shift => extraInfo.listShift.filter(id => id.id.contains(shift._1))
-        .map(nameTurno => nameTurno.nomeTurno -> shift._2.toString))) match {
+        .map(day => day._2 -> dayInt._2)).map(value => value._1 -> value._2.flatMap(shift => extraInfo.listShift
+        .filter(id => id.id.contains(shift._1)).map(nameTurno => nameTurno.nomeTurno -> shift._2.toString))) match {
         case List(element) => element
-        case Nil =>("",List.empty)
+        case Nil =>DEFAULT_INFO
       }
   }
 }
