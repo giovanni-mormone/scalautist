@@ -32,7 +32,7 @@ trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica]{
 object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
 
   def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno])={
-    
+
   }
 
   override def saveRichiestaTeorica(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]] =
