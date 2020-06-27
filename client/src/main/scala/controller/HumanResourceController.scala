@@ -433,7 +433,7 @@ object HumanResourceController {
       .onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE,value))=>value.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
         case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.result("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.result("not-found-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_))=> myView.drawModalAbsenceHoliday(item,isMalattia,List.empty)
         case Failure(_)  => myView.result("general-error")
       }
     override def passwordRecovery(user: Int): Unit =

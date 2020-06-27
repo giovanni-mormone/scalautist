@@ -3,15 +3,19 @@ package testdboperation.assenza
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import dbfactory.operation.{AssenzaOperation, DisponibilitaOperation, RisultatoOperation}
 import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
-import utils.StartServer2
+import utils.StartServer4
 
 import scala.concurrent.Future
 
-class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServer2 {
+class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with StartServer4 {
   import AssenzaReplaceOperationValues._
   behavior of "GetAllAbsence"
-  it should "return list length 4 when get all absence with date 20200618" in {
+  it should "return list length 7 when get all absence with date 20200618" in {
     val getAllAbsence: Future[Option[List[InfoAbsenceOnDay]]] = AssenzaOperation.getAllAbsence(date)
+    getAllAbsence map {allAbsence =>  assert(allAbsence.head.length==7)}
+  }
+  it should "return list length 7 when get all absence with date 20200624" in {
+    val getAllAbsence: Future[Option[List[InfoAbsenceOnDay]]] = AssenzaOperation.getAllAbsence(dateNewWeek)
     getAllAbsence map {allAbsence =>  assert(allAbsence.head.length==7)}
   }
   it should "return None if terminal and shift not contains some replacement" in {

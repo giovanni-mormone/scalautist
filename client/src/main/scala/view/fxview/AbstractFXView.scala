@@ -52,6 +52,9 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
 
   override def showMessageFromKey(message: String): Unit =
     Platform.runLater(() =>showMessage(generalResources.getResource(message)))
+
+  override def alertMessage(message: String): Boolean =
+    FXHelperFactory.modalAlert(myStage,message)
 }
 
 /**
@@ -111,4 +114,6 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
   override def showMessageFromKey(message: String): Unit = {
       showMessage(generalResources.getResource(message))
   }
+  override def alertMessage(message: String): Boolean =
+    FXHelperFactory.modalAlert(myStage,message)
 }

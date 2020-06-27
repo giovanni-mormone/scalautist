@@ -90,11 +90,20 @@ object DriverHome{
     }
     private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
 
-    override def drawHome(infoHome: InfoHome): Unit = driverHome.setCenter(home(infoHome))
+    override def drawHome(infoHome: InfoHome): Unit = {
+      endLoading()
+      driverHome.setCenter(home(infoHome))
+    }
 
-    override def drawShift(shift: InfoShift): Unit = driverHome.setCenter(this.shift(shift))
+    override def drawShift(shift: InfoShift): Unit =  {
+      endLoading()
+      driverHome.setCenter(this.shift(shift))
+    }
 
-    override def drawSalary(list:List[Stipendio]): Unit = driverHome.setCenter(salary(list))
+    override def drawSalary(list:List[Stipendio]): Unit = {
+      endLoading()
+      driverHome.setCenter(salary(list))
+    }
 
 
     private def home(infoHome: InfoHome):Pane = {
@@ -117,6 +126,9 @@ object DriverHome{
 
     override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
 
-    override def stopLoading(): Unit = driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
+    override def stopLoading(): Unit ={
+      endLoading()
+      driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
+    }
   }
 }

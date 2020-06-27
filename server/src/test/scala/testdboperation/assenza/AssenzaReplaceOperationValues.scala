@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 object AssenzaReplaceOperationValues {
   val date:Date = Date.valueOf(LocalDate.of(2020,6,18))
+  val dateNewWeek:Date = Date.valueOf(LocalDate.of(2020,6,24))
   val dateWithoutAbsence:Date = Date.valueOf(LocalDate.of(2022,6,18))
   val idRisultatoWithoutReplace=18
   val idTerminalWithoutReplace=1

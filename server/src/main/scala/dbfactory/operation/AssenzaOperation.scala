@@ -187,9 +187,10 @@ object AssenzaOperation extends AssenzaOperation{
     val queryJoin = for {
       assenza<- AssenzaTableQuery.tableQuery()
       persona<- PersonaTableQuery.tableQuery()
-      if assenza.personaId===persona.id && assenza.dataInizio<=date && assenza.dataFine>=date
+      if assenza.personaId===persona.id && assenza.dataInizio<=date && assenza.dataFine>=date &&
+        persona.ruolo===CODICE_CONDUCENTE
     } yield (persona.id,persona.terminaleId)
-    executor(queryJoin)
+    executor(queryJoin).map(_.map(_.distinct))
   }
 
   private def queryFilterForRisultatoTable(date: Date,join:Option[List[(Int, Option[Int])]]): Future[Option[List[(Int, Int, Int)]]] ={

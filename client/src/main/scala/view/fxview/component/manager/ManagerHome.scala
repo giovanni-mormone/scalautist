@@ -3,19 +3,28 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
 import view.fxview.FXHelperFactory
-import view.fxview.component.manager.subcomponent.FillHolesBox
+import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait ManagerHome extends Component[ManagerHomeParent]{
+  def reDrawRichiesta(): Unit
+
+  def drawShiftRichiesta(listShift: List[Turno]): Unit
+
+  def drawRichiesta(terminal: List[Terminale]): Unit
+
   /**
    * Method used to draw the list of turns that needs a replacement
+   *
    * @param absences
    *                 The list of turns that needs a replacement
    */
@@ -58,9 +67,12 @@ object ManagerHome{
     @FXML
     var manageTerminalButton: Button = _
     @FXML
+    var richiestaButton: Button = _
+    @FXML
     var idLabel: Label = _
 
     var fillHolesView: FillHolesBox = _
+    var managerRichiestaBoxView:ManagerRichiestaBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -72,8 +84,9 @@ object ManagerHome{
       printResultButton.setText(resources.getResource("print-result-button"))
       manageZoneButton.setText(resources.getResource("manage-zone-button"))
       manageTerminalButton.setText(resources.getResource("manage-terminal-button"))
-
+      richiestaButton.setText(resources.getResource("richiesta-button"))
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
+      richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
     }
 
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
@@ -95,5 +108,19 @@ object ManagerHome{
 
     override def stopLoadingReplacements(): Unit =
       fillHolesView.endLoading()
+
+    override def drawRichiesta(terminal: List[Terminale]): Unit = {
+      managerRichiestaBoxView = ManagerRichiestaBox(terminal)
+      baseManager.setCenter(managerRichiestaBoxView.setParent(parent).pane)
+    }
+
+    override def reDrawRichiesta(): Unit = {
+      managerRichiestaBoxView.reDrawRichiesta()
+      baseManager.setCenter(managerRichiestaBoxView.setParent(parent).pane)
+    }
+
+    override def drawShiftRichiesta(listShift: List[Turno]): Unit = {
+      managerRichiestaBoxView.drawShiftRequest(listShift)
+    }
   }
 }
