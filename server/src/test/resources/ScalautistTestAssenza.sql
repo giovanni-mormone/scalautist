@@ -85,20 +85,20 @@ INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], 
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (3, N'Giovanni', N'Mormone', N'394562358',2,null,  N'root',1,  N'root')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (4, N'Luciano',  N'Fuentes', N'365478962',3,1,     N'yoyo',1,  N'yoyo')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (5, N'Valerio', N'Vigliano', N'91485236', 3,1,     N'tutu',1,  N'tutu')
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (6, N'Conducente', N'Maestro',N'91485236',   3,3,  N'tutu2',1,  N'tutu2',1)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (7, N'Pro', N'Va',N'91485236',               3,3,  N'tutu2',1,  N'tutu2',1)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (8, N'MAtto', N'Mattesi',N'91485236',        3,3,  N'tutu2',1,  N'tutu2',1)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (9, N'Conducente2', N'Maestro2',N'91485236', 3,3,  N'tutu2',1,  N'tutu2',2)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (10, N'Pro2', N'Va2',N'91485236',            3,3,  N'tutu2',1,  N'tutu2',2)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (11, N'MAtto2', N'Mattesi2',N'91485236',     3,3,  N'tutu2',1,  N'tutu2',2)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (12, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',3)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (13, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',3)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (14, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',3)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (15, N'Pro2', N'Va2',N'91485236',            3,3,  N'tutu2',1,  N'tutu2',4)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (16, N'MAtto2', N'Mattesi2',N'91485236',     3,3,  N'tutu2',1,  N'tutu2',4)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (17, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',4)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (18, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',5)
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (19, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu2',1,  N'tutu2',5)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (6, N'Conducente', N'Maestro',N'91485236',   3,3,  N'tutu6',1,  N'tutu6',1)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (7, N'Pro', N'Va',N'91485236',               3,3,  N'tutu7',1,  N'tutu7',1)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (8, N'MAtto', N'Mattesi',N'91485236',        3,3,  N'tutu8',1,  N'tutu8',1)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (9, N'Conducente2', N'Maestro2',N'91485236', 3,3,  N'tutu9',1,  N'tutu9',2)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (10, N'Pro2', N'Va2',N'91485236',            3,3,  N'tutu10',1,  N'tutu10',2)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (11, N'MAtto2', N'Mattesi2',N'91485236',     3,3,  N'tutu11',1,  N'tutu11',2)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (12, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu12',1,  N'tutu12',3)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (13, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu13',1,  N'tutu13',3)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (14, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu14',1,  N'tutu14',3)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (15, N'Pro2', N'Va2',N'91485236',            3,3,  N'tutu15',1,  N'tutu15',4)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (16, N'MAtto2', N'Mattesi2',N'91485236',     3,3,  N'tutu16',1,  N'tutu16',4)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (17, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu17',1,  N'tutu17',4)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (18, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu18',1,  N'tutu18',5)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (19, N'Conducente3', N'Maestro3',N'91485236',3,3,  N'tutu19',1,  N'tutu19',5)
 SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 
 --//PERSONA
@@ -2136,10 +2136,10 @@ SET IDENTITY_INSERT [dbo].[RichiestaTeoricaSets] OFF
 SET IDENTITY_INSERT [dbo].[GiornoSets] ON
 INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (1, 2,N'Lunedi',1)
 INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (2, 2,N'Martedi',2)
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (3, 2,N'Mercoledi',3)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (3, 30,N'Mercoledi',3)
 INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (4, 30,N'Giovedi',4)
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (5, 2,N'Venerdi',5)
-INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (6, 2,N'Sabato',6)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (5, 30,N'Venerdi',5)
+INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (6, 30,N'Sabato',6)
 INSERT INTO [dbo].[GiornoSets] ([IdGiorno], [Quantita],[NomeGiorno],[IdGiornoInSettimana]) VALUES (7, 2,N'Domenica',7)
 SET IDENTITY_INSERT [dbo].[GiornoSets] OFF
 
@@ -2193,4 +2193,3 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
-

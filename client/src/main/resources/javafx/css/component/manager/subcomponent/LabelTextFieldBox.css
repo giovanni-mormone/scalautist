@@ -1,0 +1,12 @@
+#baseBox{
+    -fx-spacing: 100;
+}
+#shiftLabel{
+    -fx-alignment: inherit;
+}
+#quantity{
+    -fx-alignment: inherit;
+}
+#errorLabel{
+    -fx-text-fill: #ff3936;
+}

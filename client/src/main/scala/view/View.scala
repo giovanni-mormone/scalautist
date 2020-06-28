@@ -39,6 +39,7 @@ trait DialogView extends BaseView{
 
   def showMessageFromKey(message:String):Unit
 
+  def alertMessage(message:String):Boolean
 }
 
 /**

@@ -1,0 +1,12 @@
+#dateAndTerminal{
+    -fx-alignment: TOP_CENTER;
+    -fx-spacing: 50.0;
+    -fx-pref-width: 600.0;
+    -fx-pref-height:400.0;
+}
+#datepickerBox{
+    -fx-spacing: 40;
+    -fx-pref-width: 200.0;
+    -fx-pref-height:100.0;
+    -fx-alignment: TOP_CENTER;
+}
