@@ -34,7 +34,6 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         case Some(result) => result
       })))
     })*/
-    
     Future.successful(None)
   }
 }
