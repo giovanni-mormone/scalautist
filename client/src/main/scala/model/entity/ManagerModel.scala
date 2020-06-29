@@ -64,7 +64,11 @@ trait ManagerModel {
    */
   def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]]
 
-  def esecuzioneAlgoritmo():Unit
+  /**
+   * method that call server for execute algorithm for assigment free day and shift
+   * @param info case class that contains all info for algorithm and yours execution
+   */
+  def esecuzioneAlgoritmo(info:AlgorithmExecute):Unit
 }
 
 /**
@@ -108,6 +112,11 @@ object ManagerModel {
       println(requestBody)
       val request = Post(getURI("definedailyrequest"), transform(requestBody))
       callHtpp(request).flatMap(unMarshall)
+    }
+
+    override def esecuzioneAlgoritmo(info: AlgorithmExecute): Unit = {
+      val request = Post(getURI("executealgorithm"), transform(info))
+      callHtpp(request)
     }
   }
 }

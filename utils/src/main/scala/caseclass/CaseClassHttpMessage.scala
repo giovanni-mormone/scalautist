@@ -186,7 +186,7 @@ object CaseClassHttpMessage {
    *               - Quantity compared to theoretical drivers
    *               % Relative of drivers
    */
-  final case class Settimana(idDay:Int,quantita:Int,regola:Int)
+  final case class SettimanaNS(idDay:Int,quantita:Int,regola:Int)
 
   /**
    * case class which represent a group of driver in assignation.
@@ -198,7 +198,7 @@ object CaseClassHttpMessage {
    *               -respect rule a day off one worked a day off
    *               -respect two precedent case
    */
-  final case class Gruppo(idGruppo:Int,date:List[Date],regola:Int)
+  final case class GruppoA(idGruppo:Int,date:List[Date],regola:Int)
 
   /**
    * case class which represent information that algorithm need for calculus of shift and free day
@@ -210,7 +210,7 @@ object CaseClassHttpMessage {
    * @param settimanaSpeciale all existing special week in this parameterization
    * @param regolaTreSabato ruler which represent if every three saturday a driver must have free day
    */
-  final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[Gruppo]],
-                                    settimanaNormale: Option[List[Settimana]],settimanaSpeciale: Option[List[Settimana]],
+  final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[GruppoA]],
+                                    settimanaNormale: Option[List[SettimanaNS]],settimanaSpeciale: Option[List[SettimanaNS]],
                                     regolaTreSabato:Boolean)
 }
