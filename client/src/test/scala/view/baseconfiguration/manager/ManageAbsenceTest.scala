@@ -28,8 +28,5 @@ class ManageAbsenceTest extends BaseTest{
   @Test
   def test(): Unit = {
     managerOperations.openManageAbsence()
-    Thread.sleep(15000)
-    absence.clickAbsence()
-    Thread.sleep(10000)
   }
 }
