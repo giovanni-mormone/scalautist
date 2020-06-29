@@ -63,6 +63,8 @@ trait ManagerModel {
    *         result of operation
    */
   def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]]
+
+  def esecuzioneAlgoritmo():Unit
 }
 
 /**
