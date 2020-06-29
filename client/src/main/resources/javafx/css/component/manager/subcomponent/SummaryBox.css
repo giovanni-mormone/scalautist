@@ -1,0 +1,18 @@
+#baseBox{
+    -fx-spacing: 100;
+}
+#dataI{
+    -fx-alignment: TOP_LEFT;
+}
+#dataF{
+    -fx-alignment: TOP_LEFT;
+}
+#terminalLabel{
+    -fx-alignment: TOP_CENTER;
+}
+#shiftLabel{
+    -fx-alignment: inherit;
+}
+#quantityLabel{
+    -fx-alignment: inherit;
+}

@@ -217,17 +217,17 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     }
   }
 
-  private def deleteDayAbsence(listDate:List[(Date,Date)], date:Date): List[Date] ={
-    val days = createListDay(date)
+  private def deleteDayAbsence(listDate:List[(Date,Date)], dates:Date): List[Date] ={
+    val days = createListDay(dates)
     listDate.map {
-      case (date, date1) if date1.compareTo(getEndDayWeek(date)) > 0 => date -> getEndDayWeek(date)
+      case (date, date1) if date1.compareTo(getEndDayWeek(date)) > 0 => date -> getEndDayWeek(dates)
       case (date, date1) if date1.compareTo(getEndDayWeek(date)) <= 0 => date -> date1
     }.flatMap(dates => {
       val dayBetween = createListDayBetween(dates._1, dates._2)
       days.filter(day => !dayBetween.contains(day))
     }).groupBy(date => date) match {
-      case map if map.exists(_._2.length>=UNION)=> deleteDateBefore(map.filter(_._2.length==2),date)
-      case map =>deleteDateBefore(map,date)
+      case map if map.exists(_._2.length>=UNION)=> deleteDateBefore(map.filter(_._2.length==2),dates)
+      case map =>deleteDateBefore(map,dates)
     }
   }
 
@@ -268,7 +268,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     getDayNumber(date) match {
       case SUNDAY | SATURDAY => DEFAULT_RESPONSE
       case _ => InstanceAssenza.operation().execQueryFilter(disp=>(disp.dataInizio,disp.dataFine),disp=>
-        disp.dataInizio>=getFirstDayWeek(date) && disp.dataInizio<=getEndDayWeek(date) && disp.personaId===idUser)
+        (disp.dataInizio>=getFirstDayWeek(date) && disp.dataFine>=getFirstDayWeek(date) ||
+          disp.dataInizio<=getFirstDayWeek(date) && disp.dataFine>=getFirstDayWeek(date)) && disp.personaId===idUser)
         .flatMap {
           case Some(value) => operationWhenExistAbsence(deleteDayAbsence(value,date),idUser,date).map(finalResponse)
           case None =>  getDisponibilitaName(idUser,date).map(finalResponse)
@@ -302,4 +303,4 @@ object DisponibilitaOperation extends DisponibilitaOperation{
           case None =>  Future.successful(Some(StatusCodes.NOT_FOUND))
         }
   }
-} 
+}

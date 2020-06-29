@@ -14,7 +14,7 @@ import scala.util.Success
 
 /**
  * @author Francesco Cassano
- * RisultatoRoute is an object that manage methods that act on the persona entity
+ * RisultatoRoute is an object that manage methods that act on the risultato entity
  */
 object RisultatoRoute {
   private val badHttpRequest: Response[Int] =Response[Int](statusCodes.BAD_REQUEST)
@@ -55,7 +55,6 @@ object RisultatoRoute {
             case other => anotherSuccessAndFailure(other)
         }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
-
       }
     }
 }

@@ -23,6 +23,7 @@ object MasterRouteRisultato extends Directives {
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "replace success"),
+      new ApiResponse (responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
   def replaceShift(): Route =

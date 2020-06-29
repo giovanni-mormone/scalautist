@@ -23,6 +23,7 @@
                 <Button fx:id="printResultButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" />
                 <Button fx:id="manageZoneButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" />
                 <Button fx:id="manageTerminalButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" />
+                <Button fx:id="richiestaButton" mnemonicParsing="false" prefHeight="27.0" prefWidth="110.0" />
             </children>
          <BorderPane.margin>
             <Insets />

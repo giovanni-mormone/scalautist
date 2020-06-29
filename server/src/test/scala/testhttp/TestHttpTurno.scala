@@ -1,17 +1,13 @@
 package testhttp
 
-import java.sql.Date
-
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import caseclass.CaseClassDB.Turno
 import caseclass.CaseClassHttpMessage.{Dates, Request, Response}
 import jsonmessages.JsonFormats._
+import messagecodes.{StatusCodes => statusCodes}
 import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
 import servermodel.routes.masterroute.MasterRouteTurno.routeTurno
 import utils.StartServer
-import messagecodes.{StatusCodes => statusCodes}
 
 object TestHttpTurno{
   private def startServer():Unit=MainServer

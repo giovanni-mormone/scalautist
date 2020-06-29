@@ -4,7 +4,7 @@ import java.sql.Date
 
 import caseclass.CaseClassDB.{Risultato, Turno}
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, ShiftDay}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceRisultato, InstanceTurno}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRisultato, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{RisultatoTableQuery, TurnoTableQuery}
 import dbfactory.util.Helper._
@@ -61,6 +61,8 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
 }
 
 object RisultatoOperation extends RisultatoOperation {
+  val DRIVER_CODE: Int = 3
+
   def verifyResult(idRisultato: Int): Future[Option[Int]] = {
     select(idRisultato).collect{
       case Some(_) => Option(StatusCodes.SUCCES_CODE)
@@ -71,22 +73,49 @@ object RisultatoOperation extends RisultatoOperation {
 
   private case class Shift(day: Date, name: String)
 
+  private val future: Int => Future[Option[List[Int]]] = idUser => InstancePersona.operation().execQueryFilter(field => field.ruolo,
+                                      filter => filter.id === idUser && filter.ruolo === DRIVER_CODE)
+
   override def getTurniInDate(idUser: Int, date: Date): Future[Option[InfoHome]] = {
-    for{
-      listTurni <- InstanceRisultato.operation().execQueryFilter(field => field.turnoId,
-        filter => filter.data === date && filter.personeId === idUser)
-      turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
-      disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
+    InstanceAssenza.operation().execQueryFilter(field => field.id, filter => filter.personaId === idUser &&
+                                                filter.dataInizio <= date && filter.dataFine >= date).flatMap {
+      case None =>
+        future(idUser).flatMap{
+          case Some(_) => for {
+            listTurni <- InstanceRisultato.operation().execQueryFilter(field => field.turnoId,
+              filter => filter.data === date && filter.personeId === idUser)
+            turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
+            disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+          } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
+          case _ => Future.successful(None)
+        }
+      case _ => Future.successful(None)
+    }
   }
 
   override def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]] = {
     val dateEnd = DateConverter.nextWeek(date)
+    future(idUser).flatMap {
+      case Some(_) =>
+        InstanceAssenza.operation().execQueryFilter(field => (field.dataInizio, field.dataFine),
+          filter => filter.personaId === idUser &&
+            ((filter.dataInizio <= dateEnd && filter.dataInizio >= date) ||
+              (filter.dataInizio <= date && filter.dataFine >= date))
+        ).flatMap {
 
-    for{
-      turni <- getTurnoOfDays(idUser, date, dateEnd)
-      disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
-    } yield Some(InfoShift(turni.toList.flatten.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
+          case Some(dateL) => for {
+              turni <- getTurnoOfDays(idUser, date, dateEnd)
+              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+            } yield Some(InfoShift(turni.toList.flatten.filter(
+                turno => dateL.exists(date => date._1.compareTo(turno.day) > 0 || date._2.compareTo(turno.day) < 0)
+            ).map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
+          case None => for {
+              turni <- getTurnoOfDays(idUser, date, dateEnd)
+              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+            } yield Some(InfoShift(turni.toList.flatten.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
+        }
+      case _ => Future.successful(None)
+    }
   }
 
   /**
@@ -95,7 +124,9 @@ object RisultatoOperation extends RisultatoOperation {
    * @param idUser
    *               employee
    * @param initDate
+   *                 date of start of the period to search
    * @param endDate
+   *                date of end of the period to search
    * @return
    */
   private def getTurnoOfDays(idUser: Int, initDate: Date, endDate: Date): Future[Option[List[Shift]]] = {
@@ -122,7 +153,7 @@ object RisultatoOperation extends RisultatoOperation {
       }
     }yield finalResult
 
-  private def update(idRisultato:Int,idPersona:Int)={
+  private def update(idRisultato:Int,idPersona:Int): Future[Option[Int]] ={
     InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
       idPersona).result()
   }

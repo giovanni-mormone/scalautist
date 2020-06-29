@@ -2193,3 +2193,4 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
+

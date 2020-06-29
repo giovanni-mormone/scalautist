@@ -1,14 +1,32 @@
 package controller
 
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, Response}
+import caseclass.CaseClassHttpMessage.Response
 import messagecodes.StatusCodes
-import model.entity.ManagerModel
+import model.entity.{HumanResourceModel, ManagerModel}
+import utils.TransferObject.InfoRichiesta
 import view.fxview.mainview.ManagerView
 
-import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+
+  /**
+   *
+   * @param richiesta
+   */
+  def sendRichiesta(richiesta: InfoRichiesta): Unit
+
+  /**
+   *
+   * @param idTerminal
+   */
+  def selectShift(idTerminal: Int): Unit
+
+  /**
+   *
+   */
+  def datatoRichiestaPanel(): Unit
+
 
   /**
    * Method that asks the model to retrieve the data about the absent people
@@ -65,6 +83,29 @@ object ManagerController {
           dataToAbsencePanel()
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
         case Failure(_) => myView.showMessageFromKey("general-error")
+      }
+    }
+
+    override def datatoRichiestaPanel(): Unit =
+      HumanResourceModel().getAllTerminale.onComplete {
+        case Failure(exception) =>
+        case Success(value) =>value.payload.foreach(value => myView.drawRichiesta(value))
+      }
+
+
+    override def selectShift(idTerminal: Int): Unit =
+      HumanResourceModel().getAllShift.onComplete {
+        case Failure(exception) =>
+        case Success(value) =>value.payload.foreach(value=>myView.drawShiftRequest(value))
+      }
+
+    override def sendRichiesta(richiesta: InfoRichiesta): Unit = {
+      model.defineTheoreticalRequest(richiesta).onComplete {
+        case Failure(e) =>  myView.showMessageFromKey("general-error")
+          println(e)
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
+        case Success(value) =>println(value)
       }
     }
   }

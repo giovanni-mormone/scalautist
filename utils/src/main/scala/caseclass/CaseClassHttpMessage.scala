@@ -2,7 +2,7 @@ package caseclass
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Persona, Presenza, Stipendio, StoricoContratto, Turno}
+import caseclass.CaseClassDB.{Assenza, Disponibilita, Giorno, Persona, Presenza, RichiestaTeorica, Stipendio, StoricoContratto, Turno}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
@@ -29,14 +29,14 @@ object CaseClassHttpMessage {
   /**
    * case class used has a wrapper for server response
    * @param payload object that represent the case class send of the server
-   * @tparam A
+   * @tparam A generic type of request
    */
   final case class Request[A](payload:Option[A])
   /**
    * case class used has a wrapper for server response
    * @param statusCode status of the operation
    * @param payload object that represent the case class send of the server
-   * @tparam A
+   * @tparam A generic type of response
    */
   final case class Response[A](statusCode:Int,payload:Option[A]=None)
 
@@ -147,11 +147,11 @@ object CaseClassHttpMessage {
   final case class InfoAbsenceOnDay(nomeTerminale:String,nomeTurno:String,idTerminale:Int,idTurno:Int,idRisultato:Int)
 
   /**
-   *
-   * @param idRisultato
-   * @param idPersona
-   * @param nome
-   * @param cognome
+   * Case class to replacement
+   * @param idRisultato id of risultato
+   * @param idPersona id of driver
+   * @param nome name of driver
+   * @param cognome surname of driver
    */
   final case class InfoReplacement(idRisultato:Int,idPersona:Int,nome:String,cognome:String)
 
@@ -161,4 +161,18 @@ object CaseClassHttpMessage {
    * @param date date of absence
    */
   final case class InfoVacantShift(idDriver: Int, date: String)
+
+  /**
+   * Case class that represent information of daily theoretical request
+   * @param day
+   * @param shift
+   */
+  final case class RequestGiorno(day: Giorno, shift: Int)
+
+  /**
+   * Case class that represent all info to save a theoretical request
+   * @param request list of request to save for each terminal
+   * @param days list of giorno to save for each day of the week
+   */
+  final case class AssignRichiestaTeorica(request: List[RichiestaTeorica], days: List[RequestGiorno])
 }
