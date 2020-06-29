@@ -1,6 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
+import caseclass.CaseClassHttpMessage.AlgorithmExecute
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -31,8 +32,23 @@ object MasterRouteRisultato extends Directives {
       updateShift()
     }
 
+  @Path("/executealgorithm")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Run Algorithm", description = "Run algorithm for obtained free day and shift",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AlgorithmExecute])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "run success"),
+      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def executeAlgorithm(): Route =
+    path("executealgorithm") {
+      runAlgorithm()
+    }
   val routeRisultato: Route =
     concat(
-      replaceShift()
+      replaceShift(),executeAlgorithm()
     )
 }

@@ -4,12 +4,13 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.Risultato
-import caseclass.CaseClassHttpMessage.{Id, Request, Response}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response}
 import dbfactory.operation.RisultatoOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
 import messagecodes.{StatusCodes => statusCodes}
 
+import scala.concurrent.Future
 import scala.util.Success
 
 /**
@@ -54,6 +55,18 @@ object RisultatoRoute {
             case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
             case other => anotherSuccessAndFailure(other)
         }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
+      }
+    }
+
+  def runAlgorithm(): Route =
+    post {
+      entity(as[Request[AlgorithmExecute]]) {
+        case Request(Some(infoAlgorithm)) =>
+          onComplete(Future.successful()) {
+            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+            case other => anotherSuccessAndFailure(other)
+          }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
       }
     }
