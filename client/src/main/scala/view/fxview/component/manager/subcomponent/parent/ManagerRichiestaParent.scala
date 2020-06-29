@@ -1,12 +1,12 @@
 package view.fxview.component.manager.subcomponent.parent
 
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.InfoRichiesta
+import utils.TransferObject.InfoRichiesta
 
 trait ManagerRichiestaParent {
   def sendRichiesta(richiesta: InfoRichiesta): Unit
 
   def showBackMessage(str: String): Unit
 
-  def getShift(idTerminal: Int): Unit
+  def selectShift(idTerminal: Int): Unit
 
 }

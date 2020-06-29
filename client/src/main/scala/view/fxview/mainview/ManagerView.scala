@@ -9,11 +9,10 @@ import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
+import utils.TransferObject.InfoRichiesta
 import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.InfoRichiesta
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
@@ -100,7 +99,7 @@ object ManagerView {
 
     override def drawRichiesta(terminal: List[Terminale]): Unit =  Platform.runLater(() => managerHome.drawRichiesta(terminal))
 
-    override def getShift(idTerminal: Int): Unit = myController.selectShift(idTerminal)
+    override def selectShift(idTerminal: Int): Unit = myController.selectShift(idTerminal)
 
     override def drawShiftRequest(listShift: List[Turno]): Unit = {
       Platform.runLater(() => managerHome.drawShiftRichiesta(listShift))
