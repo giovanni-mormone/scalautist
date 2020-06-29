@@ -52,7 +52,7 @@ object ManagerController {
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("no-replacement-error")
         case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(e) => myView.showMessageFromKey("general-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
       }
     }
 
@@ -64,7 +64,7 @@ object ManagerController {
           myView.showMessageFromKey("replaced-driver")
           dataToAbsencePanel()
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(e) => myView.showMessageFromKey("general-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
       }
     }
   }

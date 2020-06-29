@@ -108,7 +108,7 @@ object AssenzaOperation extends AssenzaOperation{
 
   private def insertPriv(element: Assenza): Future[Option[Int]] = element match {
     case Assenza(_,start,end,false,_) if computeDaysBetweenDates(start,end) > GIORNI_FERIE_ANNUI => Future.successful(Some(StatusCodes.ERROR_CODE2))
-    case Assenza(_,start,end,false,_) if notSameYear(start,end) => Future.successful(Some(StatusCodes.ERROR_CODE3))
+    case Assenza(_,start,end,false,_) if n  zotSameYear(start,end) => Future.successful(Some(StatusCodes.ERROR_CODE3))
     case Assenza(_,start,end,false,_) if start.compareTo(end) > 0 => Future.successful(Some(StatusCodes.ERROR_CODE4))
     case Assenza(id,start,end,false,_) => tryInsert(Assenza(id,start,end,malattia = false))
     case _ => super.insert(element)
