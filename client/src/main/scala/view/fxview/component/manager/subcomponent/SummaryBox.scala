@@ -6,7 +6,8 @@ import java.util.ResourceBundle
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{HBox, VBox}
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.{ExtraInfo, InfoRichiesta}
+import utils.TransferObject.InfoRichiesta
+import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.ExtraInfo
 import view.fxview.component.{AbstractComponent, Component}
 
 trait SummaryBox extends Component[RichiestaForDayBox]{
@@ -43,15 +44,21 @@ object SummaryBox{
 
     var position:Int=1
     val DEFAULT_INFO: (String, List[(String,String)]) =("",List.empty)
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location,resources)
-      dataI.setText("infoRequest.date.toString")
-      dataF.setText("infoRequest.date1.toString")
+      dataI.setText(infoRequest.date.toString)
+      dataF.setText(infoRequest.dateF.toString)
       indietro.setText("Indietro")
       avanti.setText("Avanti")
       avanti.setOnAction(_=>nextPage())
       indietro.setOnAction(_=>backPage())
-      terminalLabel.setText("")
+      terminalLabel.setText(setTerminalName())
+    }
+    def setTerminalName():String={
+      val DEFAULT_VALUE:String =String.valueOf("  ")
+      extraInfo.listTerminal.filter(terminals=>infoRequest.idTerminal.exists(id=>terminals.idTerminale.contains(id)))
+        .map(_.nomeTerminale).foldLeft(DEFAULT_VALUE)(_ +DEFAULT_VALUE+ _)
     }
 
     def nextPage(): Unit = {
