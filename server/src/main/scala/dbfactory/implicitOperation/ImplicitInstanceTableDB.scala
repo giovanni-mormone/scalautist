@@ -11,10 +11,10 @@ import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
 import dbfactory.table.ParametroTable.ParametroTableRep
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.table.PresenzaTable.PresenzaTableRep
+import dbfactory.table.RegolaTable.RegolaTableRep
 import dbfactory.table.RichiestaTable.RichiestaTableRep
 import dbfactory.table.RichiestaTeoricaTable.RichiestaTeoricaTableRep
 import dbfactory.table.RisultatoTable.RisultatoTableRep
-import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StipendioTable.StipendioTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
@@ -94,10 +94,10 @@ object ImplicitInstanceTableDB {
 
     override def operation(): GenericOperation[Risultato, RisultatoTableRep] = GenericOperation[Risultato, RisultatoTableRep]()
   }
-  implicit object InstanceSettimana extends ImplicitInstanceTableDB[Settimana,SettimanaTableRep] {
-    override private[implicitOperation] def typeDB(): GenericCRUD[Settimana, SettimanaTableRep] = GenericCRUD[Settimana, SettimanaTableRep]()
+  implicit object InstanceRegola extends ImplicitInstanceTableDB[Regola,RegolaTableRep] {
+    override private[implicitOperation] def typeDB(): GenericCRUD[Regola, RegolaTableRep] = GenericCRUD[Regola, RegolaTableRep]()
 
-    override def operation(): GenericOperation[Settimana, SettimanaTableRep] = GenericOperation[Settimana, SettimanaTableRep]()
+    override def operation(): GenericOperation[Regola, RegolaTableRep] = GenericOperation[Regola, RegolaTableRep]()
   }
   implicit object InstanceStoricoContratto extends ImplicitInstanceTableDB[StoricoContratto,StoricoContrattoTableRep] {
     override private[implicitOperation] def typeDB(): GenericCRUD[StoricoContratto, StoricoContrattoTableRep] = GenericCRUD[StoricoContratto, StoricoContrattoTableRep]()

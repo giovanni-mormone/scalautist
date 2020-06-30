@@ -14,12 +14,25 @@ import view.fxview.FXHelperFactory
 import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
-
+/** @author Gianni Mormone, Fabian Aspee Encina
+ *  Trait which allows to perform operations on richiesta view.
+ */
 trait ManagerHome extends Component[ManagerHomeParent]{
+  /**
+   * method that re paint all element that belong to Richiesta
+   */
   def reDrawRichiesta(): Unit
 
+  /**
+   * method that send all shift that existing in system and allow draw this
+   * @param listShift list with all shift in the system
+   */
   def drawShiftRichiesta(listShift: List[Turno]): Unit
 
+  /**
+   *  method that send all terminal that existing in system and allow draw this
+   * @param terminal list with all terminal existing in system
+   */
   def drawRichiesta(terminal: List[Terminale]): Unit
 
   /**

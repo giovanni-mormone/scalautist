@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, RichiestaTeorica, Risultato}
+import caseclass.CaseClassDB.{Giorno, Parametro, RichiestaTeorica, Risultato}
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
@@ -80,12 +80,24 @@ trait ManagerModel {
   def getResultAlgorithm(idTerminale:Int,dataI:Date,dataF:Date):Future[Response[Risultato]]
 
   /**
-   *
-   * @param idTerminale
-   * @param dataI
-   * @param dataF
+   * return all parameter existing in database
    */
-  def getOldParameter(idTerminale:Int,dataI:Date,dataF:Date):Unit = ???
+  def getOldParameter:Future[Response[Parametro]]
+
+  /**
+   * method that return specific parameters with yours configuration
+   * @param idParameters represent idParameter existing in database
+   * @return Future Response InfoAlgorithm with all information saved in the database
+   */
+  def getParameterById(idParameters:Int):Future[Response[InfoAlgorithm]]
+
+  /**
+   * method which allow save all information relationship with parameters
+   * @param parameters case class that represent information for parameters, this case class contains
+   *                   parametro: Parametro, giornoInSettimana: List[GiornoInSettimana]
+   * @return Future Response Int with status of operation
+   */
+  def saveParameters(parameters:InfoAlgorithm):Future[Response[Int]]
 }
 
 /**
@@ -140,7 +152,22 @@ object ManagerModel {
       val request = Post(getURI("getresultalgorithm"), transform((idTerminale,Dates(dataI),Dates(dataF))))
       callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Risultato]])
     }
-  }
+
+    override def getOldParameter: Future[Response[Parametro]] = {
+      val request = Post(getURI("getalloldparameters"))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Parametro]])
+    }
+
+    override def getParameterById(idParameters: Int): Future[Response[InfoAlgorithm]] = {
+      val request = Post(getURI("getoldparametersbyid"), transform(idParameters))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[InfoAlgorithm]])
+    }
+
+    override def saveParameters(parameters: InfoAlgorithm): Future[Response[Int]] = {
+      val request = Post(getURI("saveparameter"), transform(parameters))
+      callHtpp(request).flatMap(unMarshall)
+    }
+}
 }
 
 object t extends App{

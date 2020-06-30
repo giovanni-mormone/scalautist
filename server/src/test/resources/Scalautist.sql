@@ -605,7 +605,7 @@ ALTER TABLE [dbo].[RichiestaSets]
         FOREIGN KEY ([Giorno_IdGiorno])
             REFERENCES [dbo].[GiornoSets]
                 ([IdGiorno])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaGiorno'
@@ -740,7 +740,7 @@ ALTER TABLE [dbo].[RichiestaSets]
         FOREIGN KEY ([RichiestaTeorica_IdRichiestaTeorica])
             REFERENCES [dbo].[RichiestaTeoricaSets]
                 ([IdRichiestaTeorica])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaTeoricaRichiesta'
@@ -755,7 +755,7 @@ ALTER TABLE [dbo].[RichiestaSets]
         FOREIGN KEY ([Turno_IdTurno])
             REFERENCES [dbo].[TurnoSets]
                 ([IdTurno])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_RichiestaTurno'
@@ -830,7 +830,7 @@ ALTER TABLE [dbo].[RichiestaTeoricaSets]
         FOREIGN KEY ([TerminalSetIdTerminale])
             REFERENCES [dbo].[TerminalSets]
                 ([IdTerminale])
-            ON DELETE NO ACTION ON UPDATE NO ACTION;
+            ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_TerminalSetRichiestaTeoricaSet'

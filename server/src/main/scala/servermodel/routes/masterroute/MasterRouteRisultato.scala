@@ -64,40 +64,9 @@ object MasterRouteRisultato extends Directives {
       getResultAlgorithm
     }
 
-  @Path("/getalloldparameters")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Parameters", description = "Return all parameters existing in database",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int,Dates,Dates)])))),
-    responses = Array(
-      new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def oldParameters(): Route =
-    path("getalloldparameters") {
-      getAllOldParameters
-    }
 
-
-  @Path("/getoldparametersbyid")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Parameters By Id", description = "Return all parameters that correspond by id",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int,Dates,Dates)])))),
-    responses = Array(
-      new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def oldParametersById(): Route =
-    path("getoldparametersbyid") {
-      getParametersById
-    }
   val routeRisultato: Route =
     concat(
-      replaceShift(),executeAlgorithm(),resultAlgorithm(),oldParameters(),oldParametersById()
+      replaceShift(),executeAlgorithm(),resultAlgorithm()
     )
 }

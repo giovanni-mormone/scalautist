@@ -11,15 +11,14 @@ import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
 import dbfactory.table.ParametroTable.ParametroTableRep
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.table.PresenzaTable.PresenzaTableRep
+import dbfactory.table.RegolaTable.RegolaTableRep
 import dbfactory.table.RichiestaTable.RichiestaTableRep
 import dbfactory.table.RichiestaTeoricaTable.RichiestaTeoricaTableRep
 import dbfactory.table.RisultatoTable.RisultatoTableRep
-import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
-import slick.jdbc.SQLServerProfile
 import slick.jdbc.SQLServerProfile.api._
 
 /**
@@ -73,9 +72,6 @@ object Table{
   object RisultatoTableQuery extends Table[Risultato,RisultatoTableRep]{
     override def tableQuery():TableQuery[RisultatoTableRep] = tableDB()
   }
-  object SettimanaTableQuery extends Table[Settimana,SettimanaTableRep]{
-    override def tableQuery():TableQuery[SettimanaTableRep] = tableDB()
-  }
   object StoricoContrattoTableQuery extends Table[StoricoContratto,StoricoContrattoTableRep]{
     override def tableQuery():TableQuery[StoricoContrattoTableRep] = tableDB()
   }
@@ -87,6 +83,9 @@ object Table{
   }
   object ZonaTableQuery extends Table[Zona,ZonaTableRep]{
     override def tableQuery(): TableQuery[ZonaTableRep] = tableDB()
+  }
+  object RegolaTableQuery extends Table[Regola,RegolaTableRep]{
+    override def tableQuery(): TableQuery[RegolaTableRep] = tableDB()
   }
 }
 

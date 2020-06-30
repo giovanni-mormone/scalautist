@@ -213,4 +213,12 @@ object CaseClassHttpMessage {
   final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[GruppoA]],
                                     settimanaNormale: Option[List[SettimanaNS]],settimanaSpeciale: Option[List[SettimanaNS]],
                                     regolaTreSabato:Boolean)
+
+  /**
+   * case class which represent info of parameters that user want to save
+   * @param parametro case class that contains name for parameters and saturday ruler
+   * @param giornoInSettimana case class that contains info for normal week, this case class contains
+   *                          giornoId: Int, turnoId: Int, parametriId: Int, regolaId: Int, idSettimana: Option[Int]
+   */
+  final case class InfoAlgorithm(parametro: Parametro, giornoInSettimana: List[GiornoInSettimana])
 }

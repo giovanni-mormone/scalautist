@@ -11,10 +11,10 @@ import dbfactory.table.GruppoTerminaleTable.GruppoTerminaleTableRep
 import dbfactory.table.ParametroTable.ParametroTableRep
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.table.PresenzaTable.PresenzaTableRep
+import dbfactory.table.RegolaTable.RegolaTableRep
 import dbfactory.table.RichiestaTable.RichiestaTableRep
 import dbfactory.table.RichiestaTeoricaTable.RichiestaTeoricaTableRep
 import dbfactory.table.RisultatoTable.RisultatoTableRep
-import dbfactory.table.SettimanaTable.SettimanaTableRep
 import dbfactory.table.StipendioTable.StipendioTableRep
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
@@ -194,13 +194,13 @@ object Crud {
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
   }
-  implicit object CrudSettimana extends OperationImplicit[Settimana,SettimanaTableRep] with Crud[Settimana] {
-    override private[implicitOperation] def insert(element: Settimana):Future[Option[Int]]                 = typeDB().insert(element)
-    override private[implicitOperation] def select(element: Int): Future[Option[Settimana]]        = typeDB().select(element)
+  implicit object CrudSettimana extends OperationImplicit[Regola,RegolaTableRep] with Crud[Regola] {
+    override private[implicitOperation] def insert(element: Regola):Future[Option[Int]]                 = typeDB().insert(element)
+    override private[implicitOperation] def select(element: Int): Future[Option[Regola]]        = typeDB().select(element)
     override private[implicitOperation] def delete(element: Int): Future[Option[Int]]                      = typeDB().delete(element)
-    override private[implicitOperation] def update(element: Settimana): Future[Option[Int]]                = typeDB().update(element)
-    override private[implicitOperation] def selectAll: Future[Option[List[Settimana]]]                     = typeDB().selectAll
-    override private[implicitOperation] def insertAll(element: List[Settimana]): Future[Option[List[Int]]] = typeDB().insertAll(element)
+    override private[implicitOperation] def update(element: Regola): Future[Option[Int]]                = typeDB().update(element)
+    override private[implicitOperation] def selectAll: Future[Option[List[Regola]]]                     = typeDB().selectAll
+    override private[implicitOperation] def insertAll(element: List[Regola]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]             = typeDB().deleteAll(element)
 
   }

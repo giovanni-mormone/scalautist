@@ -85,23 +85,5 @@ object RisultatoRoute {
       }
     }
 
-  def getAllOldParameters: Route = // TODO
-    post {
-      onComplete(Future.successful()) {
-        case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
-        case other => anotherSuccessAndFailure(other)
-      }
-    }
 
-  def getParametersById: Route = // TODO
-    post {
-      entity(as[Request[(Int,Dates,Dates)]]) {
-        case Request(Some(infoGetResultAlgoritm)) =>
-          onComplete(Future.successful()) {
-            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
-            case other => anotherSuccessAndFailure(other)
-          }
-        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
-      }
-    }
 }
