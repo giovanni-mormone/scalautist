@@ -1,14 +1,17 @@
 package dbfactory.operation
 
-import caseclass.CaseClassDB.{Richiesta, RichiestaTeorica}
+import java.sql.Date
+import java.time.LocalDate
+
+import caseclass.CaseClassDB.{Giorno, Richiesta, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage.RequestGiorno
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceGiorno
 import dbfactory.implicitOperation.OperationCrud
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
-
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Giovanni Mormone, Fabian Aspee, Francesco Cassano
@@ -53,13 +56,23 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
     })
 
   private def insertDay(days: List[RequestGiorno], idRT:Option[List[Int]]): Future[Option[Int]] =
-    days.foldLeft(Future.successful(Option(0)))((_,day) =>
+    days.map(day =>
       for {
         giorno <- selectGiornoId(day)
         richiesta <-   richiestaOperation(giorno,idRT,day)
-
       } yield richiesta
-    )
+    ).foldLeft(Future.successful(Option(0))){
+      case (defaulFuture,future)=>defaulFuture.zip(future).map {
+        case (option, option1) =>
+          (option1.toList :: option.toList :: List.empty).flatten match {
+            case List(first,_)=>Some(first)
+            case Nil =>None
+          }
+      }
+    }.collect {
+      case Some(value) => Some(value)
+      case None =>None
+    }
 
   private def richiestaOperation(giorno: Option[Int], idRT: Option[List[Int]], day: RequestGiorno,idRichiesta:List[Int]=Nil):Future[Option[Int]] = (idRT,giorno) match {
     case (Some(idRichiestaTeorica::tail),Some(idGiorno)) => RichiestaOperation.insert(Richiesta(day.shift, idGiorno, idRichiestaTeorica))

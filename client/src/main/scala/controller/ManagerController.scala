@@ -42,6 +42,7 @@ trait ManagerController extends AbstractController[ManagerView]{
   def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit
 
   def replacementSelected(idRisultato: Int, idPersona: Int)
+
 }
 
 object ManagerController {

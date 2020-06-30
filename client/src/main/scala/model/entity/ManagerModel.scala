@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, RichiestaTeorica}
+import caseclass.CaseClassDB.{Giorno, RichiestaTeorica, Risultato}
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
@@ -69,6 +69,23 @@ trait ManagerModel {
    * @param info case class that contains all info for algorithm and yours execution
    */
   def esecuzioneAlgoritmo(info:AlgorithmExecute):Unit
+
+  /**
+   *
+   * @param idTerminale
+   * @param dataI
+   * @param dataF
+   * @return
+   */
+  def getResultAlgorithm(idTerminale:Int,dataI:Date,dataF:Date):Future[Response[Risultato]]
+
+  /**
+   *
+   * @param idTerminale
+   * @param dataI
+   * @param dataF
+   */
+  def getOldParameter(idTerminale:Int,dataI:Date,dataF:Date):Unit = ???
 }
 
 /**
@@ -117,6 +134,11 @@ object ManagerModel {
     override def esecuzioneAlgoritmo(info: AlgorithmExecute): Unit = {
       val request = Post(getURI("executealgorithm"), transform(info))
       callHtpp(request)
+    }
+
+    override def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[Risultato]] = {
+      val request = Post(getURI("getresultalgorithm"), transform((idTerminale,Dates(dataI),Dates(dataF))))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Risultato]])
     }
   }
 }

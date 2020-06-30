@@ -1,10 +1,12 @@
 package servermodel.routes.subroute
 
+import java.sql.Date
+
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
 import caseclass.CaseClassDB.Risultato
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Dates, Id, Request, Response}
 import dbfactory.operation.RisultatoOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
@@ -59,10 +61,42 @@ object RisultatoRoute {
       }
     }
 
-  def runAlgorithm(): Route =
-    post {
+  def runAlgorithm(): Route = // TODO
+  post {
       entity(as[Request[AlgorithmExecute]]) {
         case Request(Some(infoAlgorithm)) =>
+          onComplete(Future.successful()) {
+            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+            case other => anotherSuccessAndFailure(other)
+          }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
+      }
+    }
+
+  def getResultAlgorithm: Route = // TODO
+  post {
+      entity(as[Request[(Int,Dates,Dates)]]) {
+        case Request(Some(infoGetResultAlgoritm)) =>
+          onComplete(Future.successful()) {
+            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+            case other => anotherSuccessAndFailure(other)
+          }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
+      }
+    }
+
+  def getAllOldParameters: Route = // TODO
+    post {
+      onComplete(Future.successful()) {
+        case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+        case other => anotherSuccessAndFailure(other)
+      }
+    }
+
+  def getParametersById: Route = // TODO
+    post {
+      entity(as[Request[(Int,Dates,Dates)]]) {
+        case Request(Some(infoGetResultAlgoritm)) =>
           onComplete(Future.successful()) {
             case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
             case other => anotherSuccessAndFailure(other)
