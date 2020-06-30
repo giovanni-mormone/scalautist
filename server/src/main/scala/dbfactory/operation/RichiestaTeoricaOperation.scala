@@ -3,14 +3,17 @@ package dbfactory.operation
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.{Giorno, Richiesta, RichiestaTeorica}
+import caseclass.CaseClassDB.{Giorno, GiornoInSettimana, Richiesta, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage.RequestGiorno
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceGiorno
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiorno, InstanceGiornoInSettimana, InstanceTerminale, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
-import messagecodes.StatusCodes
+import messagecodes.StatusCodes._
 import slick.jdbc.SQLServerProfile.api._
+import dbfactory.util.Helper._
+
 import scala.concurrent.ExecutionContext.Implicits._
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 
 /**
@@ -20,19 +23,61 @@ import scala.util.{Failure, Success}
 trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica]{
 
   /**
+   * Control that the information passed are good for the query
+   *
+   * @param requests List of [[caseclass.CaseClassDB.RichiestaTeorica]]
+   * @param days List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
+   * @return Operation result code:
+   *         [[ERROR_CODE4]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
+   *         [[ERROR_CODE5]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
+   *         [[ERROR_CODE6]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some shifts in the set don't exist
+   */
+  def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]]
+
+  /**
    * Save info about a new theoretical request
    *
    * @param requests List of [[caseclass.CaseClassDB.RichiestaTeorica]]
    * @param days List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
-   * @return Code of something
+   * @return Operation result code
    */
   def saveRichiestaTeorica(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]]
 }
 
 object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
 
-  def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno])={
+  private val WEEK: List[String] = List("Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato", "Domenica")
 
+  def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]] = {
+    if(requests.isEmpty) return Future.successful(Some(ERROR_CODE4))
+    if(days.isEmpty) return Future.successful(Some(ERROR_CODE5))
+
+    val daysOk: Boolean =  days.map(day => (day.day.nomeGiorno, Option(WEEK(day.day.idGiornoSettimana - 1))) match {
+        case (valName, Some(nameDay)) if valName.equals(nameDay) => Some(true)
+        case _ => Some(false)
+      }).forall(result => result.get)
+
+    val requestOk: Future[Boolean] = InstanceTerminale.operation().execQueryFilter(_.id, filter => filter.id.inSet(requests.map(_.terminaleId)))
+      .flatMap{
+        case Some(list) if list.size == requests.size => Future.successful(true)
+        case _ => Future.successful(false)
+      }
+
+    val shiftOk: Future[Boolean] = InstanceTurno.operation().execQueryFilter(_.id, filter => filter.id.inSet(days.map(_.shift)))
+      .flatMap{
+        case Some(list) if days.map(_.shift).forall(shift => list.contains(shift)) => Future.successful(true)
+        case _ => Future.successful(false)
+      }
+
+    verify(daysOk, Await.result(requestOk, Duration.Inf), Await.result(shiftOk, Duration.Inf))
+  }
+
+
+  private def verify(daysOk: Boolean, requestOk: Boolean, shiftOk: Boolean): Future[Option[Int]] = (daysOk, requestOk, shiftOk) match {
+    case (true, true, true) => Future.successful(Some(SUCCES_CODE))
+    case (false, _, _) => Future.successful(Some(ERROR_CODE5))
+    case (_, false, _) => Future.successful(Some(ERROR_CODE4))
+    case (_, _, false) => Future.successful(Some(ERROR_CODE6))
   }
 
   override def saveRichiestaTeorica(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]] =
@@ -76,19 +121,19 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
     }
 
 
-  private def richiestaOperation(giorno: Option[Int], idRT: Option[List[Int]], day: RequestGiorno,idRichiesta:List[Int]=Nil):Future[Option[Int]] = (idRT,giorno) match {
+  private def richiestaOperation(giorno: Option[Int], idRT: Option[List[Int]], day: RequestGiorno,idRichiesta:List[Int]=Nil): Future[Option[Int]] = (idRT,giorno) match {
     case (Some(idRichiestaTeorica::tail),Some(idGiorno)) => RichiestaOperation.insert(Richiesta(day.shift, idGiorno, idRichiestaTeorica))
       .flatMap{
         case Some(value) => richiestaOperation(giorno,Some(tail),day,value::idRichiesta)
         case None =>RichiestaOperation.deleteAll(idRichiesta).collect{
-          case Some(value) if value == idRichiesta.length=> Some(StatusCodes.ERROR_CODE1)
-          case Some(value) if value < idRichiesta.length=> Some(StatusCodes.ERROR_CODE2)
-          case None =>Some(StatusCodes.ERROR_CODE3)
+          case Some(value) if value == idRichiesta.length=> Some(ERROR_CODE1)
+          case Some(value) if value < idRichiesta.length=> Some(ERROR_CODE2)
+          case None =>Some(ERROR_CODE3)
         }
       }
-    case (Some(List()),_) => Future.successful(Some(StatusCodes.SUCCES_CODE))
-    case (None,_) => Future.successful(Some(StatusCodes.ERROR_CODE4))
-    case (_,None) => Future.successful(Some(StatusCodes.ERROR_CODE5))
+    case (Some(List()),_) => Future.successful(Some(SUCCES_CODE))
+    case (None,_) => Future.successful(Some(ERROR_CODE4))
+    case (_,None) => Future.successful(Some(ERROR_CODE5))
   }
 }
 
