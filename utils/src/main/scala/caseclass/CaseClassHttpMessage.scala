@@ -221,4 +221,22 @@ object CaseClassHttpMessage {
    *                          giornoId: Int, turnoId: Int, parametriId: Int, regolaId: Int, idSettimana: Option[Int]
    */
   final case class InfoAlgorithm(parametro: Parametro, giornoInSettimana: List[GiornoInSettimana])
+
+  /**
+   * case class which represent information that a driver can have in a time frame,
+   * @param dateI init date of shift
+   * @param dateF finish date of shift
+   * @param turno turno that driver have
+   */
+  final case class InfoDates(dateI:Date,dateF:Date,turno:String)
+
+  /**
+   * case class which represent information for result of algorithm, if driver is fixed so, list with infoDates
+   * will be equal to 1, if driver is rotary so, list with infoDates will be equal to quantity of shift that driver
+   * did in the period
+   * @param idDriver represent id of a driver
+   * @param terminale represent terminal which driver work
+   * @param dateIDateF infoDates that contains information with shift realized in this period
+   */
+  final case class ResultAlgorithm(idDriver:Int,terminale:String,dateIDateF:List[InfoDates])
 }
