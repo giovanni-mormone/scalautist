@@ -6,7 +6,8 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Turno
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.{ExtraInfo, InfoRichiesta}
+import utils.TransferObject.InfoRichiesta
+import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.ExtraInfo
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 trait RichiestaForDayBox extends Component[ManagerRichiestaBox]{

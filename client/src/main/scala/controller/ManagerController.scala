@@ -3,10 +3,9 @@ package controller
 import caseclass.CaseClassHttpMessage.Response
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.InfoRichiesta
+import utils.TransferObject.InfoRichiesta
 import view.fxview.mainview.ManagerView
 
-import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
@@ -71,7 +70,7 @@ object ManagerController {
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("no-replacement-error")
         case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(e) => myView.showMessageFromKey("general-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
       }
     }
 
@@ -83,27 +82,30 @@ object ManagerController {
           myView.showMessageFromKey("replaced-driver")
           dataToAbsencePanel()
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(e) => myView.showMessageFromKey("general-error")
+        case Failure(_) => myView.showMessageFromKey("general-error")
       }
     }
 
     override def datatoRichiestaPanel(): Unit =
-      HumanResourceModel.apply().getAllTerminale.onComplete {
+      HumanResourceModel().getAllTerminale.onComplete {
         case Failure(exception) =>
         case Success(value) =>value.payload.foreach(value => myView.drawRichiesta(value))
       }
 
 
     override def selectShift(idTerminal: Int): Unit =
-      HumanResourceModel.apply().getAllShift.onComplete {
+      HumanResourceModel().getAllShift.onComplete {
         case Failure(exception) =>
         case Success(value) =>value.payload.foreach(value=>myView.drawShiftRequest(value))
       }
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = {
-      Future.successful().onComplete {
-        case Failure(exception) => println("Ok")
-        case Success(value) =>println("ol2")
+      model.defineTheoreticalRequest(richiesta).onComplete {
+        case Failure(e) =>  myView.showMessageFromKey("general-error")
+          println(e)
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
+        case Success(value) =>println(value)
       }
     }
   }

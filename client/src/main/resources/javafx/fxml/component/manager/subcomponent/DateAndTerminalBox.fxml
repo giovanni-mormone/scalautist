@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="dateAndTerminal"  stylesheets="@../../../../css/component/manager/subcomponent/DateAndTerminalBox.css"
+<?import org.controlsfx.control.CheckComboBox?>
+<VBox fx:id="dateAndTerminal" stylesheets="@../../../../css/component/manager/subcomponent/DateAndTerminalBox.css"
       maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -13,9 +14,11 @@
          <children>
             <DatePicker fx:id="datepickerInit" />
             <DatePicker fx:id="datepickerFinish" />
+            <Label fx:id="errorLabel" />
          </children>
       </HBox>
-      <ChoiceBox fx:id="terminal" prefWidth="150.0" />
+      <CheckComboBox fx:id="terminal" prefWidth="150.0" />
+      <Label fx:id="errorLabelTerminal"/>
       <Button fx:id="next" mnemonicParsing="false" text="Button" />
    </children>
    <padding>

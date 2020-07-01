@@ -2,7 +2,7 @@ package caseclass
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Assenza, Disponibilita, Giorno, Persona, Presenza, RichiestaTeorica, Stipendio, StoricoContratto, Turno}
+import caseclass.CaseClassDB._
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
@@ -175,4 +175,42 @@ object CaseClassHttpMessage {
    * @param days list of giorno to save for each day of the week
    */
   final case class AssignRichiestaTeorica(request: List[RichiestaTeorica], days: List[RequestGiorno])
+
+  /**
+   * case class which represents both a normal week and a special especial week
+   *
+   * @param idDay represent day in week, that is to say, if monday then 1, tuesday then 2 etc.
+   * @param quantita represent the quantity we want to have more of,that is, the number of drivers that we want to have as a supplement
+   * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
+   *               % With respect to theoretical drivers
+   *               - Quantity compared to theoretical drivers
+   *               % Relative of drivers
+   */
+  final case class SettimanaNS(idDay:Int,quantita:Int,regola:Int)
+
+  /**
+   * case class which represent a group of driver in assignation.
+   *
+   * @param idGruppo id which represent the group in a period
+   * @param date   represent list of date where this group is present
+   * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
+   *               -respect the rule two days off in a row
+   *               -respect rule a day off one worked a day off
+   *               -respect two precedent case
+   */
+  final case class GruppoA(idGruppo:Int,date:List[Date],regola:Int)
+
+  /**
+   * case class which represent information that algorithm need for calculus of shift and free day
+   * @param dateI represents date init calculus
+   * @param dateF represent date finish calculus
+   * @param idTerminal list with all terminal that algorithm must process
+   * @param gruppo all existing groups in this parameterization
+   * @param settimanaNormale all existing normal week in this parameterization
+   * @param settimanaSpeciale all existing special week in this parameterization
+   * @param regolaTreSabato ruler which represent if every three saturday a driver must have free day
+   */
+  final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[GruppoA]],
+                                    settimanaNormale: Option[List[SettimanaNS]],settimanaSpeciale: Option[List[SettimanaNS]],
+                                    regolaTreSabato:Boolean)
 }

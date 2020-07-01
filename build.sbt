@@ -14,6 +14,7 @@ lazy val client = project.settings(
     libraries.akkaActor,
     libraries.akkaStream,
     libraries.sprayJson,
+    libraries.controlsfx,
     librariesTest.scalatest,
     librariesTest.scalaCheck,
     librariesTest.testFXTest,
@@ -112,6 +113,7 @@ lazy val libraries = new {
   val swaggerEnumeratunVersion = "2.0.0"
   val iteratorVersion = "1.7.1"
   val megarVersion    = "0.4.3"
+  val controlsfxVersion= "8.40.14"
   val akkaHttp       = "com.typesafe.akka"        %% "akka-http"                % akkaHttpVersion
   val akkaActor      ="com.typesafe.akka"         %% "akka-actor-typed"         % akkaVersion
   val akkaStream     = "com.typesafe.akka"        %% "akka-stream"              % akkaVersion
@@ -134,6 +136,8 @@ lazy val libraries = new {
   val modelSwagger   ="io.swagger.core.v3" % "swagger-models"                   % swaggerVersion
   val jaxrs2Swagger  ="io.swagger.core.v3" % "swagger-jaxrs2"                   % swaggerVersion
   val megard         = "ch.megard"                %% "akka-http-cors"           % megarVersion
+  val controlsfx     = "org.controlsfx"             % "controlsfx"              % controlsfxVersion
+
 }
 
 lazy val librariesTest = new {

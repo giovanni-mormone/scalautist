@@ -3,7 +3,7 @@ package view.fxview.component.manager.subcomponent
 import java.sql.Date
 
 import caseclass.CaseClassDB.{Terminale, Turno}
-import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.InfoRichiesta
+import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.parent.ManagerRichiestaParent
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
@@ -16,11 +16,10 @@ trait ManagerRichiestaBox extends Component[ManagerRichiestaParent]{
   def reDrawRichiesta():Unit
   def drawShiftRequest(listShift: List[Turno],position:Int=0): Unit
 
-  def terminalSelected(idTerminal:Int,date:Date,date1:Date)
+  def terminalSelected(idTerminal: List[Int],date:Date,date1:Date)
 }
 
 object ManagerRichiestaBox{
-  final case class InfoRichiesta(date:Date,date1:Date,info:List[(Int,List[(Int,Int)])],idTerminal:List[Int])
   final case class ExtraInfo(listShift:List[Turno],listTerminal:List[Terminale],idSummary:Int,nameDay:String,days:List[(Int,String)])
   def apply(terminal: List[Terminale]): ManagerRichiestaBox = {
    val manager= new ManagerRichiestaFX(terminal)
@@ -31,7 +30,7 @@ object ManagerRichiestaBox{
   private class ManagerRichiestaFX(terminal: List[Terminale]) extends AbstractComponent[ManagerRichiestaParent]("manager/subcomponent/ManagerRichiestaBox")
     with ManagerRichiestaBox{
 
-    var idTerminal:Int=_
+    var idTerminal: List[Int]=_
     var date:Date=_
     var date1:Date=_
     var listShiftRequest:List[Turno]=_
@@ -54,9 +53,11 @@ object ManagerRichiestaBox{
       pane.getChildren.add(DateAndTerminalBox(terminal).setParent(this).pane)
     }
 
-    override def terminalSelected(idTerminal: Int, date: Date, date1: Date): Unit = {
+    override def terminalSelected(idTerminal: List[Int], date: Date, date1: Date): Unit = {
       this.idTerminal=idTerminal
-      parent.getShift(idTerminal)
+      this.date=date
+      this.date1=date1
+      parent.selectShift(idTerminal.head)
     }
 
     override def drawShiftRequest(listShift: List[Turno],position:Int=0): Unit = {
@@ -73,7 +74,7 @@ object ManagerRichiestaBox{
 
     private def drawSummary(position:Int=0): Unit = {
       pane.getChildren.clear()
-      pane.getChildren.add(RichiestaForDayBox(InfoRichiesta(date,date1,listShiftWeek,List(idTerminal))
+      pane.getChildren.add(RichiestaForDayBox(InfoRichiesta(date,date1,listShiftWeek,idTerminal)
         ,ExtraInfo(listShiftRequest,terminal,days(position)._1,days(position)._2,days)).setParent(this).pane)
     }
 
@@ -83,7 +84,7 @@ object ManagerRichiestaBox{
           drawShiftRequest(listShiftRequest,idDay)
         case idDay if idDay<DAY_IN_WEEK && !listShiftWeek.exists(day=>day._1==valueForDay._1) => addElement(valueForDay)
           drawShiftRequest(listShiftRequest,idDay)
-        case idDay if idDay<DAY_IN_WEEK && listShiftWeek.length>idDay  =>updateElement(valueForDay);
+        case idDay if idDay<DAY_IN_WEEK && listShiftWeek.length>idDay  =>updateElement(valueForDay)
           drawShiftWithInfo(listShiftRequest,idDay,listShiftWeek)
         case idDay if idDay<DAY_IN_WEEK  =>updateElement(valueForDay); drawShiftRequest(listShiftRequest,idDay)
         case idDay if idDay==DAY_IN_WEEK =>addElement(valueForDay); drawSummary(idDay)
