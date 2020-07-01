@@ -39,8 +39,12 @@ object RichiestaTeoricaRoute {
     post {
       entity(as[Request[AssignRichiestaTeorica]]) {
         case Request(Some(theoReq)) =>
-          onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
-            case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+          onComplete(RichiestaTeoricaOperation.controlInfo(theoReq.request, theoReq.days)){
+            case Success(Some(statusCodes.SUCCES_CODE)) =>
+              onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
+                case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+                case other => anotherSuccessAndFailure(other)
+              }
             case other => anotherSuccessAndFailure(other)
           }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
