@@ -1,13 +1,14 @@
 package dbfactory.operation
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro}
+import caseclass.CaseClassDB.{Parametro, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceGiornoInSettimana
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiornoInSettimana, InstanceZonaTerminal}
 import dbfactory.implicitOperation.OperationCrud
-import slick.jdbc.SQLServerProfile.api._
-import scala.concurrent.ExecutionContext.Implicits.global
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
+import slick.jdbc.SQLServerProfile.api._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /** @author Fabian Aspee Encina
@@ -24,6 +25,7 @@ trait ParametroOperation extends OperationCrud[Parametro]{
    *         None if delete all have a problem, this is a extreme case
    *          [[messagecodes.StatusCodes.ERROR_CODE1]] if exist error while insert Parametro
    *          [[messagecodes.StatusCodes.ERROR_CODE2]] if exist error while insert GiornoInSettimana
+   *          [[messagecodes.StatusCodes.ERROR_CODE3]] if ZonaTerminal is empty or name parameter is empty
    *          [[messagecodes.StatusCodes.SUCCES_CODE]] if not exist error in operation
    */
   def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm):Future[Option[Int]]
@@ -38,37 +40,47 @@ trait ParametroOperation extends OperationCrud[Parametro]{
 }
 object ParametroOperation extends ParametroOperation {
 
-  override def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm): Future[Option[Int]] = {
-    for{
+  override def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm): Future[Option[Int]] = infoAlgorithm match {
+    case value if value.zonaTerminale.isEmpty || value.parametro.nome.isEmpty =>
+      Future.successful(Some(StatusCodes.ERROR_CODE3))
+    case _ =>for{
       idParametri <- insert(infoAlgorithm.parametro)
-      result <- insertIdParametriToGiornoInSettimana(idParametri,infoAlgorithm.giornoInSettimana)
+      result <- insertGiornoInSettimanaAndZonaTerminal(idParametri,infoAlgorithm)
     }yield result
   }
 
-  private def insertIdParametriToGiornoInSettimana(idParametri:Option[Int],giornoInSettimana: List[GiornoInSettimana]):Future[Option[Int]]={
-    idParametri match {
-      case Some(id) =>GiornoInSettimanaOperation.insertAll(giornoInSettimana.map(value=>value.copy(parametriId = id))).flatMap {
-        case Some(_) => Future.successful(Some(StatusCodes.SUCCES_CODE))
-        case None =>idParametri.map(result=>delete(result)).convert().collect {
-          case Some(_) => Some(StatusCodes.ERROR_CODE2)
-          case None =>None
-        }
+  private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
+    (idParametri,infoAlgorithm.giornoInSettimana) match {
+      case (Some(id),Some(giornoInSettimana)) =>GiornoInSettimanaOperation.insertAll(giornoInSettimana.map(value=>value.copy(parametriId = Some(id)))).flatMap {
+        case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
+        case None =>deleteParametri(idParametri)
       }
-      case None =>Future.successful(Some(StatusCodes.ERROR_CODE1))
+      case (Some(_),None)=>insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
+      case (None,_) =>Future.successful(Some(StatusCodes.ERROR_CODE1))
+    }
+  }
+  private def insertZonaTerminal(zonaTerminale:List[ZonaTerminale],idParametro:Option[Int]): Future[Option[Int]]  ={
+    ZonaTerminaleOperation.insertAll(zonaTerminale.map(_.copy(parametriId=idParametro))).flatMap {
+      case Some(_) =>Future.successful(Some(StatusCodes.SUCCES_CODE))
+      case None =>deleteParametri(idParametro)
+    }
+  }
+  private def deleteParametri(idParametri:Option[Int]): Future[Option[Int]] ={
+    idParametri.map(result=>delete(result)).convert().collect {
+      case Some(_) => Some(StatusCodes.ERROR_CODE2)
+      case None =>None
     }
   }
 
-  override def getParameter(idParameter: Int): Future[Option[InfoAlgorithm]] = {
+  override def getParameter(idParameter: Int): Future[Option[InfoAlgorithm]] =
     for{
       parameter<-select(idParameter)
+      zonaTerminal<-InstanceZonaTerminal.operation()
+        .selectFilter(_.parametriId===idParameter)
       giornoInSettimana<-InstanceGiornoInSettimana.operation()
-        .selectFilter(giornoInSettimana=>giornoInSettimana.parametriId===idParameter)
-    }yield parameter match {
-      case Some(value) => Some(InfoAlgorithm(value, giornoInSettimana match {
-        case Some(value) => value
-        case None =>Nil
-      }))
-      case None => None
+        .selectFilter(_.parametriId===idParameter)
+    }yield (parameter,zonaTerminal) match {
+      case (Some(value),Some(zonaTerminal)) => Some(InfoAlgorithm(value,zonaTerminal, giornoInSettimana))
+      case _ => None
     }
-  }
 }

@@ -14,7 +14,7 @@ object GiornoInSettimanaTable {
     def turnoId: Rep[Int] = column[Int]("Turno_IdTurno")
     def parametriId: Rep[Int] = column[Int]("ParametriSetIdParametri")
     def regolaId: Rep[Int] = column[Int]("RegolaSetIdRegola")
-    override def * : ProvenShape[GiornoInSettimana] = (giornoId,turnoId,parametriId,regolaId,id.?).mapTo[GiornoInSettimana]
+    override def * : ProvenShape[GiornoInSettimana] = (giornoId,turnoId,regolaId,parametriId.?,id.?).mapTo[GiornoInSettimana]
     def giorno: ForeignKeyQuery[GiornoTableRep, Giorno] = foreignKey("GiornoIdGiorno", giornoId, TableQuery[GiornoTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
     def turno: ForeignKeyQuery[TurnoTableRep, Turno] = foreignKey("Turno_IdTurno", turnoId, TableQuery[TurnoTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
     def parametri: ForeignKeyQuery[ParametroTableRep, Parametro] = foreignKey("ParametriSetIdParametri", parametriId, TableQuery[ParametroTableRep])(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)

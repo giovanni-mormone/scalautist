@@ -20,6 +20,7 @@ import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
+import dbfactory.table.ZonaTerminaleTable.ZonaTerminaleTableRep
 import dbfactory.util.Helper._
 
 import scala.concurrent.Future
@@ -275,6 +276,17 @@ object Crud {
     override private[implicitOperation] def update(element: Stipendio): Future[Option[Int]]                = typeDB().update(element)
     override private[implicitOperation] def selectAll: Future[Option[List[Stipendio]]]                     = typeDB().selectAll
     override private[implicitOperation] def insertAll(element: List[Stipendio]): Future[Option[List[Int]]] = typeDB().insertAll(element)
+    override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
+
+  }
+
+  implicit object CrudZonaTerminale extends OperationImplicit[ZonaTerminale,ZonaTerminaleTableRep] with Crud[ZonaTerminale] {
+    override private[implicitOperation] def insert(element: ZonaTerminale):Future[Option[Int]]                 = typeDB().insert(element)
+    override private[implicitOperation] def select(element: Int): Future[Option[ZonaTerminale]]        = typeDB().select(element)
+    override private[implicitOperation] def delete(element: Int): Future[Option[Int]]                = typeDB().delete(element)
+    override private[implicitOperation] def update(element: ZonaTerminale): Future[Option[Int]]                = typeDB().update(element)
+    override private[implicitOperation] def selectAll: Future[Option[List[ZonaTerminale]]]                     = typeDB().selectAll
+    override private[implicitOperation] def insertAll(element: List[ZonaTerminale]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
   }

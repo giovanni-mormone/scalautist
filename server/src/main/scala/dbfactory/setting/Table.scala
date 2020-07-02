@@ -19,6 +19,7 @@ import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
+import dbfactory.table.ZonaTerminaleTable.ZonaTerminaleTableRep
 import slick.jdbc.SQLServerProfile.api._
 
 /**
@@ -86,6 +87,9 @@ object Table{
   }
   object RegolaTableQuery extends Table[Regola,RegolaTableRep]{
     override def tableQuery(): TableQuery[RegolaTableRep] = tableDB()
+  }
+  object ZonaTerminaleTableQuery extends Table[ZonaTerminale,ZonaTerminaleTableRep]{
+    override def tableQuery(): TableQuery[ZonaTerminaleTableRep] = tableDB()
   }
 }
 

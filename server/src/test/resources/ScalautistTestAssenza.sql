@@ -2145,6 +2145,16 @@ SET IDENTITY_INSERT [dbo].[GiornoSets] OFF
 
 --//GIORNOSETS
 
+--REGOLASETS
+
+SET IDENTITY_INSERT [dbo].[RegolaSets] ON
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (1, N'Percent Teoric')
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (2, N'Int Teoric')
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (3, N'Relativ')
+SET IDENTITY_INSERT [dbo].[RegolaSets] OFF
+
+--//REGOLASETS
+
 --RICHIESTASETS
 
 SET IDENTITY_INSERT [dbo].[RichiestaSets] ON

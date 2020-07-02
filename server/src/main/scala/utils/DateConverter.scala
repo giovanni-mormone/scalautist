@@ -122,6 +122,8 @@ object DateConverter {
     calendar.add(Calendar.DATE,minus)
     new Date(calendar.getTimeInMillis)
   }
+
+
   private val dateToCalendar:Date=>Calendar=date=>{
     val calendar = Calendar.getInstance()
     calendar.setTime(date)

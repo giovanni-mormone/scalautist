@@ -10,6 +10,7 @@ import spray.json._
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
+    implicit val zonaTerminaleJsonFormat: RootJsonFormat[ZonaTerminale] = jsonFormat4(ZonaTerminale)
     implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
     implicit val terminaleJsonFormat: RootJsonFormat[Terminale] = jsonFormat3(Terminale)
     implicit val storicoContrattoJsonFormat: RootJsonFormat[StoricoContratto] = jsonFormat7(StoricoContratto)
@@ -48,7 +49,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val gruppoAJsonFormat: RootJsonFormat[GruppoA] = jsonFormat3(GruppoA)
     implicit val settimanaNSJsonFormat: RootJsonFormat[SettimanaNS] = jsonFormat3(SettimanaNS)
     implicit val algorithmExecuteJsonFormat: RootJsonFormat[AlgorithmExecute] = jsonFormat7(AlgorithmExecute)
-    implicit val infoAlgorithmJsonFormat: RootJsonFormat[InfoAlgorithm] = jsonFormat2(InfoAlgorithm)
+    implicit val infoAlgorithmJsonFormat: RootJsonFormat[InfoAlgorithm] = jsonFormat3(InfoAlgorithm)
     implicit val infoDatesJsonFormat: RootJsonFormat[InfoDates] = jsonFormat3(InfoDates)
     implicit val resultAlgorithmJsonFormat: RootJsonFormat[ResultAlgorithm] = jsonFormat3(ResultAlgorithm)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])

@@ -20,6 +20,7 @@ import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import dbfactory.table.TerminaleTable.TerminaleTableRep
 import dbfactory.table.TurnoTable.TurnoTableRep
 import dbfactory.table.ZonaTable.ZonaTableRep
+import dbfactory.table.ZonaTerminaleTable.ZonaTerminaleTableRep
 
 /**
  * @author Fabian Aspee Encina
@@ -53,6 +54,11 @@ object ImplicitInstanceTableDB {
     override private[implicitOperation] def typeDB(): GenericCRUD[GiornoInSettimana, GiornoInSettimanaTableRep] = GenericCRUD[GiornoInSettimana, GiornoInSettimanaTableRep]()
 
     override def operation(): GenericOperation[GiornoInSettimana, GiornoInSettimanaTableRep] = GenericOperation[GiornoInSettimana, GiornoInSettimanaTableRep]()
+  }
+  implicit object InstanceZonaTerminal extends ImplicitInstanceTableDB[ZonaTerminale,ZonaTerminaleTableRep] {
+    override private[implicitOperation] def typeDB(): GenericCRUD[ZonaTerminale, ZonaTerminaleTableRep] = GenericCRUD[ZonaTerminale, ZonaTerminaleTableRep]()
+
+    override def operation(): GenericOperation[ZonaTerminale, ZonaTerminaleTableRep] = GenericOperation[ZonaTerminale, ZonaTerminaleTableRep]()
   }
   implicit object InstanceGiorno extends ImplicitInstanceTableDB[Giorno,GiornoTableRep] {
     override private[implicitOperation] def typeDB(): GenericCRUD[Giorno, GiornoTableRep] = GenericCRUD[Giorno, GiornoTableRep]()

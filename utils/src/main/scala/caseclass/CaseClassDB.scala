@@ -133,7 +133,7 @@ object CaseClassDB{
    * @param regolaId identifies ruler for all day associated to this
    * @param idSettimana represent unambiguous for every week (for insert operation this is not mandatory)
    */
-  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,parametriId:Int,regolaId:Int,idSettimana:Option[Int]=None)
+  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,regolaId:Int,parametriId:Option[Int]=None,idSettimana:Option[Int]=None)
 
   /**
    * case class that represent rules for normal week
@@ -183,6 +183,16 @@ object CaseClassDB{
    * @param idZone represent unambiguous for every zone (for insert operation this is not mandatory)
    */
   final case class Zona(zones:String,idZone:Option[Int]=None)
+
+  /**
+   * ZonaTerminale is a case class that represent instance of table into database that contains
+   * id of a zone, id of a terminal, id of parametri
+   * @param zonaId represent a zona in database
+   * @param terminaleId represent a terminal in database
+   * @param parametriId represent a parameter in database
+   * @param idZonaTerminale represent unambiguous for every ZonaTerminale (for insert operation this is not mandatory)
+   */
+  final case class ZonaTerminale(zonaId:Int,terminaleId:Int,parametriId:Option[Int]=None,idZonaTerminale:Option[Int]=None)
 
   /**
    * Stipendio is a case class that represent a instance of table into database that contains

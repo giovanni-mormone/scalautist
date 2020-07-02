@@ -217,18 +217,18 @@ object CaseClassHttpMessage {
   /**
    * case class which represent info of parameters that user want to save
    * @param parametro case class that contains name for parameters and saturday ruler
+   * @param zonaTerminale case class that contains name for parameters and saturday ruler
    * @param giornoInSettimana case class that contains info for normal week, this case class contains
    *                          giornoId: Int, turnoId: Int, parametriId: Int, regolaId: Int, idSettimana: Option[Int]
    */
-  final case class InfoAlgorithm(parametro: Parametro, giornoInSettimana: List[GiornoInSettimana])
+  final case class InfoAlgorithm(parametro: Parametro,zonaTerminale: List[ZonaTerminale], giornoInSettimana: Option[List[GiornoInSettimana]]=None)
 
   /**
    * case class which represent information that a driver can have in a time frame,
-   * @param dateI init date of shift
-   * @param dateF finish date of shift
+   * @param date init date of shift
    * @param turno turno that driver have
    */
-  final case class InfoDates(dateI:Date,dateF:Date,turno:String)
+  final case class InfoDates(date:Date,turno:String,turno2:Option[String])
 
   /**
    * case class which represent information for result of algorithm, if driver is fixed so, list with infoDates
