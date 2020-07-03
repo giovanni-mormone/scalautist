@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Terminale, Turno}
+import caseclass.CaseClassDB.{Parametro, Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
@@ -17,7 +17,7 @@ import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
 
-  def drawShiftRequest(value: List[CaseClassDB.Turno]):Unit
+  def drawShiftRequest(value: List[Turno]):Unit
 
   def drawRichiesta(terminal: List[Terminale]): Unit
 
@@ -37,6 +37,13 @@ trait ManagerView extends DialogView {
    */
   def drawReplacement(replacement: List[InfoReplacement]): Unit
 
+  /**
+   * Method used by a [[controller.ManagerController]] to tell the view ro draw the panel to choice parameters to run
+   * shift assignment algorithm
+   *
+   * @param oldParameters the list of old parameters to show
+   */
+  def drawRunAlgorithm(oldParameters: List[Parametro]): Unit
 }
 
 object ManagerView {
@@ -109,6 +116,11 @@ object ManagerView {
        if(alertMessage(str)) managerHome.reDrawRichiesta()
     }
 
-    override def sendRichiesta(richiesta: InfoRichiesta): Unit = myController.sendRichiesta(richiesta)
+    override def sendRichiesta(richiesta: InfoRichiesta): Unit =
+      myController.sendRichiesta(richiesta)
+
+    override def drawRunAlgorithm(oldParameters: List[Parametro]): Unit =
+      Platform.runLater(() => managerHome.drawChooseParams(oldParameters))
+
   }
 }

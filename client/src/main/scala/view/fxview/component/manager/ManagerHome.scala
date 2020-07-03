@@ -3,19 +3,30 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Terminale, Turno}
+import caseclass.CaseClassDB.{Parametro, Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
-import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
 import view.fxview.FXHelperFactory
-import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
+import view.fxview.component.manager.subcomponent.{ChooseParamsBox, FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.{AbstractComponent, Component}
+import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
+ * trait of methods that allow user to do desired operations.
+ */
 trait ManagerHome extends Component[ManagerHomeParent]{
+
+  /**
+   * Method used to draw the panel that allow to choose params for run assignment algorithm
+   *
+   * @param oldParameters List of [[caseclass.CaseClassDB.Parametro]]
+   */
+  def drawChooseParams(oldParameters: List[Parametro]): Unit
+
   def reDrawRichiesta(): Unit
 
   def drawShiftRichiesta(listShift: List[Turno]): Unit
@@ -73,6 +84,8 @@ object ManagerHome{
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
+    var chooseParamsBox: ChooseParamsBox
+
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -122,5 +135,11 @@ object ManagerHome{
     override def drawShiftRichiesta(listShift: List[Turno]): Unit = {
       managerRichiestaBoxView.drawShiftRequest(listShift)
     }
+
+    override def drawChooseParams(oldParameters: List[Parametro]): Unit = {
+      chooseParamsBox = ChooseParamsBox(oldParameters)
+      baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
+    }
+
   }
 }
