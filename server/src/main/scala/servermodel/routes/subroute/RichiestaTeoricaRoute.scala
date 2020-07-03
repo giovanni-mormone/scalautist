@@ -3,7 +3,7 @@ package servermodel.routes.subroute
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
-import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, Id, Request, Response}
+import caseclass.CaseClassHttpMessage._
 import dbfactory.operation.RichiestaTeoricaOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
