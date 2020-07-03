@@ -228,7 +228,7 @@ object CaseClassHttpMessage {
    * @param date init date of shift
    * @param turno turno that driver have
    */
-  final case class InfoDates(date:Date,turno:String,turno2:Option[String])
+  final case class InfoDates(date:Date,turno:String,turno2:Option[String]=None,straordinario:Option[String]=None)
 
   /**
    * case class which represent information for result of algorithm, if driver is fixed so, list with infoDates
