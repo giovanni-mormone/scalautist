@@ -1,19 +1,21 @@
 package dbfactory.operation
 
 import java.sql.Date
+import java.time.LocalDate
 
 import caseclass.CaseClassDB.{Risultato, Turno}
-import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, ShiftDay}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRisultato, InstanceTurno}
+import caseclass.CaseClassHttpMessage._
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRisultato, InstanceTerminale, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{RisultatoTableQuery, TurnoTableQuery}
+import dbfactory.setting.Table.{PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery, TurnoTableQuery}
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
-import utils.DateConverter
+import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -58,10 +60,28 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
    *         [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
    */
   def updateAbsence(idRisultato:Int,idPersona:Int):Future[Option[Int]]
+
+  /**
+   * method that return information of the algorithm in a specific time
+   * @param dateI init date from where collect information
+   * @param dateF finish date, last day for collect information
+   * @param idTerminal represent id of a terminal in database
+   * @return Future of Option of List of ResultAlgorithm, for specific information to ResultAlgorithm view
+   *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
+   */
+  def getResultAlgorithm(idTerminal:Int,dateI:Date,dateF:Date):Future[Option[List[ResultAlgorithm]]]
+
 }
 
 object RisultatoOperation extends RisultatoOperation {
-  val DRIVER_CODE: Int = 3
+  private val DRIVER_CODE: Int = 3
+  private val ONLY_ONE_SHIFT: Int = 1
+  private val WITHOUT_SHIFT: String = ""
+  private val DEFAULT_INIT: Long =0
+  private val ABSENCE_VALUE: String ="Assenza"
+  private val FREE_DAY_VALUE: String ="Libero"
+  private val DEFAULT_TERMINAL: String =""
+  private val WITHOUT_CONTRACT: String = "Senza Contratto"
 
   def verifyResult(idRisultato: Int): Future[Option[Int]] = {
     select(idRisultato).collect{
@@ -71,8 +91,9 @@ object RisultatoOperation extends RisultatoOperation {
   }
 
 
-  private case class Shift(day: Date, name: String)
-
+  private final case class Shift(day: Date, name: String)
+  private final case class InfoForResult(idPerson:List[(Int,Option[Int],Date,Option[Date])],dateInit:Date,dateFinish:Date,result:List[Risultato]=Nil,personWithTerminal:List[(Int, Option[String])]=Nil,turno:List[(Int,String)]=Nil)
+  private final case class InfoPerson(idPersona:Int,terminal:String,initContract:Date,finishContract:Date)
   private val future: Int => Future[Option[List[Int]]] = idUser => InstancePersona.operation().execQueryFilter(field => field.ruolo,
                                       filter => filter.id === idUser && filter.ruolo === DRIVER_CODE)
 
@@ -85,7 +106,7 @@ object RisultatoOperation extends RisultatoOperation {
             listTurni <- InstanceRisultato.operation().execQueryFilter(field => field.turnoId,
               filter => filter.data === date && filter.personeId === idUser)
             turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
-            disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+            disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, getWeekNumber(date))
           } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
           case _ => Future.successful(None)
         }
@@ -94,7 +115,7 @@ object RisultatoOperation extends RisultatoOperation {
   }
 
   override def getTurniSettimanali(idUser: Int, date: Date): Future[Option[InfoShift]] = {
-    val dateEnd = DateConverter.nextWeek(date)
+    val dateEnd = nextWeek(date)
     future(idUser).flatMap {
       case Some(_) =>
         InstanceAssenza.operation().execQueryFilter(field => (field.dataInizio, field.dataFine),
@@ -105,13 +126,13 @@ object RisultatoOperation extends RisultatoOperation {
 
           case Some(dateL) => for {
               turni <- getTurnoOfDays(idUser, date, dateEnd)
-              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, getWeekNumber(date))
             } yield Some(InfoShift(turni.toList.flatten.filter(
                 turno => dateL.exists(date => date._1.compareTo(turno.day) > 0 || date._2.compareTo(turno.day) < 0)
             ).map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
           case None => for {
               turni <- getTurnoOfDays(idUser, date, dateEnd)
-              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, DateConverter.getWeekNumber(date))
+              disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, getWeekNumber(date))
             } yield Some(InfoShift(turni.toList.flatten.map(turno => ShiftDay(turno.day.toLocalDate.getDayOfWeek.getValue, turno.name)), disponibilita))
         }
       case _ => Future.successful(None)
@@ -157,4 +178,162 @@ object RisultatoOperation extends RisultatoOperation {
     InstanceRisultato.operation().execQueryUpdate(risultato=>risultato.personeId,risultato=>risultato.id===idRisultato,
       idPersona).result()
   }
+
+  override def getResultAlgorithm(idTerminal:Int,dateI: Date, dateF: Date): Future[Option[List[ResultAlgorithm]]] = {
+    val joinPersonContract = for{
+      person<- PersonaTableQuery.tableQuery()
+      contract <- StoricoContrattoTableQuery.tableQuery()
+      if(person.id===contract.personaId && person.terminaleId===Option(idTerminal)
+        && ((contract.dataInizio<=dateI && contract.dataFine>=dateF)
+        || (contract.dataInizio>=dateI && contract.dataFine<=dateF)
+        || (contract.dataFine>=dateI && contract.dataFine<=dateF)
+        || (contract.dataInizio>=dateI && contract.dataInizio<=dateF)
+        || (contract.dataInizio<=dateF && Some(contract.dataFine).isEmpty)))
+    }yield(person.id,person.terminaleId,contract.dataInizio,contract.dataFine)
+
+    InstancePersona.operation().execJoin(joinPersonContract)
+      .flatMap {
+        case Some(result) =>getResultByPerson(result,dateI,dateF)
+        case None =>Future.successful(None)
+      }
+  }
+
+  private def getResultByPerson(idPerson:List[(Int,Option[Int],Date,Option[Date])],dateI: Date, dateF: Date): Future[Option[List[ResultAlgorithm]]] ={
+    InstanceRisultato.operation()
+      .selectFilter(risultato=>risultato.data>=dateI && risultato.data<=dateF && risultato.personeId.inSet(idPerson.map(_._1)))
+      .flatMap {
+        case Some(result) =>getIdTerminalAndName(idPerson.map(value=>(value._1,value._2)),InfoForResult(idPerson,dateI,dateF,result))
+        case None =>Future.successful(None)
+      }
+  }
+
+  private def getIdTerminalAndName(idPersonTerminal:List[(Int,Option[Int])],infoResult:InfoForResult): Future[Option[List[ResultAlgorithm]]] ={
+    InstanceTerminale.operation()
+      .execQueryFilter(terminal=>(terminal.id,terminal.nomeTerminale),filter=>filter.id.inSet(idPersonTerminal.flatMap(_._2.toList)))
+      .flatMap(terminal => getIdShiftAndName(infoResult.copy(personWithTerminal = createPersonAndTerminal(idPersonTerminal, terminal.toList.flatten))))
+  }
+
+  private def createPersonAndTerminal(idPersonTerminal:List[(Int,Option[Int])],terminal:List[(Int,String)]): List[(Int, Option[String])] ={
+    idPersonTerminal.map(personAndTerminal=>
+      personAndTerminal._1->terminal.filter(idTerminal=>personAndTerminal._2.contains(idTerminal._1)).map(_._2).headOption)
+  }
+
+  private def getIdShiftAndName(infoResult:InfoForResult):Future[Option[List[ResultAlgorithm]]]={
+    InstanceTurno.operation()
+      .execQueryFilter(turno=>(turno.id,turno.nomeTurno),filter=>filter.id.inSet(infoResult.result.map(_.turnoId).distinct))
+      .flatMap(turno=> createResultAlgorithm(infoResult.copy(turno=turno.toList.flatten)))
+  }
+  private def extractDate(date:Option[Date],defaultDate:Date): Date = date match {
+    case Some(value) => value
+    case None =>defaultDate
+  }
+
+  private def createResultAlgorithm(infoResult:InfoForResult):Future[Option[List[ResultAlgorithm]]]={
+    @scala.annotation.tailrec
+    def _createResultAlgorithm(idPerson:List[InfoPerson], finalResult:Future[Option[List[ResultAlgorithm]]]=Future.successful(None)):Future[Option[List[ResultAlgorithm]]] = idPerson match {
+      case ::(head, next) => _createResultAlgorithm(next,zipFuture(head,infoResult,finalResult))
+      case Nil =>finalResult
+    }
+    val infoPerson= infoResult.idPerson.map(value=>InfoPerson(value._1,infoResult.personWithTerminal.filter(person => person._1 == value._1)
+      .flatMap(_._2.toList) match {
+      case List(element) => element
+      case Nil =>DEFAULT_TERMINAL
+    },value._3,extractDate(value._4,infoResult.dateFinish)))
+    _createResultAlgorithm(infoPerson)
+  }
+  private def zipFuture(head:InfoPerson,infoResult:InfoForResult,result:Future[Option[List[ResultAlgorithm]]]): Future[Option[List[ResultAlgorithm]]] ={
+    result.zip(createInfoDates(infoResult.result.filter(_.personaId==head.idPersona),infoResult,head.idPersona)
+      .collect(value=>ResultAlgorithm(head.idPersona,head.terminal,value))).map{
+      case (option, algorithm) => Option(option.toList.flatten:+algorithm)
+    }
+
+  }
+
+  private val differenceBetweenDate:Long=>Long=>Long=finishDate=>initDate=>finishDate-initDate
+
+  private def createInfoDates(result:List[Risultato],infoResult:InfoForResult,idPerson:Int):Future[List[InfoDates]]=
+    InstanceAssenza.operation().execQueryFilter(assenza=>(assenza.dataInizio,assenza.dataFine),
+      filter=>((filter.dataInizio<=infoResult.dateInit && filter.dataFine>=infoResult.dateFinish)
+        ||(filter.dataInizio>=infoResult.dateInit && filter.dataFine<=infoResult.dateFinish)
+        ||(filter.dataFine>=infoResult.dateInit && filter.dataFine<=infoResult.dateFinish)
+        ||(filter.dataInizio>=infoResult.dateInit && filter.dataInizio<=infoResult.dateFinish)) && filter.personaId===idPerson).collect {
+      case Some(value) =>
+        insertInfoShiftInInfoDates(result,infoResult,insertAllAbsence(value,infoResult))
+     case None => insertInfoShiftInInfoDates(result,infoResult)
+    }
+
+  private def insertInfoShiftInInfoDates(result:List[Risultato],infoResult:InfoForResult,infoAbsence:List[InfoDates]=List.empty):List[InfoDates]={
+    @scala.annotation.tailrec
+    def _insertInfoShiftInInfoDates(result:List[Risultato], infoResult:InfoForResult, infoAbsence:List[InfoDates],date:Option[Date]):List[InfoDates]= (result,date) match {
+      case (first::_::next,Some(date)) if infoResult.idPerson.filter(_._1==first.personaId)
+                          .exists(dat=>date.compareTo(dat._3)<0 || dat._4.exists(internalDate=> date.compareTo(internalDate)>0)) =>
+        _insertInfoShiftInInfoDates(next,infoResult,infoAbsence:+InfoDates(first.data,
+           WITHOUT_CONTRACT,Some(WITHOUT_CONTRACT)),Some(subtract(date,1)))
+
+      case (first::_::next,Some(date)) if infoAbsence.exists(day=>day.date==first.data)=>
+        _insertInfoShiftInInfoDates(next,infoResult,infoAbsence,Some(subtract(date,1)))
+
+      case (first::second::next,Some(date)) if computeDaysBetweenDates(date,first.data)>1
+                                          && !infoAbsence.exists(day=>day.date==first.data)  =>
+        _insertInfoShiftInInfoDates(first::second::next,infoResult,infoAbsence:+InfoDates(date,
+          FREE_DAY_VALUE,Some(FREE_DAY_VALUE)),Some(subtract(date,1)))
+
+      case (first::second::next,Some(date)) => _insertInfoShiftInInfoDates(next,infoResult,infoAbsence:+InfoDates(first.data,
+        selectNameTurno(first.turnoId,infoResult),Some(selectNameTurno(second.turnoId,infoResult))),Some(subtract(date,1)))
+
+      case (Nil , _) | (_ , None) =>infoAbsence
+      case _ =>infoAbsence
+    }
+    _insertInfoShiftInInfoDates(result.sortBy(value=>(value.data,value.personaId,value.turnoId)),infoResult,infoAbsence, result.headOption.map(_.data))
+  }
+
+  private def insertInfoShiftInInfoDates2(result:List[Risultato],infoResult:InfoForResult,infoAbsence:List[InfoDates]=List.empty):List[InfoDates]={
+    _insertInfoShiftInInfoDates(infoResult.copy(result=result.sortBy(value=>(value.data,value.personaId,value.turnoId))),infoAbsence, result.headOption.map(_.data))
+  }
+  
+  def _insertInfoShiftInInfoDates(infoResult:InfoForResult, infoAbsence:List[InfoDates],date:Option[Date]):List[InfoDates]= infoResult.result match {
+    case first::second::third::_ if first.data==second.data && second.data==third.data => ??? //verifyDate(infoResult,infoAbsence,date)
+    case first::second::_ if first.data==second.data => ???
+    case _::_  => ???
+
+  }
+  /*def verifyDate(infoResult:InfoForResult,date:Date, infoAbsence:List[InfoDates],next:List[Risultato],firstR:Risultato,result:List[Risultato])= firstR match {
+    case first if infoResult.idPerson.filter(_._1==first.personaId)
+      .exists(dat=>date.compareTo(dat._3)<0 || dat._4.exists(internalDate=> date.compareTo(internalDate)>0)) =>
+      _insertInfoShiftInInfoDates(next,infoResult,infoAbsence:+InfoDates(first.data,
+        WITHOUT_CONTRACT,Some(WITHOUT_CONTRACT)),Some(subtract(date,1)))
+
+    case first if infoAbsence.exists(day=>day.date==first.data)=>
+      _insertInfoShiftInInfoDates(next,infoResult,infoAbsence,Some(subtract(date,1)))
+
+    case first if computeDaysBetweenDates(date,first.data)>1
+      && !infoAbsence.exists(day=>day.date==first.data)  =>
+      _insertInfoShiftInInfoDates(result,infoResult,infoAbsence:+InfoDates(date,
+        FREE_DAY_VALUE,Some(FREE_DAY_VALUE)),Some(subtract(date,1)))
+
+    case  first => ???_insertInfoShiftInInfoDates(next,infoResult,infoAbsence:+InfoDates(first.data,
+      selectNameTurno(first.turnoId,infoResult),Some(selectNameTurno(second.turnoId,infoResult))),Some(subtract(date,1)))
+  }*/
+
+
+  private def insertAllAbsence(listAbsence:List[(Date,Date)],infoResult:InfoForResult): List[InfoDates] ={
+    listAbsence.map(date=>differenceBetweenDate(date._2.toLocalDate.toEpochDay)(date._1.toLocalDate.toEpochDay))
+      .flatMap(date_diff=>(DEFAULT_INIT to date_diff).map(value=>infoResult.dateInit.toLocalDate.plusDays(value))
+        .map(day=>InfoDates(Date.valueOf(day),ABSENCE_VALUE,Some(ABSENCE_VALUE))))
+  }
+
+  private def selectNameTurno(idTurno:Int,infoResult:InfoForResult):String=
+    infoResult.turno.filter(id => id._1 == idTurno) match {
+      case List(turno) =>turno._2
+      case Nil =>WITHOUT_SHIFT
+    }
+
+}
+object  t extends App{
+  RisultatoOperation.getResultAlgorithm(1,Date.valueOf(LocalDate.of(2020,6,1)), Date.valueOf(LocalDate.of(2020,8,18)))
+    .onComplete {
+      case Failure(exception) => println(exception)
+      case Success(value) =>println(value)
+    }
+  while (true){}
 }

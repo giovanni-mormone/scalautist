@@ -40,4 +40,29 @@ class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaH
     val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
     future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
   }
+
+  it should "return a Bad Request when saveParameters" in {
+    val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
+    future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
+  }
+
+  it should "return a SuccessCode when saveParameters" in {
+    val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
+    future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
+  }
+
+  it should "return a SuccessCode when saveParameters but giorno in settimana is None" in {
+    val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
+    future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
+  }
+
+  it should "return InfoAlgorithm when idParameters exist in database" in {
+    val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
+    future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
+  }
+
+  it should "return None if idParameter not exist in database" in {
+    val future: Future[Response[Int]] = model.replaceShift(idRisultato, idNewDriver)
+    future map {info => assert(info.statusCode != statusCodes.BAD_REQUEST) }
+  }
 }

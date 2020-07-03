@@ -33,6 +33,8 @@ object Helper {
   implicit class matchCaseFuture[A](f:Future[Option[A]]){
     def result(): Future[Option[A]] =  f.collect(t=>t.result())
   }
+
+
   implicit class convertOptionFutureToFuture[A](f:Option[Future[Option[A]]]){
     def convert(): Future[Option[A]] = f match {
       case Some(value) => value
