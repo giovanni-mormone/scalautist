@@ -47,3 +47,10 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Paga], [FasciaOraria]) VA
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
+
+delete from RichiestaTeoricaSets
+delete from GiornoSets
+
+select * from RichiestaTeoricaSets
+select * from GiornoSets
+select * from RichiestaSets

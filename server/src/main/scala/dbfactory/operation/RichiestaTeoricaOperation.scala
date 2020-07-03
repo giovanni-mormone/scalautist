@@ -112,7 +112,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         InstanceRichiesta.operation().execJoin(filterJoin).flatMap{
           case Some(List(idRichiesta)) => selectGiornoId(giorno).flatMap{
             case Some(giornoId) => RichiestaOperation.update(Richiesta(giorno.shift,giornoId,idRichiestaTeorica,Some(idRichiesta)))
-            case _ => Future.successful(Some(StatusCodes.ERROR_CODE8))
+             case _ => Future.successful(Some(StatusCodes.ERROR_CODE8))
           }
           case _ => Future.successful(Some(StatusCodes.ERROR_CODE7))
         }
