@@ -213,7 +213,7 @@ object AssenzaOperation extends AssenzaOperation{
         })
     ).toList.foldLeft(Future.successful(Option(List((NOT_RISULTATO_ID,NOT_RISULTATO_TURNO_ID,NOT_RISULTATO_PERSONE_ID))))) {
       case (defaulFuture,future)=>defaulFuture.zip(future).map {
-        case (option, option1) => Some((option1.toList.flatten::option.toList.flatten::List.empty).flatten)
+        case (option, option1) => Some(option1.toList.flatten:::option.toList.flatten)
       }
     }.collect {
       case Some(List((NOT_RISULTATO_ID,NOT_RISULTATO_TURNO_ID,NOT_RISULTATO_PERSONE_ID))) => None

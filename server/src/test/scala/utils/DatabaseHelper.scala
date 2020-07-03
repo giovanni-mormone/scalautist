@@ -68,6 +68,18 @@ class DatabaseHelper private{
     }
     promiseSql.future
   }
+
+  def runScriptRichiesta():Future[Int]={
+    val promiseSql = Promise[Int]
+    database.run(sqlu"#$clean_DB") onComplete{
+      case Success(_) => DatabaseHelper.database.run(sqlu"#$inserts_sqlRich")onComplete{
+        case Success(_) =>promiseSql.success(1)
+        case Failure(_) => promiseSql.success(0)
+      }
+      case Failure(_) => promiseSql.success(0)
+    }
+    promiseSql.future
+  }
 }
 object DatabaseHelper{
   def apply(): DatabaseHelper = new DatabaseHelper()
@@ -79,5 +91,6 @@ object DatabaseHelper{
   private val inserts_sql3: String = Source.fromResource("ScalautistTestDisponibilita.sql").mkString
   private val inserts_sql4: String = Source.fromResource("ScalautistTestAssenza.sql").mkString
   private val inserts_sqlT: String = Source.fromResource("ScalautistTestTurni.sql").mkString
+  private val inserts_sqlRich: String = Source.fromResource("ScalautistTestRichiesta.sql").mkString
 
 }

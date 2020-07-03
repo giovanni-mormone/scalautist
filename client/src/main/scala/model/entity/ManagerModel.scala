@@ -5,13 +5,15 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, RichiestaTeorica}
+import caseclass.CaseClassDB.{Giorno, Parametro, RichiestaTeorica, Risultato}
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
+import jsonmessages.ImplicitDate._
 import model.AbstractModel
 import utils.TransferObject.InfoRichiesta
-
+import scala.collection.mutable.{HashMap=>Hasmaph}
 import scala.collection.immutable.HashMap
+import scala.collection.mutable
 import scala.concurrent.Future
 
 /**
@@ -69,6 +71,38 @@ trait ManagerModel {
    * @param info case class that contains all info for algorithm and yours execution
    */
   def esecuzioneAlgoritmo(info:AlgorithmExecute):Unit
+
+  /**
+   * method that return result of the algorithm by terminal,
+   * before calling this method. we verify that terminal not exist
+   * in object terminals that exist only in the object [[ManagerModel]], that contains all terminals already called
+   * @param idTerminale represent a terminal in database
+   * @param dataI represent init date for which you want to start
+   * @param dataF represent finish date for this call
+   * @return Future of Response of List of Result Algorithm, for description of this case class, view
+   *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
+   */
+  def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[List[ResultAlgorithm]]]
+
+  /**
+   * return all parameter existing in database
+   */
+  def getOldParameter:Future[Response[Parametro]]
+
+  /**
+   * method that return specific parameters with yours configuration
+   * @param idParameters represent idParameter existing in database
+   * @return Future Response InfoAlgorithm with all information saved in the database
+   */
+  def getParameterById(idParameters:Int):Future[Response[InfoAlgorithm]]
+
+  /**
+   * method which allow save all information relationship with parameters
+   * @param parameters case class that represent information for parameters, this case class contains
+   *                   parametro: Parametro, giornoInSettimana: List[GiornoInSettimana]
+   * @return Future Response Int with status of operation
+   */
+  def saveParameters(parameters:InfoAlgorithm):Future[Response[Int]]
 }
 
 /**
@@ -81,7 +115,12 @@ object ManagerModel {
   /**
    * HTTP implementation for [[ManagerModel]]
    */
+
   private class ManagerModelHttp extends AbstractModel with ManagerModel {
+
+    def terminals[K,O](f:K=>O):K => O = new Hasmaph[K, O]() {
+      override def apply(key:K):O = getOrElseUpdate(key, f(key))
+    }
 
     private val TODAY: Date = Date.valueOf(LocalDate.now())
     private val WEEK: HashMap[Int, String] = HashMap(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi",
@@ -118,37 +157,28 @@ object ManagerModel {
       val request = Post(getURI("executealgorithm"), transform(info))
       callHtpp(request)
     }
-  }
+
+    override def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[List[ResultAlgorithm]]] =
+      getResultAlgorithmMemorize(dataI)(dataF)(idTerminale)
+
+    val getResultAlgorithmMemorize:Date=>Date=>Int=>Future[Response[List[ResultAlgorithm]]] =x=>y=> terminals(ids =>{
+          val request = Post(getURI("getresultalgorithm"), transform((ids,x,y)))
+          callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[ResultAlgorithm]]])
+      })
+
+    override def getOldParameter: Future[Response[Parametro]] = {
+      val request = Post(getURI("getalloldparameters"))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Parametro]])
+    }
+
+    override def getParameterById(idParameters: Int): Future[Response[InfoAlgorithm]] = {
+      val request = Post(getURI("getoldparametersbyid"), transform(idParameters))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[InfoAlgorithm]])
+    }
+
+    override def saveParameters(parameters: InfoAlgorithm): Future[Response[Int]] = {
+      val request = Post(getURI("saveparameter"), transform(parameters))
+      callHtpp(request).flatMap(unMarshall)
+    }
 }
-
-object t extends App{
-  val first = AssignRichiestaTeorica(
-    List(RichiestaTeorica(Date.valueOf("2020-06-10"),Some(Date.valueOf("2020-07-08")),2,None),
-    RichiestaTeorica(Date.valueOf("2020-06-10"),Some(Date.valueOf("2020-07-08")),3,None),
-    RichiestaTeorica(Date.valueOf("2020-06-10"),Some(Date.valueOf("2020-07-08")),4,None)),
-    List(RequestGiorno(Giorno(1,"Lunedi",1,None),6), RequestGiorno(Giorno(1,"Lunedi",1,None),5),
-      RequestGiorno(Giorno(1,"Lunedi",1,None),4), RequestGiorno(Giorno(1,"Lunedi",1,None),3),
-      RequestGiorno(Giorno(1,"Lunedi",1,None),2), RequestGiorno(Giorno(1,"Lunedi",1,None),1),
-      RequestGiorno(Giorno(2,"Martedi",2,None),6), RequestGiorno(Giorno(2,"Martedi",2,None),5),
-      RequestGiorno(Giorno(2,"Martedi",2,None),4), RequestGiorno(Giorno(2,"Martedi",2,None),3),
-      RequestGiorno(Giorno(2,"Martedi",2,None),2), RequestGiorno(Giorno(2,"Martedi",2,None),1),
-      RequestGiorno(Giorno(3,"Mercoledi",3,None),6), RequestGiorno(Giorno(3,"Mercoledi",3,None),5),
-      RequestGiorno(Giorno(3,"Mercoledi",3,None),4), RequestGiorno(Giorno(3,"Mercoledi",3,None),3),
-      RequestGiorno(Giorno(3,"Mercoledi",3,None),2), RequestGiorno(Giorno(3,"Mercoledi",3,None),1),
-      RequestGiorno(Giorno(4,"Giovedi",4,None),6), RequestGiorno(Giorno(4,"Giovedi",4,None),5),
-      RequestGiorno(Giorno(4,"Giovedi",4,None),4), RequestGiorno(Giorno(4,"Giovedi",4,None),3),
-      RequestGiorno(Giorno(4,"Giovedi",4,None),2), RequestGiorno(Giorno(4,"Giovedi",4,None),1),
-      RequestGiorno(Giorno(5,"Venerdi",5,None),6), RequestGiorno(Giorno(5,"Venerdi",5,None),5),
-      RequestGiorno(Giorno(5,"Venerdi",5,None),4), RequestGiorno(Giorno(5,"Venerdi",5,None),3),
-      RequestGiorno(Giorno(5,"Venerdi",5,None),2), RequestGiorno(Giorno(5,"Venerdi",5,None),1),
-      RequestGiorno(Giorno(6,"Sabato",6,None),6), RequestGiorno(Giorno(6,"Sabato",6,None),5),
-      RequestGiorno(Giorno(6,"Sabato",6,None),4), RequestGiorno(Giorno(6,"Sabato",6,None),3),
-      RequestGiorno(Giorno(6,"Sabato",6,None),2), RequestGiorno(Giorno(6,"Sabato",6,None),1),
-      RequestGiorno(Giorno(7,"Domenica",7,None),6), RequestGiorno(Giorno(7,"Domenica",7,None),5),
-      RequestGiorno(Giorno(7,"Domenica",7,None),4), RequestGiorno(Giorno(7,"Domenica",7,None),3),
-      RequestGiorno(Giorno(7,"Domenica",7,None),2), RequestGiorno(Giorno(7,"Domenica",7,None),1)))
-
-  val t = first.days.map(element => element).groupBy(_.day.idGiornoSettimana)
-  println(t)
-  println(first)
 }

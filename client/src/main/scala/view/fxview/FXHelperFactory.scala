@@ -38,7 +38,7 @@ object FXHelperFactory {
     import javafx.scene.control.Alert
     import javafx.scene.control.Alert.AlertType
     import javafx.scene.control.ButtonType
-    val alert = new Alert(AlertType.WARNING, message, ButtonType.OK, ButtonType.CANCEL)
+    val alert:Alert = new Alert(AlertType.WARNING, message, ButtonType.OK, ButtonType.CANCEL)
     alert.setTitle("ALERT")
     val result = alert.showAndWait
     if (result.get eq ButtonType.OK) true else false

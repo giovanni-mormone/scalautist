@@ -52,10 +52,10 @@ object CaseClassDB{
    * identification of a set of parameters
    *
    * @param treSabato represent if ruler threeSaturday for algorithm is active
-   * @param Regola PENDING
+   * @param nome PENDING
    * @param idParametri identifies set of parameters that serves the algorithm (for insert operation this is not mandatory)
    */
-  final case class Parametro(treSabato:Byte,Regola:String,idParametri:Option[Int]=None)
+  final case class Parametro(treSabato:Boolean,nome:String,idParametri:Option[Int]=None)
 
   /**
    * Persona is a case class that represent a instance of table into database that contains
@@ -110,7 +110,7 @@ object CaseClassDB{
    * @param terminaleId represent terminal which request is associate
    * @param idRichiestaTeorica represent unambiguous for every request (for insert operation this is not mandatory)
    */
-  final case class RichiestaTeorica(dataInizio:Date,dataFine:Option[Date],terminaleId:Int,idRichiestaTeorica:Option[Int]=None)
+  final case class RichiestaTeorica(dataInizio:Date,dataFine:Date,terminaleId:Int,idRichiestaTeorica:Option[Int]=None)
 
   /**
    * Risultato is a case class that represent a instance of table into database that contains all result
@@ -130,11 +130,17 @@ object CaseClassDB{
    * @param giornoId    identifies day, this can be repeat more times
    * @param turnoId     identifies shift into day
    * @param parametriId identifies the parameter to which it belongs
-   * @param settimanaId identifies week for all day associated to this
+   * @param regolaId identifies ruler for all day associated to this
    * @param idSettimana represent unambiguous for every week (for insert operation this is not mandatory)
    */
-  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,parametriId:Int,settimanaId:Int,idSettimana:Option[Int]=None)
+  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,regolaId:Int,parametriId:Option[Int]=None,idSettimana:Option[Int]=None)
 
+  /**
+   * case class that represent rules for normal week
+   * @param nomeRegola name of rule
+   * @param idRegola id that represent rule
+   */
+  final case class Regola(nomeRegola:String,idRegola:Option[Int])
   /**
    * StoricoContratto is a case class that represent a instance of table into database that contains all
    * work contract
@@ -179,13 +185,14 @@ object CaseClassDB{
   final case class Zona(zones:String,idZone:Option[Int]=None)
 
   /**
-   * Settimana is a case class that represent a instance of table into database that contains one instance
-   * of week, this is associated a one zone
-   *
-   * @param parametriSetId represent unambiguous for every settimana allocate in parameters
-   * @param idZone represent unambiguous for every zone allocate in parameters (for insert operation this is not mandatory)
+   * ZonaTerminale is a case class that represent instance of table into database that contains
+   * id of a zone, id of a terminal, id of parametri
+   * @param zonaId represent a zona in database
+   * @param terminaleId represent a terminal in database
+   * @param parametriId represent a parameter in database
+   * @param idZonaTerminale represent unambiguous for every ZonaTerminale (for insert operation this is not mandatory)
    */
-  final case class Settimana(parametriSetId:Int,idZone:Option[Int]=None)
+  final case class ZonaTerminale(zonaId:Int,terminaleId:Int,parametriId:Option[Int]=None,idZonaTerminale:Option[Int]=None)
 
   /**
    * Stipendio is a case class that represent a instance of table into database that contains

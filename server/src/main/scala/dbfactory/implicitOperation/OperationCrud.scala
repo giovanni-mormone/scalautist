@@ -59,8 +59,10 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
   /**
    * Generic operation which receive as input a case class [[caseclass.CaseClassDB]] that represent a instance
    * we want update into database
+   *
    * @param element case class that represent instance into database we want update
    * @return Future of Int that represent status of operation
+   *         Note that the return value will be None if an update was performed and Some if the operation was insert
    */
   def update(element:A):Future[Option[Int]]= crud.update(element)
 

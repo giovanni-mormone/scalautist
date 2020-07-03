@@ -32,13 +32,20 @@ object DateConverter {
       c
     })
 
+  val previousMonthDate: Date =>  Date = date =>
+    converter(date,c =>{
+      c.add(Calendar.MONTH,-1)
+      c.set(Calendar.DAY_OF_MONTH,1)
+      c
+    })
+
 
   /**
    * Returns the last date of the month provided
    */
   val endOfMonth: Date => Date = date =>
     converter(date,c => {
-      c.set(Calendar.DAY_OF_MONTH,Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH))
+      c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH))
       c
     })
 
@@ -117,6 +124,12 @@ object DateConverter {
     calendar.add(Calendar.DATE,day)
     new Date(calendar.getTimeInMillis)
   }
+  val subtract:(Date,Int)=>Date=(date,minus)=>{
+    val calendar = dateToCalendar(date)
+    calendar.add(Calendar.DATE,minus)
+    new Date(calendar.getTimeInMillis)
+  }
+
 
   private val dateToCalendar:Date=>Calendar=date=>{
     val calendar = Calendar.getInstance()
