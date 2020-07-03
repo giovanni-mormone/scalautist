@@ -1,10 +1,10 @@
 package dbfactory.operation
 
-import java.sql.Date
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceRichiesta, InstanceRichiestaTeorica}
 
-import caseclass.CaseClassDB.{Giorno, Richiesta, RichiestaTeorica}
-import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, RequestGiorno}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiorno, InstanceRichiesta, InstanceRichiestaTeorica}
+import caseclass.CaseClassDB.{Richiesta, RichiestaTeorica}
+import caseclass.CaseClassHttpMessage.RequestGiorno
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceGiorno
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
 import messagecodes.StatusCodes

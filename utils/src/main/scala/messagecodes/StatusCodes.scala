@@ -3,7 +3,7 @@ package messagecodes
 object StatusCodes {
 
   /**
-   * ERRORE1
+   * 1
    */
   val ERROR_CODE1: Int = -1
   val ERROR_CODE2: Int = -2

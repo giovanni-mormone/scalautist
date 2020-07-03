@@ -8,15 +8,50 @@ import view.fxview.component.manager.subcomponent.parent.ManagerRichiestaParent
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
+/** @author Fabian Aspee Encina
+ *  Trait which allows to perform operations on richiesta view.
+ */
 trait ManagerRichiestaBox extends Component[ManagerRichiestaParent]{
+
+  /**
+   * method which allow return action and save information which has been completed in actual view
+   * @param valueForDay value that user insert in view, represent idDay that contains a list with
+   *                    id shift and yours respective quantity
+   */
   def backAction(valueForDay: (Int, List[(Int, Int)])): Unit
 
+  /**
+   * method which allow next action and save information which has been completed in actual view
+   * @param valueForDay value that user insert in view, represent idDay that contains a list with
+   *                   id shift and yours respective quantity
+   */
   def nextAction(valueForDay: (Int, List[(Int, Int)])): Unit
+
+  /**
+   * method which allow next action but in this point the user is in end view
+   * @param listShiftRequest list of value that user insert in all view, view [[utils.TransferObject.InfoRichiesta]]
+   */
   def nextAction(listShiftRequest: InfoRichiesta): Unit
+
+  /**
+   * method that re paint all element that belong to Richiesta
+   */
   def reDrawRichiesta():Unit
+
+  /**
+   * method that allow draw all shift in every day in week
+   * @param listShift list that contains all shift in the system
+   * @param position allows to return the day for which it is being designed
+   */
   def drawShiftRequest(listShift: List[Turno],position:Int=0): Unit
 
-  def terminalSelected(idTerminal: List[Int],date:Date,date1:Date)
+  /**
+   * method that contains info for terminal or terminals selected and init date and finish date for teoric request
+   * @param idTerminal represent list with all terminal selected
+   * @param date init date for teoric request
+   * @param date1 finish date for teoric request
+   */
+  def terminalSelected(idTerminal: List[Int],date:Date,date1:Date):Unit
 }
 
 object ManagerRichiestaBox{

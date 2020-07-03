@@ -124,6 +124,12 @@ object DateConverter {
     calendar.add(Calendar.DATE,day)
     new Date(calendar.getTimeInMillis)
   }
+  val subtract:(Date,Int)=>Date=(date,minus)=>{
+    val calendar = dateToCalendar(date)
+    calendar.add(Calendar.DATE,minus)
+    new Date(calendar.getTimeInMillis)
+  }
+
 
   private val dateToCalendar:Date=>Calendar=date=>{
     val calendar = Calendar.getInstance()

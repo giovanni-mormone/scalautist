@@ -18,7 +18,7 @@ object MasterRouteAssenza extends Directives{
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
   @Operation(summary = "Get Holiday By Persona", description = "All Holiday by person in a year determinate",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Int])))),
     responses = Array(
       new ApiResponse(responseCode = "201", description = "Get All holiday by person correctly from database"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
@@ -48,7 +48,7 @@ object MasterRouteAssenza extends Directives{
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
   @Operation(summary = "Get Absence and Holiday", description = "Get absence and holiday for a person in a determinate year",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assenza])))),
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Int])))),
     responses = Array(
       new ApiResponse(responseCode = "201", description = "Get all holiday and illness from database by person"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))

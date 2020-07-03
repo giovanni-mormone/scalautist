@@ -9,6 +9,7 @@ trait ManagerOperations {
   def openPrintResult(): Unit
   def openManageZone(): Unit
   def openManageTerminal(): Unit
+  def openManageTeoricRequest(): Unit
 }
 
 object ManagerOperations{
@@ -33,5 +34,8 @@ object ManagerOperations{
 
     override def openManageTerminal(): Unit =
       toTest.clickOn("#manageTerminalButton")
+
+    override def openManageTeoricRequest(): Unit =
+      toTest.clickOn("#richiestaButton")
   }
 }
