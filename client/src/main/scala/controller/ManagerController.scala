@@ -11,19 +11,18 @@ import scala.util.{Failure, Success}
 trait ManagerController extends AbstractController[ManagerView]{
 
   /**
-   *
-   * @param richiesta
+   * method that send to server a theorical request with all info for a time frame
+   * @param richiesta case class that represent all info for create a theorical request
    */
   def sendRichiesta(richiesta: InfoRichiesta): Unit
 
   /**
-   *
-   * @param idTerminal
+   * method that select all shift that exist in database
    */
   def selectShift(idTerminal: Int): Unit
 
   /**
-   *
+   * method that return all terminal for view theorical request.
    */
   def datatoRichiestaPanel(): Unit
 
@@ -89,24 +88,25 @@ object ManagerController {
 
     override def datatoRichiestaPanel(): Unit =
       HumanResourceModel().getAllTerminale.onComplete {
-        case Failure(exception) =>
-        case Success(value) =>value.payload.foreach(value => myView.drawRichiesta(value))
+        case Failure(_) => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawRichiesta(value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
       }
 
 
     override def selectShift(idTerminal: Int): Unit =
       HumanResourceModel().getAllShift.onComplete {
-        case Failure(exception) =>
-        case Success(value) =>value.payload.foreach(value=>myView.drawShiftRequest(value))
+        case Failure(_) => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawShiftRequest(value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-shift")
       }
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = {
       model.defineTheoreticalRequest(richiesta).onComplete {
-        case Failure(e) =>  myView.showMessageFromKey("general-error")
-          println(e)
+        case Failure(_) =>  myView.showMessageFromKey("general-error")
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
-        case Success(value) =>println(value)
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) => myView.showMessageFromKey("ok-save-request")
       }
     }
   }

@@ -19,6 +19,9 @@ object SuccessAndFailure {
     case Success(Some(statusCodes.ERROR_CODE4)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE4))
     case Success(Some(statusCodes.ERROR_CODE5)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE5))
     case Success(Some(statusCodes.ERROR_CODE6)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE6))
+    case Success(Some(statusCodes.ERROR_CODE7)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE7))
+    case Success(Some(statusCodes.ERROR_CODE8)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE8))
+    case Success(Some(statusCodes.ERROR_CODE9)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE9))
     case t => failure(t)
   }
 

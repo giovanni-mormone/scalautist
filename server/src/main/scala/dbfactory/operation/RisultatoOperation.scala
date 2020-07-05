@@ -244,7 +244,7 @@ object RisultatoOperation extends RisultatoOperation {
 
   private def zipFuture(head:InfoPerson,infoResult:InfoForResult,result:Future[Option[List[ResultAlgorithm]]]): Future[Option[List[ResultAlgorithm]]] =
     result.zip(createInfoDates(infoResult.result.filter(_.personaId==head.idPersona),infoResult,head.idPersona)
-      .collect(value=>ResultAlgorithm(head.idPersona,head.terminal,value))).map{
+      .collect(value=>ResultAlgorithm(head.idPersona,head.terminal,value.sortBy(value=>(value.date,value.turno,value.turno2))))).map{
       case (option, algorithm) => Option(option.toList.flatten:+algorithm)
     }
 
@@ -335,8 +335,8 @@ object RisultatoOperation extends RisultatoOperation {
   private def insertAllAbsence(listAbsence:List[(Date,Date)],infoResult:InfoForResult): List[InfoDates] =
     listAbsence.map(value => if(value._1.compareTo(infoResult.dateInit)<0)(infoResult.dateInit,value._2) else value)
         .map(value =>if(value._2.compareTo(infoResult.dateFinish)>0)(value._1,infoResult.dateFinish) else value)
-        .map(date=>differenceBetweenDate(date._2.toLocalDate.toEpochDay)(date._1.toLocalDate.toEpochDay))
-        .flatMap(date_diff=>(DEFAULT_INIT to date_diff).map(value=>infoResult.dateInit.toLocalDate.plusDays(value))
+        .map(date=>date._1->differenceBetweenDate(date._2.toLocalDate.toEpochDay)(date._1.toLocalDate.toEpochDay))
+        .flatMap(date_diff=>(DEFAULT_INIT to date_diff._2).map(value=>date_diff._1.toLocalDate.plusDays(value))
         .map(day=>InfoDates(Date.valueOf(day),ABSENCE_VALUE,Some(ABSENCE_VALUE))))
 
   private val selectNameTurno:InfoForResult=>Int=>String=infoResult=>idTurno=>
@@ -345,12 +345,4 @@ object RisultatoOperation extends RisultatoOperation {
       case Nil =>WITHOUT_SHIFT
     }
 
-}
-object  t extends App{
-  RisultatoOperation.getResultAlgorithm(3,Date.valueOf(LocalDate.of(2020,6,1)), Date.valueOf(LocalDate.of(2020,8,18)))
-    .onComplete {
-      case Failure(exception) => println(exception)
-      case Success(value) =>println(value)
-    }
-  while (true){}
 }
