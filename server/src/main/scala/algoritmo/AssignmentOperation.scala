@@ -3,7 +3,7 @@ package algoritmo
 import java.sql.Date
 
 import algoritmo.Algoritmo.InfoForAlgorithm
-import algoritmo.ExtractAlgorithmInformation.emitter
+import scala.concurrent.ExecutionContext.Implicits.global
 import caseclass.CaseClassHttpMessage.AlgorithmExecute
 import _root_.emitter.ConfigEmitter
 
@@ -32,9 +32,10 @@ object AssignmentOperation extends AssignmentOperation {
   }
   override def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]): Unit = {
     emitter.sendMessage("Iniziando processo di assegnazione")
-  }
-  private def assignSaturdayAndSunday5x2()={
 
+  }
+  private def assignSaturdayAndSunday5x2(infoForAlgorithm: Future[InfoForAlgorithm])={
+    //infoForAlgorithm.flatMap(driver=>driver.persons.map(idPerson=>idPerson._1))
   }
   private def assignSunday6x1()={
 
