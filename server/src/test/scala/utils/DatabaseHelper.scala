@@ -4,12 +4,14 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{Awaitable, Future, Promise}
 import scala.io.Source
 import scala.util.{Failure, Success}
 
 @StaticDatabaseConfig("#tsql")
 class DatabaseHelper private{
+
+
   import DatabaseHelper._
   def runScript():Future[Int]={
     val promiseSql = Promise[Int]
@@ -56,7 +58,17 @@ class DatabaseHelper private{
     }
     promiseSql.future
   }
-
+  def runScript5(): Future[Int] = {
+    val promiseSql = Promise[Int]
+    database.run(sqlu"#$clean_DB") onComplete{
+      case Success(_) => DatabaseHelper.database.run(sqlu"#$inserts_sql5")onComplete{
+        case Success(_) =>promiseSql.success(1)
+        case Failure(_) => promiseSql.success(0)
+      }
+      case Failure(_) => promiseSql.success(0)
+    }
+    promiseSql.future
+  }
   def runScriptT():Future[Int]={
     val promiseSql = Promise[Int]
     database.run(sqlu"#$clean_DB") onComplete{
@@ -90,6 +102,7 @@ object DatabaseHelper{
   private val inserts_sql2: String = Source.fromResource("ScalautistTest2.sql").mkString
   private val inserts_sql3: String = Source.fromResource("ScalautistTestDisponibilita.sql").mkString
   private val inserts_sql4: String = Source.fromResource("ScalautistTestAssenza.sql").mkString
+  private val inserts_sql5: String = Source.fromResource("ScalautistTestResult.sql").mkString
   private val inserts_sqlT: String = Source.fromResource("ScalautistTestTurni.sql").mkString
   private val inserts_sqlRich: String = Source.fromResource("ScalautistTestRichiesta.sql").mkString
 

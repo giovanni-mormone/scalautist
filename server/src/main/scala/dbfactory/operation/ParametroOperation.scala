@@ -1,8 +1,8 @@
 package dbfactory.operation
 
-import caseclass.CaseClassDB.{Parametro, ZonaTerminale}
+import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiornoInSettimana, InstanceZonaTerminal}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiornoInSettimana, InstanceRegola, InstanceZonaTerminal}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
@@ -10,6 +10,7 @@ import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.impl.Promise
 
 /** @author Fabian Aspee Encina
  *  Trait which allows to perform operations on the parametro table.
@@ -26,6 +27,7 @@ trait ParametroOperation extends OperationCrud[Parametro]{
    *          [[messagecodes.StatusCodes.ERROR_CODE1]] if exist error while insert Parametro
    *          [[messagecodes.StatusCodes.ERROR_CODE2]] if exist error while insert GiornoInSettimana
    *          [[messagecodes.StatusCodes.ERROR_CODE3]] if ZonaTerminal is empty or name parameter is empty
+   *          [[messagecodes.StatusCodes.ERROR_CODE4]] if Regola not exist
    *          [[messagecodes.StatusCodes.SUCCES_CODE]] if not exist error in operation
    */
   def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm):Future[Option[Int]]
@@ -51,12 +53,22 @@ object ParametroOperation extends ParametroOperation {
 
   private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
     (idParametri,infoAlgorithm.giornoInSettimana) match {
-      case (Some(id),Some(giornoInSettimana)) =>GiornoInSettimanaOperation.insertAll(giornoInSettimana.map(value=>value.copy(parametriId = Some(id)))).flatMap {
-        case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
-        case None =>deleteParametri(idParametri)
+      case (Some(id),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
+        case Some(StatusCodes.SUCCES_CODE) => GiornoInSettimanaOperation.insertAll(giornoInSettimana.map(value=>value.copy(parametriId = Some(id)))).flatMap {
+          case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
+          case None =>deleteParametri(idParametri)
+        }
+        case Some(StatusCodes.ERROR_CODE4) =>deleteParametri(idParametri).collect(_=>Some(StatusCodes.ERROR_CODE4))
       }
       case (Some(_),None)=>insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
       case (None,_) =>Future.successful(Some(StatusCodes.ERROR_CODE1))
+    }
+  }
+  private def verifyRegolaAndInsert(giornoInSettimana: List[GiornoInSettimana])={
+    InstanceRegola.operation().selectFilter(_.id.inSet(giornoInSettimana.map(_.regolaId))).collect {
+      case Some(value) if value.length==giornoInSettimana.map(_.regolaId).length=> Some(StatusCodes.SUCCES_CODE)
+      case Some(_) => Some(StatusCodes.ERROR_CODE4)
+      case None => Some(StatusCodes.ERROR_CODE4)
     }
   }
   private def insertZonaTerminal(zonaTerminale:List[ZonaTerminale],idParametro:Option[Int]): Future[Option[Int]]  ={
