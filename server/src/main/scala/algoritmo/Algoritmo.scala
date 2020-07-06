@@ -6,6 +6,7 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceRegola, InstanceRichiestaTeorica, InstanceTerminale}
 import dbfactory.operation.TurnoOperation
+import dbfactory.setting.Table.{PersonaTableQuery, StoricoContrattoTableQuery}
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
@@ -57,7 +58,7 @@ object Algoritmo extends Algoritmo{
   private val verifyDate:(Date,Date,Date)=>Boolean=(day,initDay,finishDay) => {
     day.compareTo(initDay)>=0 && day.compareTo(finishDay)<=0 && getDayNumber(day)!=ENDED_DAY_OF_WEEK
   }
-  final case class InfoForAlgorithm(shift: List[Turno],theoricalRequest:List[RichiestaTeorica],persons:List[Persona],absence:Option[List[(Int,Date,Date)]]=None,allRequest:Option[List[InfoReq]]=None)
+  final case class InfoForAlgorithm(shift: List[Turno],theoricalRequest:List[RichiestaTeorica],persons:List[(Int,Persona)],absence:Option[List[(Int,Date,Date)]]=None,allRequest:Option[List[InfoReq]]=None)
   final case class InfoReq(idShift:Int,request:Int,assigned:Int,idDay:Int,data:Date,idTerminal:Int)
 
   override def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute): Future[Option[Int]] = {
@@ -150,14 +151,21 @@ object Algoritmo extends Algoritmo{
       }
   }
 
-  private def getPersonByTerminal(algorithmExecute: AlgorithmExecute,shift: List[Turno],theoricalRequest:List[RichiestaTeorica]):Future[Option[Int]] =
-    InstancePersona.operation().selectFilter(t=>algorithmExecute.idTerminal.contains(t.terminaleId)).collect {
+  private def getPersonByTerminal(algorithmExecute: AlgorithmExecute,shift: List[Turno],theoricalRequest:List[RichiestaTeorica]):Future[Option[Int]] ={
+    val joinPersona = for{
+      persona<-PersonaTableQuery.tableQuery()
+      contratto<-StoricoContrattoTableQuery.tableQuery()
+      if persona.id===contratto.personaId && algorithmExecute.idTerminal.contains(persona.terminaleId)
+    }yield (contratto.contrattoId,persona)
+    InstancePersona.operation().execJoin(joinPersona).collect {
       case Some(person) =>
         val infoForAlgorithm=ExtractAlgorithmInformation().getAllData(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))
         AssignmentOperation().initOperationAssignment(algorithmExecute,infoForAlgorithm)
         Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE7)
     }
+  }
+
 
 
 
