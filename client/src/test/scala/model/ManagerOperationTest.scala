@@ -44,6 +44,7 @@ object ManagerOperationTest {
   val timeFrameInitError: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinishError: Date =Date.valueOf(LocalDate.of(2020,6,15))
   val terminals=List(1,2,3)
+  val terminalsWithoutDriver=List(1,2,3,4)
   val terminalWithoutTheoricRequest=List(4)
   val terminalsWithoutTheoricRequest=List(1,2,4)
   val terminalsNotExist=List(1,2,3,50)
@@ -102,5 +103,8 @@ object ManagerOperationTest {
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminalWithoutTheoricRequest,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
   val algorithmExecuteTerminalsWithoutTheoricRequest: AlgorithmExecute =algorithmExecuteTerminalWithoutTheoricRequest.copy(idTerminal = terminalsWithoutTheoricRequest)
 
+  val algorithmExecuteTerminalWithoutDriver: AlgorithmExecute =
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminalsWithoutDriver,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+  val algorithmExecuteWithoutShift: AlgorithmExecute =algorithmExecuteTerminalWithoutTheoricRequest.copy(idTerminal = terminals)
 
 }

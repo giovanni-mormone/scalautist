@@ -10,11 +10,13 @@ import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
+import receiver.ConfigReceiver
 import utils.TransferObject.InfoRichiesta
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -153,6 +155,9 @@ object ManagerModel {
     }
 
     override def runAlgorithm(info: AlgorithmExecute): Future[Response[Int]] = {
+      val receiver = ConfigReceiver()
+      receiver.start()
+      receiver.receiveMessage()
       val request = Post(getURI("executealgorithm"), transform(info))
       callHtpp(request).flatMap(unMarshall)
     }
@@ -183,4 +188,23 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 }
+}
+object e extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
+  val terminals=List(1,2,3)
+  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,10))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,11))
+  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
+  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
+  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,6,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,6,8))))
+  val threeSaturday=false
+  val algorithmExecute: AlgorithmExecute =
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+ ManagerModel().runAlgorithm(algorithmExecute).onComplete {
+   case Failure(exception) => println(exception)
+   case Success(value) =>println(value)
+ }
+  while (true){}
 }
