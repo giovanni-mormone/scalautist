@@ -143,7 +143,7 @@ object ManagerModel {
 
     override def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]] = {
       val theoreticalRequest: List[RichiestaTeorica] =
-        info.idTerminal.map(terminal => RichiestaTeorica(info.date, Some(info.dateF), terminal))
+        info.idTerminal.map(terminal => RichiestaTeorica(info.date, info.dateF, terminal))
       val dailyRequest: List[RequestGiorno] =
         info.info.flatMap(giorno => giorno._2.map(needed =>
           RequestGiorno(Giorno(needed._2, WEEK.getOrElse(giorno._1, "Vacanza"), giorno._1), needed._1)))
