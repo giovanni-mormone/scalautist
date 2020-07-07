@@ -6,7 +6,7 @@ import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation.InfoForAlgorithm
 import caseclass.CaseClassDB.{Contratto, Persona, RichiestaTeorica, Turno}
 import caseclass.CaseClassHttpMessage.AlgorithmExecute
-
+import utils.DateConverter._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 trait AssignmentOperation{
@@ -26,8 +26,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   //TODO per segnare le domenica, potrebbero fare una case class che rapresente le sequenze->List contenuto interno da decidere
 
-  private val FULL_TIME_5X2= 1
-  private val PART_TIME_5X2= 2
+  private val FULL_AND_PART_TIME_5X2= List(1,2,3,4)
   private val FULL_TIME_6X1= ""
   private val PART_TIME_6X1= ""
   private val IS_FISSO=true
@@ -40,7 +39,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   final case class InfoReq(idShift:Int,request:Int,assigned:Int,idDay:Int,data:Date,idTerminal:Int)
   final case class PreviousSequence(idDriver:Int,sequenza:Int,distanceFreeDay:Int)
-  final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
+  final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Boolean=false,absence:Boolean=false)
   final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
 
   private val emitter=ConfigEmitter()
@@ -50,13 +49,47 @@ object AssignmentOperation extends AssignmentOperation {
   }
   override def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]): Unit = {
     emitter.sendMessage("Iniziando processo di assegnazione")
-    infoForAlgorithm.foreach(e=> emitter.sendMessage(e.persons.toString()))
+    infoForAlgorithm.foreach(info=>{
+       info.theoricalRequest.map(terminal=>{
+         val personaFilter = info.persons.filter(_._2.idTerminale.contains(terminal.terminaleId))
+        info.copy(persons = personaFilter,
+          allRequest = info.allRequest.map(_.filter(_.idTerminal==terminal.terminaleId)),
+          theoricalRequest = info.theoricalRequest.filter(_.terminaleId==terminal.terminaleId),
+          previousSequence = info.previousSequence.map(_.filter(value=>personaFilter.map(_._2.matricola).exists(id=>id.contains(value.idDriver)))))
+      }).foreach(info=>startAlgorithm(info,algorithmExecute))
+
+    })
+   //IN QUESTO PUNTO SEPARIAMO PER TERMINALE (?-> questo per la STUPIDAGGINE DI GIANNI)
+  }
+  private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute): Unit =Future{
+    val (driver5x2,driver6x1)=infoForAlgorithm.persons.partition(idPerson=>FULL_AND_PART_TIME_5X2.contains(idPerson._1))
+    assignSaturdayAndSunday5x2(infoForAlgorithm.allContract,algorithmExecute,driver5x2)
+      .zip(assignSunday6x1(infoForAlgorithm,algorithmExecute,driver6x1))
+  }
+
+  private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]],algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):List[Info]={
+    @scala.annotation.tailrec
+    def _assignSaturdayAndSunday(person: List[(Int, Persona)], date: Date, info: List[Info]=List.empty):List[Info]= person match {
+      case ::(head, next) =>val isFisso=allContract.map(_.filter(_.idContratto.contains(head._1)).map(_.turnoFisso)).toList.flatten match {
+        case List(isFisso) => isFisso}
+        _assignSaturdayAndSunday(next,date,
+        info:+Info(head._2.matricola.head,head._2.idTerminale.head,isFisso =isFisso ,head._1, _iterateDate(date)))
+      case Nil =>info
+    }
+    @scala.annotation.tailrec
+    def _iterateDate(date: Date, infoDay: List[InfoDay]=List.empty):List[InfoDay]=date match {
+      case date if date.compareTo(algorithmExecute.dateF)<0 && getEndDayWeek(date).compareTo(algorithmExecute.dateF)<0=>
+        _iterateDate(subtract(getEndDayWeek(date),1),
+        infoDay:::List(InfoDay(getEndDayWeek(date),freeDay = true),InfoDay(subtract(getEndDayWeek(date),-1),freeDay = true)))
+      case _ => infoDay.sortBy(_.data)
+    }
+   _assignSaturdayAndSunday(driver,algorithmExecute.dateI)
 
   }
-  private def assignSaturdayAndSunday5x2(infoForAlgorithm: Future[InfoForAlgorithm])={
-    infoForAlgorithm.collect(driver=>driver.persons.filter(idPerson=>idPerson._1==FULL_TIME_5X2 && idPerson._1==PART_TIME_5X2))
-  }
-  private def assignSunday6x1()={
+
+  //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
+  //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
+  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):List[Info]={
 
   }
   private def assignGroup()={
@@ -78,4 +111,12 @@ object AssignmentOperation extends AssignmentOperation {
 
   }
 
+}
+object  e extends App{
+
+
+  private def startAlgorithm(infoForAlgorithm: Int): Unit ={
+    println(infoForAlgorithm)
+  }
+  (0 to 10).foreach(startAlgorithm)
 }
