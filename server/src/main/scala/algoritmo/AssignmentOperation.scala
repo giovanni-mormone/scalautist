@@ -90,7 +90,7 @@ object AssignmentOperation extends AssignmentOperation {
   //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
   //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
   private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):List[Info]={
-
+    List()
   }
   private def assignGroup()={
 
