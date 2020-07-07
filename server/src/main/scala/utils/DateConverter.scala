@@ -136,6 +136,10 @@ object DateConverter {
     val calendar = dateToCalendar(date)
     if(calendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)true else false
   }
+  val isSaturday:Date=>Boolean=date=>{
+    val calendar = dateToCalendar(date)
+    if(calendar.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY)true else false
+  }
   val createListDayBetween:(Date,Date)=>List[Date]=(firstDate,endDate)=>{
       createListBetween(firstDate,endDate,List.empty)
   }
