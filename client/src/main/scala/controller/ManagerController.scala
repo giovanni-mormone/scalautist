@@ -58,7 +58,7 @@ object ManagerController {
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) => payload.foreach(result => myView.drawAbsence(result))
         case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.showMessageFromKey("no-absences-day")
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(_) => myView.showMessageFromKey("general-error")
+        case _ => myView.showMessageFromKey("general-error")
       }
     }
 
@@ -70,7 +70,7 @@ object ManagerController {
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("no-replacement-error")
         case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(_) => myView.showMessageFromKey("general-error")
+        case _ => myView.showMessageFromKey("general-error")
       }
     }
 
@@ -82,31 +82,31 @@ object ManagerController {
           myView.showMessageFromKey("replaced-driver")
           dataToAbsencePanel()
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Failure(_) => myView.showMessageFromKey("general-error")
+        case _ => myView.showMessageFromKey("general-error")
       }
     }
 
     override def datatoRichiestaPanel(): Unit =
       HumanResourceModel().getAllTerminale.onComplete {
-        case Failure(_) => myView.showMessageFromKey("general-error")
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawRichiesta(value)
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
       }
 
 
     override def selectShift(idTerminal: Int): Unit =
       HumanResourceModel().getAllShift.onComplete {
-        case Failure(_) => myView.showMessageFromKey("general-error")
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawShiftRequest(value)
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-shift")
+        case _ => myView.showMessageFromKey("general-error")
       }
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = {
       model.defineTheoreticalRequest(richiesta).onComplete {
-        case Failure(_) =>  myView.showMessageFromKey("general-error")
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.SUCCES_CODE,_)) => myView.showMessageFromKey("ok-save-request")
+        case _ => myView.showMessageFromKey("general-error")
       }
     }
   }

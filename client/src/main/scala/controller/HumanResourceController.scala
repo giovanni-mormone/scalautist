@@ -260,7 +260,7 @@ object HumanResourceController {
           showSuccess = false))
 
     override def fires(ids: Set[Int]): Unit = {
-      if(!ids.isEmpty) {
+      if(ids.nonEmpty) {
         val future: Future[Response[Int]] =
           if (ids.size > 1)
             model.firesAll(ids)
@@ -270,7 +270,7 @@ object HumanResourceController {
         future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
       }
       else
-        showResult(false, "Error6", EmployeeView.fire)
+        showResult(messageOnModal = false, "Error6", EmployeeView.fire)
     }
 
     override def illness(assenza: Assenza): Unit =
@@ -316,7 +316,7 @@ object HumanResourceController {
       case Success(Response(StatusCodes.ERROR_CODE3,_))=>myView.result("year-error")
       case Success(Response(StatusCodes.ERROR_CODE4,_))=>myView.result("init-date-error")
       case Success(Response(StatusCodes.ERROR_CODE5,_))=>myView.result("greater-day-error")
-      case Failure(_)  => myView.result("general-error")
+      case _  => myView.result("general-error")
     }
 
 
@@ -434,7 +434,7 @@ object HumanResourceController {
         case Success(Response(StatusCodes.SUCCES_CODE,value))=>value.foreach(assenza=>myView.drawModalAbsenceHoliday(item,isMalattia,assenza))
         case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.result("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_))=> myView.drawModalAbsenceHoliday(item,isMalattia,List.empty)
-        case Failure(_)  => myView.result("general-error")
+        case _  => myView.result("general-error")
       }
     override def passwordRecovery(user: Int): Unit =
       model.passwordRecovery(user)
