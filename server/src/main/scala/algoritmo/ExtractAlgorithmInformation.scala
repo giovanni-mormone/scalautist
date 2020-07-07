@@ -97,7 +97,6 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 
   private def getAllPreviousSequence(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Future[Option[List[PreviousSequence]]] ={
     val (sunday,endOfMont) = (getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
-    println(infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
     InstanceRisultato.operation().selectFilter(risultato=>risultato.personeId.inSet(infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
       && risultato.data.inSet(allSundayMonth(sunday,endOfMont))).collect {
       case Some(result) => iterateIdPerson(result,infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
@@ -176,7 +175,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 object t extends App{
   val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
-  val terminals=List(1,2,3,4,5,6,7)
+  val terminals=List(1,2)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,11))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
@@ -187,7 +186,7 @@ object t extends App{
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
   Algoritmo.shiftAndFreeDayCalculus(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
-    case Success(value) =>println(value)
+    case Success(value) =>println(":)")
   }
   while (true){}
 }
