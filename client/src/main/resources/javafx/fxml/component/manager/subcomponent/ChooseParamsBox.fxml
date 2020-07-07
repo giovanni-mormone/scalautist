@@ -3,42 +3,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox prefHeight="400.0" prefWidth="600.0">
+      <Pane prefHeight="357.0" prefWidth="600.0">
          <children>
-            <Pane prefHeight="87.0" prefWidth="600.0">
-               <children>
-                  <DatePicker fx:id="dataInit" layoutX="14.0" layoutY="14.0" />
-                  <DatePicker fx:id="dataEnd" layoutX="345.0" layoutY="14.0" />
-               </children>
-            </Pane>
-            <Pane prefHeight="234.0" prefWidth="600.0">
-               <children>
-                  <VBox prefHeight="70.0" prefWidth="600.0">
-                     <children>
-                        <ComboBox fx:id="zones" prefHeight="27.0" prefWidth="194.0" />
-                        <ComboBox fx:id="terminals" prefHeight="27.0" prefWidth="194.0" />
-                     </children>
-                  </VBox>
-                  <RadioButton fx:id="normalWeek" layoutX="469.0" layoutY="41.0" mnemonicParsing="false" text="RadioButton" />
-                  <RadioButton fx:id="specialWeek" layoutX="469.0" layoutY="66.0" mnemonicParsing="false" text="RadioButton" />
-                  <CheckBox fx:id="3SatRole" layoutX="342.0" layoutY="57.0" mnemonicParsing="false" text="CheckBox" />
-               </children>
-            </Pane>
-            <Pane prefHeight="70.0" prefWidth="600.0">
-               <children>
-                  <HBox prefHeight="70.0" prefWidth="600.0">
-                     <children>
-                        <Button fx:id="old" mnemonicParsing="false" text="Button" />
-                        <Button fx:id="reset" mnemonicParsing="false" text="Button" />
-                        <Button fx:id="run" mnemonicParsing="false" text="Button" />
-                     </children>
-                  </HBox>
-               </children>
-            </Pane>
+            <DatePicker fx:id="initDate" layoutX="50.0" layoutY="178.0" />
+            <DatePicker fx:id="endDate" layoutX="50.0" layoutY="221.0" />
+            <ComboBox fx:id="zones" layoutX="50.0" layoutY="48.0" prefHeight="27.0" prefWidth="194.0" />
+            <ComboBox fx:id="terminals" layoutX="50.0" layoutY="107.0" prefHeight="27.0" prefWidth="194.0" />
+            <CheckBox fx:id="sabato" layoutX="381.0" layoutY="183.0" mnemonicParsing="false" text="CheckBox" />
+            <RadioButton fx:id="normal" layoutX="381.0" layoutY="53.0" mnemonicParsing="false" text="RadioButton" />
+            <RadioButton fx:id="special" layoutX="381.0" layoutY="107.0" mnemonicParsing="false" text="RadioButton" />
          </children>
-      </VBox>
+      </Pane>
+      <Pane prefHeight="46.0" prefWidth="600.0">
+         <children>
+            <Button fx:id="old" layoutX="312.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="reset" layoutX="393.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="run" layoutX="478.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
+         </children>
+      </Pane>
    </children>
-
-</Pane>
+</VBox>

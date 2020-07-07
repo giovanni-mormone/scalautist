@@ -3,7 +3,7 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Terminale, Turno}
+import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
@@ -23,9 +23,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   /**
    * Method used to draw the panel that allow to choose params for run assignment algorithm
    *
-   * @param oldParameters List of [[caseclass.CaseClassDB.Parametro]]
+   * @param zones List of [[caseclass.CaseClassDB.Zona]]
    */
-  def drawChooseParams(oldParameters: List[Parametro]): Unit
+  def drawChooseParams(zones: List[Zona]): Unit
 
   def reDrawRichiesta(): Unit
 
@@ -84,7 +84,7 @@ object ManagerHome{
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
-    var chooseParamsBox: ChooseParamsBox
+    var chooseParamsBox: ChooseParamsBox = _
 
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -136,8 +136,8 @@ object ManagerHome{
       managerRichiestaBoxView.drawShiftRequest(listShift)
     }
 
-    override def drawChooseParams(oldParameters: List[Parametro]): Unit = {
-      chooseParamsBox = ChooseParamsBox(oldParameters)
+    override def drawChooseParams(zones: List[Zona]): Unit = {
+      chooseParamsBox = ChooseParamsBox(zones)
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
     }
 

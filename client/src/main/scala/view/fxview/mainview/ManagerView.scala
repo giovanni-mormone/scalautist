@@ -122,5 +122,6 @@ object ManagerView {
     override def drawRunAlgorithm(oldParameters: List[Parametro]): Unit =
       Platform.runLater(() => managerHome.drawChooseParams(oldParameters))
 
+    override def calculateShifts(params: Parametro, save: Boolean): Unit = ???
   }
 }
