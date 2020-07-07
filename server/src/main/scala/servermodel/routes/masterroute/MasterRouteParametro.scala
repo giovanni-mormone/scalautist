@@ -62,6 +62,6 @@ object MasterRouteParametro  extends Directives{
 
   val routeParametro: Route =
     concat(
-       oldParameters(),oldParametersById()
+       oldParameters(),oldParametersById(),saveParameter()
     )
 }

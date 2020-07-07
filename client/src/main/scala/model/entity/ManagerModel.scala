@@ -5,16 +5,18 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, Parametro, RichiestaTeorica, Risultato}
+import caseclass.CaseClassDB.{Giorno, Parametro, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage._
-import jsonmessages.JsonFormats._
 import jsonmessages.ImplicitDate._
+import jsonmessages.JsonFormats._
 import model.AbstractModel
+import receiver.ConfigReceiver
 import utils.TransferObject.InfoRichiesta
-import scala.collection.mutable.{HashMap=>Hasmaph}
+
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -69,8 +71,10 @@ trait ManagerModel {
   /**
    * method that call server for execute algorithm for assigment free day and shift
    * @param info case class that contains all info for algorithm and yours execution
+   * @return Future Response Int that represent status operation
+   *         [[messagecodes.StatusCodes.SUCCES_CODE]] if algorithm init without problem
    */
-  def esecuzioneAlgoritmo(info:AlgorithmExecute):Unit
+  def runAlgorithm(info:AlgorithmExecute): Future[Response[Int]]
 
   /**
    * method that return result of the algorithm by terminal,
@@ -87,7 +91,7 @@ trait ManagerModel {
   /**
    * return all parameter existing in database
    */
-  def getOldParameter:Future[Response[Parametro]]
+  def getOldParameter:Future[Response[List[Parametro]]]
 
   /**
    * method that return specific parameters with yours configuration
@@ -118,9 +122,6 @@ object ManagerModel {
 
   private class ManagerModelHttp extends AbstractModel with ManagerModel {
 
-    def terminals[K,O](f:K=>O):K => O = new Hasmaph[K, O]() {
-      override def apply(key:K):O = getOrElseUpdate(key, f(key))
-    }
 
     private val TODAY: Date = Date.valueOf(LocalDate.now())
     private val WEEK: HashMap[Int, String] = HashMap(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi",
@@ -153,22 +154,28 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 
-    override def esecuzioneAlgoritmo(info: AlgorithmExecute): Unit = {
+    override def runAlgorithm(info: AlgorithmExecute): Future[Response[Int]] = {
+      val receiver = ConfigReceiver()
+      receiver.start()
+      receiver.receiveMessage()
       val request = Post(getURI("executealgorithm"), transform(info))
-      callHtpp(request)
+      callHtpp(request).flatMap(unMarshall)
     }
 
+   val terminals: mutable.Map[(Int,Date,Date), Future[Response[List[ResultAlgorithm]]]] = collection.mutable.Map[(Int,Date,Date), Future[Response[List[ResultAlgorithm]]]]()
+
     override def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[List[ResultAlgorithm]]] =
-      getResultAlgorithmMemorize(dataI)(dataF)(idTerminale)
+      terminals.getOrElseUpdate((idTerminale,dataI,dataF),getResultAlgorithmMemorize(idTerminale,dataI,dataF))
 
-    val getResultAlgorithmMemorize:Date=>Date=>Int=>Future[Response[List[ResultAlgorithm]]] =x=>y=> terminals(ids =>{
-          val request = Post(getURI("getresultalgorithm"), transform((ids,x,y)))
-          callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[ResultAlgorithm]]])
-      })
 
-    override def getOldParameter: Future[Response[Parametro]] = {
+    def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[List[ResultAlgorithm]]] = {
+      val request = Post(getURI("getresultalgorithm"), transform((ids, dateI,dateF)))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[ResultAlgorithm]]])
+    }
+
+    override def getOldParameter: Future[Response[List[Parametro]]] = {
       val request = Post(getURI("getalloldparameters"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Parametro]])
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Parametro]]])
     }
 
     override def getParameterById(idParameters: Int): Future[Response[InfoAlgorithm]] = {

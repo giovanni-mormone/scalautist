@@ -2,7 +2,7 @@ package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
-
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
@@ -66,7 +66,7 @@ object ZonaBox {
     }
 
     private def initializeTextField(resources: ResourceBundle): Unit = {
-      newName.setPromptText(resources.getString("nametxt"))
+      newName.setPromptText(resources.getResource("nametxt"))
       newName.textProperty().addListener((_, old, word) => {
         TextFieldControl.controlNewChar(newName, NameChecker, word, old)
         ableToSave()
@@ -74,13 +74,13 @@ object ZonaBox {
     }
 
     private def initializeButton(resources: ResourceBundle): Unit = {
-      zonaButton.setText(resources.getString("add"))
+      zonaButton.setText(resources.getResource("add"))
       zonaButton.setDisable(true)
       zonaButton.setOnAction(_ => parent.newZona(Zona(newName.getText)))
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
-      searchBox.setPromptText(resourceBundle.getString("search"))
+      searchBox.setPromptText(resourceBundle.getResource("search"))
 
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[ZonaTable](

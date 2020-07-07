@@ -5,8 +5,9 @@ import java.sql.Date
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
+import algoritmo.Algoritmo
 import caseclass.CaseClassDB.Risultato
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response, ResultAlgorithm}
 import dbfactory.operation.RisultatoOperation
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
@@ -62,23 +63,22 @@ object RisultatoRoute {
       }
     }
 
-  def runAlgorithm(): Route = // TODO
+  def runAlgorithm(): Route =
   post {
       entity(as[Request[AlgorithmExecute]]) {
-        case Request(Some(infoAlgorithm)) =>
-          onComplete(Future.successful()) {
-            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+        case Request(Some(infoAlgorithm)) =>onComplete(Algoritmo.shiftAndFreeDayCalculus(infoAlgorithm)) {
+            case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
             case other => anotherSuccessAndFailure(other)
           }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
       }
     }
 
-  def getResultAlgorithm: Route = // TODO
+  def getResultAlgorithm: Route =
   post {
       entity(as[Request[(Int,Date,Date)]]) {
-        case Request(Some(resultAlgoritm)) =>onComplete(RisultatoOperation.getResultAlgorithm(resultAlgoritm._1,resultAlgoritm._2,resultAlgoritm._3)) {
-            case Success(_) => complete(Response[Int](statusCodes.SUCCES_CODE))
+        case Request(Some(resultAlgorithm)) =>onComplete(RisultatoOperation.getResultAlgorithm(resultAlgorithm._1,resultAlgorithm._2,resultAlgorithm._3)) {
+            case Success(Some(result)) => complete(Response[List[ResultAlgorithm]](statusCodes.SUCCES_CODE,Some(result)))
             case other => anotherSuccessAndFailure(other)
           }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)

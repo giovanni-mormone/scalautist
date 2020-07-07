@@ -21,9 +21,9 @@ import view.fxview.util.ResourceBundleUtil._
  */
 trait ChangePasswordView extends GoBackView{
 
-  def errorChange()
+  def errorChange():Unit
 
-  def okChange()
+  def okChange():Unit
 }
 
 /**

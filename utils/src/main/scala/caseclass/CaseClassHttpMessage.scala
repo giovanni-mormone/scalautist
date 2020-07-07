@@ -177,16 +177,30 @@ object CaseClassHttpMessage {
   final case class AssignRichiestaTeorica(request: List[RichiestaTeorica], days: List[RequestGiorno])
 
   /**
-   * case class which represents both a normal week and a special especial week
+   * case class which represents a special week
    *
    * @param idDay represent day in week, that is to say, if monday then 1, tuesday then 2 etc.
+   * @param turnoId represent shift in database
    * @param quantita represent the quantity we want to have more of,that is, the number of drivers that we want to have as a supplement
    * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
    *               % With respect to theoretical drivers
    *               - Quantity compared to theoretical drivers
    *               % Relative of drivers
    */
-  final case class SettimanaNS(idDay:Int,quantita:Int,regola:Int)
+  final case class SettimanaS(idDay:Int,turnoId:Int,quantita:Int,regola:Int,date:Date)
+
+  /**
+   * case class which represents  a normal week
+   *
+   * @param idDay represent day in week, that is to say, if monday then 1, tuesday then 2 etc.
+   * @param turnoId represent shift in database
+   * @param quantita represent the quantity we want to have more of,that is, the number of drivers that we want to have as a supplement
+   * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
+   *               % With respect to theoretical drivers
+   *               - Quantity compared to theoretical drivers
+   *               % Relative of drivers
+   */
+  final case class SettimanaN(idDay:Int,turnoId:Int,quantita:Int,regola:Int)
 
   /**
    * case class which represent a group of driver in assignation.
@@ -211,7 +225,7 @@ object CaseClassHttpMessage {
    * @param regolaTreSabato ruler which represent if every three saturday a driver must have free day
    */
   final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[GruppoA]],
-                                    settimanaNormale: Option[List[SettimanaNS]],settimanaSpeciale: Option[List[SettimanaNS]],
+                                    settimanaNormale: Option[List[SettimanaN]],settimanaSpeciale: Option[List[SettimanaS]],
                                     regolaTreSabato:Boolean)
 
   /**

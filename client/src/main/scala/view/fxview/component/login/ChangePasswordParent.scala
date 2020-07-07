@@ -15,5 +15,5 @@ trait ChangePasswordParent{
    * @param newPassword
    *                    The newPassword submitted by the user.
    */
-  def changePass(oldPassword:String, newPassword: String)
+  def changePass(oldPassword:String, newPassword: String):Unit
 }
