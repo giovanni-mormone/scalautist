@@ -2,9 +2,10 @@ package algoritmo
 
 import java.sql.Date
 
+import algoritmo.AssignmentOperation.InfoForAlgorithm
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstancePersona, InstanceRegola, InstanceRichiestaTeorica, InstanceTerminale}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceContratto, InstancePersona, InstanceRegola, InstanceRichiestaTeorica, InstanceTerminale}
 import dbfactory.operation.TurnoOperation
 import dbfactory.setting.Table.{PersonaTableQuery, StoricoContrattoTableQuery}
 import messagecodes.StatusCodes
@@ -38,15 +39,17 @@ trait Algoritmo {
    *                                                  idDay not correspond to day in week, ruler in week not exist in
    *                                                  database, shift in week not exist in database or date in week
    *                                                  is outside to time frame
-   *         [[messagecodes.StatusCodes.ERROR_CODE6]] if time frame not contains theorical request
+   *         [[messagecodes.StatusCodes.ERROR_CODE6]] if time frame not contains theoretical request
    *         [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers
    *         [[messagecodes.StatusCodes.ERROR_CODE8]] if not exist shift in database
+   *         [[messagecodes.StatusCodes.ERROR_CODE9]] if a driver not contains a contract
    *
    */
   def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute):Future[Option[Int]]
 }
 object Algoritmo extends Algoritmo{
 
+  private val RUOLO_DRIVER=3
   private val MINIMUM_DAYS = 28
   private val future:Int=>Future[Option[Int]]=code=>Future.successful(Some(code))
   private val getRuler:List[Int]=>Future[Option[List[Regola]]]=idRegola=>InstanceRegola.operation().selectFilter(_.id.inSet(idRegola))
@@ -58,8 +61,6 @@ object Algoritmo extends Algoritmo{
   private val verifyDate:(Date,Date,Date)=>Boolean=(day,initDay,finishDay) => {
     day.compareTo(initDay)>=0 && day.compareTo(finishDay)<=0 && getDayNumber(day)!=ENDED_DAY_OF_WEEK
   }
-  final case class InfoForAlgorithm(shift: List[Turno],theoricalRequest:List[RichiestaTeorica],persons:List[(Int,Persona)],absence:Option[List[(Int,Date,Date)]]=None,allRequest:Option[List[InfoReq]]=None)
-  final case class InfoReq(idShift:Int,request:Int,assigned:Int,idDay:Int,data:Date,idTerminal:Int)
 
   override def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute): Future[Option[Int]] = {
     verifyData(algorithmExecute).collect{
@@ -105,7 +106,7 @@ object Algoritmo extends Algoritmo{
     }
   }
   private val verifyRuler:List[Regola]=>List[Int]=>List[Int]=>List[Turno]=>Boolean=ruler=>weekWithRuler=>idShift=>shift=>{
-    ruler.length==weekWithRuler.length && idShift.forall(turno=>shift.exists(idTurno=>idTurno.id.contains(turno)))
+    ruler.length==weekWithRuler.distinct.length && idShift.forall(turno=>shift.exists(idTurno=>idTurno.id.contains(turno)))
   }
   private def verifyNormalWeek(algorithmExecute: AlgorithmExecute,shift:List[Turno]): Future[Option[Int]] = {
     @scala.annotation.tailrec
@@ -155,14 +156,20 @@ object Algoritmo extends Algoritmo{
     val joinPersona = for{
       persona<-PersonaTableQuery.tableQuery()
       contratto<-StoricoContrattoTableQuery.tableQuery()
-      if persona.id===contratto.personaId && algorithmExecute.idTerminal.contains(persona.terminaleId)
+      if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal)
     }yield (contratto.contrattoId,persona)
-    InstancePersona.operation().execJoin(joinPersona).collect {
-      case Some(person) =>
-        val infoForAlgorithm=ExtractAlgorithmInformation().getAllData(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))
-        AssignmentOperation().initOperationAssignment(algorithmExecute,infoForAlgorithm)
+    InstancePersona.operation().execJoin(joinPersona).flatMap {
+      case Some(person) =>getAllContract(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))
+      case None =>future(StatusCodes.ERROR_CODE7)
+    }
+  }
+  private def getAllContract(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[Option[Int]]={
+    InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
+      case Some(contract) =>  //TODO controllare i contratti
+        val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
+        AssignmentOperation().initOperationAssignment(algorithmExecute,result)
         Some(StatusCodes.SUCCES_CODE)
-      case None =>Some(StatusCodes.ERROR_CODE7)
+      case None =>Some(StatusCodes.ERROR_CODE9)
     }
   }
 

@@ -2,7 +2,6 @@ package view.fxview.loader
 
 import java.util.{Locale, ResourceBundle}
 
-import com.typesafe.config.ConfigFactory
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.Pane
 import javafx.scene.{Parent, Scene}

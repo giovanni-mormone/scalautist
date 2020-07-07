@@ -9,6 +9,6 @@ object MainClient extends App{
 private class Main extends Application{
 
   override def start(primaryStage: Stage): Unit =
-    ManagerView(primaryStage).show()
-    //LoginView(primaryStage).show()
+    //ManagerView(primaryStage).show()
+    LoginView(primaryStage).show()
 }
