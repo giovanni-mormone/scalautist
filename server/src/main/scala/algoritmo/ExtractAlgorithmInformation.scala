@@ -6,7 +6,7 @@ import java.time.LocalDate
 import algoritmo.AssignmentOperation.{InfoForAlgorithm, InfoReq, PreviousSequence}
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato, InstanceStoricoContratto}
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
 import emitter.ConfigEmitter
 import slick.jdbc.SQLServerProfile.api._
@@ -30,6 +30,22 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     emitter.start()
     this
   }
+
+  val FIRST_SEQUENCE_4 = (1,2)
+  val SECOND_SEQUENCE_4 = (1,4)
+  val THIRD_SEQUENCE_4 = (2,3)
+  val FOURTH_SEQUENCE_4 = (3,4)
+  val ANOTHER_SEQUENCE_4 = (3,0)
+  val ANOTHER2_SEQUENCE_4 = (3,1)
+  //SEQUENZA MESE 5 DOMENICHE
+  val FIRST_SEQUENCE_5 = (1,2)
+  val SECOND_SEQUENCE_5 = (1,5)
+  val THIRD_SEQUENCE_5 = (2,3)
+  val FOURTH_SEQUENCE_5 = (3,4)
+  val FIFTH_SEQUENCE_5 = (4,5)
+  val ANOTHER_SEQUENCE_5 = (3,0)
+  val ANOTHER2_SEQUENCE_5 = (3,1)
+
   private val DEFAULT_INIT_DAY = 0
   private val emitter=ConfigEmitter()
   private val DEFAULT_ASSIGNED = 0
@@ -115,21 +131,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
      _allSunday(sunday)
    }
   //  final case class PreviousSequence(idDriver:Int,sequenza:Int,distanceFreeDay:Int)
-  //SECUENZA MESE 4 DOMENICHE
-  private val FIRST_SEQUENCE_4 = (1,2)
-  private val SECOND_SEQUENCE_4 = (1,4)
-  private val THIRD_SEQUENCE_4 = (2,3)
-  private val FOURTH_SEQUENCE_4 = (3,4)
-  private val ANOTHER_SEQUENCE_4 = (3,0)
-  private val ANOTHER2_SEQUENCE_4 = (3,1)
-  //SECUENZA MESE 5 DOMENICHE
-  private val FIRST_SEQUENCE_5 = (1,2)
-  private val SECOND_SEQUENCE_5 = (1,5)
-  private val THIRD_SEQUENCE_5 = (2,3)
-  private val FOURTH_SEQUENCE_5 = (3,4)
-  private val FIFTH_SEQUENCE_5 = (4,5)
-  private val ANOTHER_SEQUENCE_5 = (3,0)
-  private val ANOTHER2_SEQUENCE_5 = (3,1)
+  //SEQUENZA MESE 4 DOMENICHE
   val returnSundayWork:List[Date]=>(Int,Int)=date=>{
     sundayWork(date,(0,0))
   }
@@ -173,9 +175,9 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   }
 }
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
-  val terminals=List(1,2)
+  val terminals=List(15,17)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,11))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
