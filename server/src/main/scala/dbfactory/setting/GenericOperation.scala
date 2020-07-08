@@ -76,6 +76,23 @@ trait GenericOperation[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] wi
   def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
 
   /**
+   * Generic Operation which enable make operation of type select, in this method you have send field that you want
+   * select and the filter operation, this operation select all field distinct
+   * that is, no two fields are the same as a result
+   *
+   * @param selectField    query which represent the field we want select in the table in the database
+   * @param filter    function which enable make select operation with filter
+   * @param shape A type class that encodes the unpacking `Mixed => Unpacked` of a
+   *             `Query[Mixed]` to its result element type `Unpacked` and the packing to a
+   *             fully packed type `Packed` [[https://scala-slick.org/doc/3.2.3/ Slick]]
+   * @tparam F  Tuple which represent the field what we want to select
+   * @tparam G  Represent the element Packed
+   * @tparam A  Represent the element unpacked which are a tuple
+   * @return    List of case class that satisfies condition f. The List is a List of Tuples that has the types of the selected fields
+   *            of the query.
+   */
+  def execQueryFilterDistinct[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]]
+  /**
    * Generic Operation which enable make operation of type update, in this method you have send field that you want
    * select for make update, the filter operation and the new values for this fields
    * @param selectField  query which represent the field we want select for make update operation in the table in the database
@@ -100,6 +117,7 @@ object GenericOperation{
     override def execQueryAll[F, G, A](selectField:T=>F)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().map(selectField).result.transactionally).result()
     override def execQuery[F, G, A](selectField:T=>F,id:Int)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]):Future[Option[A]]= super.run(tableDB().filter(_.id===id).map(selectField).result.headOption.transactionally)
     override def execQueryFilter[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).result.transactionally).result()
+    override def execQueryFilterDistinct[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean])(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[List[A]]] = super.run(tableDB().withFilter(filter).map(selectField).distinct.result.transactionally).result()
     override def execQueryUpdate[F, G, A](selectField:T=>F,filter:T=>Rep[Boolean],tupleUpdate:A)(implicit shape: Shape[_ <: FlatShapeLevel, F, A, G]): Future[Option[Int]] = super.run(tableDB().withFilter(filter).map(selectField).update(tupleUpdate).transactionally).map(t => Option(t))
 
   }

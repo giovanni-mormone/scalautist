@@ -1,5 +1,0 @@
-package emitter
-
-trait Emitter {
-
-}

@@ -10,10 +10,10 @@ import spray.json._
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
 
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
+    implicit val zonaTerminaleJsonFormat: RootJsonFormat[ZonaTerminale] = jsonFormat4(ZonaTerminale)
     implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
     implicit val terminaleJsonFormat: RootJsonFormat[Terminale] = jsonFormat3(Terminale)
     implicit val storicoContrattoJsonFormat: RootJsonFormat[StoricoContratto] = jsonFormat7(StoricoContratto)
-    implicit val settimanaJsonFormat: RootJsonFormat[Settimana] = jsonFormat2(Settimana)
     implicit val risultatoJsonFormat: RootJsonFormat[Risultato] = jsonFormat4(Risultato)
     implicit val richiestaTeoricaJsonFormat: RootJsonFormat[RichiestaTeorica] = jsonFormat4(RichiestaTeorica)
     implicit val richiestaJsonFormat: RootJsonFormat[Richiesta] = jsonFormat4(Richiesta)
@@ -23,6 +23,7 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val gruppoTerminaleJsonFormat: RootJsonFormat[GruppoTerminale] = jsonFormat2(GruppoTerminale)
     implicit val giornoJsonFormat: RootJsonFormat[Giorno] = jsonFormat4(Giorno)
     implicit val giornoInSettimanaJsonFormat: RootJsonFormat[GiornoInSettimana] = jsonFormat5(GiornoInSettimana)
+    implicit val regolaJsonFormat: RootJsonFormat[Regola] = jsonFormat2(Regola)
     implicit val contrattoJsonFormat: RootJsonFormat[Contratto] = jsonFormat5(Contratto)
     implicit val loginJsonFormat: RootJsonFormat[Login] = jsonFormat2(Login)
     implicit val stipendioJsonFormat: RootJsonFormat[Stipendio] = jsonFormat4(Stipendio)
@@ -46,8 +47,12 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val requestGiornoJsonFormat:RootJsonFormat[RequestGiorno] = jsonFormat2(RequestGiorno)
     implicit val assignRichiestaTeoricaJsonFormat: RootJsonFormat[AssignRichiestaTeorica] = jsonFormat2(AssignRichiestaTeorica)
     implicit val gruppoAJsonFormat: RootJsonFormat[GruppoA] = jsonFormat3(GruppoA)
-    implicit val settimanaNSJsonFormat: RootJsonFormat[SettimanaNS] = jsonFormat3(SettimanaNS)
+    implicit val settimanaNJsonFormat: RootJsonFormat[SettimanaN] = jsonFormat4(SettimanaN)
+    implicit val settimanaSJsonFormat: RootJsonFormat[SettimanaS] = jsonFormat5(SettimanaS)
     implicit val algorithmExecuteJsonFormat: RootJsonFormat[AlgorithmExecute] = jsonFormat7(AlgorithmExecute)
+    implicit val infoAlgorithmJsonFormat: RootJsonFormat[InfoAlgorithm] = jsonFormat3(InfoAlgorithm)
+    implicit val infoDatesJsonFormat: RootJsonFormat[InfoDates] = jsonFormat4(InfoDates)
+    implicit val resultAlgorithmJsonFormat: RootJsonFormat[ResultAlgorithm] = jsonFormat3(ResultAlgorithm)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
 }

@@ -26,8 +26,9 @@ class BaseTest extends ApplicationTest{
     release(MouseButton.PRIMARY)
   }
 
-  def ensureEventQueueComplete():Unit = WaitForAsyncUtils.waitForFxEvents(1)
-  def find[T<:Node](query:String): T ={
+  def ensureEventQueueComplete():Unit = WaitForAsyncUtils.waitForFxEvents(2)
+
+  def find[T<:Node](query:String): T =
     lookup(query).queryAll().iterator().next().asInstanceOf[T]
-  }
+
 }

@@ -9,32 +9,38 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Label, TextField}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+
+/** @author Fabian Aspee Encina
+ *  Trait which allows to perform operations on the shift and quantity for teoric request.
+ */
 trait LabelTextFieldBox extends Component[RichiestaForDayBox]{
   /**
+   * method that return quantity and shift
    *
-   * @return
+   * @return return terminal and shift that are related
    */
   def getQuantity:(Int,Int)
 
   /**
-   *
-   * @return
+   * method that verify if all textfield are completed
+   * @return true if textfield is complete false another case
    */
   def verifyData:Boolean
 
   /**
-   *
+   * method that allow set text error when textfield contains bad data
    */
   def setTextError():Unit
 
   /**
-   *
+   * method that allow clear text error
    */
   def clearText():Unit
 
   /**
-   *
-   * @param quantity
+   * method which allow set quantity when re draw component, this methosd is call only if shift in current day
+   * contains info
+   * @param quantity represent quantity for a shift
    */
   def setInfo(quantity:Int):Unit
 }

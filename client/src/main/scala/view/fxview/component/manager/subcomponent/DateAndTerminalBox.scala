@@ -36,10 +36,11 @@ object DateAndTerminalBox{
     var errorLabel: Label = _
     @FXML
     var errorLabelTerminal: Label = _
-    val DATEPICKER_WITHOUT_ERROR=true
+
     val TERMINAL_SELECTED= true
-    val DATEPICKER_WITH_ERROR=false
+
     val TERMINAL_NOT_SELECTED= false
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       title.setText(resources.getResource("title-label"))

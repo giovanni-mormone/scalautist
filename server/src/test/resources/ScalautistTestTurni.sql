@@ -3279,3 +3279,10 @@ SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
 
+select * from PersoneSets where Terminale_IdTerminale = 2 and Matricola = 257
+
+select  * from StoricoContrattoSets where Persone_Matricola = 257
+
+select * from ContratoeSets where IdContratto = 4
+
+select * from DisponibilitaStraordinarioSets where IdDisponibilitaStraordinario = 141

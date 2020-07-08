@@ -23,6 +23,6 @@ trait FillHolesParent {
    * @param idPersona
    *                  The person that will fill the hole
    */
-  def replacementSelected(idRisultato: Int, idPersona: Int)
+  def replacementSelected(idRisultato: Int, idPersona: Int):Unit
 
 }

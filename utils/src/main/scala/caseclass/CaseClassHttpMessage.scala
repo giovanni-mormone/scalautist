@@ -177,16 +177,30 @@ object CaseClassHttpMessage {
   final case class AssignRichiestaTeorica(request: List[RichiestaTeorica], days: List[RequestGiorno])
 
   /**
-   * case class which represents both a normal week and a special especial week
+   * case class which represents a special week
    *
    * @param idDay represent day in week, that is to say, if monday then 1, tuesday then 2 etc.
+   * @param turnoId represent shift in database
    * @param quantita represent the quantity we want to have more of,that is, the number of drivers that we want to have as a supplement
    * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
    *               % With respect to theoretical drivers
    *               - Quantity compared to theoretical drivers
    *               % Relative of drivers
    */
-  final case class SettimanaNS(idDay:Int,quantita:Int,regola:Int)
+  final case class SettimanaS(idDay:Int,turnoId:Int,quantita:Int,regola:Int,date:Date)
+
+  /**
+   * case class which represents  a normal week
+   *
+   * @param idDay represent day in week, that is to say, if monday then 1, tuesday then 2 etc.
+   * @param turnoId represent shift in database
+   * @param quantita represent the quantity we want to have more of,that is, the number of drivers that we want to have as a supplement
+   * @param regola represent the ruler we have to respect when assign driver in this day, this ruler can be
+   *               % With respect to theoretical drivers
+   *               - Quantity compared to theoretical drivers
+   *               % Relative of drivers
+   */
+  final case class SettimanaN(idDay:Int,turnoId:Int,quantita:Int,regola:Int)
 
   /**
    * case class which represent a group of driver in assignation.
@@ -211,6 +225,32 @@ object CaseClassHttpMessage {
    * @param regolaTreSabato ruler which represent if every three saturday a driver must have free day
    */
   final case class AlgorithmExecute(dateI:Date,dateF:Date,idTerminal:List[Int],gruppo: Option[List[GruppoA]],
-                                    settimanaNormale: Option[List[SettimanaNS]],settimanaSpeciale: Option[List[SettimanaNS]],
+                                    settimanaNormale: Option[List[SettimanaN]],settimanaSpeciale: Option[List[SettimanaS]],
                                     regolaTreSabato:Boolean)
+
+  /**
+   * case class which represent info of parameters that user want to save
+   * @param parametro case class that contains name for parameters and saturday ruler
+   * @param zonaTerminale case class that contains name for parameters and saturday ruler
+   * @param giornoInSettimana case class that contains info for normal week, this case class contains
+   *                          giornoId: Int, turnoId: Int, parametriId: Int, regolaId: Int, idSettimana: Option[Int]
+   */
+  final case class InfoAlgorithm(parametro: Parametro,zonaTerminale: List[ZonaTerminale], giornoInSettimana: Option[List[GiornoInSettimana]]=None)
+
+  /**
+   * case class which represent information that a driver can have in a time frame,
+   * @param date init date of shift
+   * @param turno turno that driver have
+   */
+  final case class InfoDates(date:Date,turno:String,turno2:Option[String]=None,straordinario:Option[String]=None)
+
+  /**
+   * case class which represent information for result of algorithm, if driver is fixed so, list with infoDates
+   * will be equal to 1, if driver is rotary so, list with infoDates will be equal to quantity of shift that driver
+   * did in the period
+   * @param idDriver represent id of a driver
+   * @param terminale represent terminal which driver work
+   * @param dateIDateF infoDates that contains information with shift realized in this period
+   */
+  final case class ResultAlgorithm(idDriver:Int,terminale:String,dateIDateF:List[InfoDates])
 }
