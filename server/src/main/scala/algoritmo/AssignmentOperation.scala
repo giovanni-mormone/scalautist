@@ -107,8 +107,8 @@ object AssignmentOperation extends AssignmentOperation {
     @scala.annotation.tailrec
     def _allSunday(sunday:Date,allSunday:List[Date]=List.empty): List[Date] = sunday match {
       case date if date.compareTo(finalDayMont) < 0 =>_allSunday(subtract(date, 7), allSunday :+ date)
-      case date if date.compareTo(finalDayMont) == 0 => (allSunday ::: createListDayBetween(subtract(date,-6),date).sortBy(_.getTime))
-      case date if date.compareTo(finalDayMont)>0 => allSunday
+      case date if date.compareTo(finalDayMont) == 0 => allSunday :+ date
+      case date if date.compareTo(finalDayMont) > 0 => allSunday
     }
     _allSunday(sunday)
   }
@@ -120,21 +120,32 @@ object AssignmentOperation extends AssignmentOperation {
   private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)]): Future[List[Info]] = Future{
 
     @scala.annotation.tailrec
-    def iterateMap(map: List[(Int,List[(Int,Persona)])],date: Date, assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),previousSequence: Option[List[PreviousSequence]],result: List[Info] = List.empty): List[Info] = map match {
-      case ::(head, next) if startMonthDate(date) == startMonthDate(algorithmExecute.dateF) =>
-        val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
-        val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
+    def iterateMap(map: List[(Int,List[(Int,Persona)])],date: Date,previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),result: List[Info] = List.empty): (List[Info], Option[List[PreviousSequence]]) = map match {
+      case ::(head, next) =>
+        val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(date)),endOfMonth(previousMonthDate(date)))
+        val sundays = allSundayMonth(getEndDayWeek(date),endOfMonth(date))
         val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
-        iterateMap(next,date,assignement._2, previousSequence=assignement._3,result::: assignement._1)
-      case Nil => result
+        iterateMap(next,date,assignement._3,assignement._2, result ::: assignement._1)
+      case Nil => (result, previousSequence)
+    }
+
+
+    @scala.annotation.tailrec
+    def iterateDate(dataI: Date, map: List[(Int,List[(Int,Persona)])], previousSequence: Option[List[PreviousSequence]], result: List[Info] = List.empty):List[Info] = dataI match{
+      case x if x.compareTo(startMonthDate(algorithmExecute.dateF)) == 0 => upsertListInfo(result,iterateMap(map,x, previousSequence = previousSequence)._1)
+      case date =>
+        val resultIterateMap = iterateMap(map,date, previousSequence, result = result)
+        iterateDate(nextMonthDate(date),map, resultIterateMap._2, upsertListInfo(result,resultIterateMap._1))
     }
 
     val (fisso,rotatorio) = driver.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
     val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
-    val t = iterateMap(rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),algorithmExecute.dateI,previousSequence=infoForAlgorithm.previousSequence)//iterateMap(driver.groupBy(_._1).toList)
+    val t = iterateDate(algorithmExecute.dateI,rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),infoForAlgorithm.previousSequence)//iterateMap(driver.groupBy(_._1).toList)
     t
    }
-  def divideYConquista(part: List[(Int, List[(StoricoContratto, Persona)])]):List[(Int, List[(Int, Persona)])] = {
+
+
+  private def divideYConquista(part: List[(Int, List[(StoricoContratto, Persona)])]):List[(Int, List[(Int, Persona)])] = {
     part.flatMap(_._2.groupBy(_._1.turnoId).toList).map(x=>x._1.head->x._2.map(x=>(x._1.contrattoId,x._2)))
   }
 
@@ -205,14 +216,25 @@ object AssignmentOperation extends AssignmentOperation {
             val x  = assigned.updated(sequence, assigned.getOrElse(sequence,0) + 1)
             val dates = assignSunday(sundays.sortBy(_.getTime),sequence,sundays.length)
             val fisso: Boolean = isFisso(Some(contract),head._1)
-            val newResult = result ::: List(Info(head._2.matricola.head,head._2.idTerminale.head,fisso,head._1,List(InfoDay(dates._1,freeDay = true),InfoDay(dates._2,freeDay = true))))
-            _assignBalancedSundays(next,x,newResult,previousSequences.map(p=>p:+value.copy(sequenza =sequence)))
+            val valore = updatePreviousSequence(previousSequences,head._2.matricola.head,sequence)
+            _assignBalancedSundays(next,x,result ::: List(Info(head._2.matricola.head,head._2.idTerminale.head,fisso,head._1,List(InfoDay(dates._1,freeDay = true),InfoDay(dates._2,freeDay = true))))
+              ,valore)
         }
       }
       case Nil =>(result,assigned,previousSequences)
     }
 
-    _assignBalancedSundays(drivers,assigned)
+    _assignBalancedSundays(drivers,assigned,previousSequences = previousSequence)
+  }
+  private def updatePreviousSequence(previousSequences: Option[List[PreviousSequence]], idPerson:Int,sequence: Int): Option[List[PreviousSequence]] ={
+    previousSequences.map(t=>t.collect{
+      case x if x.idDriver==idPerson=> x.copy(sequenza=sequence)
+      case y=>y
+    })
+  }
+  private def upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = {
+    val t = resultNew.map(res => res.copy(infoDay  = res.infoDay::: result.filter(filter => filter.idDriver == res.idDriver).flatMap(_.infoDay)))
+    t
   }
 
   private def metodino(assigned: Map[Int ,Int], possibili: List[Int]): Int = {
@@ -227,7 +249,7 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def assignShiftFixed() = {
-
+      
   }
 
   private def assignShiftRotary() = {
