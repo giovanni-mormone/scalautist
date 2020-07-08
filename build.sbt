@@ -54,6 +54,8 @@ enablePlugins(DockerPlugin).settings(
     libraries.modelSwagger,
     libraries.jaxrs2Swagger,
     libraries.megard,
+    libraries.apachePoi,
+    libraries.apachePoi2,
     librariesTest.scalatest,
     librariesTest.scalaCheck,
     librariesTest.junit,
@@ -138,6 +140,8 @@ lazy val libraries = new {
   val megard         = "ch.megard"                %% "akka-http-cors"           % megarVersion
   val controlsfx     = "org.controlsfx"             % "controlsfx"              % controlsfxVersion
 
+  val apachePoi ="org.apache.poi" % "poi" % "3.17"
+  val apachePoi2="org.apache.poi" % "poi-ooxml" % "3.17"
 }
 
 lazy val librariesTest = new {
