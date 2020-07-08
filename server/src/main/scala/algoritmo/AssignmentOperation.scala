@@ -5,7 +5,7 @@ import java.sql.Date
 import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation.InfoForAlgorithm
 import caseclass.CaseClassDB.{Contratto, Persona, RichiestaTeorica, StoricoContratto, Turno}
-import caseclass.CaseClassHttpMessage.AlgorithmExecute
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA}
 import utils.DateConverter._
 
 import scala.collection.immutable.{AbstractMap, SeqMap, SortedMap}
@@ -137,6 +137,30 @@ object AssignmentOperation extends AssignmentOperation {
   def ::::::(part: List[(Int, List[(Int, Persona)])], shift: List[Turno],result: List[(Int, List[(Int, Persona)])] = List.empty):List[(Int, List[(Int, Persona)])] = shift match {
     case ::(head, next) =>
     case Nil =>
+  }
+  
+  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
+    algorithmExecute.gruppo match {
+      case Some(value) => assignGroupDriver(infoForAlgorithm,value)
+      case None =>
+    }
+  }
+  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA])={
+    @scala.annotation.tailrec
+    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
+      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup))
+      case Nil =>result
+    }
+    @scala.annotation.tailrec
+    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
+      case ::(head, next) => _iteraGroup(next,result:::_assignGroupDriver(infoForAlgorithm.persons.groupBy(_._1).toList,head))
+      case Nil =>result
+    }
+    _iteraGroup(listGroup)
+  }
+  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA):List[Info]={
+    def _iteraDate(listGroup:GruppoA)={}
+    List()
   }
 
 
