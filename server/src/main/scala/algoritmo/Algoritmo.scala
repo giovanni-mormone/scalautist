@@ -157,7 +157,7 @@ object Algoritmo extends Algoritmo{
       persona<-PersonaTableQuery.tableQuery()
       contratto<-StoricoContrattoTableQuery.tableQuery()
       if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal)
-    }yield (contratto.contrattoId,persona)
+    }yield (contratto,persona)
     InstancePersona.operation().execJoin(joinPersona).flatMap {
       case Some(person) =>getAllContract(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))
       case None =>future(StatusCodes.ERROR_CODE7)

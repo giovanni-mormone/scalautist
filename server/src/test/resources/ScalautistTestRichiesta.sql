@@ -51,6 +51,5 @@ SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 delete from RichiestaTeoricaSets
 delete from GiornoSets
 
-select * from RichiestaTeoricaSets
 select * from GiornoSets
 select * from RichiestaSets
