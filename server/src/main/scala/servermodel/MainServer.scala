@@ -5,8 +5,8 @@ import servermodel.ServerConf.StartServer
 /**
  * Main server
  */
-object MainServer extends App{
-
-    ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
-
+object MainServer{
+    def main(args: Array[String]): Unit = {
+        ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
+    }
 }
