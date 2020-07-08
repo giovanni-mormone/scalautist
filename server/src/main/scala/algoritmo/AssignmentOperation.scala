@@ -120,30 +120,29 @@ object AssignmentOperation extends AssignmentOperation {
   private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)]): Future[List[Info]] = Future{
 
     @scala.annotation.tailrec
-    def iterateMap(map: List[(Int,List[(Int,Persona)])], assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),result: List[Info] = List.empty): List[Info] = map match {
-      case ::(head, next) if startMonthDate(algorithmExecute.dateI) == startMonthDate(algorithmExecute.dateF) =>
+    def iterateMap(map: List[(Int,List[(Int,Persona)])],date: Date, assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),previousSequence: Option[List[PreviousSequence]],result: List[Info] = List.empty): List[Info] = map match {
+      case ::(head, next) if startMonthDate(date) == startMonthDate(algorithmExecute.dateF) =>
         val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
         val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
-        val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,infoForAlgorithm.previousSequence,assigned)
-        iterateMap(next,assignement._2, result::: assignement._1)
-
-      //case ::(head, next) if startMonthDate(algorithmExecute.dateI) != startMonthDate(algorithmExecute.dateF) =>
+        val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
+        iterateMap(next,date,assignement._2, previousSequence=assignement._3,result::: assignement._1)
+      case ::(head, next) if startMonthDate(date) != startMonthDate(algorithmExecute.dateF) =>
+        val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
+        val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
+        val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
+        iterateMap(next,subtract(endOfMonth(date),1),assignement._2, previousSequence=assignement._3,result::: assignement._1)
       case Nil => result
     }
 
     val (fisso,rotatorio) = driver.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
-    /*val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
-      ::::::(part,infoForAlgorithm.shift)*/
-
-
-    val t = iterateMap(rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))))//iterateMap(driver.groupBy(_._1).toList)
+    val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
+    val t = iterateMap(rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),algorithmExecute.dateI,previousSequence=infoForAlgorithm.previousSequence)//iterateMap(driver.groupBy(_._1).toList)
     t
+   }
+  def divideYConquista(part: List[(Int, List[(StoricoContratto, Persona)])]):List[(Int, List[(Int, Persona)])] = {
+    part.flatMap(_._2.groupBy(_._1.turnoId).toList).map(x=>x._1.head->x._2.map(x=>(x._1.contrattoId,x._2)))
   }
 
-//  def ::::::(part: List[(Int, List[(Int, Persona)])], shift: List[Turno],result: List[(Int, List[(Int, Persona)])] = List.empty):List[(Int, List[(Int, Persona)])] = shift match {
-//    case ::(head, next) =>
-//    case Nil =>
-//  }
   
 //  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
 //    algorithmExecute.gruppo match {
@@ -200,22 +199,22 @@ object AssignmentOperation extends AssignmentOperation {
     case 5 => (value(sequences5(sequence)._1 -1 ),value(sequences5(sequence)._2 -1 ))
   }
 
-  private def assignBalancedSundays(drivers: List[(Int, Persona)], sundays: List[Date], previousSundays: List[Date],contract: List[Contratto], previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int]): (List[Info],Map[Int,Int]) = {
+  private def assignBalancedSundays(drivers: List[(Int, Persona)], sundays: List[Date], previousSundays: List[Date],contract: List[Contratto], previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int]): (List[Info],Map[Int,Int],Option[List[PreviousSequence]]) = {
 
     @scala.annotation.tailrec
-    def _assignBalancedSundays(drivers: List[(Int, Persona)], assigned: Map[Int,Int], result: List[Info] = List.empty): (List[Info],Map[Int,Int]) = drivers match {
+    def _assignBalancedSundays(drivers: List[(Int, Persona)], assigned: Map[Int,Int], result: List[Info] = List.empty,previousSequences: Option[List[PreviousSequence]]= None): (List[Info],Map[Int,Int],Option[List[PreviousSequence]]) = drivers match {
       case ::(head, next) => previousSequence.toList.flatten.find(x => head._2.matricola.contains(x.idDriver)) match {
         case Some(value) => sequenceCombinations.get(value.sequenza, previousSundays.length, sundays.length) match {
-          case Some(value) =>
-            val sequence = metodino(assigned,value)
+          case Some(value2) =>
+            val sequence = metodino(assigned,value2)
             val x  = assigned.updated(sequence, assigned.getOrElse(sequence,0) + 1)
             val dates = assignSunday(sundays.sortBy(_.getTime),sequence,sundays.length)
             val fisso: Boolean = isFisso(Some(contract),head._1)
             val newResult = result ::: List(Info(head._2.matricola.head,head._2.idTerminale.head,fisso,head._1,List(InfoDay(dates._1,freeDay = true),InfoDay(dates._2,freeDay = true))))
-            _assignBalancedSundays(next,x,newResult)
+            _assignBalancedSundays(next,x,newResult,previousSequences.map(p=>p:+value.copy(sequenza =sequence)))
         }
       }
-      case Nil =>(result,assigned)
+      case Nil =>(result,assigned,previousSequences)
     }
 
     _assignBalancedSundays(drivers,assigned)
