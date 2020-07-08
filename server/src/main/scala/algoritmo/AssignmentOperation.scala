@@ -126,11 +126,6 @@ object AssignmentOperation extends AssignmentOperation {
         val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
         val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
         iterateMap(next,date,assignement._2, previousSequence=assignement._3,result::: assignement._1)
-      case ::(head, next) if startMonthDate(date) != startMonthDate(algorithmExecute.dateF) =>
-        val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
-        val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
-        val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
-        iterateMap(next,subtract(endOfMonth(date),1),assignement._2, previousSequence=assignement._3,result::: assignement._1)
       case Nil => result
     }
 
