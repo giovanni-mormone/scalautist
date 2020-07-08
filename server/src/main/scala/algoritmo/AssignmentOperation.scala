@@ -5,8 +5,10 @@ import java.sql.Date
 import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation.InfoForAlgorithm
 import caseclass.CaseClassDB.{Contratto, Persona, RichiestaTeorica, Turno}
-import caseclass.CaseClassHttpMessage.AlgorithmExecute
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA}
 import utils.DateConverter._
+
+import scala.collection.immutable.{AbstractMap, SeqMap, SortedMap}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 trait AssignmentOperation{
@@ -44,6 +46,8 @@ object AssignmentOperation extends AssignmentOperation {
 
   private val emitter=ConfigEmitter()
   def apply():AssignmentOperation ={
+    val s = Map[Int,Int](1->1,3->3)
+    s.values.toList.sortWith(_<_)
     emitter.start()
     this
   }
@@ -64,10 +68,12 @@ object AssignmentOperation extends AssignmentOperation {
   private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute): Unit =Future{
     val (driver5x2,driver6x1)=infoForAlgorithm.persons.partition(idPerson=>FULL_AND_PART_TIME_5X2.contains(idPerson._1))
     assignSaturdayAndSunday5x2(infoForAlgorithm.allContract,algorithmExecute,driver5x2)
-      .zip(assignSunday6x1(infoForAlgorithm,algorithmExecute,driver6x1))
+     .zip(assignSunday6x1(infoForAlgorithm,algorithmExecute,driver6x1)).map{
+      case (info, info1) =>PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,info)
+    }
   }
 
-  private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]],algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):List[Info]={
+  private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]],algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):Future[List[Info]]=Future{
     @scala.annotation.tailrec
     def _assignSaturdayAndSunday(person: List[(Int, Persona)], date: Date, info: List[Info]=List.empty):List[Info]= person match {
       case ::(head, next) =>val isFisso=allContract.map(_.filter(_.idContratto.contains(head._1)).map(_.turnoFisso)).toList.flatten match {
@@ -89,11 +95,31 @@ object AssignmentOperation extends AssignmentOperation {
 
   //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
   //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
-  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):List[Info]={
+  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm,algorithmExecute: AlgorithmExecute,driver: List[(Int, Persona)]):Future[List[Info]]=Future{
     List()
   }
-  private def assignGroup()={
-
+  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
+    algorithmExecute.gruppo match {
+      case Some(value) => assignGroupDriver(infoForAlgorithm,value)
+      case None =>
+    }
+  }
+  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA])={
+    @scala.annotation.tailrec
+    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
+      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup))
+      case Nil =>result
+    }
+    @scala.annotation.tailrec
+    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
+      case ::(head, next) => _iteraGroup(next,result:::_assignGroupDriver(infoForAlgorithm.persons.groupBy(_._1).toList,head))
+      case Nil =>result
+    }
+    _iteraGroup(listGroup)
+  }
+  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA):List[Info]={
+    def _iteraDate(listGroup:GruppoA)={}
+    List()
   }
   private def assignShiftFixed()={
 
