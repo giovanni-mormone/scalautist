@@ -1,6 +1,7 @@
 package algoritmo
 
 import java.sql.Date
+import java.time.LocalDate
 
 import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation.InfoForAlgorithm
@@ -73,7 +74,8 @@ object AssignmentOperation extends AssignmentOperation {
     val (driver5x2, driver6x1) = infoForAlgorithm.persons.partition(idPerson => FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
     assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)))
       .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1)).map{
-      case (value, value1) => PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,value1)
+      case (driver5x2, driver6x1) =>
+        groupForDriver(infoForAlgorithm,algorithmExecute,driver5x2:::driver6x1)
     }
     //andare avanti dopo la ZIPPPP
   }
@@ -113,8 +115,6 @@ object AssignmentOperation extends AssignmentOperation {
     _allSunday(sunday)
   }
 
-
-
   //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
   //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
   private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)]): Future[List[Info]] = Future{
@@ -149,31 +149,69 @@ object AssignmentOperation extends AssignmentOperation {
     part.flatMap(_._2.groupBy(_._1.turnoId).toList).map(x=>x._1.head->x._2.map(x=>(x._1.contrattoId,x._2)))
   }
 
-  
-//  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
-//    algorithmExecute.gruppo match {
-//      case Some(value) => assignGroupDriver(infoForAlgorithm,value)
-//      case None =>
-//    }
-//  }
-//  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA])={
-//    @scala.annotation.tailrec
-//    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
-//      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup))
-//      case Nil =>result
-//    }
-//    @scala.annotation.tailrec
-//    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
-//      case ::(head, next) => _iteraGroup(next,result:::_assignGroupDriver(infoForAlgorithm.persons.groupBy(_._1).toList,head))
-//      case Nil =>result
-//    }
-//    _iteraGroup(listGroup)
-//  }
 
-//  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA):List[Info]={
-//    def _iteraDate(listGroup:GruppoA): Unit ={}
-//    List()
-//  }
+  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,assigned:List[Info]): Unit ={
+    algorithmExecute.gruppo match {
+      case Some(group) =>
+        PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,assignGroupDriver(infoForAlgorithm,group,assigned))
+      case None =>assignShift()
+    }
+  }
+  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA],assigned:List[Info]): List[Info] ={
+    @scala.annotation.tailrec
+    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
+      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup,assigned))
+      case Nil =>result
+    }
+    @scala.annotation.tailrec
+    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
+      case ::(head, next) =>
+        val (fisso,rotatorio) = infoForAlgorithm.persons.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
+        val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
+        _iteraGroup(next,result:::_assignGroupDriver(rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),head))
+      case Nil =>result
+    }
+    upsertListInfo(assigned,_iteraGroup(listGroup))
+  }
+  private val conditionAssignGroup:(Date,Date)=>Boolean=(date,date1)=>{
+    !(subtract(date,1).compareTo(date1)==0
+      || subtract(date,-1).compareTo(date1)==0  || subtract(date,2).compareTo(date1)==0  || subtract(date,-2).compareTo(date1)==0
+      || date.compareTo(date1)==0)
+
+  }
+
+
+
+
+  private def filterDayAssign(listGroups:GruppoA,assigned:List[Info]):(Int,List[Date])={
+
+    @scala.annotation.tailrec//se non rispeta regola dare una data qualsiasi e aggiungere filtrare date dentro un mese al cui apartiene la data del gruppo
+    def _filterDayAssign(listGroup:List[Date], result:List[Date]=List.empty):(Int,List[Date])= listGroup match {
+      case ::(head, next) if(assigned.exists(res=> res.infoDay.partition(date => date.data.compareTo(getEndDayWeek(head)) <= 0 &&
+        date.data.compareTo(getFirstDayWeek(head)) >= 0)._1.sortBy(_.data.getTime).headOption match {
+        case Some(data) =>  conditionAssignGroup(head,data.data)
+        case None =>false
+      })) => _filterDayAssign(next,result:+head)
+      case ::(_, next)=> _filterDayAssign(next,result)
+      case Nil if result.isEmpty =>(listGroups.date.length,listGroups.date)
+      case Nil => (result.length,result)
+    }
+    _filterDayAssign(listGroups.date)
+  }
+  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA,assigned:List[Info]):List[Info]={
+    val map:Map[Date,Int]=listGroup.date.map(date=>date->0).toMap
+    val probability:List[(Persona,(Int,List[Date]))]=drivers._2.map(res=>res._2->filterDayAssign(listGroup,assigned.filter(driver=>res._2.matricola.contains(driver.idDriver)))).sortWith(_._2._1<_._2._1)
+    @scala.annotation.tailrec
+    def _iteraDriver(probabilit:List[(Persona,List[Date])],map:Map[Date,Int], result:List[Info]=List.empty): List[Info] = probabilit match {
+      case ::(head, next) => val date = map.toList.sortWith(_._2 < _._2).collectFirst(date => head._2.filter(_.compareTo(date._1) == 0)) match {
+           case Some(List(date)) => date
+         }
+        val x =map.updated(date, map.getOrElse(date,0) + 1)
+        _iteraDriver(next,x,result :+ Info(head._1.matricola.head, 0, isFisso = false, 0, List(InfoDay(date, freeDay = true))))
+      case Nil =>result
+    }
+   _iteraDriver(probability.map(res=>res._1->res._2._2),map)
+  }
 
 
   /***
@@ -247,9 +285,9 @@ object AssignmentOperation extends AssignmentOperation {
 
     _metodino(assigned.toList.sortWith(_._2<_._2))
   }
-
+  private def assignShift() = ???
   private def assignShiftFixed() = {
-      
+
   }
 
   private def assignShiftRotary() = {
