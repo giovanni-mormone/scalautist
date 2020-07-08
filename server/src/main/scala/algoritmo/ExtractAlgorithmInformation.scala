@@ -142,6 +142,16 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     case (head::next,_) if isFourthSunday(head)=>sundayWork(next,(1,2))
     case (_,sequence)=>sequence
   }
+  val returnSundayWork2:(List[Date],Date)=>List[Int]=(date,dateI)=>{
+    List()
+  }
+  private val sundayWork2:(List[Date],(Int,Int))=>(Int,Int)={
+    case (head::next,_) if isFirstSunday(head)=>sundayWork(next,(1,2))
+    case (head::next,_) if isSecondSunday(head)=>sundayWork(next,(1,2))
+    case (head::next,_) if isThirdSunday(head)=>sundayWork(next,(1,2))
+    case (head::next,_) if isFourthSunday(head)=>sundayWork(next,(1,2))
+    case (_,sequence)=>sequence
+  }
   private def searchEndFreeDay(date:List[Date]):Int={
     @scala.annotation.tailrec
     def _searchEndFreeDay(date:List[Date], day:Int=0):Int= date match {
@@ -151,6 +161,20 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     }
     _searchEndFreeDay(date)
   }
+  private def searchSequence(sunday:List[Date],dateI:Date): List[Int] ={
+    sunday.map(date=>{
+
+    })
+    var list:List[Int]=List()
+    var date= getEndDayWeek(dateI)
+    for(i<-1 to sunday.length){
+      if(sunday(i).compareTo(dateI)==0)
+        list=list:+i
+      date=subtract(date,7)
+    }
+    list
+  }
+
   private def createPreviousSequence(id:Int,result : List[Risultato]):PreviousSequence={
     val sunday=result.filter(value=>isSunday(value.data)).distinctBy(_.data)
     val sundayWorkVal = if(sunday.length>=3)(3,0) else returnSundayWork(sunday.map(_.data))
@@ -175,11 +199,11 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   }
 }
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,11))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
   val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
   val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
@@ -192,4 +216,3 @@ object t extends App{
   }
   while (true){}
 }
-
