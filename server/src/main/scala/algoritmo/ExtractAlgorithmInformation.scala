@@ -177,7 +177,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 object t extends App{
   val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
-  val terminals=List(15,17)
+  val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,11))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))

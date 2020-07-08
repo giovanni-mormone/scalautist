@@ -70,9 +70,11 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Unit = Future {
-    val (driver5x2, driver6x1) = infoForAlgorithm.persons.partition(idPerson => FULL_AND_PART_TIME_5X2.contains(idPerson._1))
+    val (driver5x2, driver6x1) = infoForAlgorithm.persons.partition(idPerson => FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
     assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)))
-      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1.map(v => (v._1.contrattoId,v._2))))
+      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1)).map{
+      case (value, value1) => PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,value1)
+    }
     //andare avanti dopo la ZIPPPP
   }
 
@@ -115,53 +117,58 @@ object AssignmentOperation extends AssignmentOperation {
 
   //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
   //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
-  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(Int, Persona)]): Future[List[Info]] = Future{
+  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)]): Future[List[Info]] = Future{
 
     @scala.annotation.tailrec
-    def iterateMap(map: List[(Int,List[(Int,Persona)])], result: List[Info] = List.empty): List[Info] = map match {
+    def iterateMap(map: List[(Int,List[(Int,Persona)])], assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),result: List[Info] = List.empty): List[Info] = map match {
       case ::(head, next) if startMonthDate(algorithmExecute.dateI) == startMonthDate(algorithmExecute.dateF) =>
         val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
         val sundays = allSundayMonth(getEndDayWeek(algorithmExecute.dateI),endOfMonth(algorithmExecute.dateF))
-        iterateMap(next,result ::: assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,infoForAlgorithm.previousSequence,Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0)))
+        val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,infoForAlgorithm.previousSequence,assigned)
+        iterateMap(next,assignement._2, result::: assignement._1)
+
       //case ::(head, next) if startMonthDate(algorithmExecute.dateI) != startMonthDate(algorithmExecute.dateF) =>
       case Nil => result
     }
 
-    val (fisso,rotatorio) = driver.groupBy(_._1).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
-    val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
-      ::::::(part,infoForAlgorithm.shift)
-    val t = iterateMap(rotatorio)
+    val (fisso,rotatorio) = driver.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
+    /*val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
+      ::::::(part,infoForAlgorithm.shift)*/
+
+
+    val t = iterateMap(rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))))//iterateMap(driver.groupBy(_._1).toList)
     t
   }
 
-  def ::::::(part: List[(Int, List[(Int, Persona)])], shift: List[Turno],result: List[(Int, List[(Int, Persona)])] = List.empty):List[(Int, List[(Int, Persona)])] = shift match {
-    case ::(head, next) =>
-    case Nil =>
-  }
+//  def ::::::(part: List[(Int, List[(Int, Persona)])], shift: List[Turno],result: List[(Int, List[(Int, Persona)])] = List.empty):List[(Int, List[(Int, Persona)])] = shift match {
+//    case ::(head, next) =>
+//    case Nil =>
+//  }
   
-  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
-    algorithmExecute.gruppo match {
-      case Some(value) => assignGroupDriver(infoForAlgorithm,value)
-      case None =>
-    }
-  }
-  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA])={
-    @scala.annotation.tailrec
-    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
-      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup))
-      case Nil =>result
-    }
-    @scala.annotation.tailrec
-    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
-      case ::(head, next) => _iteraGroup(next,result:::_assignGroupDriver(infoForAlgorithm.persons.groupBy(_._1).toList,head))
-      case Nil =>result
-    }
-    _iteraGroup(listGroup)
-  }
-  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA):List[Info]={
-    def _iteraDate(listGroup:GruppoA)={}
-    List()
-  }
+//  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute)={
+//    algorithmExecute.gruppo match {
+//      case Some(value) => assignGroupDriver(infoForAlgorithm,value)
+//      case None =>
+//    }
+//  }
+//  private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA])={
+//    @scala.annotation.tailrec
+//    def _assignGroupDriver(groupDriver:List[(Int,List[(Int,Persona)])], listGroup:GruppoA, result:List[Info]=List.empty):List[Info]= groupDriver match {
+//      case ::(head, next) => _assignGroupDriver(next,listGroup,result:::iteraDate(head,listGroup))
+//      case Nil =>result
+//    }
+//    @scala.annotation.tailrec
+//    def _iteraGroup(listGroup:List[GruppoA], result:List[Info]=List.empty):List[Info]= listGroup match {
+//      case ::(head, next) => _iteraGroup(next,result:::_assignGroupDriver(infoForAlgorithm.persons.groupBy(_._1).toList,head))
+//      case Nil =>result
+//    }
+//    _iteraGroup(listGroup)
+//  }
+
+//  private def iteraDate(drivers:(Int,List[(Int,Persona)]),listGroup:GruppoA):List[Info]={
+//    def _iteraDate(listGroup:GruppoA): Unit ={}
+//    List()
+//  }
 
 
   /***
@@ -193,10 +200,10 @@ object AssignmentOperation extends AssignmentOperation {
     case 5 => (value(sequences5(sequence)._1 -1 ),value(sequences5(sequence)._2 -1 ))
   }
 
-  private def assignBalancedSundays(drivers: List[(Int, Persona)], sundays: List[Date], previousSundays: List[Date],contract: List[Contratto], previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int]): List[Info] = {
+  private def assignBalancedSundays(drivers: List[(Int, Persona)], sundays: List[Date], previousSundays: List[Date],contract: List[Contratto], previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int]): (List[Info],Map[Int,Int]) = {
 
     @scala.annotation.tailrec
-    def _assignBalancedSundays(drivers: List[(Int, Persona)], assigned: Map[Int,Int], result: List[Info] = List.empty): List[Info] = drivers match {
+    def _assignBalancedSundays(drivers: List[(Int, Persona)], assigned: Map[Int,Int], result: List[Info] = List.empty): (List[Info],Map[Int,Int]) = drivers match {
       case ::(head, next) => previousSequence.toList.flatten.find(x => head._2.matricola.contains(x.idDriver)) match {
         case Some(value) => sequenceCombinations.get(value.sequenza, previousSundays.length, sundays.length) match {
           case Some(value) =>
@@ -208,7 +215,7 @@ object AssignmentOperation extends AssignmentOperation {
             _assignBalancedSundays(next,x,newResult)
         }
       }
-      case Nil =>result
+      case Nil =>(result,assigned)
     }
 
     _assignBalancedSundays(drivers,assigned)
