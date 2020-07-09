@@ -125,17 +125,17 @@ object AssignmentOperation extends AssignmentOperation {
         val previousSundays = allSundayMonth(getEndDayWeek(previousMonthDate(date)),endOfMonth(previousMonthDate(date)))
         val sundays = allSundayMonth(getEndDayWeek(date),endOfMonth(date))
         val assignement = assignBalancedSundays(head._2,sundays,previousSundays,infoForAlgorithm.allContract.head,previousSequence,assigned)
-        iterateMap(next,date,assignement._3,assignement._2, result ::: assignement._1)
+        iterateMap(next,date,assignement._3,assignement._2, upsertListInfo(result, assignement._1))
       case Nil => (result, previousSequence)
     }
 
 
     @scala.annotation.tailrec
     def iterateDate(dataI: Date, map: List[(Int,List[(Int,Persona)])], previousSequence: Option[List[PreviousSequence]], result: List[Info] = List.empty):List[Info] = dataI match{
-      case x if x.compareTo(startMonthDate(algorithmExecute.dateF)) == 0 => upsertListInfo(result,iterateMap(map,x, previousSequence = previousSequence)._1)
+      case x if x.compareTo(startMonthDate(algorithmExecute.dateF)) == 0 => iterateMap(map,x, previousSequence = previousSequence,result = result)._1
       case date =>
         val resultIterateMap = iterateMap(map,date, previousSequence, result = result)
-        iterateDate(nextMonthDate(date),map, resultIterateMap._2, upsertListInfo(result,resultIterateMap._1))
+        iterateDate(nextMonthDate(date),map, resultIterateMap._2, resultIterateMap._1)
     }
 
     val (fisso,rotatorio) = driver.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
@@ -270,9 +270,17 @@ object AssignmentOperation extends AssignmentOperation {
       case y=>y
     })
   }
+
   private def upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = {
-    val t = resultNew.map(res => res.copy(infoDay  = res.infoDay::: result.filter(filter => filter.idDriver == res.idDriver).flatMap(_.infoDay)))
-    t
+    @scala.annotation.tailrec
+    def _upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = resultNew match {
+      case ::(head, next) => _upsertListInfo(result.find(_.idDriver == head.idDriver) match {
+          case Some(value) => result.updated(result.indexOf(value),value.copy(infoDay = value.infoDay ::: head.infoDay))
+          case None =>  head :: result
+        },next)
+      case Nil => result
+    }
+    _upsertListInfo(result,resultNew)
   }
 
   private def metodino(assigned: Map[Int ,Int], possibili: List[Int]): Int = {
