@@ -3,7 +3,7 @@ package algoritmo
 import java.sql.Date
 import java.time.LocalDate
 
-import algoritmo.AssignmentOperation.{InfoForAlgorithm, InfoReq, PreviousSequence}
+import algoritmo.AssignmentOperation.{Info, InfoDay, InfoForAlgorithm, InfoReq, PreviousSequence}
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato, InstanceStoricoContratto}
@@ -222,3 +222,20 @@ object t extends App{
   }
   while (true){}
 }
+object  e extends App{
+
+  val info: List[Info] = List(Info(1,1,true,1,List(InfoDay(Date.valueOf(LocalDate.of(2020,6,11)),Some(1)),InfoDay(Date.valueOf(LocalDate.of(2020,6,12)),Some(1)),InfoDay(Date.valueOf(LocalDate.of(2020,6,13)),Some(1)))))
+  val du = Date.valueOf(LocalDate.of(2020,6,11))
+  val s = 1
+  val sd = Option(List(InfoReq(1,2,1,1,Date.valueOf(LocalDate.of(2020,6,11)),1),InfoReq(1,2,1,1,Date.valueOf(LocalDate.of(2020,6,12)),1),InfoReq(1,2,1,1,Date.valueOf(LocalDate.of(2020,6,13)),1)))
+  val di = Date.valueOf(LocalDate.of(2020,6,11))
+  val df = Date.valueOf(LocalDate.of(2020,6,13))
+  //PrintListToExcel.printInfo(di,df,info,sd)
+  val di2 = Date.valueOf(LocalDate.of(2020,6,1))
+  val df2 = Date.valueOf(LocalDate.of(2020,9,30))
+
+  val seq = List((1,List(1,2,3,4)),(1,List(1,2,3,4)),(1,List(1,2,3,4)),(1,List(1,2,3,4)),(1,List(1,2,3,4)))
+  val average = seq.map(x=>x._2.foldLeft((0.0, 1))((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1)
+
+}
+//val average = seq.foldLeft((0.0, 1)) ((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1
