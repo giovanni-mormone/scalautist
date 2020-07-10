@@ -359,12 +359,12 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def assignShiftAndUpdateRequest(person: Persona,assignedForTurn: Option[List[InfoReq]], dateI: Date, dateF: Date, turnoId: Int, result: List[Info],turnoId1: Option[Int] = None):(Option[List[InfoReq]], Info) = {
-    val infoDay = createListDayBetween(dateI,dateF).filter(x => !result.filter(x => person.matricola.contains(x.idDriver))
-      .flatMap(_.infoDay.map(_.data)).exists(_.compareTo(x) == 0)).foldLeft((assignedForTurn,List[InfoDay]()))((x,y) => {
+    val infoDay = createListDayBetween(dateI,dateF).filter(date => !result.filter(result => person.matricola.contains(result.idDriver))
+      .flatMap(_.infoDay.map(_.data)).exists(_.compareTo(date) == 0)).foldLeft((assignedForTurn,List[InfoDay]()))((x,y) => {
       val updateMap = updateInfoReq(x._1,y,turnoId)
       turnoId1 match {
-        case Some(value) => (updateInfoReq(updateMap,y,value),x._2 ::: List(InfoDay(y,Some(turnoId),turnoId1)))
-        case None => (updateMap,x._2 ::: List(InfoDay(y,Some(turnoId),turnoId1)))
+        case Some(value) => (updateInfoReq(updateMap,y,value),x._2 :+ InfoDay(y,Some(turnoId),turnoId1))
+        case None => (updateMap,x._2 :+ InfoDay(y,Some(turnoId),turnoId1))
       }
     })
     (infoDay._1,Info(person.matricola.head,0,isFisso = false,0,infoDay._2))
@@ -381,39 +381,40 @@ object AssignmentOperation extends AssignmentOperation {
     }
 
     @scala.annotation.tailrec
-    def _assignWeekForRotatory(drivers: List[(StoricoContratto, Persona)], allRequest:Option[List[InfoReq]], week: List[Date], result: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = drivers match {
+    def _assignWeekForRotatory(drivers: List[(StoricoContratto, Persona)], allRequest:Option[List[InfoReq]], week: List[Date], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = drivers match {
       case ::(head, next) =>
         val shift = shiftWithMoreRequest(week,allRequest)
         if(isPartTime(contracts,head._1.contrattoId)){
           val assignedWeek = assignShiftAndUpdateRequest(head._2, allRequest,week.head,week.last,shift,result)
-          _assignWeekForRotatory(next, assignedWeek._1, week,result :+assignedWeek._2)
+          _assignWeekForRotatory(next, assignedWeek._1, week,resultNew :+assignedWeek._2)
         }else {
           val shift2 = Some(shift % 6 + 1)
           val assignedWeek = assignShiftAndUpdateRequest(head._2, allRequest,week.head,week.last,shift,result,shift2)
-          _assignWeekForRotatory(next, assignedWeek._1, week,result :+assignedWeek._2)
+          _assignWeekForRotatory(next, assignedWeek._1, week,resultNew :+assignedWeek._2)
         }
 
-      case Nil => (allRequest, result)
+      case Nil => (allRequest, resultNew)
     }
 
     val callresult = _assignShiftForRotatory(rotatori,allRequest,createWeekLists(dateI,dateF))
     (callresult._1, upsertListInfo(result,callresult._2))
   }
 
-  private def shiftWithMoreRequest(week: List[Date], allRequest: Option[List[InfoReq]]): Int = {
+
+  //decidere come fare stammerda
+  private def shiftWithMoreRequest(week: List[Date], allRequest: Option[List[InfoReq]]): Int =
     allRequest.map(_.filter(x => week.contains(x.data)).map(res => res.idShift -> (res.request - res.assigned)).groupBy(_._1)
       .map(res => res._1 -> res._2.map(_._2)).toList.map(x => x._1 -> x._2
-      .foldLeft((0.0, 1))((acc, i) => ((acc._2 + (i - acc._2) / acc._2), acc._2 + 1))._1).maxBy(_._2)._1) match {
+      .foldLeft((0.0, 1))((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1).maxBy(_._2)._1) match {
       case Some(value) => value
     }
-  }
 
    private def createWeekLists(dateI: Date, dateF: Date): List[List[Date]] = {
 
     @scala.annotation.tailrec
     def _createWeekLists(date: Date, result: List[List[Date]] = List.empty): List[List[Date]] = {
       if (nextWeek(date).compareTo(dateF) > 0)
-        result:+ createListDayBetween(date, getEndDayWeek(date))
+        result:+ createListDayBetween(date, dateF)
       else
         _createWeekLists(nextWeek(date), result:+ createListDayBetween(date, getEndDayWeek(date)))
     }
