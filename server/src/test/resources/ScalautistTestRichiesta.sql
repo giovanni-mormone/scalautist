@@ -48,8 +48,7 @@ SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
 
-delete from RichiestaTeoricaSets
-delete from GiornoSets
-
+select * from TerminalSets
 select * from GiornoSets
 select * from RichiestaSets
+select * from AssenzaSets
