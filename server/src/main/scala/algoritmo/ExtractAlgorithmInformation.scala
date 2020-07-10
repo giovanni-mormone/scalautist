@@ -52,7 +52,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 
   override def getAllData(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[InfoForAlgorithm] =
     for{
-      absence<-InstanceAssenza.operation().execQueryFilter(persona=>(persona.id,persona.dataInizio,persona.dataFine),
+      absence<-InstanceAssenza.operation().execQueryFilter(persona=>(persona.personaId,persona.dataInizio,persona.dataFine),
         filter=>filter.dataInizio>=algorithmExecute.dateI && filter.dataFine<=algorithmExecute.dateF)
       allRequest<-getTheoricalRequest(algorithmExecute,infoForAlgorithm)
       previousSequence<-getAllPreviousSequence(algorithmExecute,infoForAlgorithm)
@@ -201,7 +201,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 object t extends App{
   val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
-  val terminals=List(15)
+  val terminals=List(22)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
   val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
