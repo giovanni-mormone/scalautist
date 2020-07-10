@@ -65,26 +65,54 @@ object AssignmentOperation extends AssignmentOperation {
           theoricalRequest = info.theoricalRequest.filter(_.terminaleId == terminal.terminaleId),
           previousSequence = info.previousSequence.map(_.filter(value => personaFilter.map(_._2.matricola).exists(id => id.contains(value.idDriver)))))
       }).foreach(info => startAlgorithm(info, algorithmExecute))
-
     })
     //IN QUESTO PUNTO SEPARIAMO PER TERMINALE (?-> questo per la STUPIDAGGINE DI GIANNI)
   }
 
   private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Unit = Future {
     val (driver5x2, driver6x1) = infoForAlgorithm.persons.partition(idPerson => FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
-    assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)))
-      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1)).map{
-      case (driver5x2, driver6x1) =>
-        groupForDriver(infoForAlgorithm,algorithmExecute,driver5x2:::driver6x1)
+    infoForAlgorithm.absence match {
+      case Some(value) =>assignAbsence(driver5x2.map(v => (v._1.contrattoId,v._2)),infoForAlgorithm.allContract,value)
+        .zip(assignAbsence(driver6x1.map(v => (v._1.contrattoId,v._2)),infoForAlgorithm.allContract,value))
+        .map{
+          case (listInfo5x2, listInfo6x1) => continueAlgorithm(infoForAlgorithm,algorithmExecute,driver5x2,driver6x1,listInfo5x2,listInfo6x1)
+        }
+      case None => continueAlgorithm(infoForAlgorithm,algorithmExecute,driver5x2,driver6x1)
     }
     //andare avanti dopo la ZIPPPP
   }
 
-  private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]], algorithmExecute: AlgorithmExecute, driver: List[(Int, Persona)]): Future[List[Info]] = Future{
+  def continueAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver5x2: List[(StoricoContratto, Persona)], driver6x1: List[(StoricoContratto, Persona)], listInfo5x2: List[Info] = List.empty, listInfo6x1: List[Info] = List.empty): Unit = {
+    assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)),listInfo5x2)
+      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1,listInfo6x1)).map{
+      case (driver5x2, driver6x1) =>
+        groupForDriver(infoForAlgorithm,algorithmExecute,driver5x2:::driver6x1)
+    }
+  }
+
+  private def assignAbsence(drivers: List[(Int,Persona)],contracts: Option[List[Contratto]],absence: List[(Int, Date,Date)]): Future[List[Info]] = Future{
+
+    @scala.annotation.tailrec
+    def _absignAbsence(drivers: List[(Int, Persona)], result: List[Info] = List.empty): List[Info] = drivers match {
+      case ::(head, next) if absence.exists(x => head._2.matricola.contains(x._1)) => _absignAbsence(next, result :+ Info(head._2.matricola.head,
+        head._2.idTerminale.head,isFisso(contracts, head._1), head._1, _iterateDate(head._2.matricola.head)))
+      case ::(_,next) => _absignAbsence(next,result)
+      case Nil => result
+    }
+
+    def _iterateDate(driverId: Int): List[InfoDay] = {
+      absence.filter(_._1 == driverId).map(absence => createListDayBetween(absence._2, absence._3))
+        .flatMap(res => res.map(date => InfoDay(date, absence =true)))
+    }
+
+    _absignAbsence(drivers)
+  }
+
+  private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]], algorithmExecute: AlgorithmExecute, driver: List[(Int, Persona)], result: List[Info]): Future[List[Info]] = Future{
     @scala.annotation.tailrec
     def _assignSaturdayAndSunday(person: List[(Int, Persona)], date: Date, info: List[Info] = List.empty): List[Info] =  person match {
-      case ::(head, next) => _assignSaturdayAndSunday(next, date, info :+ Info(head._2.matricola.head, head._2.idTerminale.head,
-        isFisso =  isFisso(allContract,head._1), head._1, _iterateDate(date)))
+      case ::(head, next) => _assignSaturdayAndSunday(next, date, upsertListInfo(info, List(Info(head._2.matricola.head, head._2.idTerminale.head,
+        isFisso =  isFisso(allContract,head._1), head._1, _iterateDate(date)))))
       case Nil => info
     }
 
@@ -97,12 +125,16 @@ object AssignmentOperation extends AssignmentOperation {
       case _ => infoDay.sortBy(_.data)
     }
 
-    _assignSaturdayAndSunday(driver, algorithmExecute.dateI)
+    _assignSaturdayAndSunday(driver, algorithmExecute.dateI,result)
 
   }
 
   private val isFisso: (Option[List[Contratto]], Int) => Boolean = (allContract,idContratto) => allContract.map(_.filter(_.idContratto.contains(idContratto)).map(_.turnoFisso)).toList.flatten match {
     case List(isFisso) => isFisso
+  }
+
+  private val isPartTime: (Option[List[Contratto]], Int) => Boolean = (allContract,idContratto) => allContract.map(_.filter(_.idContratto.contains(idContratto)).map(_.partTime)).toList.flatten match {
+    case List(isPartTime) => isPartTime
   }
 
   private def allSundayMonth(sunday:Date,finalDayMont:Date):List[Date]={
@@ -117,7 +149,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   //final case class InfoDay(data:Date,shift:Option[Int]=None,shift2:Option[Int]=None,straordinario:Option[Int]=None,freeDay:Option[Int]=None,absence:Option[Int]=None)
   //  final case class Info(idDriver:Int,idTerminal:Int,isFisso:Boolean,tipoContratto:Int,infoDay: List[InfoDay])
-  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)]): Future[List[Info]] = Future{
+  private def assignSunday6x1(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, driver: List[(StoricoContratto, Persona)], result: List[Info]): Future[List[Info]] = Future{
 
     @scala.annotation.tailrec
     def iterateMap(map: List[(Int,List[(Int,Persona)])],date: Date,previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int] = Map(1 ->0, 2 -> 0, 3 -> 0, 4 -> 0, 5-> 0),result: List[Info] = List.empty): (List[Info], Option[List[PreviousSequence]]) = map match {
@@ -140,7 +172,7 @@ object AssignmentOperation extends AssignmentOperation {
 
     val (fisso,rotatorio) = driver.groupBy(_._1.contrattoId).toList.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.turnoFisso))
     val(part,full) = fisso.partition(t => infoForAlgorithm.allContract.toList.flatten.exists(tr => tr.idContratto.contains(t._1) && tr.partTime))
-    val t = iterateDate(algorithmExecute.dateI,rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),infoForAlgorithm.previousSequence)//iterateMap(driver.groupBy(_._1).toList)
+    val t = iterateDate(algorithmExecute.dateI,rotatorio.map(x1 => x1._1 -> x1._2.map(x => (x._1.contrattoId,x._2))):::divideYConquista(part):::divideYConquista(full),infoForAlgorithm.previousSequence, result)//iterateMap(driver.groupBy(_._1).toList)
     t
    }
 
@@ -152,9 +184,8 @@ object AssignmentOperation extends AssignmentOperation {
 
   private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,assigned:List[Info]): Unit ={
     algorithmExecute.gruppo match {
-      case Some(group) =>
-        PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,assignGroupDriver(infoForAlgorithm,group,assigned))
-      case None =>assignShift()
+      case Some(group) => assignShifts(infoForAlgorithm,algorithmExecute.dateI,algorithmExecute.dateF,assignGroupDriver(infoForAlgorithm,group,assigned))
+      case None =>assignShifts(infoForAlgorithm,algorithmExecute.dateI,algorithmExecute.dateF,assigned)
     }
   }
   private def assignGroupDriver(infoForAlgorithm: InfoForAlgorithm,listGroup:List[GruppoA],assigned:List[Info]): List[Info] ={
@@ -306,13 +337,99 @@ object AssignmentOperation extends AssignmentOperation {
 
     _metodino(assigned.toList.sortWith(_._2<_._2))
   }
-  private def assignShift() = ???
-  private def assignShiftFixed() = {
 
+  private def assignShifts(infoForAlgorithm: InfoForAlgorithm, dateI: Date, dateF: Date, result: List[Info]): Future[List[Info]] = Future{
+    val(fissi, rotatori) = infoForAlgorithm.persons.partition(person => infoForAlgorithm.allContract.toList.flatten.filter(_.turnoFisso).flatMap(_.idContratto.toList).contains(person._1.contrattoId))
+    val maronna = assignShiftForFissi(fissi,infoForAlgorithm.allRequest,dateI,dateF,result)
+    val maronna2 = assignShiftForRotary(rotatori,maronna._1,dateI,dateF,maronna._2,infoForAlgorithm.allContract)
+    PrintListToExcel.printInfo(dateI,dateF,maronna2._2,maronna2._1)
+    List()
   }
 
-  private def assignShiftRotary() = {
+  def assignShiftForFissi(fissi: List[(StoricoContratto, Persona)], assignedForTurn: Option[List[InfoReq]],dateI: Date, dateF: Date, result: List[Info]): (Option[List[InfoReq]], List[Info]) = {
 
+    @scala.annotation.tailrec
+    def _assignShiftForFissi(fissi: List[(StoricoContratto, Persona)], assignedForTurn: Option[List[InfoReq]], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = fissi match {
+      case ::(head, next) =>
+        val assignmentResult = assignShiftAndUpdateRequest(head._2,assignedForTurn,dateI,dateF,head._1.turnoId.head,result,head._1.turnoId1)
+        _assignShiftForFissi(next, assignmentResult._1, resultNew :+ assignmentResult._2)
+      case Nil =>(assignedForTurn,resultNew)
+    }
+
+    val callresult = _assignShiftForFissi(fissi,assignedForTurn)
+    (callresult._1, upsertListInfo(result,callresult._2))
+  }
+
+  private def assignShiftAndUpdateRequest(person: Persona,assignedForTurn: Option[List[InfoReq]], dateI: Date, dateF: Date, turnoId: Int, result: List[Info],turnoId1: Option[Int] = None):(Option[List[InfoReq]], Info) = {
+    val infoDay = createListDayBetween(dateI,dateF).filter(x => !result.filter(x => person.matricola.contains(x.idDriver))
+      .flatMap(_.infoDay.map(_.data)).exists(_.compareTo(x) == 0)).foldLeft((assignedForTurn,List[InfoDay]()))((x,y) => {
+      val updateMap = updateInfoReq(x._1,y,turnoId)
+      turnoId1 match {
+        case Some(value) => (updateInfoReq(updateMap,y,value),x._2 ::: List(InfoDay(y,Some(turnoId),turnoId1)))
+        case None => (updateMap,x._2 ::: List(InfoDay(y,Some(turnoId),turnoId1)))
+      }
+    })
+
+    (infoDay._1,Info(person.matricola.head,0,false,0,infoDay._2))
+  }
+
+  def assignShiftForRotary(rotatori: List[(StoricoContratto, Persona)], allRequest: Option[List[InfoReq]], dateI: Date, dateF: Date, result: List[Info],contracts: Option[List[Contratto]]): (Option[List[InfoReq]],List[Info]) = {
+
+    @scala.annotation.tailrec
+    def _assignShiftForRotatory(rotatori: List[(StoricoContratto, Persona)], allRequest: Option[List[InfoReq]], weeks: List[List[Date]], resultNew: List[Info] = List.empty): (Option[List[InfoReq]],List[Info]) = weeks match {
+      case ::(head, next) =>
+        val weekAssignment = _assignWeekForRotatory(rotatori,allRequest,head)
+        _assignShiftForRotatory(rotatori.reverse,weekAssignment._1, next, upsertListInfo(resultNew,weekAssignment._2))
+      case Nil => (allRequest,resultNew)
+    }
+
+    @scala.annotation.tailrec
+    def _assignWeekForRotatory(drivers: List[(StoricoContratto, Persona)], allRequest:Option[List[InfoReq]], week: List[Date], result: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = drivers match {
+      case ::(head, next) =>
+        val shift = shiftWithMoreRequest(week,allRequest)
+        if(isPartTime(contracts,head._1.contrattoId)){
+          val assignedWeek = assignShiftAndUpdateRequest(head._2, allRequest,week.head,week.last,shift,result)
+          _assignWeekForRotatory(next, assignedWeek._1, week,result :+assignedWeek._2)
+        }else {
+          val shift2 = Some(shift % 6 + 1)
+          val assignedWeek = assignShiftAndUpdateRequest(head._2, allRequest,week.head,week.last,shift,result,shift2)
+          _assignWeekForRotatory(next, assignedWeek._1, week,result :+assignedWeek._2)
+        }
+
+      case Nil => (allRequest, result)
+    }
+
+    val callresult = _assignShiftForRotatory(rotatori,allRequest,createWeekLists(dateI,dateF))
+    (callresult._1, upsertListInfo(result,callresult._2))
+  }
+
+  private def shiftWithMoreRequest(week: List[Date], allRequest: Option[List[InfoReq]]): Int = {
+
+    allRequest.map(_.filter(x => week.contains(x.data)).map(res => res.idShift -> (res.request - res.assigned)).groupBy(_._1)
+      .map(res => res._1 -> res._2.map(_._2)).toList.map(x => x._1 -> x._2
+      .foldLeft((0.0, 1))((acc, i) => ((acc._2 + (i - acc._2) / acc._2), acc._2 + 1))._1).maxBy(_._2)._1) match {
+      case Some(value) => value
+      case None => 5 //sto default non serve, lo metto di notte che sono bastardo
+    }
+  }
+
+   private def createWeekLists(dateI: Date, dateF: Date): List[List[Date]] = {
+
+    @scala.annotation.tailrec
+    def _createWeekLists(date: Date, result: List[List[Date]] = List.empty): List[List[Date]] = {
+      if (nextWeek(date).compareTo(dateF) > 0)
+        result:+ createListDayBetween(date, getEndDayWeek(date))
+      else
+        _createWeekLists(nextWeek(date), result:+ createListDayBetween(date, getEndDayWeek(date)))
+    }
+
+    _createWeekLists(dateI)
+  }
+  private def updateInfoReq(infoReq: Option[List[InfoReq]], date: Date, shift: Int): Option[List[InfoReq]] = {
+    infoReq.map(_.collect{
+      case x if x.data.compareTo(date) == 0 && x.idShift == shift => x.copy(assigned = x.assigned +1)
+      case x => x
+    })
   }
 
   private def rulerThirfSaturday() = {
