@@ -6,6 +6,7 @@ import java.sql.Date
 import algoritmo.AssignmentOperation.{Info, InfoDay, InfoReq}
 import org.apache.poi.xssf.usermodel.{XSSFSheet, XSSFWorkbook}
 import utils.DateConverter._
+import scala.concurrent.blocking
 
 object PrintListToExcel {
   val workbook:XSSFWorkbook= new XSSFWorkbook()
@@ -56,7 +57,7 @@ object PrintListToExcel {
     _iteraDate(date)
   }
 
-  def printInfo(dataI:Date,dateF:Date,infoss:List[Info], infoReq: Option[List[InfoReq]] = None): Unit ={
+  def printInfo(dataI:Date,dateF:Date,infoss:List[Info], infoReq: Option[List[InfoReq]] = None): Unit =  blocking{
     val info:Map[String,List[String]]=Map("1"->(List("Matricola","Terminal","IsFisso","Tipo Contratto"):::createListDayBetween(dataI,dateF).map(_.toString)))
     val newInfo=createObject2(dataI,dateF,infoss,info,infoReq)
     val keySet:List[String] = newInfo.keySet.toList.map(_.toInt).sortWith(_<_).map(_.toString)
@@ -64,10 +65,10 @@ object PrintListToExcel {
     iteraKey(keySet,newInfo)
     try {
       // this Writes the workbook gfgcontribute
-      val out = new FileOutputStream(new File("drivers"+infoss.head.idTerminal+".xlsx"))
-      workbook.write(out)
-      out.close()
-      System.out.println("gfgcontribute.xlsx written successfully on disk.")
+        val out = new FileOutputStream(new File("drivers"+infoss.head.idTerminal+".xlsx"))
+        workbook.write(out)
+        out.close()
+        System.out.println("gfgcontribute.xlsx written successfully on disk.")
     }
     catch{
       case e:Exception=> e.printStackTrace()
