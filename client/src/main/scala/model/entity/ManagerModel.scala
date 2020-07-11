@@ -215,3 +215,37 @@ object t extends App{
   }
   while (true){}
 }
+object w extends App{
+  val u = List((1,List((1,2),(5,2),(3,2),(2,2))),
+    (3,List((1,2),(5,2),(3,2),(2,2))),
+    (5,List((1,2),(5,2),(3,2),(2,2))),
+    (4,List((1,2),(5,2),(3,2),(2,2))),
+    (6,List((1,2),(5,2),(3,2),(2,2))),
+    (7,List((1,2),(5,2),(3,2),(2,2))),
+    (8,List((1,2),(5,2),(3,2),(2,2))))
+  val s = List((1,List((1,1),(6,1),(4,1),(2,2))),
+    (3,List((1,2),(6,1),(4,1),(2,2))),
+    (2,List((1,2),(5,2),(3,2),(2,2))),
+    (4,List((1,2),(5,1),(3,2),(2,2))))
+  val bu = List()
+  val ok = u.flatMap{
+    case (i, i1) if s.exists(_._1 == i)=>s.filter(_._1==i).map(_=>(i,i1))
+    case (i, i1) => List((i,i1))
+  }
+  val ok2 = u.flatMap{
+    case (i, i1) if s.exists(_._1 == i)=>s.filter(_._1==i).map(x=>{
+      println(x)
+      val t = x._1->i1.flatMap{
+        case (s, s1) if x._2.exists(_._1==s)=>
+          println(s)
+          x._2.filter(_._1==s).map(_=>(s,s1))
+        case (s, s1) =>
+          println(s)
+          List((s,s1))
+      }
+      (t._1,t._2:::x._2.filter(x=> !t._2.exists(_._1==x._1)))
+    })
+    case (i, i1) => List((i,i1))
+  }
+  println(ok2:::s.filter(xs=> !ok2.exists(_._1==xs._1)))
+}

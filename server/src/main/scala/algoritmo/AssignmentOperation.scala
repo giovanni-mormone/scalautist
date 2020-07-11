@@ -313,17 +313,33 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = {
-    @scala.annotation.tailrec
-    def _upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = resultNew match {
-      case ::(head, next) => _upsertListInfo(result.find(_.idDriver == head.idDriver) match {
-          case Some(value) => result.updated(result.indexOf(value),value.copy(infoDay = value.infoDay ::: head.infoDay))
-          case None =>  head :: result
-        },next)
-      case Nil => result
+    val newResult = resultNew.flatMap{
+      case info if result.exists(_.idDriver == info.idDriver)=>result.filter(_.idDriver==info.idDriver).map(x=>{
+        val infoNew =x.copy(infoDay = info.infoDay.flatMap{
+          case s if x.infoDay.exists(_.data.compareTo(s.data)==0)=>
+            x.infoDay.filter(_.data.compareTo(s.data)==0).map(_=>s)
+          case s => List(s)
+        })
+        infoNew.copy(infoDay = infoNew.infoDay:::x.infoDay.filter(x=> !infoNew.infoDay.exists(_.data.compareTo(x.data)==0)))
+      })
+      case x => List(x)
     }
-    _upsertListInfo(result,resultNew)
+    newResult:::result.filter(xs=> !newResult.exists(_.idDriver==xs.idDriver))
   }
-
+  private def upsertListInfo2(result: List[Info], resultNew: List[Info]): List[Info] = {
+    val newResult = resultNew.flatMap{
+      case info if result.exists(_.idDriver == info.idDriver)=>result.filter(_.idDriver==info.idDriver).map(x=>{
+        val infoNew =x.copy(infoDay = info.infoDay.flatMap{
+          case s if x.infoDay.exists(_.data.compareTo(s.data)==0)=>
+            x.infoDay.filter(_.data.compareTo(s.data)==0).map(_=>s)
+          case s => List(s)
+        })
+        infoNew.copy(infoDay = infoNew.infoDay:::x.infoDay.filter(x=> !infoNew.infoDay.exists(_.data.compareTo(x.data)==0)))
+      })
+      case x => List(x)
+    }
+    newResult:::result.filter(xs=> !newResult.exists(_.idDriver==xs.idDriver))
+  }
   private def metodino(assigned: Map[Int ,Int], possibili: List[Int]): Int = {
     @scala.annotation.tailrec
     def _metodino(assigned: List[(Int,Int)]):Int = assigned match {

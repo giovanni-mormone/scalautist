@@ -154,10 +154,10 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   }
   private def searchEndFreeDay(date:List[Date]):Int={
     @scala.annotation.tailrec
-    def _searchEndFreeDay(date:List[Date], day:Int=0):Int= date match {
-      case firstDate::secondDate:: next if subtract(firstDate,-1).compareTo(secondDate)==0=>_searchEndFreeDay(secondDate::next,day=day+1)
-      case _::_ =>day
-      case Nil =>day
+    def _searchEndFreeDay(date:List[Date]):Int= date match {
+      case firstDate::secondDate:: next if subtract(firstDate,-1).compareTo(secondDate)==0=>_searchEndFreeDay(secondDate::next)
+      case firstDate::_ =>getDayNumber(firstDate)
+      case Nil =>6
     }
     _searchEndFreeDay(date)
   }
@@ -238,4 +238,10 @@ object  e extends App{
   val average = seq.map(x=>x._2.foldLeft((0.0, 1))((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1)
 
 }
+object seis extends App{
+  val t = List(1,2,3,4,5,6)
+  println(t.indexWhere(_==2))
+  println(t.indexWhere(_==12))
+}
+
 //val average = seq.foldLeft((0.0, 1)) ((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1
