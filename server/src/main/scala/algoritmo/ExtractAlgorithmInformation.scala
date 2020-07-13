@@ -201,7 +201,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 object t extends App{
   val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
-  val terminals=List(15)
+  val terminals=List(15,16,17,18,19,20)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
   val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
