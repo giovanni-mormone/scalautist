@@ -3,6 +3,7 @@ package dbfactory.operation
 import java.sql.Date
 import java.time.LocalDate
 
+import algoritmo.AssignmentOperation.{Info, InfoDay}
 import caseclass.CaseClassDB.{Risultato, Turno}
 import caseclass.CaseClassHttpMessage._
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRisultato, InstanceTerminale, InstanceTurno}
@@ -71,7 +72,7 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
    *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
    */
   def getResultAlgorithm(idTerminal:Int,dateI:Date,dateF:Date):Future[Option[List[ResultAlgorithm]]]
-
+  def saveResultAlgorithm(result:List[Info]):Future[Option[Int]]
 }
 
 object RisultatoOperation extends RisultatoOperation {
@@ -345,4 +346,18 @@ object RisultatoOperation extends RisultatoOperation {
       case Nil =>WITHOUT_SHIFT
     }
 
+  override def saveResultAlgorithm(result: List[Info]): Future[Option[Int]] = {
+    val finalResult = result.map(inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))).flatMap(x=>{
+      x.infoDay.flatMap{
+        case InfoDay(data, Some(shift), None, None,_,_)=>List(Risultato(data,x.idDriver,shift))
+        case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2))
+        case InfoDay(data, Some(shift), Some(shift2), Some(straordinario),_,_)=>
+          List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2),Risultato(data,x.idDriver,straordinario))
+      }
+    })
+    insertAll(finalResult).collect {
+      case Some(value) if value.length==finalResult.length=>Some(StatusCodes.SUCCES_CODE)
+      case None =>Some(StatusCodes.ERROR_CODE1)
+    }
+  }
 }

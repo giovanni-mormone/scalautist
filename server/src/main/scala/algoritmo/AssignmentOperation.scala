@@ -44,6 +44,9 @@ object AssignmentOperation extends AssignmentOperation {
   private val emitter = ConfigEmitter()
   private val infoAssigned:InfoAssigned = InfoAssigned()
   private val infoRequest:RequestOperation = RequestOperation()
+  private val FIRST_RULER=1
+  private val SECOND_RULER=2
+  private val THIRD_RULER=3
   def apply(): AssignmentOperation = {
     emitter.start()
     this
@@ -60,7 +63,6 @@ object AssignmentOperation extends AssignmentOperation {
           previousSequence = info.previousSequence.map(_.filter(value => personaFilter.map(_._2.matricola).exists(id => id.contains(value.idDriver)))))
       }).foreach(info => startAlgorithm(info, algorithmExecute))
     })
-    //IN QUESTO PUNTO SEPARIAMO PER TERMINALE (?-> questo per la STUPIDAGGINE DI GIANNI)
   }
 
   private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Unit = Future {
@@ -133,7 +135,7 @@ object AssignmentOperation extends AssignmentOperation {
     case List(isPartTime) => isPartTime
   }
 
-  private def allSundayMonth(sunday:Date,finalDayMont:Date):List[Date]={
+  def allSundayMonth(sunday:Date,finalDayMont:Date):List[Date]={
     @scala.annotation.tailrec
     def _allSunday(sunday:Date,allSunday:List[Date]=List.empty): List[Date] = sunday match {
       case date if date.compareTo(finalDayMont) < 0 =>_allSunday(subtract(date, 7), allSunday :+ date)
@@ -218,9 +220,9 @@ object AssignmentOperation extends AssignmentOperation {
   private val filterAndVerify:(Int,List[Info],Date)=>Boolean=(regola,assigned,groupDate)=> assigned.exists(res=>
       res.infoDay.map(_.data).partition(date => date.compareTo(startMonthDate(groupDate)) >= 0 &&
         date.compareTo(endOfMonth(groupDate)) <= 0)._1.forall(date => regola match {
-        case 1=>conditionAssignGroup(groupDate,date)
-        case 2=>conditionAssignGroup2(groupDate,date)
-        case 3=>conditionAssignGroup3(groupDate,date)
+        case FIRST_RULER=>conditionAssignGroup(groupDate,date)
+        case SECOND_RULER=>conditionAssignGroup2(groupDate,date)
+        case THIRD_RULER=>conditionAssignGroup3(groupDate,date)
       }))
 
 
@@ -271,9 +273,9 @@ object AssignmentOperation extends AssignmentOperation {
     (0,4,5) -> List(5,2,3,4),(1,5,4) -> List(1,2),(2,5,4) -> List(2,3,4),(3,5,4) -> List(1,2,3), (4,5,4) -> List(3,4,2,1),
     (5,5,4) -> List(4,3),(0,5,4) -> List(1,2,3,4))
 
-  private val sequences4: Map[Int,(Int,Int)] = Map(1 -> (1,2),2 -> (1,4), 3 -> (2,3), 4 -> (3,4))
+  val sequences4: Map[Int,(Int,Int)] = Map(1 -> (1,2),2 -> (1,4), 3 -> (2,3), 4 -> (3,4))
 
-  private val sequences5: Map[Int,(Int,Int)] = Map(1 -> (1,2), 2 -> (1,5), 3-> (2,3), 4-> (3,4), 5-> (4,5))
+  val sequences5: Map[Int,(Int,Int)] = Map(1 -> (1,2), 2 -> (1,5), 3-> (2,3), 4-> (3,4), 5-> (4,5))
 
   def assignSunday(value: List[Date], sequence: Int, sundays: Int): (Date,Date) = sundays match {
     case 4 => (value(sequences4(sequence)._1 -1 ),value(sequences4(sequence)._2 -1 ))
@@ -324,7 +326,6 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def upsertInfoDay(result: List[Info], resultNew: List[Info]): List[Info] = {
-
     @scala.annotation.tailrec
     def _upsertInfoDay(toIterate: List[InfoDay], newRes: List[InfoDay]): List[InfoDay] = toIterate match {
       case ::(head, next) =>
@@ -429,7 +430,6 @@ object AssignmentOperation extends AssignmentOperation {
             case Some(value) => (deUpdateInfoReq(updateReq,meh._1._2,meh._1._3), sticazzi(meh, y,result),x._3 :+ InfoDay(meh._1._2,freeDay = true))
             case None =>(updateReq,sticazzi(meh,y,result), x._3 :+ InfoDay(meh._1._2,freeDay = true))
           }
-
       }
       (infoDay._1,infoDay._2,Info(driver._2.matricola.head,0,isFisso = false,0,infoDay._3))
     }

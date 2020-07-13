@@ -29,9 +29,3 @@ object RequestOperation {
       this.infoReq=this.infoReq.map(_=>infoReq.toList.flatten)
   }
 }
-object sdalasldk extends App{
-  val s = ListBuffer[Int]()
-  s+=1
-  s.map(_=>s+=22)
-  println(s)
-}
