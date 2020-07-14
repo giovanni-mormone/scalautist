@@ -1,6 +1,6 @@
 package view.fxview.component.manager.subcomponent.parent
 
-import caseclass.CaseClassDB.Parametro
+import caseclass.CaseClassDB.{Parametro, Zona}
 
 /**
  * @author Francesco Cassano
@@ -9,8 +9,20 @@ import caseclass.CaseClassDB.Parametro
 trait ChooseParamsParent {
 
   /**
-   * Method to rn the algorithm
+   * Method to run the algorithm
+   *
    * @param params
+   *               That are the params the algorithm needs to run
+   * @param save
+   *             Boolean to save params and reuse that in future
    */
   def calculateShifts(params: Parametro, save: Boolean): Unit
+
+  /**
+   * Find all terminal in the zone
+   *
+   * @param zone
+   *             The zone containing the necessary terminals
+   */
+  def getTerminals(zone: Zona): Unit
 }

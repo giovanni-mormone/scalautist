@@ -8,10 +8,16 @@ import caseclass.CaseClassHttpMessage.InfoPresenza
 import com.sun.javafx.scene.control.skin.DatePickerSkin
 import javafx.scene.control.{DateCell, DatePicker, Tooltip}
 
+/**
+ * @author Francesco Cassano, Fabian Aspee
+ *
+ * Methods that allow to manage DataPicker
+ */
 case object CreateDatePicker{
 
   final case class MoveDatePeriod(years: Int = 0, months: Int = 0, days: Int = 0)
   final case class DatePickerC(finishDate:DatePicker,behind: MoveDatePeriod, after: MoveDatePeriod,today:LocalDate=LocalDate.now())
+
   def createDataPicker(dataPicker: DatePickerC,assenza: Option[List[Option[(LocalDate,LocalDate)]]]=None): Unit = {
     dataPicker.finishDate.setEditable(false)
     dataPicker.finishDate.setDayCellFactory(_=> setDate(dataPicker,assenza))
@@ -57,6 +63,39 @@ case object CreateDatePicker{
   def createDatePickerSkin(localDate:LocalDate): (DatePickerSkin,DatePicker) ={
     val datepicker= new DatePicker(localDate)
     (new DatePickerSkin(datepicker),datepicker)
+  }
+
+  def firstMonthDay(today: LocalDate, monthToStart: Int, monthToEnd: Int, limit: Int = 15): DateCell = {
+    val MONTH_SHIFT: Int = 1
+    val N_DAY: Int = 1
+    val initMonth: LocalDate = today.plusMonths(if (today.getDayOfMonth > limit)  monthToStart + MONTH_SHIFT else monthToStart)
+                  .withDayOfMonth(N_DAY)
+    val endMonth: LocalDate = initMonth.plusMonths(monthToEnd)
+
+    new DateCell{
+      override def updateItem(item: LocalDate, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        // Disable all except first of month
+        if (item.getDayOfMonth != N_DAY && item.isAfter(endMonth) && item.isBefore(initMonth)) {
+          setDisable(true)
+        }
+      }
+    }
+  }
+
+  def lastMonthDay(initDate: LocalDate, maxRangeToCalcolate: Int = 12): DateCell = {
+
+    val lastMonth: LocalDate = initDate.plusMonths(maxRangeToCalcolate)
+
+    new DateCell{
+      override def updateItem(item: LocalDate, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        // Disable all except first of month
+        if (item.getDayOfMonth != item.lengthOfMonth() && item.isAfter(lastMonth) && item.isBefore(initDate)) {
+          setDisable(true)
+        }
+      }
+    }
   }
 
 }
