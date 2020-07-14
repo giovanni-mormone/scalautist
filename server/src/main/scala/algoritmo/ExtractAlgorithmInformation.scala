@@ -3,12 +3,12 @@ package algoritmo
 import java.sql.Date
 import java.time.LocalDate
 
-import algoritmo.AssignmentOperation.{InfoForAlgorithm, InfoReq, PreviousSequence}
+import algoritmo.AssignmentOperation._
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato, InstanceStoricoContratto}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato}
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
-import emitter.ConfigEmitter
+import _root_.emitter.ConfigEmitter
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
@@ -31,28 +31,14 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     this
   }
 
-  val FIRST_SEQUENCE_4 = (1,2)
-  val SECOND_SEQUENCE_4 = (1,4)
-  val THIRD_SEQUENCE_4 = (2,3)
-  val FOURTH_SEQUENCE_4 = (3,4)
-  val ANOTHER_SEQUENCE_4 = (3,0)
-  val ANOTHER2_SEQUENCE_4 = (3,1)
-  //SEQUENZA MESE 5 DOMENICHE
-  val FIRST_SEQUENCE_5 = (1,2)
-  val SECOND_SEQUENCE_5 = (1,5)
-  val THIRD_SEQUENCE_5 = (2,3)
-  val FOURTH_SEQUENCE_5 = (3,4)
-  val FIFTH_SEQUENCE_5 = (4,5)
-  val ANOTHER_SEQUENCE_5 = (3,0)
-  val ANOTHER2_SEQUENCE_5 = (3,1)
-
   private val DEFAULT_INIT_DAY = 0
   private val emitter=ConfigEmitter()
   private val DEFAULT_ASSIGNED = 0
+  private val DEFAULT_SEQUENCE = 1
 
   override def getAllData(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[InfoForAlgorithm] =
     for{
-      absence<-InstanceAssenza.operation().execQueryFilter(persona=>(persona.id,persona.dataInizio,persona.dataFine),
+      absence<-InstanceAssenza.operation().execQueryFilter(persona=>(persona.personaId,persona.dataInizio,persona.dataFine),
         filter=>filter.dataInizio>=algorithmExecute.dateI && filter.dataFine<=algorithmExecute.dateF)
       allRequest<-getTheoricalRequest(algorithmExecute,infoForAlgorithm)
       previousSequence<-getAllPreviousSequence(algorithmExecute,infoForAlgorithm)
@@ -82,10 +68,11 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     def _createInfoDay(theoricalRequest: List[RichiestaTeorica],infoReq: List[InfoReq]=List.empty):Option[List[InfoReq]]= theoricalRequest match {
       case ::(request, next) => _createInfoDay(next,createListInfoDay(resultJoinWithTerminal
         .filter(id=>request.idRichiestaTeorica.contains(id._2.richiestaTeoricaId)),algorithmExecute):::infoReq)
-      case Nil => Option(infoReq)
+      case Nil => Option(constructInfoReq(infoReq,algorithmExecute))
     }
     _createInfoDay(theoricalRequest)
   }
+
   private def createListInfoDay(resultJoin:List[(Int, Richiesta, Giorno)],algorithmExecute: AlgorithmExecute):List[InfoReq]={
     (DEFAULT_INIT_DAY until computeDaysBetweenDates(algorithmExecute.dateI,algorithmExecute.dateF))
       .flatMap(value=>{
@@ -94,6 +81,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
         createInfoDayCaseClass(resultJoin,day)
       }).toList
   }
+
   private def createInfoDayCaseClass(resultJoin:List[(Int, Richiesta, Giorno)],day:Date):List[InfoReq]={
     @scala.annotation.tailrec
     def _createInfoDayCaseClass(resultJoin:List[(Int, Richiesta, Giorno)], listInfoReq:List[InfoReq]=List.empty):List[InfoReq]= resultJoin match {
@@ -105,6 +93,50 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     val dayInWeek  = if(getDayNumber(day)!=0)getDayNumber(day) else 7
     _createInfoDayCaseClass(resultJoin.filter(value=>value._3.idGiornoSettimana==dayInWeek))
   }
+
+
+
+  private def constructInfoReq(infoReq: List[InfoReq], algorithmExecute: AlgorithmExecute):List[InfoReq]=
+    algorithmExecute.settimanaSpeciale match {
+      case Some(specialWeek) =>
+        algorithmExecute.settimanaNormale match {
+        case Some(normalWeek) =>
+          val infoReqForSpecialWeek = infoReq.partition(res=>specialWeek.exists(x => x.date.compareTo(res.data)==0 && x.turnoId == res.idShift))
+          modifiedNormalWeek(normalWeek,infoReqForSpecialWeek._2):::modifiedSpecialWeek(specialWeek,infoReqForSpecialWeek._1)
+        case None => modifiedSpecialWeek(specialWeek,infoReq)
+      }
+      case None => algorithmExecute.settimanaNormale match {
+        case Some(normalWeek) => modifiedNormalWeek(normalWeek,infoReq)
+        case None =>infoReq
+      }
+    }
+
+  private def modifiedSpecialWeek(specialWeek: List[SettimanaS], infoReq: List[InfoReq]): List[InfoReq] ={
+    @scala.annotation.tailrec
+    def _modifiedSpecialWeek(listIndex:List[(Int,Int)], infoReq: List[InfoReq]):List[InfoReq] = listIndex match {
+      case ::(index, next) => _modifiedSpecialWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
+      case Nil =>infoReq
+    }
+  _modifiedSpecialWeek(specialWeek.map(res=>(res.quantita,infoReq.indexWhere(x=>x.idShift==res.turnoId && x.idDay==res.idDay && x.data.compareTo(res.date)==0))),infoReq)
+
+  }
+
+  private  def modifiedNormalWeek(normalWeek: List[SettimanaN], infoReq: List[InfoReq]): List[InfoReq]={
+    @scala.annotation.tailrec
+    def _modifiedNormalWeek(listIndex:List[(Int,Int)], infoReq: List[InfoReq]):List[InfoReq] = listIndex match {
+      case ::(index, next) => _modifiedNormalWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
+      case Nil =>infoReq
+    }
+    val t = normalWeek.flatMap(res=>{
+      infoReq.foldLeft((List[(Int,Int)](),0)){
+        case (index,element) if element.idShift==res.turnoId && element.idDay==res.idDay=>(index._1:+(res.quantita,index._2),index._2+1)
+        case (index,_)=>(index._1,index._2+1)
+      }._1
+    })
+    _modifiedNormalWeek(t,infoReq)
+
+  }
+
   private def createResultJoinWithTerminal(resultJoin:List[(Richiesta,Giorno)],theoricalRequest: List[RichiestaTeorica]): List[(Int, Richiesta, Giorno)] =
     resultJoin.map(result=> (theoricalRequest.find(theorical => theorical.idRichiestaTeorica.contains(result._1.richiestaTeoricaId)) match {
       case Some(value) => value.terminaleId
@@ -114,13 +146,13 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   private def getAllPreviousSequence(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Future[Option[List[PreviousSequence]]] ={
     val (sunday,endOfMont) = (getEndDayWeek(previousMonthDate(algorithmExecute.dateI)),endOfMonth(previousMonthDate(algorithmExecute.dateI)))
     InstanceRisultato.operation().selectFilter(risultato=>risultato.personeId.inSet(infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
-      && risultato.data.inSet(allSundayMonth(sunday,endOfMont))).collect {
-      case Some(result) => iterateIdPerson(result,infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
-      case None =>iterateIdPerson(List.empty,infoForAlgorithm.persons.flatMap(_._2.matricola.toList))
+      && risultato.data.inSet(allSundayMonthAndEndWeek(sunday,endOfMont))).collect {
+      case Some(result) => iterateIdPerson(result,infoForAlgorithm.persons.flatMap(_._2.matricola.toList),previousMonthDate(algorithmExecute.dateI))
+      case None =>iterateIdPerson(List.empty,infoForAlgorithm.persons.flatMap(_._2.matricola.toList),previousMonthDate(algorithmExecute.dateI))
     }
   }
 
-   private def allSundayMonth(sunday:Date,finalDayMont:Date):List[Date]={
+   private def allSundayMonthAndEndWeek(sunday:Date,finalDayMont:Date):List[Date]={
      @scala.annotation.tailrec
      def _allSunday(sunday:Date,allSunday:List[Date]=List.empty):List[Date]= sunday match {
        case date if date.compareTo(finalDayMont) < 0 =>_allSunday(subtract(date, 7), allSunday :+ date)
@@ -130,59 +162,80 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
      }
      _allSunday(sunday)
    }
-  //  final case class PreviousSequence(idDriver:Int,sequenza:Int,distanceFreeDay:Int)
-  //SEQUENZA MESE 4 DOMENICHE
-  val returnSundayWork:List[Date]=>(Int,Int)=date=>{
-    sundayWork(date,(0,0))
+
+  @scala.annotation.tailrec
+  def searchEndFreeDay(date:List[Date],endDayMonth:Date):Int= date match {
+    case firstDate:: next if endDayMonth.compareTo(firstDate)==0 =>searchEndFreeDay(next,subtract(endDayMonth,-1))
+    case _::_ =>getDayNumber(endDayMonth)
+    case Nil =>6
   }
-  private val sundayWork:(List[Date],(Int,Int))=>(Int,Int)={
-    case (head::next,_) if isFirstSunday(head)=>sundayWork(next,(1,2))
-    case (head::next,_) if isSecondSunday(head)=>sundayWork(next,(1,2))
-    case (head::next,_) if isThirdSunday(head)=>sundayWork(next,(1,2))
-    case (head::next,_) if isFourthSunday(head)=>sundayWork(next,(1,2))
-    case (_,sequence)=>sequence
+
+  private def createPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence= result match {
+    case  res =>constructPreviousSequence(id,data,res)
+    case Nil => PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
+
   }
-  private def searchEndFreeDay(date:List[Date]):Int={
-    @scala.annotation.tailrec
-    def _searchEndFreeDay(date:List[Date], day:Int=0):Int= date match {
-      case firstDate::secondDate:: next if subtract(firstDate,-1).compareTo(secondDate)==0=>_searchEndFreeDay(secondDate::next,day=day+1)
-      case _::_ =>day
-      case Nil =>day
-    }
-    _searchEndFreeDay(date)
+
+ private def constructPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence={
+   @scala.annotation.tailrec
+   def _sundayMonth(sunday:Date, endDayWeek:Date, number:Int=0):Int=sunday match {
+     case date if date.compareTo(endDayWeek)==0=>number+1
+     case date =>_sundayMonth(date,subtract(endDayWeek,7),number+1)
+   }
+   val sunday=result.filter(value=>isSunday(value.data)).distinctBy(_.data).map(_.data).sortBy(_.getTime)
+     .map(date=>_sundayMonth(date,getEndDayWeek(data))) //controllar si tiene mas de3 domingos trabajos y el mes es 4
+   val allSunday = allSundayMonth(getEndDayWeek(data),endOfMonth(data)).sortBy(_.getTime).map(date=>_sundayMonth(date,getEndDayWeek(data)))
+   verifySunday(sunday,allSunday,id,result,data)
+ }
+
+ private def verifySunday(sunday:List[Int],allSunday:List[Int],id:Int,result:List[Risultato],data:Date):PreviousSequence={
+   val endFreeDay=searchEndFreeDay(result.map(_.data).distinct.sortWith(_.getTime>_.getTime),endOfMonth(data))
+   sunday.length match {
+     case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+     case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+     case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
+     case _ =>
+       val sequence = allSunday.filter(x=> !sunday.contains(x))
+       val idSequence = selectIdSequence(allSunday,sequence)
+       PreviousSequence(id,idSequence,endFreeDay)
+   }
+ }
+
+  private val searchSequence:(Int,(Int,(Int,Int)),(Int,Int))=>Int={
+    case (idSequence,sequences,previousSunday) if sequences._2.equals(previousSunday)=> idSequence+sequences._1
+    case (idSequence,_,_) =>  idSequence
   }
-  private def createPreviousSequence(id:Int,result : List[Risultato]):PreviousSequence={
-    val sunday=result.filter(value=>isSunday(value.data)).distinctBy(_.data)
-    val sundayWorkVal = if(sunday.length>=3)(3,0) else returnSundayWork(sunday.map(_.data))
-    createPreviousSequenceMonth4Sunday(sundayWorkVal,searchEndFreeDay(result.map(_.data).distinct.sortWith(_.getTime>_.getTime)),id)
+
+  private def selectIdSequence(listDate:List[Int],sundayFree:List[Int]):Int= (listDate.length,sundayFree) match {
+    case (4,List(first,second)) =>sequences4.foldLeft(0)((idSequence,sequences)=>searchSequence(idSequence,sequences,(first,second)))
+    case (5,List(first,second)) =>sequences5.foldLeft(0)((idSequence,sequences)=>searchSequence(idSequence,sequences,(first,second)))
   }
-  private  def createPreviousSequenceMonth4Sunday(sundays:(Int,Int),endedWeek:Int,id:Int):PreviousSequence= sundays match {
-    case FIRST_SEQUENCE_4 => PreviousSequence(id,1,endedWeek)
-    case SECOND_SEQUENCE_4 =>PreviousSequence(id,2,endedWeek)
-    case THIRD_SEQUENCE_4 => PreviousSequence(id,3,endedWeek)
-    case FOURTH_SEQUENCE_4 => PreviousSequence(id,4,endedWeek)
-    case ANOTHER_SEQUENCE_4 => PreviousSequence(id,0,endedWeek)
-    case ANOTHER2_SEQUENCE_4 => PreviousSequence(id,0,endedWeek)
-    case _ => PreviousSequence(id,0,endedWeek)
-  }
-  private def iterateIdPerson(result : List[Risultato],idPerson:List[Int]):Option[List[PreviousSequence]]= {
+
+  private def iterateIdPerson(result : List[Risultato],idPerson:List[Int],data:Date):Option[List[PreviousSequence]]= {
     @scala.annotation.tailrec
     def _iterateIdPerson(idPerson: List[Int], previousSequence: List[PreviousSequence] = List.empty): Option[List[PreviousSequence]] = idPerson match {
-      case ::(id, next) => _iterateIdPerson(next, previousSequence :+ createPreviousSequence(id,result.filter(_.personaId == id)))
+      case ::(id, next) => _iterateIdPerson(next, previousSequence :+ createPreviousSequence(id,data,result.filter(_.personaId == id)))
       case Nil => Option(previousSequence)
     }
     _iterateIdPerson(idPerson)
   }
 }
+
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,11))
-  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
+  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
+  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
+  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
+  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
+  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
   val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
+  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
   val threeSaturday=false
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
@@ -192,4 +245,3 @@ object t extends App{
   }
   while (true){}
 }
-

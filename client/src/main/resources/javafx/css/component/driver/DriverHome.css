@@ -1,4 +1,7 @@
 #driverHome{
-    -fx-height: 100%;
-    -fx-width: 100%;
+    -fx-alignment: center;
+    -fx-min-height: 700;
+    -fx-fill-width: true;
+    -fx-min-width: 800;
+    -fx-padding: 10;
 }
