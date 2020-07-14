@@ -68,10 +68,11 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     def _createInfoDay(theoricalRequest: List[RichiestaTeorica],infoReq: List[InfoReq]=List.empty):Option[List[InfoReq]]= theoricalRequest match {
       case ::(request, next) => _createInfoDay(next,createListInfoDay(resultJoinWithTerminal
         .filter(id=>request.idRichiestaTeorica.contains(id._2.richiestaTeoricaId)),algorithmExecute):::infoReq)
-      case Nil => Option(infoReq)
+      case Nil => Option(constructInfoReq(infoReq,algorithmExecute))
     }
     _createInfoDay(theoricalRequest)
   }
+
   private def createListInfoDay(resultJoin:List[(Int, Richiesta, Giorno)],algorithmExecute: AlgorithmExecute):List[InfoReq]={
     (DEFAULT_INIT_DAY until computeDaysBetweenDates(algorithmExecute.dateI,algorithmExecute.dateF))
       .flatMap(value=>{
@@ -80,6 +81,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
         createInfoDayCaseClass(resultJoin,day)
       }).toList
   }
+
   private def createInfoDayCaseClass(resultJoin:List[(Int, Richiesta, Giorno)],day:Date):List[InfoReq]={
     @scala.annotation.tailrec
     def _createInfoDayCaseClass(resultJoin:List[(Int, Richiesta, Giorno)], listInfoReq:List[InfoReq]=List.empty):List[InfoReq]= resultJoin match {
@@ -91,6 +93,50 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     val dayInWeek  = if(getDayNumber(day)!=0)getDayNumber(day) else 7
     _createInfoDayCaseClass(resultJoin.filter(value=>value._3.idGiornoSettimana==dayInWeek))
   }
+
+
+
+  private def constructInfoReq(infoReq: List[InfoReq], algorithmExecute: AlgorithmExecute):List[InfoReq]=
+    algorithmExecute.settimanaSpeciale match {
+      case Some(specialWeek) =>
+        algorithmExecute.settimanaNormale match {
+        case Some(normalWeek) =>
+          val infoReqForSpecialWeek = infoReq.partition(res=>specialWeek.exists(x => x.date.compareTo(res.data)==0 && x.turnoId == res.idShift))
+          modifiedNormalWeek(normalWeek,infoReqForSpecialWeek._2):::modifiedSpecialWeek(specialWeek,infoReqForSpecialWeek._1)
+        case None => modifiedSpecialWeek(specialWeek,infoReq)
+      }
+      case None => algorithmExecute.settimanaNormale match {
+        case Some(normalWeek) => modifiedNormalWeek(normalWeek,infoReq)
+        case None =>infoReq
+      }
+    }
+
+  private def modifiedSpecialWeek(specialWeek: List[SettimanaS], infoReq: List[InfoReq]): List[InfoReq] ={
+    @scala.annotation.tailrec
+    def _modifiedSpecialWeek(listIndex:List[(Int,Int)], infoReq: List[InfoReq]):List[InfoReq] = listIndex match {
+      case ::(index, next) => _modifiedSpecialWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
+      case Nil =>infoReq
+    }
+  _modifiedSpecialWeek(specialWeek.map(res=>(res.quantita,infoReq.indexWhere(x=>x.idShift==res.turnoId && x.idDay==res.idDay && x.data.compareTo(res.date)==0))),infoReq)
+
+  }
+
+  private  def modifiedNormalWeek(normalWeek: List[SettimanaN], infoReq: List[InfoReq]): List[InfoReq]={
+    @scala.annotation.tailrec
+    def _modifiedNormalWeek(listIndex:List[(Int,Int)], infoReq: List[InfoReq]):List[InfoReq] = listIndex match {
+      case ::(index, next) => _modifiedNormalWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
+      case Nil =>infoReq
+    }
+    val t = normalWeek.flatMap(res=>{
+      infoReq.foldLeft((List[(Int,Int)](),0)){
+        case (index,element) if element.idShift==res.turnoId && element.idDay==res.idDay=>(index._1:+(res.quantita,index._2),index._2+1)
+        case (index,_)=>(index._1,index._2+1)
+      }._1
+    })
+    _modifiedNormalWeek(t,infoReq)
+
+  }
+
   private def createResultJoinWithTerminal(resultJoin:List[(Richiesta,Giorno)],theoricalRequest: List[RichiestaTeorica]): List[(Int, Richiesta, Giorno)] =
     resultJoin.map(result=> (theoricalRequest.find(theorical => theorical.idRichiestaTeorica.contains(result._1.richiestaTeoricaId)) match {
       case Some(value) => value.terminaleId
@@ -117,7 +163,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
      _allSunday(sunday)
    }
 
-  @scala.annotation.tailrec //verificar getdaynumber
+  @scala.annotation.tailrec
   def searchEndFreeDay(date:List[Date],endDayMonth:Date):Int= date match {
     case firstDate:: next if endDayMonth.compareTo(firstDate)==0 =>searchEndFreeDay(next,subtract(endDayMonth,-1))
     case _::_ =>getDayNumber(endDayMonth)
@@ -126,9 +172,10 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 
   private def createPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence= result match {
     case  res =>constructPreviousSequence(id,data,res)
-    case Nil => PreviousSequence(id,DEFAULT_SEQUENCE,getDayNumber(endOfMonth(data)))
+    case Nil => PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
 
   }
+
  private def constructPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence={
    @scala.annotation.tailrec
    def _sundayMonth(sunday:Date, endDayWeek:Date, number:Int=0):Int=sunday match {
@@ -146,13 +193,14 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
    sunday.length match {
      case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
      case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-     case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_SEQUENCE,getDayNumber(endOfMonth(data)))
+     case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
      case _ =>
        val sequence = allSunday.filter(x=> !sunday.contains(x))
        val idSequence = selectIdSequence(allSunday,sequence)
        PreviousSequence(id,idSequence,endFreeDay)
    }
  }
+
   private val searchSequence:(Int,(Int,(Int,Int)),(Int,Int))=>Int={
     case (idSequence,sequences,previousSunday) if sequences._2.equals(previousSunday)=> idSequence+sequences._1
     case (idSequence,_,_) =>  idSequence
@@ -187,7 +235,7 @@ object t extends App{
   val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
   val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
+  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
   val threeSaturday=false
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)

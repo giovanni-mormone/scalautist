@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 
-import utils.DateConverter.{createListDay, createListDayBetween, getEndDayWeek}
+import utils.DateConverter.{createListDay, createListDayBetween, dateToCalendar, getEndDayWeek}
 
 import scala.collection.immutable.{AbstractMap, SeqMap, SortedMap}
 
@@ -112,26 +112,6 @@ object DateConverter {
     })
   }
 
-  val isFirstSunday:Date=>Boolean=date=>{
-    val calendar = dateToCalendar(date)
-    if(calendar.get(Calendar.DAY_OF_MONTH)<=7) true else false
-  }
-  val isSecondSunday:Date=>Boolean=date=>{
-    val calendar = dateToCalendar(date)
-    if(calendar.get(Calendar.DAY_OF_MONTH)<=14) true else false
-  }
-  val isThirdSunday:Date=>Boolean=date=>{
-    val calendar = dateToCalendar(date)
-    if(calendar.get(Calendar.DAY_OF_MONTH)<=21) true else false
-  }
-  val isFourthSunday:Date=>Boolean=date=>{
-    val calendar = dateToCalendar(date)
-    if(calendar.get(Calendar.DAY_OF_MONTH)<=28) true else false
-  }
-  val isFiftSunday:Date=>Boolean=date=>{
-    val calendar = dateToCalendar(date)
-    if(calendar.get(Calendar.DAY_OF_MONTH)<=30 || calendar.get(Calendar.DAY_OF_MONTH)<=31) true else false
-  }
   val isSunday:Date=>Boolean=date=>{
     val calendar = dateToCalendar(date)
     if(calendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY)true else false
