@@ -14,6 +14,7 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 trait Algoritmo {
 
   /**
