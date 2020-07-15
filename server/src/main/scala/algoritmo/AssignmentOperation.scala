@@ -17,6 +17,7 @@ import scala.util.{Failure, Random, Success}
 trait AssignmentOperation{
   def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]):Unit
 }
+
 object AssignmentOperation extends AssignmentOperation {
   //TODO DETTO DA GIANNI! assegnare prima i liberi ai 5x2 sabato e domenica libero
   //TODO assegnare domeniche 6x1 indipendente sia fisso o rotatorio
