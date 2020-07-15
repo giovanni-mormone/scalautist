@@ -52,3 +52,4 @@ select * from TerminalSets
 select * from GiornoSets
 select * from RichiestaSets
 select * from AssenzaSets
+select * from RisultatoSets
