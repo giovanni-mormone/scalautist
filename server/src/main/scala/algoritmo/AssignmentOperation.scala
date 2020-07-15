@@ -271,8 +271,8 @@ object AssignmentOperation extends AssignmentOperation {
 
   private val sequenceCombinations: Map[(Int,Int,Int),List[Int]] = Map((1,4,4) -> List(1,2,3),(2,4,4) -> List(2,3,4),(3,4,4) -> List(3,2,1), (4,4,4) -> List(4,3),
     (0,4,4) -> List(1,2,3,4), (1,4,5) -> List(1,2,3),(2,4,5) -> List(2,4,5,3),(3,4,5) -> List(3,4,2,1), (4,4,5) -> List(4,5,3),
-    (0,4,5) -> List(5,2,3,4),(1,5,4) -> List(1,2),(2,5,4) -> List(2,3,4),(3,5,4) -> List(1,2,3), (4,5,4) -> List(3,4,2,1),
-    (5,5,4) -> List(4,3),(0,5,4) -> List(1,2,3,4))
+    (0,4,5) -> List(5,2,3,4,1), (1,5,4) -> List(1,2),  (2,5,4) -> List(2,3,4),  (3,5,4) -> List(1,2,3),   (4,5,4) -> List(3,4,2,1),
+    (5,5,4) -> List(4,3),     (0,5,4) -> List(1,2,3,4))
 
   val sequences4: Map[Int,(Int,Int)] = Map(1 -> (1,2),2 -> (1,4), 3 -> (2,3), 4 -> (3,4))
 
@@ -359,27 +359,38 @@ object AssignmentOperation extends AssignmentOperation {
     _metodino(assigned.toList.sortWith(_._2<_._2))
   }
 
+ private def updateLastFree(infoForAlgorithm: InfoForAlgorithm,result:List[Info],date:Date):List[(Int,Int)]={
+   val sunday = getEndDayWeek(date)
+   val saturday = subtract(sunday, -1)
+   val update = result.filter(driver=> !FULL_AND_PART_TIME_5X2.contains(driver.tipoContratto))
+     .map(x=>x.copy(infoDay=x.infoDay
+       .filter(e=> (e.data.compareTo(saturday)==0 || e.data.compareTo(sunday)==0) && (e.absence || e.freeDay))))
+     .filter(_.infoDay.nonEmpty)
 
+   val sequence = infoForAlgorithm.previousSequence.toList.flatten.map(x => (x.idDriver, x.distanceFreeDay))
+   sequence.map{
+     case (i, _) if update.exists(_.idDriver==i)=> update.foldLeft((i,0)){
+       case (default,actual) if actual.idDriver==default._1=> (i,getDayNumber(actual.infoDay.last.data))
+       case (default,_)=> default
+     }
+     case x => x
+   }
+
+ }
   private def assignShifts(infoForAlgorithm: InfoForAlgorithm, dateI: Date, dateF: Date, result: List[Info]): Future[List[Info]] = Future{
     emitter.sendMessage("Assign Shift Fixed and Rotatory")
     val(fissi, rotatori) = infoForAlgorithm.persons.partition(person => infoForAlgorithm.allContract.toList.flatten.filter(_.turnoFisso).flatMap(_.idContratto.toList).contains(person._1.contrattoId))
     val maronna = assignShiftForFissi(fissi,infoForAlgorithm.allRequest,dateI,dateF,result)
     val maronna2: (Option[List[InfoReq]], List[Info]) = assignShiftForRotary(rotatori,maronna._1,dateI,dateF,maronna._2,infoForAlgorithm.allContract)
-    val lastFree = infoForAlgorithm.previousSequence.toList.flatten.map(x => (x.idDriver, x.distanceFreeDay))
-    var maronna3:(Option[List[InfoReq]],List[Info])=(None,List())
-    try{
-       maronna3  =assignFreeDays(infoForAlgorithm.persons.filter(idPerson => !FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId)),maronna2._1, maronna2._2,createWeekLists(dateI,dateF), lastFree)
+    val allSaturday= createListDayBetween(dateI,dateF).filter(isSaturday)
+    val maronna2_5 =ruleThirdSaturday(allSaturday, maronna2._1,infoForAlgorithm.persons.map(_._2),maronna2._2)
+    val lastFree:List[(Int,Int)]= updateLastFree(infoForAlgorithm,maronna2_5._2,dateI)
 
-    }catch {
-      case e:Exception => println(e)
-    }
+    val maronna3:(Option[List[InfoReq]],List[Info])=assignFreeDays(infoForAlgorithm.persons.filter(idPerson => !FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId)),maronna2_5._1, maronna2_5._2,createWeekLists(dateI,dateF), lastFree)
+
     val listWeek = createWeekLists(dateI,dateF)
-    var maronna4: (List[Info],Option[List[InfoReq]]) = (List(),None)
-    try{
-      maronna4 =assignExtraOrdinary(maronna3._2,maronna3._1,infoForAlgorithm.persons.map(_._2),listWeek)
-    }catch {
-      case e:Exception => println(e)
-    }
+    val maronna4: (List[Info],Option[List[InfoReq]]) = assignExtraOrdinary(maronna3._2,maronna3._1,infoForAlgorithm.persons.map(_._2),listWeek)
+
     PrintListToExcel.printInfo(dateI,dateF,maronna4._1,maronna4._2)
     RisultatoOperation.saveResultAlgorithm(maronna4._1).onComplete {
       case Failure(exception) => println(exception)
@@ -392,6 +403,17 @@ object AssignmentOperation extends AssignmentOperation {
     emitter.sendMessage("Assegnando Giorni Liberi")
     @scala.annotation.tailrec
     def _assignFreeDays(request: Option[List[InfoReq]], weeks: List[List[Date]], lastFree: List[(Int, Int)], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = weeks match {
+      case ::(head,Nil) if head.length<7=>
+        emitter.sendMessage("Assegnando Giorni Liberi Settimana"+ head.head)
+        val secureLastFree = lastFree.partition(x=>getDayNumber(head.last)<x._2 && x._2!=0)
+        val anotherDriver = secureLastFree._1.splitAt((secureLastFree._1.length/6)*head.length)
+        val weekFreeDays = _assignFreeWeek(head, request,(secureLastFree._2:::anotherDriver._1).sortWith(_._2 > _._2))
+        (weekFreeDays._1,upsertListInfo(resultNew,weekFreeDays._3))
+      case ::(head, next) if head.length<7=>
+        emitter.sendMessage("Assegnando Giorni Liberi Settimana"+ head.head)
+        val secureLastFree = lastFree.partition(x=>getDayNumber(head.head)>x._2)
+        val weekFreeDays = _assignFreeWeek(head, request,secureLastFree._2.sortWith(_._2 > _._2))
+        _assignFreeDays(weekFreeDays._1,next, weekFreeDays._2:::secureLastFree._1, upsertListInfo(resultNew,weekFreeDays._3))
       case ::(head, next) =>
         emitter.sendMessage("Assegnando Giorni Liberi Settimana"+ head.head)
         val weekFreeDays = _assignFreeWeek(head, request,lastFree.sortWith(_._2 > _._2))
@@ -404,7 +426,7 @@ object AssignmentOperation extends AssignmentOperation {
       case ::(head, next) =>
         drivers.find(_._2.matricola.contains(head._1)) match {
           case Some(driver) =>if(head._2==0){
-            week.filter(isSunday).foldLeft(false)((default,ress)=>{
+            week.foldLeft(false)((default,ress)=>{
               default || result.filter(res => driver._2.matricola.contains(res.idDriver)).exists(
                 _.infoDay.count(x => x.data.compareTo(ress) == 0 && (x.freeDay || x.absence))>0)
             }) match {
@@ -427,6 +449,7 @@ object AssignmentOperation extends AssignmentOperation {
 
             }
           } else {
+
             val dayInWeek = result.filter(res => driver._2.matricola.contains(res.idDriver)).flatMap(
               _.infoDay.filter(x => week.exists(date => date.compareTo(x.data) == 0 && getDayNumber(x.data) <= head._2)))
             val possibleDays = dayInWeek.partition(x => !isSunday(x.data))
@@ -565,7 +588,7 @@ object AssignmentOperation extends AssignmentOperation {
       if (nextWeek(date).compareTo(dateF) > 0)
         result:+ createListDayBetween(date, dateF)
       else
-        _createWeekLists(nextWeek(date), result:+ createListDayBetween(date, getEndDayWeek(date)))
+        _createWeekLists(getFirstDayWeek(nextWeek(date)), result:+ createListDayBetween(date, getEndDayWeek(date)))
     }
 
     _createWeekLists(dateI)
@@ -603,7 +626,9 @@ object AssignmentOperation extends AssignmentOperation {
   def searchShiftWithMoreRequest(week: List[Date], allRequest:Option[List[InfoReq]],persons:List[Persona],resultWeek:List[Info]):(List[Info],List[InfoReq]) = {
     val newInfoReq: List[InfoReq] = week.flatMap(resp=> allRequest.toList.flatten.filter(x=> (x.request - x.assigned) >0 && x.data.compareTo(resp)==0))
     val mapPerson: mutable.Map[Int, Int] = persons.flatMap(x=>x.matricola.map(x=>x->0)).to(mutable.Map)
-    emitter.sendMessage("Assegnando Straordinario in Settimana"+week.head)
+    week.headOption.foreach(data=>{
+      emitter.sendMessage("Assegnando Straordinario in Settimana"+data)
+    })
     @scala.annotation.tailrec
     def _searchShiftWithMoreRequest(infoReq:List[InfoReq], result:List[Info], resultInfoReq:List[InfoReq]=List.empty):(List[Info],List[InfoReq]) = infoReq match {
       case s::next =>
@@ -648,8 +673,69 @@ object AssignmentOperation extends AssignmentOperation {
       case x => x
     }))),updateInfoReq(Some(listInfoReq),infoReq.data,infoReq.idShift).toList.flatten)
   }
-  private def rulerThirdSaturday() = {
 
+  private def ruleThirdSaturday(week: List[Date], allRequest:Option[List[InfoReq]],drivers:List[Persona],result:List[Info]):(Option[List[InfoReq]],List[Info])= {
+    emitter.sendMessage("Assegnando Terzo Sabato")
+      def _iterateDrivers(driver:List[Persona],allRequest:List[InfoReq],result:List[Info]):(Option[List[InfoReq]],List[Info])= driver match {
+        case ::(head, next) =>
+          val driverResult = result.filter(x=>head.matricola.contains(x.idDriver))
+          val finalResult = _searchSaturday(week,driverResult,allRequest)
+          _iterateDrivers(next,finalResult._1,upsertListInfo(result,finalResult._2))
+        case Nil =>(Some(allRequest),result)
+      }
+
+    @scala.annotation.tailrec
+    def _searchSaturday(saturdays:List[Date], info:List[Info], request:List[InfoReq], sundayWork:List[Date]=List.empty):(List[InfoReq],List[Info])= saturdays match {
+      case ::(head, next) if info.exists(res=> res.infoDay.exists(x => x.data.compareTo(head)==0 && !x.freeDay && !x.absence)
+        && res.infoDay.exists(x => x.data.compareTo(subtract(head,1))==0 && !x.freeDay && !x.absence))=>
+        val finalSunday = head+:sundayWork
+        if(finalSunday.length<3)
+          _searchSaturday(next,info,request,finalSunday)
+        else{
+          val day = finalSunday(Random.nextInt(finalSunday.length))
+          val otherDay = finalSunday.filter(days=>days.compareTo(day)>0)
+          val newInfo =info.map(x=> x.copy(infoDay = x.infoDay.map{
+            case y if y.data.compareTo(day)==0 =>
+              InfoDay(day,freeDay = true)
+            case y => y
+          }))
+          val ww = info.flatMap(_.infoDay.filter(_.data.compareTo(day)==0)).map(r=>{
+            val w = deUpdateInfoReq(Some(request),day,r.shift.head)
+            val e= r.shift2 match {
+              case Some(value) =>  deUpdateInfoReq(w,day,value)
+              case None =>w
+            }
+            e
+          })
+          _searchSaturday((next:::otherDay).sortBy(_.getTime),newInfo,ww.flatMap(_.toList).flatten)
+        }
+      case _::next => _searchSaturday(next,info,request)
+      case Nil =>(request,info)
+    }
+
+    allRequest match {
+      case Some(allRequest) =>_iterateDrivers(drivers,allRequest,result)
+    }
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
