@@ -75,7 +75,7 @@ trait ManagerModel {
    * @return Future Response Int that represent status operation
    *         [[messagecodes.StatusCodes.SUCCES_CODE]] if algorithm init without problem
    */
-  def runAlgorithm(info:AlgorithmExecute): Future[Response[Int]]
+  def runAlgorithm(info:AlgorithmExecute,method:String=>Unit): Future[Response[Int]]
 
   /**
    * method that return result of the algorithm by terminal,
@@ -155,10 +155,10 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 
-    override def runAlgorithm(info: AlgorithmExecute): Future[Response[Int]] = {
-      val receiver = ConfigReceiver()
+    override def runAlgorithm(info: AlgorithmExecute,method:String=>Unit): Future[Response[Int]] = {
+      val receiver = ConfigReceiver("info_algorithm")
       receiver.start()
-      receiver.receiveMessage()
+      receiver.receiveMessage(method)
       val request = Post(getURI("executealgorithm"), transform(info))
       callHtpp(request).flatMap(unMarshall)
     }
@@ -189,66 +189,4 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 }
-}
-
-object t extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
-  val terminals=List(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
-  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
-  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
-  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
-  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
-  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
-  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
-  val threeSaturday=false
-  val algorithmExecute: AlgorithmExecute =
-    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
-  ManagerModel().runAlgorithm(algorithmExecute).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>println(":)")
-  }
-  while (true){}
-}
-object w extends App{
-  val u = ListBuffer((1,List((1,2),(5,2),(3,2),(2,2))),
-    (3,List((1,2),(5,2),(3,2),(2,2))),
-    (5,List((1,2),(5,2),(3,2),(2,2))),
-    (4,List((1,2),(5,2),(3,2),(2,2))),
-    (6,List((1,2),(5,2),(3,2),(2,2))),
-    (7,List((1,2),(5,2),(3,2),(2,2))),
-    (8,List((1,2),(5,2),(3,2),(2,2))))
-  val s = ListBuffer((1,List((1,1),(6,1),(4,1),(2,2))),
-    (3,List((1,2),(6,1),(4,1),(2,2))),
-    (2,List((1,2),(5,2),(3,2),(2,2))),
-    (4,List((1,2),(5,1),(3,2),(2,2))))
-
-  val ok = u.flatMap{
-    case (i, i1) if s.exists(_._1 == i)=>s.filter(_._1==i).map(_=>(i,i1))
-    case (i, i1) => List((i,i1))
-  }
-
-  val e = u.flatMap{
-    case (i, i1) if s.exists(_._1 == i)=>s.filter(_._1==i).map(x=>{
-      //println(x)
-      val t = x._1->i1.flatMap{
-        case (s, s1) if x._2.exists(_._1==s)=>
-          //println(s)
-          x._2.filter(_._1==s).map(_=>(s,s1))
-        case (s, s1) =>
-          //println(s)
-          List((s,s1))
-      }
-      (t._1,t._2:::x._2.filter(x=> !t._2.exists(_._1==x._1)))
-    })
-    case (i, i1) => ListBuffer((i,i1))
-  }
-  s.filter(xs=> !u.exists(_._1==xs._1)).map(x=>e+=x)
-  println(e.sortWith(_._1<_._1))
 }

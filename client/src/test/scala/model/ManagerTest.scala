@@ -123,83 +123,83 @@ class ManagerTest extends AsyncFlatSpec with ClientAkkaHttp {
 
   behavior of "Run Algorithm"
   it should "Return Success code if algorithm init without problem" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecute)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecute,f)
     future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
   it should "Return Success code if algorithm init without problem and Group is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithGroupNone)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithGroupNone,f)
     future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
   it should "Return Success code if algorithm init without problem and normal week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithNormalWeekNone)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithNormalWeekNone,f)
     future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
   it should "Return Success code if algorithm init without problem and special week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithSpecialWeekNone)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithSpecialWeekNone,f)
     future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
   it should "Return Error code 1 if difference between date is less that 28" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteDateError)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteDateError,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE1) }
   }
   it should "Return Error code 1 if date to the contrary" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteDateContrary)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteDateContrary,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE1) }
   }
   it should "Return Error code 2 if some terminal in list not exist in database " in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE2) }
   }
   it should "Return Error code 2 if list of terminal is empty" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalEmpty)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalEmpty,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE2) }
   }
   it should "Return Error code 3 if group not contains minimum two date" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupWithOneDate)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupWithOneDate,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE3) }
   }
   it should "Return Error code 3 if group contains a ruler that not exist in database" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupWithRulerNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupWithRulerNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE3) }
   }
   it should "Return Error code 3 if group contains a date outside time frame algorithm" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupContainDateOutsideTimeFrame)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteGroupContainDateOutsideTimeFrame,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE3) }
   }
   it should "Return Error code 4 if normal week contains idDay grater that 7" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithIdDayGreater7)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithIdDayGreater7,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE4) }
   }
   it should "Return Error code 4 if normal week contains ruler that not exist in database" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithRulerNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithRulerNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE4) }
   }
   it should "Return Error code 4 if normal week contains a shift that not exist in database" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithShiftNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteNormalWeekWithShiftNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE4) }
   }
   it should "Return Error code 5 if special week contains idDay grater that 7" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithIdDayGreater7)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithIdDayGreater7,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE5) }
   }
   it should "Return Error code 5 if special week contains date outside time frame algorithm" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithDateOutside)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithDateOutside,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE5) }
   }
   it should "Return Error code 5 if special week contains ruler that not exist in database" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithRulerNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithRulerNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE5) }
   }
   it should "Return Error code 5 if special week contains a shift that not exist in database" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithShiftNotExist)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteSpecialWeekWithShiftNotExist,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE5) }
   }
   it should "Return Error code 6 if terminal not contains theorical request" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalWithoutTheoricRequest)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalWithoutTheoricRequest,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE6) }
   }
   it should "Return Error code 6 if some terminal in list not contains theorical request" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalsWithoutTheoricRequest)
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalsWithoutTheoricRequest,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE6) }
   }
 }

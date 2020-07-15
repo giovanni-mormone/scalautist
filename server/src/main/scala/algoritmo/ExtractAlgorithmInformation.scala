@@ -3,12 +3,12 @@ package algoritmo
 import java.sql.Date
 import java.time.LocalDate
 
+import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation._
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceRichiesta, InstanceRisultato}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstanceRichiesta, InstanceRisultato}
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
-import _root_.emitter.ConfigEmitter
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
@@ -25,24 +25,26 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   //TODO tornare quantità di giorni trascorsi dal ultimo libero di ogni conducente col suo turno tornare anche secuenza domeniche
   //TODO tornare tutti conducenti con assenza
   //TODO tornare tutta la richiesta teorica per il periodo a fare eseguire
-  //
+  //TODO controllare final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
   def apply():ExtractAlgorithmInformation ={
     emitter.start()
     this
   }
 
   private val DEFAULT_INIT_DAY = 0
-  private val emitter=ConfigEmitter()
+  private val emitter: ConfigEmitter =ConfigEmitter("info_algorithm")
   private val DEFAULT_ASSIGNED = 0
   private val DEFAULT_SEQUENCE = 1
 
-  override def getAllData(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[InfoForAlgorithm] =
+
+  override def getAllData(algorithmExecute: AlgorithmExecute, infoForAlgorithm: InfoForAlgorithm):Future[InfoForAlgorithm] =
     for{
       absence<-InstanceAssenza.operation().execQueryFilter(persona=>(persona.personaId,persona.dataInizio,persona.dataFine),
         filter=>filter.dataInizio>=algorithmExecute.dateI && filter.dataFine<=algorithmExecute.dateF)
       allRequest<-getTheoricalRequest(algorithmExecute,infoForAlgorithm)
+      allAvailability <- getAvailabilityFixed(infoForAlgorithm)
       previousSequence<-getAllPreviousSequence(algorithmExecute,infoForAlgorithm)
-    }yield infoForAlgorithm.copy(absence = absence,allRequest = allRequest,previousSequence = previousSequence)
+    }yield infoForAlgorithm.copy(absence = absence,allRequest = allRequest,previousSequence = previousSequence,allAvailability = allAvailability)
 
   private def getTheoricalRequest(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Future[Option[List[InfoReq]]] = {
     emitter.sendMessage("costruendo richiesta teorica")
@@ -77,7 +79,6 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     (DEFAULT_INIT_DAY until computeDaysBetweenDates(algorithmExecute.dateI,algorithmExecute.dateF))
       .flatMap(value=>{
         val day = subtract(algorithmExecute.dateI,value)
-        emitter.sendMessage(s"costruendo infoReq for day $day")
         createInfoDayCaseClass(resultJoin,day)
       }).toList
   }
@@ -117,6 +118,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
       case ::(index, next) => _modifiedSpecialWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
       case Nil =>infoReq
     }
+    emitter.sendMessage("Modificando settimana speciale")
   _modifiedSpecialWeek(specialWeek.map(res=>(res.quantita,infoReq.indexWhere(x=>x.idShift==res.turnoId && x.idDay==res.idDay && x.data.compareTo(res.date)==0))),infoReq)
 
   }
@@ -127,6 +129,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
       case ::(index, next) => _modifiedNormalWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
       case Nil =>infoReq
     }
+    emitter.sendMessage("Modificando settimana normale")
     val t = normalWeek.flatMap(res=>{
       infoReq.foldLeft((List[(Int,Int)](),0)){
         case (index,element) if element.idShift==res.turnoId && element.idDay==res.idDay=>(index._1:+(res.quantita,index._2),index._2+1)
@@ -136,7 +139,16 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     _modifiedNormalWeek(t,infoReq)
 
   }
+  final case class DisponibilitaFixed(idDisponibile:Int,idDay1:Int,idDay2:Int)
 
+  def getAvailabilityFixed(infoForAlgorithm: InfoForAlgorithm):Future[Option[List[DisponibilitaFixed]]] = {
+    val day = List("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
+    val fixedDriver = infoForAlgorithm.persons.filter(x=> infoForAlgorithm.allContract.toList.flatten.exists(res=>res.turnoFisso && res.idContratto.contains(x._1.contrattoId)))
+    InstanceDisponibilita.operation().selectFilter(x=>x.id.inSet(fixedDriver.flatMap(_._2.disponibilita.toList))).collect {
+      case Some(value) => Some(value.flatMap(res=>res.idDisponibilita.toList.map(id=>DisponibilitaFixed(id,day.indexWhere(_.equals(res.giorno1)),day.indexWhere(_.equals(res.giorno2))))))
+      case None => None
+    }
+  }
   private def createResultJoinWithTerminal(resultJoin:List[(Richiesta,Giorno)],theoricalRequest: List[RichiestaTeorica]): List[(Int, Richiesta, Giorno)] =
     resultJoin.map(result=> (theoricalRequest.find(theorical => theorical.idRichiestaTeorica.contains(result._1.richiestaTeoricaId)) match {
       case Some(value) => value.terminaleId
@@ -189,18 +201,26 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
  }
 
  private def verifySunday(sunday:List[Int],allSunday:List[Int],id:Int,result:List[Risultato],data:Date):PreviousSequence={
-   val endFreeDay=searchEndFreeDay(result.map(_.data).distinct.sortWith(_.getTime>_.getTime),endOfMonth(data))
-   sunday.length match {
-     case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-     case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-     case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
-     case _ =>
-       val sequence = allSunday.filter(x=> !sunday.contains(x))
-       val idSequence = selectIdSequence(allSunday,sequence)
-       PreviousSequence(id,idSequence,endFreeDay)
+   result match {
+     case _::_ =>
+       val endFreeDay =  searchEndFreeDay(result.map(_.data).distinct.sortWith(_.getTime>_.getTime),endOfMonth(data))
+       createPreviousSequence(sunday,allSunday,id,endFreeDay,data)
+     case Nil =>createPreviousSequence(sunday,allSunday,id,DEFAULT_INIT_DAY,data)
    }
- }
 
+ }
+  private def createPreviousSequence(sunday:List[Int],allSunday:List[Int],id:Int,endFreeDay:Int,data:Date) = {
+    sunday.length match {
+      case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case _ if endFreeDay==DEFAULT_INIT_DAY=>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
+      case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
+      case _ =>
+        val sequence = allSunday.filter(x=> !sunday.contains(x))
+        val idSequence = selectIdSequence(allSunday,sequence)
+        PreviousSequence(id,idSequence,endFreeDay)
+    }
+  }
   private val searchSequence:(Int,(Int,(Int,Int)),(Int,Int))=>Int={
     case (idSequence,sequences,previousSunday) if sequences._2.equals(previousSunday)=> idSequence+sequences._1
     case (idSequence,_,_) =>  idSequence

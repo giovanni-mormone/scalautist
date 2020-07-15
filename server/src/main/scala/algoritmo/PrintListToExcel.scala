@@ -96,6 +96,10 @@ object PrintListToExcel {
     def _iteraDate(listDate:List[Date],result:List[String]=List.empty):List[String]=listDate match {
       case ::(head, next) if infoDay.exists(_.data.compareTo(head)==0)=>_iteraDate(next,result:+(infoDay.find(_.data.compareTo(head) == 0) match {
         case Some(value) => value match {
+          case InfoDay(_, Some(shift), Some(shift2), Some(straordinario), false, false)=>
+                shift.toString+" "+ shift2.toString +" "+straordinario.toString
+          case InfoDay(_, Some(shift), None, Some(straordinario), false, false)=>
+                shift.toString+" "+straordinario.toString
           case InfoDay(_, Some(shift), Some(shift2), None, false, false)=> shift.toString+" "+ shift2.toString
           case InfoDay(_, Some(shift), None, None, false, false)=>shift.toString
           case InfoDay(_, None, None, None, true, false)=> "L"
