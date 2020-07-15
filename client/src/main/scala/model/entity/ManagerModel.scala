@@ -15,6 +15,7 @@ import utils.TransferObject.InfoRichiesta
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -74,7 +75,7 @@ trait ManagerModel {
    * @return Future Response Int that represent status operation
    *         [[messagecodes.StatusCodes.SUCCES_CODE]] if algorithm init without problem
    */
-  def runAlgorithm(info:AlgorithmExecute): Future[Response[Int]]
+  def runAlgorithm(info:AlgorithmExecute,method:String=>Unit): Future[Response[Int]]
 
   /**
    * method that return result of the algorithm by terminal,
@@ -154,10 +155,10 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 
-    override def runAlgorithm(info: AlgorithmExecute): Future[Response[Int]] = {
-      val receiver = ConfigReceiver()
+    override def runAlgorithm(info: AlgorithmExecute,method:String=>Unit): Future[Response[Int]] = {
+      val receiver = ConfigReceiver("info_algorithm")
       receiver.start()
-      receiver.receiveMessage()
+      receiver.receiveMessage(method)
       val request = Post(getURI("executealgorithm"), transform(info))
       callHtpp(request).flatMap(unMarshall)
     }

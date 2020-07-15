@@ -5,11 +5,10 @@ trait ConfigEmitter{
   def sendMessage(message:String):Unit
 }
 object ConfigEmitter {
-  def apply(): ConfigEmitter = new ConfigEmitterImpl()
-  private class ConfigEmitterImpl() extends ConfigEmitter{
+  def apply(routingKey:String): ConfigEmitter = new ConfigEmitterImpl(routingKey)
+  private class ConfigEmitterImpl(routingKey:String) extends ConfigEmitter{
     import ConnectionStart._
     val EXCHANGE_NAME = "info_algorithm_logs"
-    val routingKey = "info_algorithm"
     override def start(): Unit = {
        channel.exchangeDeclare(EXCHANGE_NAME, "direct")
     }

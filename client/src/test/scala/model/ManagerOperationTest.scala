@@ -106,5 +106,5 @@ object ManagerOperationTest {
   val algorithmExecuteTerminalWithoutDriver: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminalsWithoutDriver,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
   val algorithmExecuteWithoutShift: AlgorithmExecute =algorithmExecuteTerminalWithoutTheoricRequest.copy(idTerminal = terminals)
-
+  def f(message:String):Unit = message
 }

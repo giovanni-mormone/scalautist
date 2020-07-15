@@ -14,6 +14,7 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 trait Algoritmo {
 
   /**
@@ -129,7 +130,7 @@ object Algoritmo extends Algoritmo{
     @scala.annotation.tailrec
     def _verifySpecialWeek(specialWeek:List[SettimanaS]):Future[Option[Int]] = specialWeek match {
       case ::(head, next) if verifyDateInt(head.idDay)
-        && verifyDate(head.date,algorithmExecute.dateI,algorithmExecute.dateF) =>_verifySpecialWeek(next)
+        && verifyDate(head.date,algorithmExecute.dateI,algorithmExecute.dateF) && getDayNumber(head.date)==head.idDay =>_verifySpecialWeek(next)
       case Nil =>verifyTheoricalRequest(algorithmExecute,shift)
       case _ =>future(StatusCodes.ERROR_CODE5)
     }
@@ -167,7 +168,7 @@ object Algoritmo extends Algoritmo{
     InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
       case Some(contract) =>  //TODO controllare i contratti
         val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
-        AssignmentOperation().initOperationAssignment(algorithmExecute,result)
+        AssignmentOperation.initOperationAssignment(algorithmExecute,result)
         Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE9)
     }
