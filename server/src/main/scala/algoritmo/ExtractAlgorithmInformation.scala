@@ -213,7 +213,6 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     sunday.length match {
       case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
       case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-      case _ if endFreeDay==DEFAULT_INIT_DAY=>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
       case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
       case _ =>
         val sequence = allSunday.filter(x=> !sunday.contains(x))
@@ -242,8 +241,8 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 }
 
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
@@ -256,10 +255,10 @@ object t extends App{
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
   val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
   val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
-  val threeSaturday=false
+  val threeSaturday=true
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
-  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute).onComplete {
+  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute.copy(gruppo = None,settimanaNormale = None,settimanaSpeciale = None)).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>println(":)")
   }
