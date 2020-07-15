@@ -241,8 +241,8 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 }
 
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,9,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,10,31))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))

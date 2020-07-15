@@ -392,10 +392,15 @@ object AssignmentOperation extends AssignmentOperation {
     val maronna4: (List[Info],Option[List[InfoReq]]) = assignExtraOrdinary(maronna3._2,maronna3._1,infoForAlgorithm.persons.map(_._2),listWeek)
 
     PrintListToExcel.printInfo(dateI,dateF,maronna4._1,maronna4._2)
-    RisultatoOperation.saveResultAlgorithm(maronna4._1).onComplete {
-      case Failure(exception) => println(exception)
-      case Success(value) =>println(value)
+    try {
+      RisultatoOperation.saveResultAlgorithm(maronna4._1).onComplete {
+        case Failure(exception) => println(exception)
+        case Success(value) =>println(value)
+      }
+    }catch {
+      case e:Exception => println(e)
     }
+
     List()
   }
 

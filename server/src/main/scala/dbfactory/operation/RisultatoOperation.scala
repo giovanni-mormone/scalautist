@@ -353,6 +353,8 @@ object RisultatoOperation extends RisultatoOperation {
         case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2))
         case InfoDay(data, Some(shift), Some(shift2), Some(straordinario),_,_)=>
           List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2),Risultato(data,x.idDriver,straordinario))
+        case InfoDay(data, Some(shift), None, Some(straordinario),_,_)=>
+          List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,straordinario))
       }
     })
     insertAll(finalResult).collect {
