@@ -1,17 +1,24 @@
 package controller
 
-import caseclass.CaseClassHttpMessage.Response
+import java.sql.Date
+import java.time.LocalDate
+
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, Response, SettimanaN, SettimanaS}
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
 import view.fxview.mainview.ManagerView
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+  def runAlgorithm(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
+
 
   /**
    * method that send to server a theorical request with all info for a time frame
+   *
    * @param richiesta case class that represent all info for create a theorical request
    */
   def sendRichiesta(richiesta: InfoRichiesta): Unit
@@ -109,5 +116,65 @@ object ManagerController {
         case _ => myView.showMessageFromKey("general-error")
       }
     }
+    def statusAlgorithm(message:String):Unit={
+      println(s"$message")
+    }
+
+    override def runAlgorithm(algorithmExecute: AlgorithmExecute):  Future[Response[Int]]  = {
+      model.runAlgorithm(algorithmExecute,statusAlgorithm)
+    }
   }
+}
+
+object t extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
+  val terminals=List(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
+  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
+  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
+  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
+  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
+  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
+  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
+  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
+  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
+  val threeSaturday=false
+  val algorithmExecute: AlgorithmExecute =
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+  ManagerController().runAlgorithm(algorithmExecute).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>println(value)
+  }
+  while (true){}
+}
+
+
+object t2 extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
+  val terminals=List(15)
+  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
+  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
+  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
+  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
+  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
+  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
+  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
+  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
+  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
+  val threeSaturday=false
+  val algorithmExecute: AlgorithmExecute =
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+  ManagerController().runAlgorithm(algorithmExecute).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>println(":)")
+  }
+  while (true){}
 }
