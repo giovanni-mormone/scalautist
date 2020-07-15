@@ -183,7 +183,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   }
 
   private def createPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence= result match {
-    case  res =>constructPreviousSequence(id,data,res)
+    case  res if res.nonEmpty =>constructPreviousSequence(id,data,res)
     case Nil => PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
 
   }
@@ -213,6 +213,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     sunday.length match {
       case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
       case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case x if x==1 =>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
       case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
       case _ =>
         val sequence = allSunday.filter(x=> !sunday.contains(x))
@@ -241,8 +242,8 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 }
 
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,8,31))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
