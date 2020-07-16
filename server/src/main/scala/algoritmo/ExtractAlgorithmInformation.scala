@@ -213,7 +213,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     sunday.length match {
       case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
       case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-      case x if x==1 =>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
+      case x if ((x==1 && allSunday.length==4) || (x==2 && allSunday.length==5)) =>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
       case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
       case _ =>
         val sequence = allSunday.filter(x=> !sunday.contains(x))

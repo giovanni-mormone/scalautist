@@ -19,36 +19,18 @@ trait AssignmentOperation{
 }
 
 object AssignmentOperation extends AssignmentOperation {
-  //TODO DETTO DA GIANNI! assegnare prima i liberi ai 5x2 sabato e domenica libero
-  //TODO assegnare domeniche 6x1 indipendente sia fisso o rotatorio
-  //TODO se ci sono assegniamo i gruppi per ogni gruppo assegna tutti un libero controllare in che data serve di piu
-  //TODO che lavorare la persona prima di assegnare il libero del gruppo
-  //TODO assegnare tutti turni prima fissi dopo rotatorio, verificare InfoReq quando si sta assegnando
-  //TODO verificare se regola tre sabato e attiva, se e cosi e il conducente ha 3 sabati di seguito lavorando,
-  //TODO il 3 e libero, se il 3 e insieme a una domenica libera allora lo avrà il 2 e cosi via via
-  //TODO assegnare i liberi ai 6x1 fissi, controllare quantità di giorni senza libero. in piu guardare se ce una settimana normale o speciale
-  //TODO due liberi non possono essere insieme, due liberi devono avere una distanza minima di 2 giorni
-  //TODO assegnare liberi ai 6x1 rotatorio, controllare InfoReq per vedere quanti possono essere liberi in quel turno in quella data
-
-  //TODO per segnare le domenica, potrebbero fare una case class che rapresente le sequenze->List contenuto interno da decidere
 
   private val FULL_AND_PART_TIME_5X2 = List(1, 2, 3, 4)
-
   final case class InfoForAlgorithm(shift: List[Turno], theoricalRequest: List[RichiestaTeorica],
                                     persons: List[(StoricoContratto, Persona)], allContract: Option[List[Contratto]] = None, absence: Option[List[(Int, Date, Date)]] = None,
                                     allRequest: Option[List[InfoReq]] = None, previousSequence: Option[List[PreviousSequence]] = None, allAvailability:Option[List[DisponibilitaFixed]]=None)
 
   final case class InfoReq(idShift: Int, request: Int, assigned: Int, idDay: Int, data: Date, idTerminal: Int)
-
   final case class PreviousSequence(idDriver: Int, sequenza: Int, distanceFreeDay: Int)
-  
   final case class InfoDay(data: Date, shift: Option[Int] = None, shift2: Option[Int] = None, straordinario: Option[Int] = None, freeDay: Boolean = false, absence: Boolean = false)
-
-  final case class Info(idDriver: Int, idTerminal: Int, isFisso: Boolean, tipoContratto: Int, infoDay: List[InfoDay])
+  final case class Info(idDriver: Option[Int], idTerminal:  Option[Int], isFisso: Boolean, tipoContratto: Int, infoDay: List[InfoDay])
 
   private val emitter = ConfigEmitter("info_algorithm")
-  private val infoAssigned:InfoAssigned = InfoAssigned()
-  private val infoRequest:RequestOperation = RequestOperation()
   private val FIRST_RULER=1
   private val SECOND_RULER=2
   private val THIRD_RULER=3
@@ -95,8 +77,8 @@ object AssignmentOperation extends AssignmentOperation {
 
     @scala.annotation.tailrec
     def _absignAbsence(drivers: List[(Int, Persona)], result: List[Info] = List.empty): List[Info] = drivers match {
-      case ::(head, next) if absence.exists(x => head._2.matricola.contains(x._1)) => _absignAbsence(next, result :+ Info(head._2.matricola.head,
-        head._2.idTerminale.head,isFisso(contracts, head._1), head._1, _iterateDate(head._2.matricola.head)))
+      case ::(driver, next) if absence.exists(x => driver._2.matricola.contains(x._1)) => _absignAbsence(next, result :+ Info(driver._2.matricola,
+        driver._2.idTerminale,isFisso(contracts, driver._1), driver._1, _iterateDate(driver._2.matricola.head)))
       case ::(_,next) => _absignAbsence(next,result)
       case Nil => result
     }
@@ -111,9 +93,9 @@ object AssignmentOperation extends AssignmentOperation {
 
   private def assignSaturdayAndSunday5x2(allContract: Option[List[Contratto]], algorithmExecute: AlgorithmExecute, driver: List[(Int, Persona)], result: List[Info]): Future[List[Info]] = Future{
     @scala.annotation.tailrec
-    def _assignSaturdayAndSunday(person: List[(Int, Persona)], date: Date, info: List[Info] = List.empty): List[Info] =  person match {
-      case ::(head, next) => _assignSaturdayAndSunday(next, date, upsertListInfo(info, List(Info(head._2.matricola.head, head._2.idTerminale.head,
-        isFisso =  isFisso(allContract,head._1), head._1, _iterateDate(date)))))
+    def _assignSaturdayAndSunday(drivers: List[(Int, Persona)], date: Date, info: List[Info] = List.empty): List[Info] =  drivers match {
+      case ::(driver, next) => _assignSaturdayAndSunday(next, date, upsertListInfo(info, List(Info(driver._2.matricola, driver._2.idTerminale,
+        isFisso =  isFisso(allContract,driver._1), driver._1, _iterateDate(date)))))
       case Nil => info
     }
 
@@ -248,7 +230,7 @@ object AssignmentOperation extends AssignmentOperation {
         case Some(value) => value._1
         }
         val x =map.updated(date, map.getOrElse(date,0) + 1)
-        _iteraDriver(next,x,result :+ Info(head._1.matricola.head, 0, isFisso = false, 0, List(InfoDay(date, freeDay = true))))
+        _iteraDriver(next,x,result :+ Info(head._1.matricola, None, isFisso = false, 0, List(InfoDay(date, freeDay = true))))
       case Nil =>(result,map)
     }
    _iteraDriver(probability.map(res=>res._1->res._2._2).sortBy(r=>r._1.matricola),map)
@@ -296,7 +278,7 @@ object AssignmentOperation extends AssignmentOperation {
             val dates = assignSunday(sundays.sortBy(_.getTime),sequence,sundays.length)
             val fisso: Boolean = isFisso(Some(contract),head._1)
             val valore = updatePreviousSequence(previousSequences,head._2.matricola.head,sequence)
-            _assignBalancedSundays(next,x,result ::: List(Info(head._2.matricola.head,head._2.idTerminale.head,fisso,head._1,List(InfoDay(dates._1,freeDay = true),InfoDay(dates._2,freeDay = true))))
+            _assignBalancedSundays(next,x,result ::: List(Info(head._2.matricola,head._2.idTerminale,fisso,head._1,List(InfoDay(dates._1,freeDay = true),InfoDay(dates._2,freeDay = true))))
               ,valore)
         }
       }
@@ -336,7 +318,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   private def upsertListInfo(result: List[Info], resultNew: List[Info]): List[Info] = {
     val newResult = resultNew.flatMap{
-      case info if result.exists(_.idDriver == info.idDriver)=>result.filter(_.idDriver==info.idDriver).map(x=>{
+      case info if result.exists(_.idDriver.equals(info.idDriver)) =>result.filter(_.idDriver.equals(info.idDriver)).map(x=>{
         val infoNew =x.copy(infoDay = info.infoDay.flatMap{
           case s if x.infoDay.exists(_.data.compareTo(s.data)==0)=>
             x.infoDay.filter(_.data.compareTo(s.data)==0).map(_=>s)
@@ -346,7 +328,7 @@ object AssignmentOperation extends AssignmentOperation {
       })
       case x => List(x)
     }
-    newResult:::result.filter(xs=> !newResult.exists(_.idDriver==xs.idDriver))
+    newResult:::result.filter(xs=> !newResult.exists(_.idDriver.equals(xs.idDriver)))
   }
 
   private def metodino(assigned: Map[Int ,Int], possibili: List[Int]): Int = {
@@ -360,7 +342,7 @@ object AssignmentOperation extends AssignmentOperation {
     _metodino(assigned.toList.sortWith(_._2<_._2))
   }
 
- private def updateLastFree(infoForAlgorithm: InfoForAlgorithm,result:List[Info],date:Date):List[(Int,Int)]={
+ private def updateLastFree(infoForAlgorithm: InfoForAlgorithm,result:List[Info],date:Date):List[(Option[Int],Int)]={
    val sunday = getEndDayWeek(date)
    val saturday = subtract(sunday, -1)
    val update = result.filter(driver=> !FULL_AND_PART_TIME_5X2.contains(driver.tipoContratto))
@@ -370,11 +352,11 @@ object AssignmentOperation extends AssignmentOperation {
 
    val sequence = infoForAlgorithm.previousSequence.toList.flatten.map(x => (x.idDriver, x.distanceFreeDay))
    sequence.map{
-     case (i, _) if update.exists(_.idDriver==i)=> update.foldLeft((i,0)){
-       case (default,actual) if actual.idDriver==default._1=> (i,getDayNumber(actual.infoDay.last.data))
+     case (i, _) if update.exists(_.idDriver.contains(i))=> update.foldLeft((Option(i),0)){
+       case (default,actual) if actual.idDriver.equals(default._1) => (default._1,getDayNumber(actual.infoDay.last.data))
        case (default,_)=> default
      }
-     case x => x
+     case x => (Some(x._1),x._2)
    }
 
  }
@@ -385,7 +367,7 @@ object AssignmentOperation extends AssignmentOperation {
     val maronna2: (Option[List[InfoReq]], List[Info]) = assignShiftForRotary(rotatori,maronna._1,dateI,dateF,maronna._2,infoForAlgorithm.allContract)
     val allSaturday= createListDayBetween(dateI,dateF).filter(isSaturday)
     val maronna2_5 =ruleThirdSaturday(allSaturday, maronna2._1,infoForAlgorithm.persons.map(_._2),maronna2._2)
-    val lastFree:List[(Int,Int)]= updateLastFree(infoForAlgorithm,maronna2_5._2,dateI)
+    val lastFree:List[(Option[Int],Int)]= updateLastFree(infoForAlgorithm,maronna2_5._2,dateI)
 
     val maronna3:(Option[List[InfoReq]],List[Info])=assignFreeDays(infoForAlgorithm.persons.filter(idPerson => !FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId)),maronna2_5._1, maronna2_5._2,createWeekLists(dateI,dateF), lastFree)
 
@@ -394,10 +376,10 @@ object AssignmentOperation extends AssignmentOperation {
 
     PrintListToExcel.printInfo(dateI,dateF,maronna4._1,maronna4._2)
     try {
-      RisultatoOperation.saveResultAlgorithm(maronna4._1).onComplete {
+    /*  RisultatoOperation.saveResultAlgorithm(maronna4._1).onComplete {
         case Failure(exception) => println(exception)
         case Success(value) =>println(value)
-      }
+      }*/
     }catch {
       case e:Exception => println(e)
     }
@@ -405,13 +387,13 @@ object AssignmentOperation extends AssignmentOperation {
     List()
   }
 
-  def assignFreeDays(drivers: List[(StoricoContratto, Persona)], request: Option[List[InfoReq]], result: List[Info], weeks: List[List[Date]], lastFree: List[(Int, Int)]):(Option[List[InfoReq]], List[Info]) = {
+  def assignFreeDays(drivers: List[(StoricoContratto, Persona)], request: Option[List[InfoReq]], result: List[Info], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)]):(Option[List[InfoReq]], List[Info]) = {
     emitter.sendMessage("Assegnando Giorni Liberi")
     @scala.annotation.tailrec
-    def _assignFreeDays(request: Option[List[InfoReq]], weeks: List[List[Date]], lastFree: List[(Int, Int)], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = weeks match {
+    def _assignFreeDays(request: Option[List[InfoReq]], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = weeks match {
       case ::(head,Nil) if head.length<7=>
         emitter.sendMessage("Assegnando Giorni Liberi Settimana"+ head.head)
-        val secureLastFree = lastFree.partition(x=>getDayNumber(head.last)<x._2 && x._2!=0)
+        val secureLastFree = lastFree.partition(x=> getDayNumber(head.last)<x._2 && x._2!=0)
         val anotherDriver = secureLastFree._1.splitAt((secureLastFree._1.length/6)*head.length)
         val weekFreeDays = _assignFreeWeek(head, request,(secureLastFree._2:::anotherDriver._1).sortWith(_._2 > _._2))
         (weekFreeDays._1,upsertListInfo(resultNew,weekFreeDays._3))
@@ -428,18 +410,18 @@ object AssignmentOperation extends AssignmentOperation {
     }
 
     @scala.annotation.tailrec
-    def _assignFreeWeek(week: List[Date], request: Option[List[InfoReq]], lastFree: List[(Int, Int)], resultNew: List[Info] = List.empty, lastNew: List[(Int,Int)] = List.empty):(Option[List[InfoReq]],List[(Int,Int)], List[Info]) = lastFree match {
+    def _assignFreeWeek(week: List[Date], request: Option[List[InfoReq]], lastFree: List[(Option[Int], Int)], resultNew: List[Info] = List.empty, lastNew: List[(Option[Int],Int)] = List.empty):(Option[List[InfoReq]],List[(Option[Int],Int)], List[Info]) = lastFree match {
       case ::(head, next) =>
-        drivers.find(_._2.matricola.contains(head._1)) match {
+        drivers.find(_._2.matricola.equals(head._1)) match {
           case Some(driver) =>if(head._2==0){
             week.foldLeft(false)((default,ress)=>{
-              default || result.filter(res => driver._2.matricola.contains(res.idDriver)).exists(
+              default || result.filter(res => driver._2.matricola.equals(res.idDriver)).exists(
                 _.infoDay.count(x => x.data.compareTo(ress) == 0 && (x.freeDay || x.absence))>0)
             }) match {
               case true =>
                 _assignFreeWeek(week,request,next,resultNew, lastNew:+ head)
               case false =>
-                val possibleDays = result.filter(res => driver._2.matricola.contains(res.idDriver)).flatMap(
+                val possibleDays = result.filter(res => driver._2.matricola.equals(res.idDriver)).flatMap(
                 _.infoDay.filter(x =>
                   week.exists(date => !isSunday(date) && date.compareTo(x.data) == 0)))
                 possibleDays.find(x => getDayNumber(x.data) <=2 && (x.absence || x.freeDay)) match {
@@ -447,7 +429,7 @@ object AssignmentOperation extends AssignmentOperation {
                     _assignFreeWeek(week, request, next, resultNew, lastNew :+ (head._1, getDayNumber(value.data)))
                   case None =>
                     possibleDays.filter(res => getDayNumber(res.data) > 2).sortBy(_.data.getTime).findLast(date => date.absence || date.freeDay) match {
-                      case Some(value) => _assignFreeWeek(week,request,next,resultNew, lastNew:+ (driver._2.matricola.head,getDayNumber(value.data))) //aggiornare lastFree se non ti trovo
+                      case Some(value) => _assignFreeWeek(week,request,next,resultNew, lastNew:+ (driver._2.matricola,getDayNumber(value.data))) //aggiornare lastFree se non ti trovo
                       case None =>
                         callAssign(driver,possibleDays,week,next,resultNew,lastNew)
                     }
@@ -456,7 +438,7 @@ object AssignmentOperation extends AssignmentOperation {
             }
           } else {
 
-            val dayInWeek = result.filter(res => driver._2.matricola.contains(res.idDriver)).flatMap(
+            val dayInWeek = result.filter(res => driver._2.matricola.equals(res.idDriver)).flatMap(
               _.infoDay.filter(x => week.exists(date => date.compareTo(x.data) == 0 && getDayNumber(x.data) <= head._2)))
             val possibleDays = dayInWeek.partition(x => !isSunday(x.data))
             possibleDays._2.find(date => date.absence || date.freeDay) match {
@@ -481,7 +463,7 @@ object AssignmentOperation extends AssignmentOperation {
       case Nil =>(request,lastNew,resultNew)
     }
 
-    def assignFreeDay(driver:(StoricoContratto,Persona),possibleDays:List[InfoDay],week:List[Date],next:List[(Int,Int)],resultNew: List[Info] = List.empty, lastNew: List[(Int,Int)] = List.empty, head:(Int,Int)) = {
+    def assignFreeDay(driver:(StoricoContratto,Persona),possibleDays:List[InfoDay],week:List[Date],next:List[(Option[Int],Int)],resultNew: List[Info] = List.empty, lastNew: List[(Option[Int],Int)] = List.empty, head:(Option[Int],Int)) = {
       possibleDays.sortBy(_.data.getTime).findLast(date => date.absence || date.freeDay) match {
         case Some(value) =>
           _assignFreeWeek(week, request, next, resultNew, lastNew :+ (head._1, getDayNumber(value.data))) //aggiornare lastFree se non ti trovo
@@ -490,7 +472,7 @@ object AssignmentOperation extends AssignmentOperation {
 
       }
     }
-    def callAssign(driver:(StoricoContratto,Persona),possibleDays:List[InfoDay],week:List[Date],next:List[(Int,Int)],resultNew: List[Info] = List.empty, lastNew: List[(Int,Int)] = List.empty)={
+    def callAssign(driver:(StoricoContratto,Persona),possibleDays:List[InfoDay],week:List[Date],next:List[(Option[Int],Int)],resultNew: List[Info] = List.empty, lastNew: List[(Option[Int],Int)] = List.empty): (Option[List[InfoReq]], List[(Option[Int], Int)], List[Info]) ={
       val driverWeekFree = assignFreeDayInWeek(driver,possibleDays.map(_.data),request,result)
       _assignFreeWeek(week,driverWeekFree._1,next,resultNew :+ driverWeekFree._3, lastNew :+ driverWeekFree._2)
     }
@@ -498,13 +480,13 @@ object AssignmentOperation extends AssignmentOperation {
     (boh._1, upsertListInfo(result, boh._2))
   }
 
-  private def assignFreeDayInWeek(driver: (StoricoContratto, Persona), possibleFree: List[Date], request: Option[List[InfoReq]],result:List[Info]):(Option[List[InfoReq]],(Int,Int),Info) = {
+  private def assignFreeDayInWeek(driver: (StoricoContratto, Persona), possibleFree: List[Date], request: Option[List[InfoReq]],result:List[Info]):(Option[List[InfoReq]],(Option[Int],Int),Info) = {
     val meh = request.toList.flatten.filter(x => possibleFree.exists(_.compareTo(x.data) == 0))
       .map(x => (x.assigned - x.request,x.data,x.idShift) ->
-        result.find(res => driver._2.matricola.contains(res.idDriver) && res.infoDay.
+        result.find(res => driver._2.matricola.equals(res.idDriver) && res.infoDay.
           exists(date => date.data.compareTo(x.data) == 0))).maxBy(_._1)
 
-    val infoDay = meh._2.toList.foldLeft((request,(0,0),List[InfoDay]())){
+    val infoDay = meh._2.toList.foldLeft((request,(Option(0),0),List[InfoDay]())){
       case (x,y) =>
         val updateReq = deUpdateInfoReq(x._1,meh._1._2,meh._1._3)
         y.infoDay.head.shift2 match {
@@ -512,13 +494,13 @@ object AssignmentOperation extends AssignmentOperation {
           case None =>(updateReq,(y.idDriver,getDayNumber(meh._1._2)), x._3 :+ InfoDay(meh._1._2,freeDay = true))
         }
     }
-    (infoDay._1,infoDay._2,Info(driver._2.matricola.head,0,isFisso = false,0,infoDay._3))
+    (infoDay._1,infoDay._2,Info(driver._2.matricola,None,isFisso = false,0,infoDay._3))
   }
 
 
 
   private def assignShiftAndUpdateRequest(person: Persona, assignedForTurn: Option[List[InfoReq]], dateI: Date, dateF: Date, turnoId: Int, result: List[Info], turnoId1: Option[Int] = None):(Option[List[InfoReq]], Info) = {
-    val infoDay = createListDayBetween(dateI,dateF).filter(date => !result.filter(result => person.matricola.contains(result.idDriver))
+    val infoDay = createListDayBetween(dateI,dateF).filter(date => !result.filter(result => person.matricola.equals(result.idDriver))
       .flatMap(_.infoDay.map(_.data)).exists(_.compareTo(date) == 0)).foldLeft((assignedForTurn,List[InfoDay]()))((x,y) => {
       val updateMap = updateInfoReq(x._1,y,turnoId)
       turnoId1 match {
@@ -526,7 +508,7 @@ object AssignmentOperation extends AssignmentOperation {
         case None => (updateMap,x._2 :+ InfoDay(y,Some(turnoId),turnoId1))
       }
     })
-    (infoDay._1,Info(person.matricola.head,0,isFisso = false,0,infoDay._2))
+    (infoDay._1,Info(person.matricola,None,isFisso = false,0,infoDay._2))
   }
 
   //CONTROLAR ALLREQUEST Y SU ACTUALIZACION
@@ -584,7 +566,7 @@ object AssignmentOperation extends AssignmentOperation {
   private def shiftWithMoreRequest(week: List[Date], allRequest: Option[List[InfoReq]]): Int =
     allRequest.map(_.filter(x => week.contains(x.data)).map(res => res.idShift -> (res.request - res.assigned)).groupBy(_._1)
       .map(res => res._1 -> res._2.map(_._2)).toList.map(x => x._1 -> x._2
-      .foldLeft((0.0, 1))((acc, i) => ((acc._1 + (i - acc._1) / acc._2), acc._2 + 1))._1).maxBy(_._2)._1) match {
+      .foldLeft((0.0, 1))((acc, i) => (acc._1 + (i - acc._1) / acc._2, acc._2 + 1))._1).maxBy(_._2)._1) match {
       case Some(value) => value
     }
 
@@ -647,7 +629,7 @@ object AssignmentOperation extends AssignmentOperation {
           && ( res.shift.contains(req.idShift+1) || (res.shift2 match {
             case Some(value) => Some(value).contains(req.idShift-1)
             case None => res.shift.contains(req.idShift-1)
-          }))))).filter(x=> x.infoDay.nonEmpty && mapPerson.filter(_._2<2).toList.map(_._1).contains(x.idDriver))
+          }))))).filter(x=> x.infoDay.nonEmpty && x.idDriver.exists(id=>mapPerson.filter(_._2<2).toList.map(_._1).contains(id)))
 
         val newInfoReq = x.filter(x=> !(x.idShift==req.idShift && x.data.compareTo(req.data)==0 && x.idDay==req.idDay))
         if(driverExtra.isEmpty){
@@ -655,7 +637,7 @@ object AssignmentOperation extends AssignmentOperation {
         }else{
           val driver = driverExtra(Random.nextInt(driverExtra.length))
           val assinged = assignExtra(driver,result,req,infoReq)
-          mapPerson.get(driver.idDriver).foreach(x=> mapPerson.update(driver.idDriver,x+1))
+          driver.idDriver.foreach(id=>mapPerson.get(id).foreach(x=> mapPerson.update(id,x+1)))
           if(assinged._2.exists(res=>res.data.compareTo(req.data)==0 && res.idShift==req.idShift && res.assigned==res.request)){
             _searchShiftWithMoreRequest(newInfoReq,assinged._1,resultInfoReq:::assinged._2.filter(res=> res.data.compareTo(req.data)==0 && res.idShift==req.idShift))
           }else{
@@ -725,23 +707,4 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

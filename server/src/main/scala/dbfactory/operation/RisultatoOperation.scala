@@ -1,7 +1,6 @@
 package dbfactory.operation
 
 import java.sql.Date
-import java.time.LocalDate
 
 import algoritmo.AssignmentOperation.{Info, InfoDay}
 import caseclass.CaseClassDB.{Risultato, Turno}
@@ -14,10 +13,8 @@ import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
-import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -349,12 +346,12 @@ object RisultatoOperation extends RisultatoOperation {
   override def saveResultAlgorithm(result: List[Info]): Future[Option[Int]] = {
     val finalResult = result.map(inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))).flatMap(x=>{
       x.infoDay.flatMap{
-        case InfoDay(data, Some(shift), None, None,_,_)=>List(Risultato(data,x.idDriver,shift))
-        case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2))
+        case InfoDay(data, Some(shift), None, None,_,_)=>x.idDriver.toList.map(id=>Risultato(data,id,shift))
+        case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>x.idDriver.toList.flatMap(id=>List(Risultato(data,id,shift),Risultato(data,id,shift2)))
         case InfoDay(data, Some(shift), Some(shift2), Some(straordinario),_,_)=>
-          List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,shift2),Risultato(data,x.idDriver,straordinario))
+          x.idDriver.toList.flatMap(id=>List(Risultato(data,id,shift),Risultato(data,id,shift2),Risultato(data,id,straordinario)))
         case InfoDay(data, Some(shift),None, Some(straordinario),_,_) =>
-          List(Risultato(data,x.idDriver,shift),Risultato(data,x.idDriver,straordinario))
+          x.idDriver.toList.flatMap(id=>List(Risultato(data,id,shift),Risultato(data,id,straordinario)))
       }
     })
 

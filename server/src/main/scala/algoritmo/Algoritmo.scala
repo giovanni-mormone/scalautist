@@ -14,7 +14,6 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 trait Algoritmo {
 
   /**
@@ -167,8 +166,8 @@ object Algoritmo extends Algoritmo{
   private def getAllContract(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[Option[Int]]={
     InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
       case Some(contract) =>  //TODO controllare i contratti
-        val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
-        AssignmentOperation.initOperationAssignment(algorithmExecute,result)
+      val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
+      AssignmentOperation.initOperationAssignment(algorithmExecute,result)
         Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE9)
     }
