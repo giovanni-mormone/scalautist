@@ -498,7 +498,7 @@ object AssignmentOperation extends AssignmentOperation {
       case (default,actual) =>
         val updateReq = updateInfoReq(default._1,requestWithShift._1._2,requestWithShift._1._3,subtracts)
         actual.infoDay match {
-          case List(InfoDay(_, _, shift2, _, _, _)) => (updateInfoReq(updateReq,requestWithShift._1._2,shift2,subtracts),
+          case List(element) => (updateInfoReq(updateReq,requestWithShift._1._2,element.shift2,subtracts),
             (actual.idDriver,getDayNumber(requestWithShift._1._2)),default._3 :+ InfoDay(requestWithShift._1._2,freeDay = true))
           case _ =>(updateReq,(actual.idDriver,getDayNumber(requestWithShift._1._2)), default._3 :+ InfoDay(requestWithShift._1._2,freeDay = true))
         }
