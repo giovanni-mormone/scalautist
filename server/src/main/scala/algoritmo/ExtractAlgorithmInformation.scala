@@ -242,7 +242,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 }
 
 object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,9,1))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
   val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,10,31))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
@@ -259,7 +259,7 @@ object t extends App{
   val threeSaturday=true
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
-  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute.copy(gruppo = None,settimanaNormale = None,settimanaSpeciale = None)).onComplete {
+  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>println(":)")
   }
