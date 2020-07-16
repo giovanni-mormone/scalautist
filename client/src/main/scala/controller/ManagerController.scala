@@ -128,8 +128,8 @@ object ManagerController {
 
 object t extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,9,30))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,12,31))
   val terminals=List(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
@@ -140,9 +140,9 @@ object t extends App{
   val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
   val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
-  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
-  val threeSaturday=false
+  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2),SettimanaN(3,2,15,2),SettimanaN(4,2,15,2),SettimanaN(5,2,15,2),SettimanaN(6,2,15,2))
+  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
+  val threeSaturday=true
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
   ManagerController().runAlgorithm(algorithmExecute).onComplete {
@@ -178,3 +178,4 @@ object t2 extends App{
   }
   while (true){}
 }
+
