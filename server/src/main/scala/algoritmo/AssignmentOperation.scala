@@ -612,7 +612,7 @@ object AssignmentOperation extends AssignmentOperation {
     _assignExtraOrdinary(listWeek,allRequest)
   }
   // A POSTO
-  private def extraDriver(result:List[Info],mapPerson: mutable.Map[Int, Int],infoReq: InfoReq)=
+  private def extraDriver(result:List[Info],mapPerson: mutable.Map[Int, Int],infoReq: InfoReq): List[Info] =
     result.map(myResult=>myResult.copy(infoDay= myResult.infoDay.filter(infoDay=> (getDayNumber(infoDay.data) match {
       case dayNumber if dayNumber==0 => SUNDAY_INFO_REQ==infoReq.idDay
       case dayNumber => dayNumber==infoReq.idDay
