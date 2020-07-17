@@ -69,7 +69,30 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
    *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
    */
   def getResultAlgorithm(idTerminal:Int,dateI:Date,dateF:Date):Future[Option[List[ResultAlgorithm]]]
-  def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date,dataF:Date): Future[Option[Int]]
+
+  /**
+   * method that save result for algorithm in database
+   * @param result all information that algorithm to generate
+   * @param dataI init time period of the algorithm, this date serve to know if exist info that need to be replace
+   * @return Future of Option of Int that represent status of Operation this result can ben:
+   *         [[messagecodes.StatusCodes.SUCCES_CODE]] operation finished successfully
+   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if insertAllBatch have a problem
+   */
+  def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date): Future[Option[Int]]
+
+  /**
+   * Method that represent control to result for verify if exist old info
+   * @param idTerminal all terminal that we want run
+   * @param dataI date that represent init time period
+   * @param dataF date that represent ended time period
+   * @return Future of List of Option with status code of operation that can be:
+   *         [[messagecodes.StatusCodes.INFO_CODE1]] if not exist info in this time period
+   *         [[messagecodes.StatusCodes.INFO_CODE2]] if exist a time period next to dataF
+   *         [[messagecodes.StatusCodes.INFO_CODE3]] if exist new driver or minus driver in terminal that we want to run
+   *         [[messagecodes.StatusCodes.INFO_CODE4]] if only re-write info in the time period
+   *         [[messagecodes.StatusCodes.ERROR_CODE1]] if not exist drivers for some terminal
+   */
+  def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[Int]]]
 }
 
 object RisultatoOperation extends RisultatoOperation {
@@ -342,7 +365,25 @@ object RisultatoOperation extends RisultatoOperation {
       case List(turno) =>turno._2
       case Nil =>WITHOUT_SHIFT
     }
- 
+
+  override def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[Int]]]={
+    Future.sequence(idTerminal.map(id=>verifyOldResult(id,dataI,dataF)))
+  }
+
+  private def verifyOldResult(idTerminal:Int,dataI:Date,dataF:Date): Future[Option[Int]]={
+      InstancePersona.operation().selectFilter(x=> Option(idTerminal).equals(x.terminaleId)).flatMap {
+        case Some(value) =>
+          InstanceRisultato.operation().selectFilter(x=> x.data>=dataI && x.personeId.inSet(value.flatMap(_.matricola.toList))).collect {
+            case Some(result) if result.exists(date=>date.data.compareTo(subtract(dataF,1))==0)=>Some(StatusCodes.INFO_CODE2)
+            case Some(result) if result.map(_.personaId).distinct.length>=value.flatMap(_.matricola.toList).length ||
+              result.map(_.personaId).distinct.length<=value.flatMap(_.matricola.toList).length =>Some(StatusCodes.INFO_CODE3)
+            case None =>Some(StatusCodes.INFO_CODE1)
+            case _ =>Some(StatusCodes.INFO_CODE4)
+          }
+        case None => Future.successful(Some(StatusCodes.ERROR_CODE1))
+      }
+
+  }
   override def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date): Future[Option[Int]] = {
     val finalResult = result.map(inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))).flatMap(x=>{
       x.infoDay.flatMap{
@@ -362,13 +403,30 @@ object RisultatoOperation extends RisultatoOperation {
 
   private def resultForUpdate(oldR: List[Risultato],newR: List[Risultato]): Future[Option[Int]] ={
     insertAllBatch(newR).flatMap {
-      case Some(StatusCodes.SUCCES_CODE) => deleteAll(oldR.flatMap(_.idRisultato.toList))
+      case Some(StatusCodes.SUCCES_CODE) =>println(1)
+        deleteAllRecursive(oldR)
       case Some(StatusCodes.ERROR_CODE1) => Future.successful(Option(StatusCodes.ERROR_CODE1))
     }
   }
-
+  private def deleteAllRecursive(oldR: List[Risultato])={
+    val idForDelete = oldR.flatMap(_.idRisultato.toList)
+    val myTake = if(idForDelete.length>1000) 1000 else idForDelete.length
+    def _deleteAllRecursive(delete:List[Int],rest:List[Int]):Future[Option[Int]]= rest match {
+      case Nil => deleteAll(delete).flatMap{
+        case Some(value) if value>0  => Future.successful(Option(StatusCodes.SUCCES_CODE))
+        case _ =>_deleteAllRecursive(delete,rest)
+      }
+      case ::(_, _) => deleteAll(delete).flatMap{
+        case Some(value) if value>0 => val (delete,resto) = rest.splitAt(myTake)
+          _deleteAllRecursive(delete,resto)
+        case _ =>_deleteAllRecursive(delete,rest)
+      }
+    }
+    val (delete,rest) = idForDelete.splitAt(myTake)
+    _deleteAllRecursive(delete,rest)
+  }
   override def insertAllBatch(finalResult: List[Risultato]): Future[Option[Int]] = {
-    insertAllBatch(finalResult).collect {
+    super.insertAllBatch(finalResult).collect {
       case Some(_) => Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE1)
     }
