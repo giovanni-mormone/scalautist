@@ -8,6 +8,7 @@ import algoritmo.ExtractAlgorithmInformation.DisponibilitaFixed
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA}
 import dbfactory.operation.RisultatoOperation
+import messagecodes.StatusCodes
 import utils.DateConverter._
 
 import scala.collection.mutable
@@ -15,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Random
 trait AssignmentOperation{
-  def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]):Unit
+  def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]): Future[Option[Int]]
 }
 
 object AssignmentOperation extends AssignmentOperation {
@@ -44,8 +45,8 @@ object AssignmentOperation extends AssignmentOperation {
   private val subtracts:Int=>Int=x=>x-1
   private val sum:Int=>Int=x=>x+1
   //A POSTO
-  override def initOperationAssignment(algorithmExecute: AlgorithmExecute, infoForAlgorithm: Future[InfoForAlgorithm]): Unit = {
-    infoForAlgorithm.foreach(info => {
+  override def initOperationAssignment(algorithmExecute: AlgorithmExecute, infoForAlgorithm: Future[InfoForAlgorithm]): Future[Option[Int]] = {
+    infoForAlgorithm.flatMap(info => {
       emitter.sendMessage("Iniziando processo di assegnazione")
       emitter.sendMessage("Separando Terminali")
       info.theoricalRequest.map(terminal => {
@@ -54,13 +55,22 @@ object AssignmentOperation extends AssignmentOperation {
           allRequest = info.allRequest.map(_.filter(_.idTerminal == terminal.terminaleId)),
           theoricalRequest = info.theoricalRequest.filter(_.terminaleId == terminal.terminaleId),
           previousSequence = info.previousSequence.map(_.filter(value => personaFilter.map(_._2.matricola).exists(id => id.contains(value.idDriver)))))
-      }).foreach(info => startAlgorithm(info, algorithmExecute))
+      }).map(info => info -> startAlgorithm(info, algorithmExecute)).foldLeft(Future.successful(Option(StatusCodes.SUCCES_CODE))){
+        case (default,actual) => actual._2.flatMap {
+          case Some(StatusCodes.SUCCES_CODE) =>
+            actual._1.theoricalRequest.headOption.foreach(terminale => emitter.sendMessage("Terminale: " + terminale.terminaleId + "Inserito con successo"))
+            default
+          case _ =>
+            actual._1.theoricalRequest.headOption.foreach(terminale => emitter.sendMessage("Terminale: " + terminale.terminaleId + "Ha avuto problemi mentali"))
+            default
+        }
+      }
     })
   }
 
   val partition:List[(StoricoContratto,Persona)]=>(List[(StoricoContratto,Persona)],List[(StoricoContratto,Persona)]) =persons=> persons.partition(idPerson => FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
   //A POSTO
-  private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Unit = Future {
+  private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Future[Option[Int]] = Future {
     val (driver5x2, driver6x1) = partition(infoForAlgorithm.persons)
     infoForAlgorithm.absence match {
       case Some(value) => emitter.sendMessage("Assign absence")
@@ -68,16 +78,16 @@ object AssignmentOperation extends AssignmentOperation {
         .zip(assignAbsence(driver6x1.map(v => (v._1.contrattoId,v._2)),infoForAlgorithm.allContract,value))
         .map{
           case (listInfo5x2, listInfo6x1) => assignSundayAndSaturday(infoForAlgorithm,algorithmExecute,listInfo5x2,listInfo6x1)
-        }
+        }.flatMap(x => x)
       case None => assignSundayAndSaturday(infoForAlgorithm,algorithmExecute)
     }
-  }
+  }.flatMap(x => x)
 
-  def assignSundayAndSaturday(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,listInfo5x2: List[Info] = List.empty, listInfo6x1: List[Info] = List.empty): Unit = {
+  def assignSundayAndSaturday(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,listInfo5x2: List[Info] = List.empty, listInfo6x1: List[Info] = List.empty): Future[Option[Int]] = {
     emitter.sendMessage("Assign Saturday and Sunday 5x2 and Sunday 6x1")
     val (driver5x2, driver6x1) = partition(infoForAlgorithm.persons)
     assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)),listInfo5x2)
-      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1,listInfo6x1)).map{
+      .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1,listInfo6x1)).flatMap{
       case (driver5x2, driver6x1) => groupForDriver(infoForAlgorithm,algorithmExecute,driver5x2:::driver6x1)
     }
   }
@@ -177,7 +187,7 @@ object AssignmentOperation extends AssignmentOperation {
 
 
   // A POSTO
-  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,assigned:List[Info]): Unit ={
+  private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,assigned:List[Info]): Future[Option[Int]] ={
     emitter.sendMessage("Assign Group for Driver")
     algorithmExecute.gruppo match {
       case Some(group) =>
@@ -363,7 +373,7 @@ object AssignmentOperation extends AssignmentOperation {
    }
 
  }
-  private def assignShifts(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, result: List[Info]):Unit = Future{
+  private def assignShifts(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, result: List[Info]):Future[Option[Int]] = Future{
     emitter.sendMessage("Assign Shift Fixed and Rotatory")
     val(fissi, rotatori) = infoForAlgorithm.persons.partition(person => infoForAlgorithm.allContract.toList.flatten.filter(_.turnoFisso)
       .flatMap(_.idContratto.toList).contains(person._1.contrattoId))
@@ -371,10 +381,9 @@ object AssignmentOperation extends AssignmentOperation {
     val resultAssignShiftFissi = assignShiftForFissi(fissi,infoForAlgorithm.allRequest,algorithmExecute.dateI,algorithmExecute.dateF,result)
     val resultAssignShiftRotatori = assignShiftForRotary(rotatori,resultAssignShiftFissi._1,algorithmExecute.dateI,algorithmExecute.dateF,resultAssignShiftFissi._2,infoForAlgorithm.allContract)
     assignThirdSaturday(algorithmExecute,resultAssignShiftRotatori,infoForAlgorithm)
+  }.flatMap(x => x)
 
-  }
-
-  private def assignThirdSaturday(algorithmExecute: AlgorithmExecute, resultAssignShiftRotatori: (Option[List[InfoReq]],List[Info]),infoForAlgorithm: InfoForAlgorithm): Unit ={
+  private def assignThirdSaturday(algorithmExecute: AlgorithmExecute, resultAssignShiftRotatori: (Option[List[InfoReq]],List[Info]),infoForAlgorithm: InfoForAlgorithm): Future[Option[Int]] ={
     if(algorithmExecute.regolaTreSabato){
       val allSaturday= createListDayBetween(algorithmExecute.dateI,algorithmExecute.dateF).filter(isSaturday)
       val resultAssignRuleThirdSaturday =ruleThirdSaturday(allSaturday, resultAssignShiftRotatori._1,infoForAlgorithm.persons.map(_._2),resultAssignShiftRotatori._2)
@@ -386,14 +395,14 @@ object AssignmentOperation extends AssignmentOperation {
     }
   }
 
-  private def assignFreeDay(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm,resultAssign: (Option[List[InfoReq]], List[Info]),lastFree:List[(Option[Int], Int)]): Unit ={
+  private def assignFreeDay(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm,resultAssign: (Option[List[InfoReq]], List[Info]),lastFree:List[(Option[Int], Int)]): Future[Option[Int]] ={
     val weekListDate = createWeekLists(algorithmExecute.dateI,algorithmExecute.dateF)
     val partAndFullTime6x1 = infoForAlgorithm.persons.filter(idPerson => !FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
     val resultFreeDay=assignFreeDays(partAndFullTime6x1,resultAssign._1, resultAssign._2,weekListDate,lastFree)
     assignExtraOrdinaryShift(resultFreeDay,algorithmExecute,infoForAlgorithm)
   }
 
-  private def assignExtraOrdinaryShift(resultFreeDay: (Option[List[InfoReq]], List[Info]), algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Unit ={
+  private def assignExtraOrdinaryShift(resultFreeDay: (Option[List[InfoReq]], List[Info]), algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Future[Option[Int]] ={
     val listWeek = createWeekLists(algorithmExecute.dateI,algorithmExecute.dateF)
     val resultAssignExtraOrdinary = assignExtraOrdinary(resultFreeDay._2,resultFreeDay._1,infoForAlgorithm.persons.map(_._2),listWeek)
     PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,resultAssignExtraOrdinary._1,resultAssignExtraOrdinary._2)
