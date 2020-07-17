@@ -253,4 +253,15 @@ object CaseClassHttpMessage {
    * @param dateIDateF infoDates that contains information with shift realized in this period
    */
   final case class ResultAlgorithm(idDriver:Int,terminale:String,dateIDateF:List[InfoDates])
+
+  /**
+   * Case class that represents a request to check the old results in the database before running the algorithm
+   * @param terminalsId
+   *              The list of the ids of the terminals to check
+   * @param dateI
+   *              The starting date of the algorithm
+   * @param dateF
+   *              The ending date of the algorithm
+   */
+  final case class CheckResultRequest(terminalsId: List[Int], dateI: Date, dateF: Date)
 }

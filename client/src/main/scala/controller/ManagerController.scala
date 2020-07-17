@@ -3,7 +3,7 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, Response, SettimanaN, SettimanaS}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, Response, SettimanaN, SettimanaS, CheckResultRequest}
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
@@ -48,6 +48,8 @@ trait ManagerController extends AbstractController[ManagerView]{
   def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit
 
   def replacementSelected(idRisultato: Int, idPersona: Int):Unit
+
+  def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
 
 }
 
@@ -120,8 +122,13 @@ object ManagerController {
       println(s"$message")
     }
 
+    //TODO MODIFICARE I TIPI DI RITORNO
     override def runAlgorithm(algorithmExecute: AlgorithmExecute):  Future[Response[Int]]  = {
       model.runAlgorithm(algorithmExecute,statusAlgorithm)
+    }
+
+    override def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]] = {
+      model.verifyOldResult(dataToCheck)
     }
   }
 }
@@ -172,11 +179,21 @@ object t2 extends App{
   val threeSaturday=false
   val algorithmExecute: AlgorithmExecute =
     AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,None,None,None,false)
-  ManagerController().runAlgorithm(algorithmExecute).onComplete {
+
+  val checkData: CheckResultRequest =
+    CheckResultRequest(terminals, timeFrameInit,timeFrameFinish)
+
+
+  ManagerController().verifyOldResult(checkData).onComplete{
     case Failure(exception) => println(exception)
     case Success(value) =>
       println("FINE???" + value)
   }
+  /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>
+      println("FINE???" + value)
+  }*/
   /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>
