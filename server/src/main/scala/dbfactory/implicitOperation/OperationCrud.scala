@@ -41,6 +41,16 @@ abstract class OperationCrud[A](implicit crud:Crud[A]) {
 
 
   /**
+   * Generic operation which enable the insert of a List of any element in any table in database.
+   * It is a bulk operation that doesn't return the list of ids inserted in the db but only the
+   * status of the operation
+   * @param element List of case class that represent instance of the table in database
+   * @return Future of List of Int that represent status of operation
+   */
+  def insertAllBatch (element:List[A]):Future[Option[Int]]= crud.insertAllBatch(element)
+
+
+  /**
    * Generic operation which enable delete one instance into database, this method receive a case class
    * as parameter and send this to Crud trait -> [[dbfactory.implicitOperation.Crud]]
    * @param element case class that represent instance of database  [[caseclass.CaseClassDB]]

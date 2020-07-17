@@ -155,8 +155,8 @@ object t extends App{
 
 object t2 extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,12,31))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
@@ -171,11 +171,22 @@ object t2 extends App{
   val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
   val threeSaturday=false
   val algorithmExecute: AlgorithmExecute =
-    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,None,None,None,false)
   ManagerController().runAlgorithm(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
-    case Success(value) =>println(":)")
+    case Success(value) =>
+      println("FINE???" + value)
   }
+  /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>
+      println("FINE2???" + value)
+  }
+  ManagerController().runAlgorithm(algorithmExecute).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>
+      println("FINE3???" + value)
+  }*/
   while (true){}
 }
 
