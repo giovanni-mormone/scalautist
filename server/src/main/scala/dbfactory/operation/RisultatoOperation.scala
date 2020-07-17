@@ -355,8 +355,8 @@ object RisultatoOperation extends RisultatoOperation {
       }
     })
 
-    insertAll(finalResult).collect {
-      case Some(value) if value.length==finalResult.length=>Some(StatusCodes.SUCCES_CODE)
+    insertAllBatch(finalResult).collect {
+      case Some(value) => Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE1)
     }
   }
