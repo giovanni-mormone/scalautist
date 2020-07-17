@@ -398,7 +398,7 @@ object AssignmentOperation extends AssignmentOperation {
   private def assignFreeDay(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm,resultAssign: (Option[List[InfoReq]], List[Info]),lastFree:List[(Option[Int], Int)]): Future[Option[Int]] ={
     val weekListDate = createWeekLists(algorithmExecute.dateI,algorithmExecute.dateF)
     val partAndFullTime6x1 = infoForAlgorithm.persons.filter(idPerson => !FULL_AND_PART_TIME_5X2.contains(idPerson._1.contrattoId))
-    val resultFreeDay = assignFreeDays(partAndFullTime6x1,resultAssign._1, resultAssign._2,weekListDate,lastFree)
+    val resultFreeDay= assignFreeDays(partAndFullTime6x1,resultAssign._1, resultAssign._2,weekListDate,lastFree)
     assignExtraOrdinaryShift(resultFreeDay,algorithmExecute,infoForAlgorithm)
   }
 
@@ -406,7 +406,13 @@ object AssignmentOperation extends AssignmentOperation {
     val listWeek = createWeekLists(algorithmExecute.dateI,algorithmExecute.dateF)
     val resultAssignExtraOrdinary = assignExtraOrdinary(resultFreeDay._2,resultFreeDay._1,infoForAlgorithm.persons.map(_._2),listWeek)
     PrintListToExcel.printInfo(algorithmExecute.dateI,algorithmExecute.dateF,resultAssignExtraOrdinary._1,resultAssignExtraOrdinary._2)
-    RisultatoOperation.saveResultAlgorithm(resultAssignExtraOrdinary._1)
+    var f:Future[Option[Int]]=Future.successful(Option(0))
+    try {
+       f =  RisultatoOperation.verifyAndSaveResultAlgorithm(resultAssignExtraOrdinary._1,algorithmExecute.dateI)
+    }catch {
+      case e:Exception => println(e)
+    }
+    f
   }
   private val verifyIfExistAnotherFree:(List[Date],List[InfoDay])=>Boolean=(week,infoDay)=> week.exists(date=>
     infoDay.exists(x => x.data.compareTo(date) == 0 && (x.freeDay || x.absence)))
@@ -424,6 +430,7 @@ object AssignmentOperation extends AssignmentOperation {
     val week = (possibleDays._1:::possibleDays._2).sortBy(_.data.getTime)
     !(week.exists(date=>subtract(data,1).compareTo(date.data)==0 && (date.freeDay || date.absence)) ||  week.exists(date=>subtract(data,2).compareTo(date.data)==0 && (date.freeDay || date.absence)))
   }
+
   //A POSTO
   def assignFreeDays(drivers: List[(StoricoContratto, Persona)], request: Option[List[InfoReq]], result: List[Info], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)]):(Option[List[InfoReq]], List[Info]) = {
     emitter.sendMessage("Assegnando Giorni Liberi")
@@ -431,9 +438,12 @@ object AssignmentOperation extends AssignmentOperation {
     def _assignFreeDays(request: Option[List[InfoReq]], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = weeks match {
       case ::(week,Nil) if week.length<DAYS_IN_WEEK=>
         week.headOption.foreach(date=>emitter.sendMessage("Assegnando Giorni Liberi Settimana " +date))
-        val secureLastFree = lastFree.partition(x=> week.lastOption.exists(date=>getDayNumber(date)<x._2) && x._2!=SUNDAY)
-        val anotherDriver = secureLastFree._2.filter(_._2 != SUNDAY).splitAt((secureLastFree._1.length/SATURDAY)*week.length)
-        val weekFreeDays = _assignFreeWeek(week, request,(secureLastFree._1:::anotherDriver._1).sortWith(_._2 > _._2))
+        val secureLastFree =  lastFree.partition(x=> week.lastOption.exists(date=> x._2<getDayNumber(date)) && x._2!=SUNDAY)
+        val anotherDriver = week match {
+          case days if days.length==1 => secureLastFree._2.filter(date => date._2 != SUNDAY && date._2!=SATURDAY)
+          case _ =>secureLastFree._2.filter(date => date._2 != SUNDAY)
+        }
+        val weekFreeDays = _assignFreeWeek(week, request,(secureLastFree._1:::anotherDriver.splitAt((secureLastFree._2.length/SATURDAY)*week.length)._1).sortWith(_._2 > _._2))
         (weekFreeDays._1,upsertListInfo(resultNew,weekFreeDays._3))
       case ::(week, next) if week.length<DAYS_IN_WEEK=>
         week.headOption.foreach(date=>emitter.sendMessage("Assegnando Giorni Liberi Settimana " +date))
@@ -621,7 +631,7 @@ object AssignmentOperation extends AssignmentOperation {
     _assignExtraOrdinary(listWeek,allRequest)
   }
   // A POSTO
-  private def extraDriver(result:List[Info],mapPerson: mutable.Map[Int, Int],infoReq: InfoReq)=
+  private def extraDriver(result:List[Info],mapPerson: mutable.Map[Int, Int],infoReq: InfoReq): List[Info] =
     result.map(myResult=>myResult.copy(infoDay= myResult.infoDay.filter(infoDay=> (getDayNumber(infoDay.data) match {
       case dayNumber if dayNumber==0 => SUNDAY_INFO_REQ==infoReq.idDay
       case dayNumber => dayNumber==infoReq.idDay
