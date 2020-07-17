@@ -338,12 +338,12 @@ object RisultatoOperation extends RisultatoOperation {
         .map(day=>InfoDates(Date.valueOf(day),ABSENCE_VALUE,Some(ABSENCE_VALUE))))
 
   private val selectNameTurno:InfoForResult=>Int=>String=infoResult=>idTurno=>
-    infoResult.turno.filter(id => id == idTurno) match {
+    infoResult.turno.filter(id => id._1 == idTurno) match {
       case List(turno) =>turno._2
       case Nil =>WITHOUT_SHIFT
     }
  
-  override def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date,dataF:Date): Future[Option[Int]] = {
+  override def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date): Future[Option[Int]] = {
     val finalResult = result.map(inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))).flatMap(x=>{
       x.infoDay.flatMap{
         case InfoDay(data, Some(shift), None, None,_,_)=>x.idDriver.toList.map(id=>Risultato(data,id,shift))
@@ -356,20 +356,20 @@ object RisultatoOperation extends RisultatoOperation {
     })
     InstanceRisultato.operation().selectFilter(res=>res.data>=dataI).flatMap {
       case Some(value) =>resultForUpdate(value,finalResult)
-      case None =>insertAll(finalResult)
+      case None =>insertAllBatch(finalResult)
     }
   }
 
   private def resultForUpdate(oldR: List[Risultato],newR: List[Risultato]): Future[Option[Int]] ={
-    insertAll(newR).flatMap {
+    insertAllBatch(newR).flatMap {
       case Some(StatusCodes.SUCCES_CODE) => deleteAll(oldR.flatMap(_.idRisultato.toList))
       case Some(StatusCodes.ERROR_CODE1) => Future.successful(Option(StatusCodes.ERROR_CODE1))
     }
   }
 
-  private def insertAll(element: List[Risultato]): Future[Option[Int]] = {
-    super.insertAll(element).collect {
-      case Some(value) =>Some(StatusCodes.SUCCES_CODE)
+  override def insertAllBatch(finalResult: List[Risultato]): Future[Option[Int]] = {
+    insertAllBatch(finalResult).collect {
+      case Some(_) => Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE1)
     }
   }

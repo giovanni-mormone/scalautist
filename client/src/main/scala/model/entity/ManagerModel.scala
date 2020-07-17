@@ -128,6 +128,8 @@ object ManagerModel {
     private val WEEK: HashMap[Int, String] = HashMap(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi",
                                                       5 -> "Venerdi", 6 -> "Sabato", 7 -> "Domenica")
 
+    private val notificationReceiver = ConfigReceiver("person_emitter")
+
     override def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]] = {
       val request = Post(getURI("allabsences"), transform(Dates(TODAY)))
       callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoAbsenceOnDay]]])

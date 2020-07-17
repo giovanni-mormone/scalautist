@@ -1,8 +1,6 @@
 package dbfactory.setting
 import dbfactory.implicitOperation.Crud
 import slick.jdbc.SQLServerProfile.api._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 
@@ -32,6 +30,7 @@ object GenericCRUD{
     override def select(id: Int): Future[Option[C]] = super.run(queryById(id).result.headOption.transactionally)
     override def insert(element: C): Future[Option[Int]]= super.run(((tableDB() returning tableDB().map(_.id)) += element).transactionally).result()
     override def insertAll(element: List[C]): Future[Option[List[Int]]] =  super.run(((tableDB returning tableDB().map(_.id)) ++= element).transactionally).result()
+    override def insertAllBatch(element: List[C]): Future[Option[Int]] =  super.run((tableDB ++= element).transactionally)
     override def delete(id: Int): Future[Option[Int]] = super.run(queryById(id).delete.transactionally).result()
     override def deleteAll(id: List[Int]): Future[Option[Int]] = super.run(queryByIdPlus(id).delete.transactionally).result()
     override def update(element: C): Future[Option[Int]] = super.run((tableDB() returning tableDB().map(_.id)).insertOrUpdate(element).transactionally)
