@@ -5,6 +5,7 @@ import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilit
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.util.Helper._
+import emitter.ConfigEmitter
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 
@@ -74,6 +75,7 @@ object PersonaOperation extends PersonaOperation {
   private val CODICE_CONDUCENTE: Int = 3
   private val LAST_TURNO: Int = 6
   private val FIRST_TURNO: Int = 1
+  private val notificationEmitter = ConfigEmitter("person_emitter")
 
   private val selectPersone: (PersonaTableRep => Rep[Boolean]) => Future[Option[List[Persona]]] =
     filter =>  InstancePersona.operation().selectFilter(filter)
@@ -125,7 +127,24 @@ object PersonaOperation extends PersonaOperation {
       case Some(_) => disponibilita.map(disp => InstanceDisponibilita.operation()
         .selectFilter(filter => filter.settimana === disp.settimana &&
           (filter.giorno1 === disp.giorno1 && filter.giorno2 === disp.giorno2 ||
-            filter.giorno1 === disp.giorno2 && filter.giorno2 === disp.giorno1)).flatMap(dispId => insertPersona(constructPersona(persona, dispListToDispId(dispId)), newContratto))).convert()
+            filter.giorno1 === disp.giorno2 && filter.giorno2 === disp.giorno1)).
+              flatMap(dispId => insertPersona(constructPersona(persona, dispListToDispId(dispId)), newContratto))).convert()
+    }
+  }
+
+  override def delete(element: Int): Future[Option[Int]] = {
+    super.delete(element).collect{
+      case x =>
+        notificationEmitter.sendMessage("Licenziato un conducente")
+        x
+    }
+  }
+
+  override def deleteAll(element: List[Int]): Future[Option[Int]] = {
+    super.deleteAll(element).collect{
+      case Some(x) =>
+        notificationEmitter.sendMessage("licenziati " + x + " conducenti")
+        Some(x)
     }
   }
 
@@ -142,9 +161,12 @@ object PersonaOperation extends PersonaOperation {
 
   private def insertPersona(persona: Persona,contratto:StoricoContratto): Future[Option[Int]] =
     for{
-      persona <- insert(persona)
-      contratto <- if(persona.isDefined) StoricoContrattoOperation.insert(constructContratto(contratto,persona)) else Future.successful(None)
-    }yield if (contratto.isDefined) persona else None
+      person <- insert(persona)
+      contract <- if(person.isDefined) StoricoContrattoOperation.insert(constructContratto(contratto,person)) else Future.successful(None)
+    }yield if (contract.isDefined) {
+      notificationEmitter.sendMessage("Inserita persona, il tizio si chiama " + persona.nome + " " + persona.cognome)
+      person
+    } else None
 
 
   private def constructContratto(contratto:StoricoContratto, personaId:Option[Int]): StoricoContratto = {
