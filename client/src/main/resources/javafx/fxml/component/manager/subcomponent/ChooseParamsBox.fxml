@@ -9,22 +9,19 @@
    <children>
       <Pane prefHeight="371.0" prefWidth="537.0">
          <children>
-            <DatePicker fx:id="initDate" layoutX="50.0" layoutY="178.0" />
-            <DatePicker fx:id="endDate" layoutX="50.0" layoutY="221.0" />
-            <ComboBox fx:id="zones" layoutX="50.0" layoutY="48.0" prefHeight="27.0" prefWidth="194.0" />
-            <CheckComboBox fx:id="terminals" layoutX="50.0" layoutY="107.0" prefHeight="27.0" prefWidth="194.0" />
-            <CheckBox fx:id="sabato" layoutX="381.0" layoutY="183.0" mnemonicParsing="false" text="CheckBox" />
-            <CheckBox fx:id="saveName" layoutX="381.0" layoutY="210.0" mnemonicParsing="false" text="CheckBox" />
-            <TextField fx:id="name" layoutX="381.0" layoutY="250.0" />
-            <RadioButton fx:id="normal" layoutX="381.0" layoutY="53.0" mnemonicParsing="false" text="RadioButton" />
-            <RadioButton fx:id="special" layoutX="381.0" layoutY="107.0" mnemonicParsing="false" text="RadioButton" />
+            <CheckComboBox fx:id="terminals" layoutX="150.0" layoutY="70.0" prefHeight="27.0" prefWidth="194.0" />
+            <DatePicker fx:id="initDate" layoutX="150.0" layoutY="120.0" />
+            <DatePicker fx:id="endDate" layoutX="150.0" layoutY="170.0" />
+            <CheckBox fx:id="sabato" layoutX="150.0" layoutY="220.0" mnemonicParsing="false" text="CheckBox" />
+            <CheckBox fx:id="saveName" layoutX="150.0" layoutY="270.0" mnemonicParsing="false" text="CheckBox" />
+            <TextField fx:id="name" layoutX="150.0" layoutY="320.0" />
          </children>
       </Pane>
       <Pane prefHeight="46.0" prefWidth="600.0">
          <children>
-            <Button fx:id="old" layoutX="312.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
-            <Button fx:id="reset" layoutX="393.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
-            <Button fx:id="run" layoutX="478.0" layoutY="9.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="old" layoutX="312.0" layoutY="29.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="reset" layoutX="393.0" layoutY="29.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="run" layoutX="478.0" layoutY="29.0" mnemonicParsing="false" text="Button" />
          </children>
       </Pane>
    </children>

@@ -4,15 +4,17 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
 import utils.TransferObject.InfoRichiesta
 import view.DialogView
 import view.fxview.AbstractFXDialogView
+import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
+import view.fxview.component.manager.subcomponent.ParamsModal
+import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalParamParent}
 import view.fxview.component.modal.Modal
 
 trait ManagerView extends DialogView {
@@ -41,29 +43,16 @@ trait ManagerView extends DialogView {
    * Method used by a [[controller.ManagerController]] to tell the view to draw the panel to choice parameters to run
    * shift assignment algorithm
    *
-   * @param zonesList the list of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals the list of [[caseclass.CaseClassDB.Terminale]]
    */
-  def drawRunAlgorithm(zonesList: List[Zona]): Unit
-
-  /**
-   * Method used by a [[controller.ManagerController]] to tell the view to full the list of
-   * [[caseclass.CaseClassDB.Terminale]] that the user can choose
-   *
-   * @param terminalsList list of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def drawTerminalForParam(terminalsList: List[Terminale]): Unit
-
-  /**
-   * Method allows to draw the modal for choosing params
-   */
-  def modalOldParam(): Unit
+  def drawRunAlgorithm(terminals: List[Terminale]): Unit
 
   /**
    * The method draws the list of [[caseclass.CaseClassDB.Parametro]] and it allows to choose params
    *
    * @param olds list of [[caseclass.CaseClassDB.Parametro]]
    */
-  def modalOldParamDraw(olds: List[Parametro]): Unit
+  def modalOldParamDraw(olds: List[InfoAlgorithm]): Unit
 }
 
 object ManagerView {
@@ -71,7 +60,7 @@ object ManagerView {
   def apply(stage: Stage): ManagerView = new ManagerViewFX(stage)
 
   private class ManagerViewFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with ManagerView with ManagerHomeParent{
+    with ManagerView with ManagerHomeParent {
 
     private var modalResource: Modal = _
     private var myController: ManagerController = _
@@ -140,30 +129,25 @@ object ManagerView {
     override def sendRichiesta(richiesta: InfoRichiesta): Unit =
       myController.sendRichiesta(richiesta)
 
-    override def drawRunAlgorithm(zonesList: List[Zona]): Unit =
-      Platform.runLater(() => managerHome.drawChooseParams(zonesList))
+    override def drawRunAlgorithm(terminals: List[Terminale]): Unit =
+      Platform.runLater(() => managerHome.drawChooseParams(terminals))
 
     override def calculateShifts(params: Parametro, save: Boolean): Unit = {
       println("here")
     }
 
-    override def getTerminals(zone: Zona): Unit = {
-      myController.getTerminalsToParam(zone)
-    }
-
     override def drawParamsPanel(): Unit =
-      myController.zonesToParams()
-
-    override def drawTerminalForParam(terminals: List[Terminale]): Unit =
-      Platform.runLater(() => managerHome.showTerminalsParam(terminals))
+      myController.chooseParams()
 
     override def modalOldParam(): Unit =
-      println("params")
+      myController.modalOldParams()
 
-    override def modalOldParamDraw(olds: List[Parametro]): Unit = {
+    override def modalOldParamDraw(olds: List[InfoAlgorithm]): Unit = {
       Platform.runLater(() =>{
-        modalResource = Modal[ModalParamParent]
+        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, this, ParamsModal(olds))
+        modalResource.show()
       })
     }
+
   }
 }

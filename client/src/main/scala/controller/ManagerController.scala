@@ -3,8 +3,8 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.{Parametro, Terminale, Zona}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
+import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Terminale, Zona, ZonaTerminale}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
@@ -54,15 +54,9 @@ trait ManagerController extends AbstractController[ManagerView]{
   def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
 
   /**
-   * Method that asks model to find data about the zones before draw the panel
+   * Method that asks model to find data about the terminals before draw the panel
    */
-  def zonesToParams(): Unit
-
-  /**
-   * Method return a list of [[caseclass.CaseClassDB.Terminale]] in a chosen zone
-   * @param zone instance of chosen [[caseclass.CaseClassDB.Zona]]
-   */
-  def getTerminalsToParam(zone: Zona): Unit
+  def chooseParams(): Unit
 
   /**
    * Method asks the old params list to draw modal
@@ -146,22 +140,24 @@ object ManagerController {
     override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] =
       model.verifyOldResult(dataToCheck)
 
-    override def zonesToParams(): Unit = {
-      val zones = List(Zona("aooo", Some(2)), Zona("eccolo", Some(3)))
-      myView.drawRunAlgorithm(zones)
-    }
-
-    override def getTerminalsToParam(zone: Zona): Unit = {
+    override def chooseParams(): Unit = {
       val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
         Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
         Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
-      myView.drawTerminalForParam(terminals.filter(_.idZona == zone.idZone.getOrElse(-1)))
+      myView.drawRunAlgorithm(terminals)
     }
 
     override def modalOldParams(): Unit = {
-      val params = List(Parametro(true, "mare"), Parametro(false, "cielo"), Parametro(false, "match"))
-      myView.modalOldParamDraw()
+      val params = List(InfoAlgorithm(
+        Parametro(true, "mai", Some(1)),
+        List(ZonaTerminale(2, 3, Some(1), Some(1))),
+        Some(List(GiornoInSettimana(1, 1, 2, Some(1), Some(30)), GiornoInSettimana(2, 2, 2, Some(1), Some(30)),
+          GiornoInSettimana(3, 3, 2, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, Some(1), Some(30)),
+          GiornoInSettimana(5, 5, 2, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, Some(1), Some(20))
+        ))))
+      myView.modalOldParamDraw(params)
     }
+
   }
 }
 

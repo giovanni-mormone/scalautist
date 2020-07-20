@@ -23,9 +23,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   /**
    * Method used to draw the panel that allow to choose params for run assignment algorithm
    *
-   * @param zones List of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals List of [[caseclass.CaseClassDB.Terminale]]
    */
-  def drawChooseParams(zones: List[Zona]): Unit
+  def drawChooseParams(terminals: List[Terminale]): Unit
 
   def reDrawRichiesta(): Unit
 
@@ -60,12 +60,6 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   def stopLoadingReplacements(): Unit
 
-  /**
-   * Method allows to show list of [[caseclass.CaseClassDB.Terminale]] in the view
-   *
-   * @param terminals List of [[caseclass.CaseClassDB.Terminale]] to choose
-   */
-  def showTerminalsParam(terminals: List[Terminale]): Unit
 }
 
 object ManagerHome{
@@ -152,13 +146,10 @@ object ManagerHome{
       managerRichiestaBoxView.drawShiftRequest(listShift)
     }
 
-    override def drawChooseParams(zones: List[Zona]): Unit = {
-      chooseParamsBox = ChooseParamsBox(zones)
+    override def drawChooseParams(terminals: List[Terminale]): Unit = {
+      chooseParamsBox = ChooseParamsBox(terminals)
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
     }
 
-    override def showTerminalsParam(terminals: List[Terminale]): Unit = {
-      chooseParamsBox.insertTerminals(terminals)
-    }
   }
 }

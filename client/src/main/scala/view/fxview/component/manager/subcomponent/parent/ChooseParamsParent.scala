@@ -19,10 +19,8 @@ trait ChooseParamsParent {
   def calculateShifts(params: Parametro, save: Boolean): Unit
 
   /**
-   * Find all terminal in the zone
-   *
-   * @param zone
-   *             The zone containing the necessary terminals
+   * Method allows to draw the modal for choosing params
    */
-  def getTerminals(zone: Zona): Unit
+  def modalOldParam(): Unit
+
 }

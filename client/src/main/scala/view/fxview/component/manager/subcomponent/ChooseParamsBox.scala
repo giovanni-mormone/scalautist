@@ -21,12 +21,6 @@ import view.fxview.util.ResourceBundleUtil._
  */
 trait ChooseParamsBox extends Component[ChooseParamsParent] {
 
-  /**
-   * Allow to insert the list of terminals
-   * @param terminalsList
-   *                      List of terminals [[caseclass.CaseClassDB.Terminale]]
-   */
-  def insertTerminals(terminalsList: List[Terminale]): Unit
 }
 
 /**
@@ -34,14 +28,14 @@ trait ChooseParamsBox extends Component[ChooseParamsParent] {
  */
 object ChooseParamsBox {
 
-  def apply(zones: List[Zona]): ChooseParamsBox = new ChooseParamsBoxFX(zones)
+  def apply(terminalsList: List[Terminale]): ChooseParamsBox = new ChooseParamsBoxFX(terminalsList)
 
   /**
    * Class that implements javaFX version of [[ChooseParamsBox]]
-   * @param zoneList
-   *                 list of zones of type [[caseclass.CaseClassDB.Zona]]
+   * @param terminalsList
+   *                 list of zones of type [[caseclass.CaseClassDB.Terminale]]
    */
-  private class ChooseParamsBoxFX(zoneList: List[Zona])
+  private class ChooseParamsBoxFX(terminalsList: List[Terminale])
     extends AbstractComponent[ChooseParamsParent](path = "manager/subcomponent/ChooseParamsBox")
       with ChooseParamsBox {
 
@@ -50,15 +44,9 @@ object ChooseParamsBox {
     @FXML
     var endDate: DatePicker = _
     @FXML
-    var zones: ComboBox[String] = _
-    @FXML
     var terminals: CheckComboBox[String] = _
     @FXML
     var sabato: CheckBox = _
-    @FXML
-    var normal: RadioButton = _
-    @FXML
-    var special: RadioButton = _
     @FXML
     var old: Button = _
     @FXML
@@ -70,8 +58,6 @@ object ChooseParamsBox {
     @FXML
     var name: TextField = _
 
-    var terminalsList: List[Terminale] = List.empty
-
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       initText()
@@ -81,8 +67,6 @@ object ChooseParamsBox {
 
     private def initText(): Unit = {
       sabato.setText(resources.getResource(key = "txtcheck"))
-      normal.setText(resources.getResource(key = "txtnormal"))
-      special.setText(resources.getResource(key = "txtspecial"))
       saveName.setText(resources.getResource(key = "txtsave"))
       old.setText(resources.getResource(key = "txtold"))
       reset.setText(resources.getResource(key = "txtreset"))
@@ -92,11 +76,6 @@ object ChooseParamsBox {
     private def initAction(): Unit = {
       import javafx.collections.ListChangeListener
       //combobox
-      zones.setOnAction(_ => {
-        val zone = getZone
-        if (zone.isDefined)
-          parent.getTerminals(zone.get)
-      })
       terminals.getCheckModel.getCheckedItems.addListener(
       new ListChangeListener[String]() {
         override def onChanged(c: ListChangeListener.Change[_ <: String]): Unit =
@@ -106,11 +85,9 @@ object ChooseParamsBox {
       //buttons
       reset.setOnAction(_ => resetComponent())
       run.setOnAction(_ => println("eccolo"))
-      old.setOnAction(_ => parent)
+      old.setOnAction(_ => parent.modalOldParam())
 
       //checkbox e radiobutton
-      normal.setOnAction(_ => special.selectedProperty().setValue(false))
-      special.setOnAction(_ => normal.selectedProperty().setValue(false))
       saveName.setOnAction(_ => {
         if (saveName.isSelected)
           name.setDisable(false)
@@ -136,21 +113,13 @@ object ChooseParamsBox {
     }
 
     private def resetComponent(): Unit = {
-      zones.setPromptText(resources.getResource(key = "txtzones"))
+      insertTerminals()
 
-      zones.getItems.clear()
-      zoneList.foreach(zona => zones.getItems.add(zona.zones))
-      terminals.getItems.clear()
-
-      normal.selectedProperty().setValue(true)
-      special.selectedProperty().setValue(false)
       saveName.selectedProperty().setValue(false)
       sabato.selectedProperty().setValue(false)
 
-      terminals.setDisable(true)
       endDate.setDisable(true)
       run.setDisable(true)
-      normal.selectedProperty().setValue(true)
 
       initDate.getEditor.clear()
       initDate.setValue(null)
@@ -159,12 +128,6 @@ object ChooseParamsBox {
       CreateDatePicker.createDatePickerFMD(initDate, LocalDate.now())
       enableTxtField()
     }
-
-    private def getComboSelected(component: ComboBox[String]): String =
-      component.getSelectionModel.getSelectedItem
-
-    private def getZone: Option[Zona] =
-      zoneList.find(zona => zona.zones.equals(getComboSelected(zones)))
 
     private def getTerminals: List[Terminale] =
       terminalsList.filter(terminal => terminals.getCheckModel.getCheckedItems.contains(terminal.nomeTerminale))
@@ -179,7 +142,7 @@ object ChooseParamsBox {
     }
 
     private def enableAlgorithm(): Unit =
-      if (getZone.isDefined && getTerminals.nonEmpty && getDate(initDate).isDefined &&
+      if (getTerminals.nonEmpty && getDate(initDate).isDefined &&
         getDate(endDate).isDefined && saveControl())
         run.setDisable(false)
       else
@@ -191,10 +154,10 @@ object ChooseParamsBox {
       name.setPromptText(resources.getResource(key = "txtname"))
     }
 
-    override def insertTerminals(terminalsList: List[Terminale]): Unit = {
+    private def insertTerminals(): Unit = {
       terminals.setDisable(false)
+      terminals.getCheckModel.clearChecks()
       terminals.getItems.clear()
-      this.terminalsList = terminalsList
       terminalsList.foreach(terminal => terminals.getItems.add(terminal.nomeTerminale))
     }
   }

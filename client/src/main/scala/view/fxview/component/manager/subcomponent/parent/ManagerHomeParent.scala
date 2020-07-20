@@ -1,6 +1,6 @@
 package view.fxview.component.manager.subcomponent.parent
 
-trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent with ChooseParamsParent {
+trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent with ChooseParamsParent with ModalParamParent {
 
   /**
    *

@@ -1,5 +1,7 @@
 package view.fxview.component.manager.subcomponent.parent
 
-trait ModalParamParent {
+import view.fxview.component.modal.ModalParent
+
+trait ModalParamParent extends ModalParent {
 
 }
