@@ -371,7 +371,7 @@ object RisultatoOperation extends RisultatoOperation {
   }
 
   private def verifyOldResult(idTerminal:Int,dataI:Date,dataF:Date): Future[Option[Int]]={
-      InstancePersona.operation().selectFilter(x=> Option(idTerminal).equals(x.terminaleId)).flatMap {
+      InstancePersona.operation().selectFilter(x=> Option(idTerminal) == x.terminaleId).flatMap {
         case Some(value) =>
           InstanceRisultato.operation().selectFilter(x=> x.data>=dataI && x.personeId.inSet(value.flatMap(_.matricola.toList))).collect {
             case Some(result) if result.exists(date=>date.data.compareTo(subtract(dataF,1))==0)=>Some(StatusCodes.INFO_CODE2)
