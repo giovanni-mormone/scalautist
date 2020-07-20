@@ -3,15 +3,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<?import org.controlsfx.control.CheckComboBox?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="357.0" prefWidth="600.0">
+      <Pane prefHeight="371.0" prefWidth="537.0">
          <children>
             <DatePicker fx:id="initDate" layoutX="50.0" layoutY="178.0" />
             <DatePicker fx:id="endDate" layoutX="50.0" layoutY="221.0" />
             <ComboBox fx:id="zones" layoutX="50.0" layoutY="48.0" prefHeight="27.0" prefWidth="194.0" />
-            <ComboBox fx:id="terminals" layoutX="50.0" layoutY="107.0" prefHeight="27.0" prefWidth="194.0" />
+            <CheckComboBox fx:id="terminals" layoutX="50.0" layoutY="107.0" prefHeight="27.0" prefWidth="194.0" />
             <CheckBox fx:id="sabato" layoutX="381.0" layoutY="183.0" mnemonicParsing="false" text="CheckBox" />
+            <CheckBox fx:id="saveName" layoutX="381.0" layoutY="210.0" mnemonicParsing="false" text="CheckBox" />
+            <TextField fx:id="name" layoutX="381.0" layoutY="250.0" />
             <RadioButton fx:id="normal" layoutX="381.0" layoutY="53.0" mnemonicParsing="false" text="RadioButton" />
             <RadioButton fx:id="special" layoutX="381.0" layoutY="107.0" mnemonicParsing="false" text="RadioButton" />
          </children>

@@ -59,6 +59,13 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   def loadingReplacements(): Unit
 
   def stopLoadingReplacements(): Unit
+
+  /**
+   * Method allows to show list of [[caseclass.CaseClassDB.Terminale]] in the view
+   *
+   * @param terminals List of [[caseclass.CaseClassDB.Terminale]] to choose
+   */
+  def showTerminalsParam(terminals: List[Terminale]): Unit
 }
 
 object ManagerHome{
@@ -108,6 +115,7 @@ object ManagerHome{
       richiestaButton.setText(resources.getResource("richiesta-button"))
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
+      generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
     }
 
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
@@ -149,5 +157,8 @@ object ManagerHome{
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
     }
 
+    override def showTerminalsParam(terminals: List[Terminale]): Unit = {
+      chooseParamsBox.insertTerminals(terminals)
+    }
   }
 }
