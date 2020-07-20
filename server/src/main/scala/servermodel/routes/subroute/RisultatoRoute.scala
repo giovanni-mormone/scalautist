@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
 import algoritmo.Algoritmo
 import caseclass.CaseClassDB.Risultato
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response, ResultAlgorithm}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Id, Request, Response, ResultAlgorithm, CheckResultRequest}
 import dbfactory.operation.RisultatoOperation
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
@@ -70,6 +70,17 @@ object RisultatoRoute {
             case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
             case other => anotherSuccessAndFailure(other)
           }
+        case _ => complete(StatusCodes.BadRequest, badHttpRequest)
+      }
+    }
+
+  def checkOldResult(): Route =
+    post {
+      entity(as[Request[CheckResultRequest]]) {
+        case Request(Some(value)) => onComplete(RisultatoOperation.verifyOldResult(value.terminalsId, value.dateI, value.dateF)) {
+          case Success(x) => complete(Response[List[Option[Int]]](statusCodes.SUCCES_CODE,Some(x)))
+          case other => anotherSuccessAndFailure(other)
+        }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)
       }
     }

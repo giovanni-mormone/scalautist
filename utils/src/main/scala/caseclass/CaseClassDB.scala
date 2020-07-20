@@ -161,6 +161,7 @@ object CaseClassDB{
    *
    * @param nomeTerminale name for one terminal
    * @param idZona identifies zone that terminal is associated
+   * @param idZona identifies zone that terminal is associated
    * @param idTerminale represent unambiguous for every terminal (for insert operation this is not mandatory)
    */
   final case class Terminale(nomeTerminale:String,idZona:Int,idTerminale:Option[Int]=None)

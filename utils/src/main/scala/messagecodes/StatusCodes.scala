@@ -18,4 +18,8 @@ object StatusCodes {
   val BAD_REQUEST: Int = 2
   val NOT_FOUND  : Int = 0
   val SUCCES_CODE: Int = 1
+  val INFO_CODE1:Int = 4
+  val INFO_CODE2:Int = 5
+  val INFO_CODE3:Int = 6
+  val INFO_CODE4:Int = 7
 }

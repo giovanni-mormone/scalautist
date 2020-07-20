@@ -108,6 +108,8 @@ trait ManagerModel {
    * @return Future Response Int with status of operation
    */
   def saveParameters(parameters:InfoAlgorithm):Future[Response[Int]]
+
+  def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
 }
 
 /**
@@ -127,6 +129,8 @@ object ManagerModel {
     private val TODAY: Date = Date.valueOf(LocalDate.now())
     private val WEEK: HashMap[Int, String] = HashMap(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi",
                                                       5 -> "Venerdi", 6 -> "Sabato", 7 -> "Domenica")
+
+    private val notificationReceiver = ConfigReceiver("person_emitter")
 
     override def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]] = {
       val request = Post(getURI("allabsences"), transform(Dates(TODAY)))
@@ -188,5 +192,10 @@ object ManagerModel {
       val request = Post(getURI("saveparameter"), transform(parameters))
       callHtpp(request).flatMap(unMarshall)
     }
-}
+
+    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] = {
+      val request = Post(getURI("checkresultprealgorithm"), transform(dataToCheck))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
+    }
+  }
 }

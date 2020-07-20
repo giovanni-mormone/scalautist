@@ -1,6 +1,7 @@
 package algoritmo
 
 import java.sql.Date
+import java.util.concurrent.locks.ReentrantLock
 
 import algoritmo.AssignmentOperation.InfoForAlgorithm
 import caseclass.CaseClassDB._
@@ -47,6 +48,7 @@ trait Algoritmo {
    *
    */
   def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute):Future[Option[Int]]
+
 }
 object Algoritmo extends Algoritmo{
 
@@ -63,11 +65,24 @@ object Algoritmo extends Algoritmo{
     day.compareTo(initDay)>=0 && day.compareTo(finishDay)<=0 && getDayNumber(day)!=ENDED_DAY_OF_WEEK
   }
 
+  private val lock = new ReentrantLock()
+  private var running: Boolean = false
+
   override def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute): Future[Option[Int]] = {
-    verifyData(algorithmExecute).collect{
-      case Some(StatusCodes.SUCCES_CODE) =>Some(StatusCodes.SUCCES_CODE)
-      case value =>value
+    lock.lock()
+    if(running){
+      lock.unlock()
+      future(StatusCodes.ERROR_CODE1)
     }
+    else{
+      running = true
+      lock.unlock()
+      verifyData(algorithmExecute).collect{
+        case Some(StatusCodes.SUCCES_CODE) =>Some(StatusCodes.SUCCES_CODE)
+        case value =>value
+      }
+    }
+
   }
 
   private def verifyData(algorithmExecute: AlgorithmExecute): Future[Option[Int]] ={
@@ -167,14 +182,11 @@ object Algoritmo extends Algoritmo{
   private def getAllContract(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[Option[Int]]={
     InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
       case Some(contract) =>  //TODO controllare i contratti
-        val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
-        AssignmentOperation.initOperationAssignment(algorithmExecute,result)
+      val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
+      AssignmentOperation.initOperationAssignment(algorithmExecute,result).foreach(_ => running = false)
         Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE9)
     }
   }
-
-
-
-
 }
+

@@ -1,12 +1,11 @@
 package algoritmo
 
 import java.sql.Date
-import java.time.LocalDate
 
 import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation._
 import caseclass.CaseClassDB._
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, SettimanaN, SettimanaS}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstanceRichiesta, InstanceRisultato}
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
 import slick.jdbc.SQLServerProfile.api._
@@ -14,17 +13,12 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 trait ExtractAlgorithmInformation{
   def getAllData(algorithmExecute:AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[InfoForAlgorithm]
 }
 object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
-  //TODO tornare tutti conducenti per terminale incluso il suo contratto id
-  //TODO tornare tutti turni esistenti
-  //TODO tornare quantità di giorni trascorsi dal ultimo libero di ogni conducente col suo turno tornare anche secuenza domeniche
-  //TODO tornare tutti conducenti con assenza
-  //TODO tornare tutta la richiesta teorica per il periodo a fare eseguire
+
   //TODO controllare final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
   def apply():ExtractAlgorithmInformation ={
     emitter.start()
@@ -183,7 +177,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
   }
 
   private def createPreviousSequence(id:Int,data:Date,result : List[Risultato]):PreviousSequence= result match {
-    case  res =>constructPreviousSequence(id,data,res)
+    case  res if res.nonEmpty =>constructPreviousSequence(id,data,res)
     case Nil => PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
 
   }
@@ -211,8 +205,9 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
  }
   private def createPreviousSequence(sunday:List[Int],allSunday:List[Int],id:Int,endFreeDay:Int,data:Date) = {
     sunday.length match {
-      case x if x>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
-      case x if x>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case length if length>3 && allSunday.length==4=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case length if length>4 && allSunday.length==5=>PreviousSequence(id,DEFAULT_SEQUENCE,endFreeDay)
+      case length if (length==1 && allSunday.length==4) || (length==2 && allSunday.length==5) =>PreviousSequence(id,DEFAULT_ASSIGNED,endFreeDay)
       case _ if sunday.isEmpty=>PreviousSequence(id,DEFAULT_ASSIGNED,getDayNumber(endOfMonth(data)))
       case _ =>
         val sequence = allSunday.filter(x=> !sunday.contains(x))
@@ -238,29 +233,4 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     }
     _iterateIdPerson(idPerson)
   }
-}
-
-object t extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
-  val terminals=List(15)
-  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
-  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
-  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
-  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
-  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
-  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
-  val threeSaturday=true
-  val algorithmExecute: AlgorithmExecute =
-    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
-  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute.copy(gruppo = None,settimanaNormale = None,settimanaSpeciale = None)).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>println(":)")
-  }
-  while (true){}
 }

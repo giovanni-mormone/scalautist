@@ -61,6 +61,17 @@ trait Crud[A]{
    */
   private[implicitOperation] def insertAll(element:List[A]):Future[Option[List[Int]]]
 
+
+  /**
+   *  Generic operation which enable insert a List of any element in any table in database.
+   *  It's a bulk operation that runs all in once and doesn't return the list of the ids inserted in the database
+   *  but only a code representing the status of the operation
+   * @param element List of case class that represent instance of the table in database
+   * @return Future of Option Int that represents the status of the operation
+   *         Note that the return value will be None if element has not been inserted into database and Some if the operation was insertAll
+   */
+  private[implicitOperation] def insertAllBatch(element:List[A]):Future[Option[Int]]
+
   /**
    *  Generic operation which enable delete one element in any table in database
    * @param element case class that represent one element in one table in database
@@ -99,6 +110,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Contratto]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Contratto]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudGiornoInSettimana extends OperationImplicit[GiornoInSettimana,GiornoInSettimanaTableRep] with Crud[GiornoInSettimana] {
     override private[implicitOperation] def insert(element: GiornoInSettimana):Future[Option[Int]]                 = typeDB().insert(element)
@@ -109,6 +121,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[GiornoInSettimana]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[GiornoInSettimana]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudGiorno extends OperationImplicit[Giorno,GiornoTableRep] with Crud[Giorno] {
     override private[implicitOperation] def insert(element: Giorno):Future[Option[Int]]                 = typeDB().insert(element)
@@ -119,6 +132,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Giorno]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Giorno]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudGruppoTerminale extends OperationImplicit[GruppoTerminale,GruppoTerminaleTableRep] with Crud[GruppoTerminale] {
     override private[implicitOperation] def insert(element: GruppoTerminale):Future[Option[Int]]                 = typeDB().insert(element)
@@ -129,6 +143,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[GruppoTerminale]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[GruppoTerminale]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudParametro extends OperationImplicit[Parametro,ParametroTableRep] with Crud[Parametro] {
     override private[implicitOperation] def insert(element: Parametro):Future[Option[Int]]                 = typeDB().insert(element)
@@ -139,6 +154,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Parametro]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Parametro]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudPersona extends OperationImplicit[Persona,PersonaTableRep] with Crud[Persona] {
     import slick.jdbc.SQLServerProfile.api._
@@ -154,6 +170,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Persona]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Persona]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudPresenza extends OperationImplicit[Presenza,PresenzaTableRep] with Crud[Presenza] {
     override private[implicitOperation] def insert(element: Presenza):Future[Option[Int]]                 = typeDB().insert(element)
@@ -164,6 +181,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Presenza]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Presenza]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudRichiesta extends OperationImplicit[Richiesta,RichiestaTableRep] with Crud[Richiesta] {
     override private[implicitOperation] def insert(element: Richiesta):Future[Option[Int]]                 = typeDB().insert(element)
@@ -174,6 +192,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Richiesta]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Richiesta]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudRichiestaTeorica extends OperationImplicit[RichiestaTeorica,RichiestaTeoricaTableRep] with Crud[RichiestaTeorica] {
     override private[implicitOperation] def insert(element: RichiestaTeorica):Future[Option[Int]]                 = typeDB().insert(element)
@@ -184,6 +203,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[RichiestaTeorica]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[RichiestaTeorica]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudRisultato extends OperationImplicit[Risultato,RisultatoTableRep] with Crud[Risultato] {
     override private[implicitOperation] def insert(element: Risultato):Future[Option[Int]]                 = typeDB().insert(element)
@@ -194,6 +214,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Risultato]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Risultato]) =  typeDB().insertAllBatch(element)
   }
   implicit object CrudSettimana extends OperationImplicit[Regola,RegolaTableRep] with Crud[Regola] {
     override private[implicitOperation] def insert(element: Regola):Future[Option[Int]]                 = typeDB().insert(element)
@@ -204,6 +225,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Regola]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]             = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Regola]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudStoricoContratto extends OperationImplicit[StoricoContratto,StoricoContrattoTableRep] with Crud[StoricoContratto] {
     override private[implicitOperation] def insert(element: StoricoContratto):Future[Option[Int]]                 = typeDB().insert(element)
@@ -214,6 +236,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[StoricoContratto]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[StoricoContratto]) = typeDB().insertAllBatch(element)
   }
 
   implicit object CrudTerminale extends OperationImplicit[Terminale,TerminaleTableRep] with Crud[Terminale] {
@@ -225,6 +248,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Terminale]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Terminale]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudTurno extends OperationImplicit[Turno,TurnoTableRep] with Crud[Turno] {
     override private[implicitOperation] def insert(element: Turno):Future[Option[Int]]                 = typeDB().insert(element)
@@ -235,6 +259,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Turno]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Turno]) = typeDB().insertAllBatch(element)
   }
   implicit object CrudZona extends OperationImplicit[Zona,ZonaTableRep] with Crud[Zona] {
     override private[implicitOperation] def insert(element: Zona):Future[Option[Int]]                 = typeDB().insert(element)
@@ -245,6 +270,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Zona]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Zona]) = typeDB().insertAllBatch(element)
   }
 
   implicit object CrudDisponibilita extends OperationImplicit[Disponibilita,DisponibilitaTableRep] with Crud[Disponibilita] {
@@ -256,6 +282,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Disponibilita]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Disponibilita]) = typeDB().insertAllBatch(element)
   }
 
   implicit object CrudAssenza extends OperationImplicit[Assenza,AssenzaTableRep] with Crud[Assenza] {
@@ -267,6 +294,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Assenza]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Assenza]) = typeDB().insertAllBatch(element)
   }
 
   implicit object CrudStipendio extends OperationImplicit[Stipendio,StipendioTableRep] with Crud[Stipendio] {
@@ -278,6 +306,7 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[Stipendio]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[Stipendio]) = typeDB().insertAllBatch(element)
   }
 
   implicit object CrudZonaTerminale extends OperationImplicit[ZonaTerminale,ZonaTerminaleTableRep] with Crud[ZonaTerminale] {
@@ -289,5 +318,6 @@ object Crud {
     override private[implicitOperation] def insertAll(element: List[ZonaTerminale]): Future[Option[List[Int]]] = typeDB().insertAll(element)
     override private[implicitOperation] def deleteAll(element: List[Int]): Future[Option[Int]]       = typeDB().deleteAll(element)
 
+    override private[implicitOperation] def insertAllBatch(element: List[ZonaTerminale]) = typeDB().insertAllBatch(element)
   }
 }
