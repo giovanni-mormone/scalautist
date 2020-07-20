@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Dates}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, Dates, CheckResultRequest}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -65,8 +65,25 @@ object MasterRouteRisultato extends Directives {
     }
 
 
+  @Path("/checkresult")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Check result", description = "Check the old result before running the algorithm",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[CheckResultRequest])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "run success"),
+      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def checkResult(): Route =
+    path("checkresultprealgorithm") {
+      checkOldResult()
+    }
+
+
   val routeRisultato: Route =
     concat(
-      replaceShift(),executeAlgorithm(),resultAlgorithm()
+      replaceShift(),executeAlgorithm(),resultAlgorithm(),checkResult()
     )
 }
