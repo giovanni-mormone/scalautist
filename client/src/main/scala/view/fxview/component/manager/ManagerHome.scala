@@ -3,24 +3,30 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Terminale, Turno}
+import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
-import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
 import view.fxview.FXHelperFactory
-import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
+import view.fxview.component.manager.subcomponent.{ChooseParamsBox, FillHolesBox, ManagerRichiestaBox}
 import view.fxview.component.{AbstractComponent, Component}
-/** @author Gianni Mormone, Fabian Aspee Encina
- *  Trait which allows to perform operations on richiesta view.
+import view.fxview.util.ResourceBundleUtil._
+
+/**
+ * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
+ * trait of methods that allow user to do desired operations.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
+
   /**
-   * method that re paint all element that belong to Richiesta
+   * Method used to draw the panel that allow to choose params for run assignment algorithm
+   *
+   * @param zones List of [[caseclass.CaseClassDB.Zona]]
    */
+  def drawChooseParams(zones: List[Zona]): Unit
+
   def reDrawRichiesta(): Unit
 
   /**
@@ -53,6 +59,13 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   def loadingReplacements(): Unit
 
   def stopLoadingReplacements(): Unit
+
+  /**
+   * Method allows to show list of [[caseclass.CaseClassDB.Terminale]] in the view
+   *
+   * @param terminals List of [[caseclass.CaseClassDB.Terminale]] to choose
+   */
+  def showTerminalsParam(terminals: List[Terminale]): Unit
 }
 
 object ManagerHome{
@@ -86,6 +99,8 @@ object ManagerHome{
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
+    var chooseParamsBox: ChooseParamsBox = _
+
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -100,6 +115,7 @@ object ManagerHome{
       richiestaButton.setText(resources.getResource("richiesta-button"))
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
+      generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
     }
 
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
@@ -134,6 +150,15 @@ object ManagerHome{
 
     override def drawShiftRichiesta(listShift: List[Turno]): Unit = {
       managerRichiestaBoxView.drawShiftRequest(listShift)
+    }
+
+    override def drawChooseParams(zones: List[Zona]): Unit = {
+      chooseParamsBox = ChooseParamsBox(zones)
+      baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
+    }
+
+    override def showTerminalsParam(terminals: List[Terminale]): Unit = {
+      chooseParamsBox.insertTerminals(terminals)
     }
   }
 }
