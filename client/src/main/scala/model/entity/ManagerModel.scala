@@ -108,6 +108,8 @@ trait ManagerModel {
    * @return Future Response Int with status of operation
    */
   def saveParameters(parameters:InfoAlgorithm):Future[Response[Int]]
+
+  def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
 }
 
 /**
@@ -190,5 +192,10 @@ object ManagerModel {
       val request = Post(getURI("saveparameter"), transform(parameters))
       callHtpp(request).flatMap(unMarshall)
     }
-}
+
+    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] = {
+      val request = Post(getURI("checkresultprealgorithm"), transform(dataToCheck))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
+    }
+  }
 }
