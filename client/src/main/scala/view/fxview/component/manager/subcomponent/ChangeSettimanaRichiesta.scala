@@ -5,8 +5,9 @@ import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB.Regola
 import javafx.fxml.FXML
-import javafx.scene.control.Button
+import javafx.scene.control.{Button, ComboBox}
 import org.controlsfx.control.CheckComboBox
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
@@ -19,9 +20,10 @@ trait ChangeSettimanaRichiesta extends Component[ChangeSettimanaRichiestaParent]
 
 object ChangeSettimanaRichiesta{
 
-  def apply(params: ParamsForAlgoritm): ChangeSettimanaRichiesta = new ChangeSettimanaRichiestaFX(params)
+  def apply(params: ParamsForAlgoritm, rules: List[Regola]): ChangeSettimanaRichiesta =
+    new ChangeSettimanaRichiestaFX(params, rules)
 
-  private class ChangeSettimanaRichiestaFX(params: ParamsForAlgoritm)
+  private class ChangeSettimanaRichiestaFX(params: ParamsForAlgoritm, rules: List[Regola])
   extends AbstractComponent[ChangeSettimanaRichiestaParent](path = "manager/subcomponent/ParamSettimana")
   with ChangeSettimanaRichiesta{
 
@@ -31,6 +33,10 @@ object ChangeSettimanaRichiesta{
     var reset: Button = _
     @FXML
     var weekS: CheckComboBox[String] = _
+    @FXML
+    var ruleN: ComboBox[String] = _
+    @FXML
+    var ruleS: ComboBox[String] = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
@@ -49,11 +55,17 @@ object ChangeSettimanaRichiesta{
     private def initCombo(): Unit = {
       val list = calcolateWeeks()
       list.foreach(week => weekS.getItems.add(week.toString))
+
+      rules.foreach(rule => {
+        ruleN.getItems.add(rule.nomeRegola)
+        ruleS.getItems.add(rule.nomeRegola)
+      })
     }
 
     private def calcolateWeeks(): List[Int] = {
       val DECEMBER: Int = 12
       val LAST_DAY: Int = 28
+      val FIRST_WEEK: Int = 1
       var res: List[Int] = List.empty
 
       val initWeek = weekNum(params.dateI)
@@ -66,7 +78,7 @@ object ChangeSettimanaRichiesta{
         val lastWeek = weekNum(LocalDate.of(params.dateI.getYear, DECEMBER, LAST_DAY))
         for (i <- initWeek to lastWeek)
           res = res :+ i
-        for (i <- 0 to endWeek)
+        for (i <- FIRST_WEEK to endWeek)
           res = res :+ i
       }
       res

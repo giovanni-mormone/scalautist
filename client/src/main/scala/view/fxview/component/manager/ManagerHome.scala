@@ -3,7 +3,7 @@ package view.fxview.component.manager
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
@@ -64,7 +64,7 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   /**
    *
    */
-  def drawWeekParams(params: ParamsForAlgoritm): Unit
+  def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit
 
   /**
    *
@@ -167,8 +167,8 @@ object ManagerHome{
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
     }
 
-    override def drawWeekParams(params: ParamsForAlgoritm): Unit = {
-      val box = ChangeSettimanaRichiesta(params)
+    override def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit = {
+      val box = ChangeSettimanaRichiesta(params, rules)
       baseManager.setCenter(box.setParent(parent).pane)
     }
 

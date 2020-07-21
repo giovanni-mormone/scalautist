@@ -3,7 +3,7 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
@@ -59,7 +59,7 @@ trait ManagerView extends DialogView {
    *
    * @param params
    */
-  def drawWeekParam(params: ParamsForAlgoritm)
+  def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola])
 
   /**
    *
@@ -172,8 +172,8 @@ object ManagerView {
     override def resetWeekParams(): Unit =
       drawParamsPanel()
 
-    override def drawWeekParam(params: ParamsForAlgoritm): Unit =
-      Platform.runLater(() => managerHome.drawWeekParams(params))
+    override def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]): Unit =
+      Platform.runLater(() => managerHome.drawWeekParams(params, rules))
 
     override def drawGroupParam(params: ParamsForAlgoritm): Unit =
       Platform.runLater(() => managerHome.drawGroupsParam())

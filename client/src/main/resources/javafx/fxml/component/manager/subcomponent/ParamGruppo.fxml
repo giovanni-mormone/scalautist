@@ -15,12 +15,7 @@
          <children>
             <Pane prefHeight="341.0" prefWidth="413.0">
                <children>
-                  <TableView layoutX="14.0" layoutY="14.0" prefHeight="254.0" prefWidth="374.0">
-                    <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
-                    </columns>
-                  </TableView>
+                  <TableView layoutX="14.0" layoutY="14.0" prefHeight="254.0" prefWidth="374.0"/>
                   <Button layoutX="84.0" layoutY="287.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" text="Button" />
                   <Button layoutX="195.0" layoutY="287.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" text="Button" />
                </children>

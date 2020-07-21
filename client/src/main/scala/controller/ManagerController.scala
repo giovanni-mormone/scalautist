@@ -3,7 +3,7 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Terminale, Zona, ZonaTerminale}
+import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
@@ -170,7 +170,8 @@ object ManagerController {
     }
 
     override def weekParam(params: ParamsForAlgoritm): Unit = {
-      myView.drawWeekParam(params)
+      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      myView.drawWeekParam(params, rules)
     }
 
     override def groupParam(params: ParamsForAlgoritm): Unit = {
