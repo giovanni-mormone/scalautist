@@ -13,4 +13,5 @@ trait ModalParamParent extends ModalParent {
    * @param param
    */
   def loadParam(param: InfoAlgorithm): Unit
+
 }

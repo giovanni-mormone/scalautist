@@ -5,13 +5,19 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="316.0" prefWidth="600.0">
          <children>
-            <TableView fx:id="params" layoutX="19.0" layoutY="25.0" prefHeight="272.0" prefWidth="554.0">
-            </TableView>
+            <TableView fx:id="params" layoutX="15.0" layoutY="25.0" prefHeight="325.0" prefWidth="200.0"/>
+            <TextArea fx:id="terminals" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+            <TextArea fx:id="days" layoutX="230.0" layoutY="200.0" prefHeight="150.0" prefWidth="200.0" />
+            <CheckBox fx:id="sabato" layoutX="460.0" layoutY="25.0" />
+            <TextField fx:id="rule" layoutX="460.0" layoutY="50.0" />
          </children>
       </Pane>
       <Pane prefHeight="90.0" prefWidth="600.0">

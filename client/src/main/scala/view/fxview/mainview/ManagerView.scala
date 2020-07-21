@@ -53,7 +53,7 @@ trait ManagerView extends DialogView {
    *
    * @param olds list of [[caseclass.CaseClassDB.Parametro]]
    */
-  def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale]): Unit
+  def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit
 
   /**
    *
@@ -151,9 +151,10 @@ object ManagerView {
     override def modalOldParam(terminals: List[Terminale]): Unit =
       myController.modalOldParams(terminals)
 
-    override def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale]): Unit =
+    override def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit =
       Platform.runLater(() =>{
-        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, this, ParamsModal(olds, terminals))
+        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
+          ParamsModal(olds, terminals, rules))
         modalResource.show()
       })
 
