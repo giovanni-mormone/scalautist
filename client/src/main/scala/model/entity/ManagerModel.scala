@@ -10,14 +10,13 @@ import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
 import model.AbstractModel
+import persistence.ConfigReceiverPersistence
 import receiver.ConfigReceiver
 import utils.TransferObject.InfoRichiesta
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -25,6 +24,10 @@ import scala.util.{Failure, Success}
  * Interface for System Manager's operation on data
  */
 trait ManagerModel {
+  def consumeNotification(tag: Long,userId: Option[Int]): Unit
+
+  def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit):Unit
+
 
   /**
    * Returns a list that contains all absent people in the date of today
@@ -87,7 +90,7 @@ trait ManagerModel {
    * @return Future of Response of List of Result Algorithm, for description of this case class, view
    *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
    */
-  def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[List[ResultAlgorithm]]]
+  def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[(List[ResultAlgorithm],List[Date])]]
 
   /**
    * return all parameter existing in database
@@ -167,15 +170,19 @@ object ManagerModel {
       callHtpp(request).flatMap(unMarshall)
     }
 
-   val terminals: mutable.Map[(Int,Date,Date), Future[Response[List[ResultAlgorithm]]]] = collection.mutable.Map[(Int,Date,Date), Future[Response[List[ResultAlgorithm]]]]()
+   val terminals: mutable.Map[(Int,Date,Date), Future[Response[(List[ResultAlgorithm],List[Date])]]] = collection.mutable.Map[(Int,Date,Date), Future[Response[(List[ResultAlgorithm],List[Date])]]]()
 
-    override def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[List[ResultAlgorithm]]] =
+    override def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[(List[ResultAlgorithm],List[Date])]] =
       terminals.getOrElseUpdate((idTerminale,dataI,dataF),getResultAlgorithmMemorize(idTerminale,dataI,dataF))
 
 
-    def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[List[ResultAlgorithm]]] = {
+    def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[(List[ResultAlgorithm],List[Date])]] = {
       val request = Post(getURI("getresultalgorithm"), transform((ids, dateI,dateF)))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[ResultAlgorithm]]])
+      callHtpp(request).flatMap(response => {
+        println(response)
+        Unmarshal(response).to[Response[(List[ResultAlgorithm],List[Date])]]
+      }
+       )
     }
 
     override def getOldParameter: Future[Response[List[Parametro]]] = {
@@ -196,6 +203,18 @@ object ManagerModel {
     override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] = {
       val request = Post(getURI("checkresultprealgorithm"), transform(dataToCheck))
       callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
+    }
+
+    override def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit): Unit = {
+      val nameQueue = "manager"+userId
+      val receiver = ConfigReceiverPersistence(nameQueue,"assumi","licenzia","malattie","vacanze")
+      receiver.start()
+      receiver.receiveMessage(f)
+    }
+
+    override def consumeNotification(tag: Long,userId: Option[Int]): Unit = {
+      val receiver = ConfigReceiverPersistence("manager"+userId,"assumi")
+      receiver.consumeNotification(tag)
     }
   }
 }

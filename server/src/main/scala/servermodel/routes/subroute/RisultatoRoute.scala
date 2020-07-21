@@ -89,7 +89,7 @@ object RisultatoRoute {
   post {
       entity(as[Request[(Int,Date,Date)]]) {
         case Request(Some(resultAlgorithm)) =>onComplete(RisultatoOperation.getResultAlgorithm(resultAlgorithm._1,resultAlgorithm._2,resultAlgorithm._3)) {
-            case Success(Some(result)) => complete(Response[List[ResultAlgorithm]](statusCodes.SUCCES_CODE,Some(result)))
+            case Success((Some(result),list)) => complete(Response(statusCodes.SUCCES_CODE,Some((result,list))))
             case other => anotherSuccessAndFailure(other)
           }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)

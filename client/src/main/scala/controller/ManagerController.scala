@@ -3,7 +3,8 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, Response, SettimanaN, SettimanaS, CheckResultRequest}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
+import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
@@ -13,6 +14,12 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+  def consumeNotification(tag: Long): Unit
+
+  def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit
+
+  def dataToResultPanel(): Unit
+
   def runAlgorithm(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
 
 
@@ -50,7 +57,7 @@ trait ManagerController extends AbstractController[ManagerView]{
   def replacementSelected(idRisultato: Int, idPersona: Int):Unit
 
   def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
-
+  def startListenNotification():Unit
 }
 
 object ManagerController {
@@ -61,6 +68,13 @@ object ManagerController {
 
   private class ManagerControllerImpl extends ManagerController {
 
+    private def notificationReceived(message:String,tag:Long):Unit={
+        myView.drawNotification(message,tag)
+    }
+
+    override def startListenNotification(): Unit ={
+       model.verifyExistedQueue(Utils.userId,notificationReceived)
+    }
     override def dataToAbsencePanel(): Unit = {
 
       model.allAbsences().onComplete{
@@ -130,6 +144,22 @@ object ManagerController {
     override def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]] = {
       model.verifyOldResult(dataToCheck)
     }
+
+    override def dataToResultPanel(): Unit =
+      HumanResourceModel().getAllTerminale.onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawResultTerminal(value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
+    override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit = {
+      model.getResultAlgorithm(idTerminal.head,date,date1).onComplete {
+        case Failure(exception) => println(exception)
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
+      }
+    }
+
+    override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
   }
 }
 

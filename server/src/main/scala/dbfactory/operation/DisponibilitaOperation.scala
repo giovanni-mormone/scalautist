@@ -11,6 +11,7 @@ import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, Ins
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{AssenzaTableQuery, ContrattoTableQuery, DisponibilitaTableQuery, PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery}
 import messagecodes.StatusCodes
+import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
@@ -97,7 +98,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private val SATURDAY=0
   private val SUCCESS_UPDATE = 1
   private val DEFAULT_RESPONSE = Future.successful(None)
-
   private object convertToQueryPersonStoricAvail{
 
     private val DEFAULT_YEAR = 0
