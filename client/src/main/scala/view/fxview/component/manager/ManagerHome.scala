@@ -1,23 +1,31 @@
 package view.fxview.component.manager
 
 import java.net.URL
+import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
+import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import caseclass.CaseClassDB.{Terminale, Turno}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
 import view.fxview.util.ResourceBundleUtil._
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.BorderPane
+import javafx.scene.control.{Accordion, Button, Label, TitledPane}
+import javafx.scene.layout.{BorderPane, VBox}
+import org.controlsfx.control.PopOver
 import view.fxview.FXHelperFactory
-import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox}
+import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 /** @author Gianni Mormone, Fabian Aspee Encina
  *  Trait which allows to perform operations on richiesta view.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
+  def drawNotifica(str: String,tag:Long): Unit
+
+  def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
+
+  def drawResultTerminal(terminal: List[Terminale]): Unit
+
   /**
    * method that re paint all element that belong to Richiesta
    */
@@ -83,9 +91,14 @@ object ManagerHome{
     var richiestaButton: Button = _
     @FXML
     var idLabel: Label = _
+    @FXML
+    var popover: PopOver = _
+    @FXML
+    var accordion:Accordion= _
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
+    var selectResultBox:SelectResultBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -100,8 +113,15 @@ object ManagerHome{
       richiestaButton.setText(resources.getResource("richiesta-button"))
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
-    }
+      printResultButton.setOnAction(_=> parent.drawResultPanel())
+      notificationButton.setOnAction(_=>openAccordion())
 
+
+    }
+    //rabbit manda la notificacion, pero donde la manda? llega primero que el inizializate?
+    private def openAccordion(): Unit ={
+      popover.show(notificationButton)
+    }
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
       fillHolesView = FillHolesBox()
       baseManager.setCenter(fillHolesView.setParent(parent).pane)
@@ -134,6 +154,31 @@ object ManagerHome{
 
     override def drawShiftRichiesta(listShift: List[Turno]): Unit = {
       managerRichiestaBoxView.drawShiftRequest(listShift)
+    }
+
+    override def drawResultTerminal(terminal: List[Terminale]): Unit = {
+      selectResultBox = SelectResultBox(terminal)
+      baseManager.setCenter(selectResultBox.setParent(parent).pane)
+    }
+
+    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = selectResultBox.createResult(resultList,dateList)
+
+    private def consumeNotification(tag:Long): Unit ={
+
+    }
+
+    override def drawNotifica(str: String,tag:Long): Unit = {
+      val firstTitled = new TitledPane
+      firstTitled.setText(str)
+      firstTitled.setId(tag.toString)
+      val content = new VBox
+      val label = new Label("Orario")
+      content.getChildren.add(label)
+      firstTitled.setContent(content)
+      firstTitled.setOnMouseClicked(_=>consumeNotification(tag))
+      accordion.getPanes.add(firstTitled)
+      popover.getRoot.getChildren.removeIf(_=>popover.getRoot.getChildren.contains(accordion))
+      popover.getRoot.getChildren.add(accordion)
     }
   }
 }

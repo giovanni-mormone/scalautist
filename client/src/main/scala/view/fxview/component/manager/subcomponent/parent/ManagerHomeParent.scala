@@ -1,6 +1,8 @@
 package view.fxview.component.manager.subcomponent.parent
 
-trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent{
+trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent with SelectResultParent{
+  def drawResultPanel(): Unit
+
   def drawRichiestaPanel(): Unit
 
 

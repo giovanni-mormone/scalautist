@@ -10,6 +10,7 @@ import dbfactory.setting.Table._
 import dbfactory.util.Helper._
 import emitter.ConfigEmitter
 import messagecodes.StatusCodes
+import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -77,8 +78,8 @@ object AssenzaOperation extends AssenzaOperation{
   private val NOT_RISULTATO_TURNO_ID:Int=0
   //countAvailableForShiftOnDay not contain idPersone
   private val NOT_RISULTATO_PERSONE_ID:Int=0
-  private val notificationEmitter = ConfigEmitter("assenza_emitter")
-
+  private val notificationEmitter = ConfigEmitterPersistence("assenza_emitter","malattie","vacanze")
+  notificationEmitter.start()
   override def getAllFerie(data: Int):Future[Option[List[Ferie]]] = {
     val nextYear = dateFromYear(data+1)
     val currentYear = dateFromYear(data)
@@ -101,11 +102,17 @@ object AssenzaOperation extends AssenzaOperation{
     for{
       absence <-InstanceAssenza.operation().selectFilter(f => f.dataInizio <= element.dataFine && f.dataFine >= element.dataInizio && f.personaId === element.personaId)
       result <- if (absence.isDefined) Future.successful(Some(StatusCodes.ERROR_CODE1)) else for(x <- insertPriv(element)) yield x
-    }yield {
-      notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "ha una nuova assenza dal" + element.dataInizio + " al" +
-      element.dataFine)
+    }yield {sendMessage(element)
       result
     }
+  }
+  private def sendMessage(element:Assenza)={
+    if(element.malattia)
+      notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "ha una nuova malattia dal" + element.dataInizio + " al" +
+        element.dataFine,"malattie")
+    else
+      notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "inizia le sue vacanze dal" + element.dataInizio + " al" +
+        element.dataFine,"vacanze")
   }
 
   override def getAssenzeInYearForPerson(year: Int, idPersona: Int): Future[Option[List[Assenza]]] = {

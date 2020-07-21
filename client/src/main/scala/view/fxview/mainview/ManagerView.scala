@@ -1,11 +1,12 @@
 package view.fxview.mainview
 
 import java.net.URL
+import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
+import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import caseclass.CaseClassDB.{Terminale, Turno}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -16,8 +17,12 @@ import view.fxview.component.manager.ManagerHome
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 
 trait ManagerView extends DialogView {
+  def drawNotification(str: String, tag: Long): Unit
 
-  def drawShiftRequest(value: List[CaseClassDB.Turno]):Unit
+  def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
+
+
+  def drawShiftRequest(value: List[CaseClassDB.Turno]): Unit
 
   def drawRichiesta(terminal: List[Terminale]): Unit
 
@@ -33,10 +38,14 @@ trait ManagerView extends DialogView {
   /**
    * Method used by a [[controller.ManagerController]] to tell the view to draw the list of people that needs
    * a replacement
+   *
    * @param replacement
    */
   def drawReplacement(replacement: List[InfoReplacement]): Unit
 
+  def drawResultTerminal(terminal: List[Terminale]): Unit
+
+  def consumeNotification(tag: Long): Unit
 }
 
 object ManagerView {
@@ -57,6 +66,7 @@ object ManagerView {
       myController.setView(this)
       managerHome = ManagerHome()
       pane.getChildren.add(managerHome.setParent(this).pane)
+      myController.startListenNotification()
     }
 
     /////////CALLS FROM CHILDREN TO DRAW -> SEND TO CONTROLLER/////////////
@@ -106,9 +116,21 @@ object ManagerView {
     }
 
     override def showBackMessage(str: String): Unit = {
-       if(alertMessage(str)) managerHome.reDrawRichiesta()
+      if(alertMessage(str)) managerHome.reDrawRichiesta()
     }
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = myController.sendRichiesta(richiesta)
+
+    override def drawResultPanel(): Unit = myController.dataToResultPanel()
+
+    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() => managerHome.drawResultTerminal(terminal))
+
+    override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = myController.resultForTerminal(value,date,date1)
+
+    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = Platform.runLater(() => managerHome.drawResult(resultList,dateList))
+
+    override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>managerHome.drawNotifica(str,tag))
+
+    override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
   }
 }
