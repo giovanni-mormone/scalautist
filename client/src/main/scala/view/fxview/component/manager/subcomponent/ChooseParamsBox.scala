@@ -4,13 +4,15 @@ import java.net.URL
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Terminale, Zona}
+import caseclass.CaseClassDB.{GiornoInSettimana, Terminale}
+import caseclass.CaseClassHttpMessage.InfoAlgorithm
 import javafx.fxml.FXML
 import javafx.scene.control._
 import org.controlsfx.control.CheckComboBox
-import regularexpressionutilities.{NameChecker, ZonaChecker}
+import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, TextFieldControl}
 import view.fxview.component.manager.subcomponent.parent.ChooseParamsParent
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -21,6 +23,11 @@ import view.fxview.util.ResourceBundleUtil._
  */
 trait ChooseParamsBox extends Component[ChooseParamsParent] {
 
+  /**
+   *
+   * @param param
+   */
+  def loadParam(param: InfoAlgorithm): Unit
 }
 
 /**
@@ -58,6 +65,8 @@ object ChooseParamsBox {
     @FXML
     var name: TextField = _
 
+    private var days: Option[List[GiornoInSettimana]] = None
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       initText()
@@ -84,8 +93,8 @@ object ChooseParamsBox {
 
       //buttons
       reset.setOnAction(_ => resetComponent())
-      run.setOnAction(_ => println("eccolo"))
-      old.setOnAction(_ => parent.modalOldParam())
+      run.setOnAction(_ => parent.weekParams(getParams))
+      old.setOnAction(_ => parent.modalOldParam(terminalsList))
 
       //checkbox e radiobutton
       saveName.setOnAction(_ => {
@@ -135,11 +144,17 @@ object ChooseParamsBox {
     private def getDate(picker: DatePicker): Option[LocalDate] =
       Option(picker.getValue)
 
-    private def saveControl(): Boolean = {
+    private def saveControl(): Boolean =
       if(saveName.isSelected)
         !name.getText.equals("")
-      else true
-    }
+      else
+        true
+
+    private def getName: Option[String] =
+      if(saveName.isSelected)
+        Option(name.getText)
+      else
+        None
 
     private def enableAlgorithm(): Unit =
       if (getTerminals.nonEmpty && getDate(initDate).isDefined &&
@@ -160,6 +175,21 @@ object ChooseParamsBox {
       terminals.getItems.clear()
       terminalsList.foreach(terminal => terminals.getItems.add(terminal.nomeTerminale))
     }
+
+    override def loadParam(param: InfoAlgorithm): Unit = {
+      sabato.setSelected(param.parametro.treSabato)
+
+      terminals.getCheckModel.clearChecks()
+      terminalsList.collect{
+        case terminal if param.zonaTerminale.exists(zTerm => terminal.idTerminale.contains(zTerm.terminaleId)) =>
+          terminal.nomeTerminale
+      }.foreach(toSelect => terminals.getItemBooleanProperty(toSelect).set(true))
+
+      days = param.giornoInSettimana
+    }
+
+    private def getParams: ParamsForAlgoritm =
+      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days)
   }
 
 }

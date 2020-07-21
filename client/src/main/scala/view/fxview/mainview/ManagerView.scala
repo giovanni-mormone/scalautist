@@ -15,6 +15,7 @@ import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
 import view.fxview.component.manager.subcomponent.ParamsModal
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalParamParent}
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.modal.Modal
 
 trait ManagerView extends DialogView {
@@ -52,7 +53,19 @@ trait ManagerView extends DialogView {
    *
    * @param olds list of [[caseclass.CaseClassDB.Parametro]]
    */
-  def modalOldParamDraw(olds: List[InfoAlgorithm]): Unit
+  def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale]): Unit
+
+  /**
+   *
+   * @param params
+   */
+  def drawWeekParam(params: ParamsForAlgoritm)
+
+  /**
+   *
+   * @param params
+   */
+  def drawGroupParam(params: ParamsForAlgoritm)
 }
 
 object ManagerView {
@@ -132,22 +145,37 @@ object ManagerView {
     override def drawRunAlgorithm(terminals: List[Terminale]): Unit =
       Platform.runLater(() => managerHome.drawChooseParams(terminals))
 
-    override def calculateShifts(params: Parametro, save: Boolean): Unit = {
-      println("here")
-    }
-
     override def drawParamsPanel(): Unit =
       myController.chooseParams()
 
-    override def modalOldParam(): Unit =
-      myController.modalOldParams()
+    override def modalOldParam(terminals: List[Terminale]): Unit =
+      myController.modalOldParams(terminals)
 
-    override def modalOldParamDraw(olds: List[InfoAlgorithm]): Unit = {
+    override def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale]): Unit =
       Platform.runLater(() =>{
-        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, this, ParamsModal(olds))
+        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, this, ParamsModal(olds, terminals))
         modalResource.show()
       })
-    }
 
+    override def weekParams(params: ParamsForAlgoritm): Unit =
+      myController.weekParam(params)
+
+    override def loadParam(param: InfoAlgorithm): Unit =
+      Platform.runLater(() => {
+        modalResource.close()
+        managerHome.drawLoadedParam(param)
+      })
+
+    override def groupParam(params: ParamsForAlgoritm): Unit =
+      myController.groupParam(params)
+
+    override def resetWeekParams(): Unit =
+      drawParamsPanel()
+
+    override def drawWeekParam(params: ParamsForAlgoritm): Unit =
+      Platform.runLater(() => managerHome.drawWeekParams(params))
+
+    override def drawGroupParam(params: ParamsForAlgoritm): Unit =
+      Platform.runLater(() => managerHome.drawGroupsParam())
   }
 }

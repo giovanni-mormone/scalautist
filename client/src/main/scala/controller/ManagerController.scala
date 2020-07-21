@@ -8,6 +8,7 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Gru
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.mainview.ManagerView
 
 import scala.concurrent.Future
@@ -61,7 +62,17 @@ trait ManagerController extends AbstractController[ManagerView]{
   /**
    * Method asks the old params list to draw modal
    */
-  def modalOldParams(): Unit
+  def modalOldParams(terminals: List[Terminale]): Unit
+
+  /**
+   *
+   */
+  def weekParam(params: ParamsForAlgoritm): Unit
+
+  /**
+   *
+   */
+  def groupParam(params: ParamsForAlgoritm): Unit
 }
 
 object ManagerController {
@@ -147,7 +158,7 @@ object ManagerController {
       myView.drawRunAlgorithm(terminals)
     }
 
-    override def modalOldParams(): Unit = {
+    override def modalOldParams(terminals: List[Terminale]): Unit = {
       val params = List(InfoAlgorithm(
         Parametro(true, "mai", Some(1)),
         List(ZonaTerminale(2, 3, Some(1), Some(1))),
@@ -155,9 +166,16 @@ object ManagerController {
           GiornoInSettimana(3, 3, 2, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, Some(1), Some(30)),
           GiornoInSettimana(5, 5, 2, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, Some(1), Some(20))
         ))))
-      myView.modalOldParamDraw(params)
+      myView.modalOldParamDraw(params, terminals)
     }
 
+    override def weekParam(params: ParamsForAlgoritm): Unit = {
+      myView.drawWeekParam(params)
+    }
+
+    override def groupParam(params: ParamsForAlgoritm): Unit = {
+      myView.drawGroupParam(params)
+    }
   }
 }
 

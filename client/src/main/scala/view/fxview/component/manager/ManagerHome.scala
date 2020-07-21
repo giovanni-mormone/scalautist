@@ -4,13 +4,14 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Parametro, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
 import view.fxview.FXHelperFactory
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
-import view.fxview.component.manager.subcomponent.{ChooseParamsBox, FillHolesBox, ManagerRichiestaBox}
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.{ChangeSettimanaRichiesta, ChooseParamsBox, FillHolesBox, GroupParamsBox, ManagerRichiestaBox}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -60,6 +61,22 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   def stopLoadingReplacements(): Unit
 
+  /**
+   *
+   */
+  def drawWeekParams(params: ParamsForAlgoritm): Unit
+
+  /**
+   *
+   * @param param
+   */
+  def drawLoadedParam(param: InfoAlgorithm): Unit
+
+  /**
+   *
+   */
+  def drawGroupsParam(): Unit
+
 }
 
 object ManagerHome{
@@ -94,7 +111,6 @@ object ManagerHome{
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
     var chooseParamsBox: ChooseParamsBox = _
-
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -149,6 +165,19 @@ object ManagerHome{
     override def drawChooseParams(terminals: List[Terminale]): Unit = {
       chooseParamsBox = ChooseParamsBox(terminals)
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
+    }
+
+    override def drawWeekParams(params: ParamsForAlgoritm): Unit = {
+      val box = ChangeSettimanaRichiesta(params)
+      baseManager.setCenter(box.setParent(parent).pane)
+    }
+
+    override def drawLoadedParam(param: InfoAlgorithm): Unit =
+      chooseParamsBox.loadParam(param)
+
+    override def drawGroupsParam(): Unit = {
+      val box = GroupParamsBox()
+      baseManager.setCenter(box.setParent(parent).pane)
     }
 
   }

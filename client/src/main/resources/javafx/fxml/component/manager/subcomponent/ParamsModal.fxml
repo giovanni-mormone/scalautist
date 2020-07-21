@@ -5,7 +5,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="316.0" prefWidth="600.0">
          <children>
@@ -15,7 +16,8 @@
       </Pane>
       <Pane prefHeight="90.0" prefWidth="600.0">
          <children>
-            <Button fx:id="open" layoutX="460.0" layoutY="30.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="101.0" text="Button" />
+            <Button fx:id="open" layoutX="460.0" layoutY="30.0" mnemonicParsing="false" prefHeight="27.0"
+                    prefWidth="101.0" text="Button" />
          </children>
       </Pane>
    </children>

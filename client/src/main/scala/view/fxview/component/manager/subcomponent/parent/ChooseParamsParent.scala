@@ -1,6 +1,7 @@
 package view.fxview.component.manager.subcomponent.parent
 
-import caseclass.CaseClassDB.{Parametro, Zona}
+import caseclass.CaseClassDB.Terminale
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 
 /**
  * @author Francesco Cassano
@@ -9,18 +10,14 @@ import caseclass.CaseClassDB.{Parametro, Zona}
 trait ChooseParamsParent {
 
   /**
-   * Method to run the algorithm
-   *
-   * @param params
-   *               That are the params the algorithm needs to run
-   * @param save
-   *             Boolean to save params and reuse that in future
+   * Method allows to draw the modal for choosing params
+   * @param terminals List of [[caseclass.CaseClassDB.Terminale]]
    */
-  def calculateShifts(params: Parametro, save: Boolean): Unit
+  def modalOldParam(terminals: List[Terminale]): Unit
 
   /**
-   * Method allows to draw the modal for choosing params
+   * Method that allows to draw the panel to set weeks params
    */
-  def modalOldParam(): Unit
+  def weekParams(param: ParamsForAlgoritm): Unit
 
 }
