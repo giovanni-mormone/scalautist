@@ -133,7 +133,7 @@ object CaseClassDB{
    * @param regolaId identifies ruler for all day associated to this
    * @param idSettimana represent unambiguous for every week (for insert operation this is not mandatory)
    */
-  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,regolaId:Int,parametriId:Option[Int]=None,idSettimana:Option[Int]=None)
+  final case class GiornoInSettimana(giornoId:Int,turnoId:Int,regolaId:Int,quantita:Int,parametriId:Option[Int]=None,idSettimana:Option[Int]=None)
 
   /**
    * case class that represent rules for normal week
