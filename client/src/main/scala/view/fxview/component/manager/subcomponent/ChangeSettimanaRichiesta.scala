@@ -6,11 +6,13 @@ import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Regola
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox}
+import javafx.scene.control.{Button, ComboBox, Label, TableView}
 import org.controlsfx.control.CheckComboBox
+import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -37,16 +39,30 @@ object ChangeSettimanaRichiesta{
     var ruleN: ComboBox[String] = _
     @FXML
     var ruleS: ComboBox[String] = _
+    @FXML
+    var titleN: Label = _
+    @FXML
+    var titleS: Label = _
+    @FXML
+    var dayShiftN: TableView[ShiftTable] = _
+
+    case class DailyReq(day: Int, shift: Int, quantity: Int = 0)
+
+    var daysInfo: List[DailyReq] = List.empty
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      daysInfo = params.request.getOrElse(List.empty).map(req => DailyReq(req.giornoId, req.turnoId, 2))
       initButton()
       initCombo()
+      initLabel()
+      initTable()
     }
 
     private def initButton(): Unit = {
       run.setText(resources.getResource("runtxt"))
       run.setOnAction(_ => parent.groupParam(params))
+      run.setDisable(true)
 
       reset.setText(resources.getResource("resettxt"))
       reset.setOnAction(_ => parent.resetWeekParams())
@@ -55,11 +71,66 @@ object ChangeSettimanaRichiesta{
     private def initCombo(): Unit = {
       val list = calcolateWeeks()
       list.foreach(week => weekS.getItems.add(week.toString))
+      weekS.getCheckModel.getCheckedItems.addListener(
+        new ListChangeListener[String]() {
+          override def onChanged(c: ListChangeListener.Change[_ <: String]): Unit =
+            enableButton()
+        })
 
       rules.foreach(rule => {
         ruleN.getItems.add(rule.nomeRegola)
         ruleS.getItems.add(rule.nomeRegola)
       })
+      ruleN.setPromptText(resources.getResource("ruletxt"))
+      ruleS.setPromptText(resources.getResource("ruletxt"))
+      ruleS.setOnAction(_ => enableButton())
+      ruleN.setOnAction(_ => enableButton())
+
+      if(params.ruleNormal.isDefined) {
+        rules.find(rule => rule.idRegola.contains(params.ruleNormal.head))
+          .fold()(rule => ruleN.getSelectionModel.select(rule.nomeRegola))
+      }
+    }
+
+    private def initLabel(): Unit = {
+      titleN.setText(resources.getResource("weekN"))
+      titleS.setText(resources.getResource("weekS"))
+    }
+
+    private def initTable(): Unit = {
+      //val columnFields = List("monday", "tuesday", "wednesday", "thursday", "friday", "saturday")
+      val elements = getElements
+      CreateTable.fillTable[ShiftTable](dayShiftN, elements)
+      val ecco = 1
+      CreateTable.createColumns[ShiftTable](dayShiftN, List("shift"))//columnFields) //
+      CreateTable.createEditableColumns[ShiftTable](dayShiftN, ShiftTable.editableShiftTable)
+    }
+
+    private def enableButton(): Unit =
+      run.setDisable(!(!ruleN.getSelectionModel.isEmpty && controlSpecialWeek()))
+
+    private def controlSpecialWeek(): Boolean = {
+      if(getweeks.nonEmpty)
+        !ruleS.getSelectionModel.isEmpty
+      else true
+    }
+
+    private def getElements: List[ShiftTable] = {
+      val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
+      (1 to 6).map( shift => {
+        val info: List[String] = getInfoShiftForDays(shift)
+        new ShiftTable(shiftStringMap.getOrElse(shift, "ERROR"), info.head, info(1), info(2), info(3), info(4), info(5))
+      }).toList
+    }
+
+    private def getInfoShiftForDays(shift: Int): List[String] =
+      (1 to 6).map(day => daysInfo.find(info => info.day == day && info.shift == shift)
+        .fold("0")(_.quantity.toString)).toList
+
+    private def getweeks: List[Int] = {
+      var weeks: List[Int] = List.empty
+      weekS.getCheckModel.getCheckedItems.forEach(selected => weeks = weeks :+ selected.toInt)
+      weeks
     }
 
     private def calcolateWeeks(): List[Int] = {

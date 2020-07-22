@@ -133,6 +133,7 @@ object ChooseParamsBox {
       initDate.getEditor.clear()
       initDate.setValue(null)
       endDate.getEditor.clear()
+      endDate.setValue(null)
 
       CreateDatePicker.createDatePickerFMD(initDate, LocalDate.now())
       enableTxtField()
