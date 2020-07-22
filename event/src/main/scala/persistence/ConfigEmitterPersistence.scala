@@ -9,7 +9,7 @@ trait ConfigEmitterPersistence {
 object ConfigEmitterPersistence {
   def apply(nameQueue:String,routingKey:String*): ConfigEmitterPersistence = new ConfigEmitterImpl(nameQueue,routingKey)
   private class ConfigEmitterImpl(nameQueue:String,routingKey:Seq[String]) extends ConfigEmitterPersistence{
-    val EXCHANGE_NAME = "info_algorithm_logs"
+    val EXCHANGE_NAME = "general_info"
     val NAME_QUEUE: String = nameQueue
     override def start(): Unit = {
       channel.exchangeDeclare(EXCHANGE_NAME, "topic",true)

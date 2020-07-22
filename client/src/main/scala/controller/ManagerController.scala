@@ -156,6 +156,7 @@ object ManagerController {
       model.getResultAlgorithm(idTerminal.head,date,date1).onComplete {
         case Failure(exception) => println(exception)
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
       }
     }
 

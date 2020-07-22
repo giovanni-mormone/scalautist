@@ -4,12 +4,15 @@ import caseclass.CaseClassDB.{Disponibilita, Turno}
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, Response, ShiftDay}
 import messagecodes.StatusCodes
 import model.entity.DriverModel
+import controller.ManagerController.model
 import view.fxview.mainview.DriverView
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 trait DriverController  extends AbstractController[DriverView] {
+  def startListenNotification(): Unit
+
   /**
    * draw information for one day into home page of the driver, the information is
    * shift that having in the day and extra day that can make in the week
@@ -37,9 +40,20 @@ trait DriverController  extends AbstractController[DriverView] {
   def sendDisponibility(day1: String, day2: String): Unit
 }
 object DriverController{
-  def apply(): DriverController = new DriverControllerImpl()
+  private val instance = new DriverControllerImpl()
+  private val model = DriverModel()
+
+  def apply(): DriverController = instance
+
   private class DriverControllerImpl() extends DriverController {
-    private val model = DriverModel()
+
+    private def notificationReceived(message:String,tag:Long):Unit={
+      myView.drawNotification(message,tag)
+    }
+
+    override def startListenNotification(): Unit ={
+      model.verifyExistedQueue(Utils.userId,notificationReceived)
+    }
 
     override def drawHomePanel(): Unit =
       model.getTurniInDay(Utils.userId.head).onComplete {
