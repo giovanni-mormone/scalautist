@@ -8,7 +8,7 @@ object ConfigEmitter {
   def apply(routingKey:String): ConfigEmitter = new ConfigEmitterImpl(routingKey)
   private class ConfigEmitterImpl(routingKey:String) extends ConfigEmitter{
     import ConnectionStart._
-    val EXCHANGE_NAME = "info_algorithm_logs"
+    val EXCHANGE_NAME = "info_algorithm_logss"
     override def start(): Unit = {
        channel.exchangeDeclare(EXCHANGE_NAME, "direct")
     }
