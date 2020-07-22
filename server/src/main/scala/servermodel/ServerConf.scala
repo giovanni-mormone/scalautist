@@ -1,13 +1,19 @@
 package servermodel
 
-import scala.util.{Failure, Success}
+import java.sql.Date
+import java.time.LocalDate
+
+import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.scaladsl.adapter._
 import akka.actor.typed.{ActorSystem, Behavior}
-import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
-import routes.RouteServer._
+import dbfactory.operation.{DisponibilitaOperation, PresenzaOperation, StipendioOperation}
+import messagecodes.StatusCodes
+import servermodel.routes.RouteServer._
 
+import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 /**
  * @author Francesco Cassano
  * Object to configure and start Http server
@@ -16,7 +22,8 @@ object ServerConf {
   final case class StartServer()
   private val interface = "0.0.0.0"
   private val port = 8080
-
+  private val INITIAL_DELAY = 3
+  private val DELAY = 1
   def apply():Behavior[StartServer]=
     Behaviors.setup{
       context =>
@@ -28,6 +35,7 @@ object ServerConf {
     // Akka HTTP still needs a classic ActorSystem to start
     implicit val classicSystem: akka.actor.ActorSystem = system.toClassic
     import system.executionContext
+    system.scheduler.scheduleWithFixedDelay(INITIAL_DELAY seconds, DELAY day)(()=>verifyDayInWeek())
     Http().bindAndHandle(routes, interface, port).onComplete {
       case Success(binding) =>
         val address = binding.localAddress
@@ -36,5 +44,19 @@ object ServerConf {
         system.log.error("Failed to bind HTTP endpoint, terminating system", ex)
         system.terminate()
     }
+  }
+  private def verifyDayInWeek(): Unit ={
+    import scala.concurrent.ExecutionContext.Implicits.global
+    def _verifyDayInWeek(count:Int=0):Unit={
+      import utils.DateConverter._
+      val date = Date.valueOf(LocalDate.now())
+      if(date.compareTo(getFirstDayWeek(date))==0 && count<2){
+        DisponibilitaOperation.updateAvailabilityWeekFissi(date).filter(_.isEmpty).map(_=>_verifyDayInWeek(count+1))
+      }
+      if(date.compareTo(startMonthDate(date))==0 && count<2){
+            StipendioOperation.calculateStipendi(date).filter(x => !x.contains(StatusCodes.SUCCES_CODE)).map(_=>_verifyDayInWeek(count+1))
+      }
+    }
+  _verifyDayInWeek()
   }
 }

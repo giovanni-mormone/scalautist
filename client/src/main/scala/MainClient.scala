@@ -14,4 +14,3 @@ private class Main extends Application{
     //ManagerView(primaryStage).show()
     LoginView(primaryStage).show()
 }
- 

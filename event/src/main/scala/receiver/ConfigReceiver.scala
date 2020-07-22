@@ -10,7 +10,7 @@ object ConfigReceiver {
   def apply(routingKey:String): ConfigReceiver = new ConfigReceiverImpl(routingKey)
   private class ConfigReceiverImpl(routingKey:String) extends ConfigReceiver{
     import emitter.ConnectionStart._
-    val EXCHANGE_NAME = "info_algorithm_logs"
+    val EXCHANGE_NAME = "info_algorithm_logss"
     var queueName: String =""
     override def start(): Unit = {
       channel.exchangeDeclare(EXCHANGE_NAME, "direct")
