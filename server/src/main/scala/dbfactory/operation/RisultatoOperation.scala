@@ -3,9 +3,9 @@ package dbfactory.operation
 import java.sql.Date
 
 import algoritmo.AssignmentOperation.{Info, InfoDay}
-import caseclass.CaseClassDB.{Risultato, Turno}
+import caseclass.CaseClassDB.{Presenza, Risultato, Turno}
 import caseclass.CaseClassHttpMessage._
-import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstanceRisultato, InstanceTerminale, InstanceTurno}
+import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstancePersona, InstancePresenza, InstanceRisultato, InstanceTerminale, InstanceTurno}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery, TurnoTableQuery}
 import dbfactory.util.Helper._
@@ -131,7 +131,7 @@ object RisultatoOperation extends RisultatoOperation {
           case Some(_) => for {
             listTurni <- InstanceRisultato.operation().execQueryFilter(field => field.turnoId,
               filter => filter.data === date && filter.personeId === idUser)
-            turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.getOrElse(List.empty[Int])))
+            turni <- InstanceTurno.operation().selectFilter(filter => filter.id.inSet(listTurni.toList.flatten))
             disponibilita <- DisponibilitaOperation.getDisponibilita(idUser, getWeekNumber(date))
           } yield Some(InfoHome(turni.getOrElse(List.empty[Turno]), disponibilita))
           case _ => Future.successful(None)
@@ -223,7 +223,7 @@ object RisultatoOperation extends RisultatoOperation {
 
     InstancePersona.operation().execJoin(joinPersonContract)
       .flatMap {
-        case Some(result) =>getResultByPerson(result,dateI,dateF).collect(x=>(x,createListDayBetween(dateI,dateF)))
+        case Some(result) => getResultByPerson(result,dateI,dateF).collect(x=>(x,createListDayBetween(dateI,dateF)))
         case None =>Future.successful((None,List.empty))
       }
   }
@@ -303,10 +303,11 @@ object RisultatoOperation extends RisultatoOperation {
       case Nil =>infoAbsence
     }
 
-    val orderResult=result.sortBy(value=>(value.data,value.personaId,value.turnoId))
+    val orderResult=result.filter(day => !infoAbsence.exists(x => x.date.compareTo(day.data) == 0)).sortBy(value => (value.data, value.personaId, value.turnoId))
     val resultContract = verifyContract(driver.initContract,driver.finishContract,infoResult)
     val allFreeDay = assignFreeDay(infoAbsence:::resultContract,orderResult,infoResult.dateInit,infoResult.dateFinish)
-    _insertInfoShiftInInfoDates(infoResult.copy(result=orderResult),allFreeDay)
+    _insertInfoShiftInInfoDates(infoResult.copy(result=orderResult),allFreeDay:::infoAbsence)
+
   }
 
   def assignFreeDay(infoDates: List[InfoDates], orderResult: List[Risultato],dateInit: Date,dateFinish:Date):List[InfoDates] = {
@@ -373,8 +374,28 @@ object RisultatoOperation extends RisultatoOperation {
       }
 
   }
+   private val infoCopy:Info=>Info=inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))
+
+   private def insertPresenza(result: List[Info],dataI:Date)={
+      val finalResult = result.map(infoCopy).flatMap(x =>{
+        x.infoDay.flatMap{
+          case InfoDay(data, Some(shift), None, None,_,_)=>x.idDriver.toList.map(id=>Presenza(data,id,shift,isStraordinario = false))
+          case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>x.idDriver.toList.flatMap(id=>List(Presenza(data,id,shift,isStraordinario = false),
+            Presenza(data,id,shift2,isStraordinario = false)))
+          case InfoDay(data, Some(shift), Some(shift2), Some(straordinario),_,_)=>
+            x.idDriver.toList.flatMap(id=>List(Presenza(data,id,shift,isStraordinario = false),Presenza(data,id,shift2,isStraordinario = false),Presenza(data,id,straordinario,isStraordinario = true)))
+          case InfoDay(data, Some(shift),None, Some(straordinario),_,_) =>
+            x.idDriver.toList.flatMap(id=>List(Presenza(data,id,shift,isStraordinario = false),Presenza(data,id,straordinario,isStraordinario = true)))
+        }
+
+      })
+      InstancePresenza.operation().selectFilter(res=>res.data>=dataI && res.personeId.inSet(finalResult.map(_.personaId).distinct)).flatMap {
+        case Some(value) =>presenzeForUpdate(value,finalResult)
+        case None =>insertAllBatchPresenza(finalResult)
+      }
+    }
   override def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date): Future[Option[Int]] = {
-    val finalResult = result.map(inf=>inf.copy(infoDay= inf.infoDay.filter(x=> !x.absence && !x.freeDay))).flatMap(x=>{
+    val finalResult = result.map(infoCopy).flatMap(x=>{
       x.infoDay.flatMap{
         case InfoDay(data, Some(shift), None, None,_,_)=>x.idDriver.toList.map(id=>Risultato(data,id,shift))
         case InfoDay(data, Some(shift), Some(shift2), None,_,_)=>x.idDriver.toList.flatMap(id=>List(Risultato(data,id,shift),Risultato(data,id,shift2)))
@@ -384,16 +405,16 @@ object RisultatoOperation extends RisultatoOperation {
           x.idDriver.toList.flatMap(id=>List(Risultato(data,id,shift),Risultato(data,id,straordinario)))
       }
     })
-    InstanceRisultato.operation().selectFilter(res=>res.data>=dataI).flatMap {
+    insertPresenza(result,dataI)
+    InstanceRisultato.operation().selectFilter(res=>res.data>=dataI && res.personeId.inSet(finalResult.map(_.personaId).distinct)).flatMap {
       case Some(value) =>resultForUpdate(value,finalResult)
-      case None =>insertAllBatch(finalResult)
+      case None =>insertAllBatchResult(finalResult)
     }
   }
 
   private def resultForUpdate(oldR: List[Risultato],newR: List[Risultato]): Future[Option[Int]] ={
-    insertAllBatch(newR).flatMap {
-      case Some(StatusCodes.SUCCES_CODE) =>println(1)
-        deleteAllRecursive(oldR)
+    insertAllBatchResult(newR).flatMap {
+      case Some(StatusCodes.SUCCES_CODE) => deleteAllRecursive(oldR)
       case Some(StatusCodes.ERROR_CODE1) => Future.successful(Option(StatusCodes.ERROR_CODE1))
     }
   }
@@ -414,8 +435,40 @@ object RisultatoOperation extends RisultatoOperation {
     val (delete,rest) = idForDelete.splitAt(myTake)
     _deleteAllRecursive(delete,rest)
   }
-  override def insertAllBatch(finalResult: List[Risultato]): Future[Option[Int]] = {
+
+  private def insertAllBatchResult(finalResult: List[Risultato]): Future[Option[Int]] = {
     super.insertAllBatch(finalResult).collect {
+      case Some(_) => Some(StatusCodes.SUCCES_CODE)
+      case None =>Some(StatusCodes.ERROR_CODE1)
+    }
+  }
+
+  private def presenzeForUpdate(oldR: List[Presenza],newR: List[Presenza]): Future[Option[Int]] ={
+    insertAllBatchPresenza(newR).flatMap {
+      case Some(StatusCodes.SUCCES_CODE) => deleteAllRecursivePresenza(oldR)
+      case Some(StatusCodes.ERROR_CODE1) => Future.successful(Option(StatusCodes.ERROR_CODE1))
+    }
+  }
+  private def deleteAllRecursivePresenza(oldR: List[Presenza])={
+    val idForDelete = oldR.flatMap(_.idPresenza.toList)
+    val myTake = if(idForDelete.length>1000) 1000 else idForDelete.length
+    def _deleteAllRecursive(delete:List[Int],rest:List[Int]):Future[Option[Int]]= rest match {
+      case Nil => PresenzaOperation.deleteAll(delete).flatMap{
+        case Some(value) if value>0  => Future.successful(Option(StatusCodes.SUCCES_CODE))
+        case _ =>_deleteAllRecursive(delete,rest)
+      }
+      case ::(_, _) =>PresenzaOperation.deleteAll(delete).flatMap{
+        case Some(value) if value>0 => val (delete,resto) = rest.splitAt(myTake)
+          _deleteAllRecursive(delete,resto)
+        case _ =>_deleteAllRecursive(delete,rest)
+      }
+    }
+    val (delete,rest) = idForDelete.splitAt(myTake)
+    _deleteAllRecursive(delete,rest)
+  }
+
+  private def insertAllBatchPresenza(finalResult: List[Presenza]): Future[Option[Int]] = {
+    PresenzaOperation.insertAllBatch(finalResult).collect {
       case Some(_) => Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE1)
     }

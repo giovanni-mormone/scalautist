@@ -69,7 +69,7 @@ object StipendioOperation extends StipendioOperation {
   private def insertStipendiInDB(date: Date): Future[Option[Int]] =
     createStipendi(date).flatMap {
       case None => Future.successful(Some(StatusCodes.ERROR_CODE3))
-      case Some(stipendi) => insertAll(stipendi).collect {
+      case Some(stipendi) => insertAllBatch(stipendi).collect {
         case None => Some(StatusCodes.ERROR_CODE3)
         case _ => Some(StatusCodes.SUCCES_CODE)
       }

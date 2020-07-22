@@ -71,7 +71,7 @@ object SelectResultBox{
     }
 
     private def checkDatepicker():Boolean ={
-      abs(datepickerInit.getValue.getDayOfYear-datepickerFinish.getValue.getDayOfYear)>=1
+      abs(datepickerInit.getValue.getDayOfYear-datepickerFinish.getValue.getDayOfYear)>=0
     }
     private def checkSelectDatepickerAndCheckBox(): (Option[(LocalDate, LocalDate)], Boolean) =
       (Option(datepickerInit.getValue).zip(Option(datepickerFinish.getValue)), !terminal.getItems.isEmpty)
