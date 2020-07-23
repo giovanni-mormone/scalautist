@@ -178,5 +178,8 @@ object ManagerView {
 
     override def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit =
       Platform.runLater(() => managerHome.drawGroupsParam(params, groups, rule))
+
+    override def resetGroupsParams(): Unit =
+      drawParamsPanel()
   }
 }

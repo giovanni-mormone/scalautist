@@ -59,6 +59,7 @@ object ChangeSettimanaRichiesta{
       initCombo()
       initLabel()
       initTable()
+      enableButton()
     }
 
     private def initButton(): Unit = {

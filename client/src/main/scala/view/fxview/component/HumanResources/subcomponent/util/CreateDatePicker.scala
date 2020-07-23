@@ -70,6 +70,22 @@ case object CreateDatePicker{
     (new DatePickerSkin(datepicker),datepicker)
   }
 
+  def someDatePicker(value: List[LocalDate]): DatePicker = {
+    val datePicker: DatePicker = new DatePicker()
+    datePicker.setDayCellFactory(_ => new DateCell(){
+      override def updateItem(date:LocalDate, empty:Boolean): Unit = {
+        super.updateItem(date, empty)
+        setDisable(!value.contains(date))
+      }
+    })
+    datePicker
+  }
+
+  def changingDatePickerSkin(localDate: List[LocalDate]): (DatePickerSkin,DatePicker) = {
+    val datePicker = someDatePicker(localDate)
+    (new DatePickerSkin(datePicker),datePicker)
+  }
+
   def createDatePickerFMD(date: DatePicker, today: LocalDate): Unit = {
     date.setEditable(false)
     date.setDayCellFactory(_ => firstMonthDay(today))

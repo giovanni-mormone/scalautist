@@ -34,12 +34,24 @@ class ShiftTable(shiftVal: String, mondayVal: String, tuesdayVal: String, wednes
 
 object ShiftTable{
 
-  val editableShiftTable: List[(String, (ShiftTable, String) => Unit)] = List(
-    ("monday", (st, value) => st.setMonday(value)),
-    ("tuesday", (st, value) => st.setTuesday(value)),
-    ("wednesday", (st, value) => st.setWednesday(value)),
-    ("thursday", (st, value) => st.setThursday(value)),
-    ("friday", (st, value) => st.setFriday(value)),
-    ("saturday", (st, value) => st.setSaturday(value))
+  val editableShiftTable: List[(String, (ShiftTable, String) => ShiftTable)] = List(
+    ("monday", (st, value) => {
+      st.setMonday(value); st
+    }),
+    ("tuesday", (st, value) => {
+      st.setTuesday(value); st
+    }),
+    ("wednesday", (st, value) => {
+      st.setWednesday(value); st
+    }),
+    ("thursday", (st, value) => {
+      st.setThursday(value); st
+    }),
+    ("friday", (st, value) => {
+      st.setFriday(value); st
+    }),
+    ("saturday", (st, value) => {
+      st.setSaturday(value); st
+    })
   )
 }
