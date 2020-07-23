@@ -45,6 +45,8 @@ object ChangeSettimanaRichiesta{
     var titleS: Label = _
     @FXML
     var dayShiftN: TableView[ShiftTable] = _
+    @FXML
+    var dayShiftS: TableView[ShiftTable] = _
 
     case class DailyReq(day: Int, shift: Int, quantity: Int = 0)
 
@@ -98,12 +100,13 @@ object ChangeSettimanaRichiesta{
     }
 
     private def initTable(): Unit = {
-      //val columnFields = List("monday", "tuesday", "wednesday", "thursday", "friday", "saturday")
-      val elements = getElements
-      CreateTable.fillTable[ShiftTable](dayShiftN, elements)
-      val ecco = 1
-      CreateTable.createColumns[ShiftTable](dayShiftN, List("shift"))//columnFields) //
+      CreateTable.fillTable[ShiftTable](dayShiftN, getElements())
+      CreateTable.createColumns[ShiftTable](dayShiftN, List("shift"))
       CreateTable.createEditableColumns[ShiftTable](dayShiftN, ShiftTable.editableShiftTable)
+
+      CreateTable.fillTable[ShiftTable](dayShiftS, getElements(List.empty))
+      CreateTable.createColumns[ShiftTable](dayShiftS, List("shift"))
+      CreateTable.createEditableColumns[ShiftTable](dayShiftS, ShiftTable.editableShiftTable)
     }
 
     private def enableButton(): Unit =
@@ -115,16 +118,16 @@ object ChangeSettimanaRichiesta{
       else true
     }
 
-    private def getElements: List[ShiftTable] = {
+    private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
       val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
       (1 to 6).map( shift => {
-        val info: List[String] = getInfoShiftForDays(shift)
+        val info: List[String] = getInfoShiftForDays(shift, infoDays)
         new ShiftTable(shiftStringMap.getOrElse(shift, "ERROR"), info.head, info(1), info(2), info(3), info(4), info(5))
       }).toList
     }
 
-    private def getInfoShiftForDays(shift: Int): List[String] =
-      (1 to 6).map(day => daysInfo.find(info => info.day == day && info.shift == shift)
+    private def getInfoShiftForDays(shift: Int, infoDays: List[DailyReq]): List[String] =
+      (1 to 6).map(day => infoDays.find(info => info.day == day && info.shift == shift)
         .fold("0")(_.quantity.toString)).toList
 
     private def getweeks: List[Int] = {

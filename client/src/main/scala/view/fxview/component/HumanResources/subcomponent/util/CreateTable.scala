@@ -2,6 +2,7 @@ package view.fxview.component.HumanResources.subcomponent.util
 
 import javafx.scene.control.cell.{PropertyValueFactory, TextFieldTableCell}
 import javafx.scene.control.{TableColumn, TableRow, TableView}
+import regularexpressionutilities.NumbersChecker
 
 object CreateTable {
 
@@ -45,11 +46,16 @@ object CreateTable {
     import javafx.event.EventHandler
     col.setOnEditCommit(new EventHandler[TableColumn.CellEditEvent[A, String]] {
       override def handle(event: TableColumn.CellEditEvent[A, String]): Unit = {
-        action(event.getTableView.getItems.get(event.getTablePosition.getRow).asInstanceOf[A], event.getNewValue)
+        action(event.getTableView.getItems.get(event.getTablePosition.getRow).asInstanceOf[A],
+              if(event.getNewValue.isEmpty || notNumber(event.getNewValue)) "0"
+              else event.getNewValue)
       }
     })
     col
   }
+
+  private def notNumber(str: String): Boolean =
+    TextFieldControl.controlString(str, NumbersChecker, 4)
 
   private def setFactoryAndWidth[A](column: TableColumn[A, String], name: String,dim:Int=177): Unit ={
     column.setId(name.toLowerCase())

@@ -10,4 +10,7 @@ object TextFieldControl {
   def controlNewChar(component: TextField, checker: Checker, word: String, old: String, maxChar: Int = MAX_CHARS): Unit =
       if (!word.isEmpty && !checker.checkRegex.matches(s"${word.last}") || word.length > maxChar)
         component.setText(old)
+
+  def controlString(string: String, checker: Checker, maxChar: Int = MAX_CHARS): Boolean =
+    !string.isEmpty && !checker.checkRegex.matches(string) || string.length > maxChar
 }

@@ -66,6 +66,7 @@ object ChooseParamsBox {
     var name: TextField = _
 
     private var days: Option[List[GiornoInSettimana]] = None
+    private var ruleN: Option[Int] = None
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
@@ -187,10 +188,13 @@ object ChooseParamsBox {
       }.foreach(toSelect => terminals.getItemBooleanProperty(toSelect).set(true))
 
       days = param.giornoInSettimana
+      ruleN = param.giornoInSettimana.collect {
+        case head :: _ => head.regolaId
+      }
     }
 
     private def getParams: ParamsForAlgoritm =
-      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days)
+      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days, ruleN)
   }
 
 }

@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -65,7 +65,7 @@ trait ManagerView extends DialogView {
    *
    * @param params
    */
-  def drawGroupParam(params: ParamsForAlgoritm)
+  def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola])
 }
 
 object ManagerView {
@@ -176,7 +176,7 @@ object ManagerView {
     override def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]): Unit =
       Platform.runLater(() => managerHome.drawWeekParams(params, rules))
 
-    override def drawGroupParam(params: ParamsForAlgoritm): Unit =
-      Platform.runLater(() => managerHome.drawGroupsParam())
+    override def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit =
+      Platform.runLater(() => managerHome.drawGroupsParam(params, groups, rule))
   }
 }

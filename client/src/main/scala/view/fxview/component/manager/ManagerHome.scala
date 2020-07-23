@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
@@ -75,7 +75,7 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   /**
    *
    */
-  def drawGroupsParam(): Unit
+  def drawGroupsParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit
 
 }
 
@@ -175,8 +175,8 @@ object ManagerHome{
     override def drawLoadedParam(param: InfoAlgorithm): Unit =
       chooseParamsBox.loadParam(param)
 
-    override def drawGroupsParam(): Unit = {
-      val box = GroupParamsBox()
+    override def drawGroupsParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit = {
+      val box = GroupParamsBox(params, groups, rule)
       baseManager.setCenter(box.setParent(parent).pane)
     }
 
