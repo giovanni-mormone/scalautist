@@ -10,7 +10,6 @@ import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.impl.Promise
 
 /** @author Fabian Aspee Encina
  *  Trait which allows to perform operations on the parametro table.
@@ -28,6 +27,7 @@ trait ParametroOperation extends OperationCrud[Parametro]{
    *          [[messagecodes.StatusCodes.ERROR_CODE2]] if exist error while insert GiornoInSettimana
    *          [[messagecodes.StatusCodes.ERROR_CODE3]] if ZonaTerminal is empty or name parameter is empty
    *          [[messagecodes.StatusCodes.ERROR_CODE4]] if Regola not exist
+   *          [[messagecodes.StatusCodes.ERROR_CODE5]] if GiornoInSettimana contains quantity less that zero
    *          [[messagecodes.StatusCodes.SUCCES_CODE]] if not exist error in operation
    */
   def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm):Future[Option[Int]]
@@ -45,6 +45,8 @@ object ParametroOperation extends ParametroOperation {
   override def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm): Future[Option[Int]] = infoAlgorithm match {
     case value if value.zonaTerminale.isEmpty || value.parametro.nome.isEmpty =>
       Future.successful(Some(StatusCodes.ERROR_CODE3))
+    case value if value.giornoInSettimana.forall(giorno=>giorno.exists(quant=>quant.quantita<=0))=>
+      Future.successful(Some(StatusCodes.ERROR_CODE5))
     case _ =>for{
       idParametri <- insert(infoAlgorithm.parametro)
       result <- insertGiornoInSettimanaAndZonaTerminal(idParametri,infoAlgorithm)
