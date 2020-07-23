@@ -71,21 +71,9 @@ object PersonaModel {
       callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[Persona]])
     }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Response[Int]] = {
-      val result =Promise[Response[Int]]
       val newCredential = ChangePassword(user, oldPassword, newPassword)
-      changePassword(result,newCredential)
-      result.future
-    }
-    private def changePassword(result: Promise[Response[Int]],newCredential:ChangePassword): Unit ={
-      val request = Post(getURI("changepassword"), Request(Some(newCredential))) // cambiare request
-      doHttp(request).onComplete{
-        case Success(t) => t.status match {
-          case StatusCodes.OK => result.success(Response[Int](StatusCodes.OK.intValue,None))
-          case StatusCodes.NotFound => result.success(Response[Int](StatusCodes.NotFound.intValue,None))
-          case StatusCodes.InternalServerError => result.success(Response[Int](StatusCodes.InternalServerError.intValue,None))
-        }
-        case Failure(_) => result.success(Response[Int](StatusCodes.InternalServerError.intValue,None))
-      }
+      val request = Post(getURI("changepassword"), transform(newCredential))
+      callHtpp(request).flatMap(unMarshall)
     }
   }
 

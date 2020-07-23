@@ -1,6 +1,7 @@
 package view.fxview.component.manager.subcomponent
 
 import java.lang.Math.abs
+import java.lang.management.PlatformLoggingMXBean
 import java.net.URL
 import java.sql.Date
 import java.time.LocalDate
@@ -8,6 +9,7 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Terminale
 import caseclass.CaseClassHttpMessage.ResultAlgorithm
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, DatePicker, Label}
 import javafx.scene.layout.VBox
@@ -15,6 +17,8 @@ import view.fxview.component.manager.subcomponent.parent.SelectResultParent
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
+import scala.util.Success
+import scala.concurrent.ExecutionContext.Implicits.global
 trait SelectResultBox extends Component[SelectResultParent]{
   def createResult(resultList: List[ResultAlgorithm], dateList: List[Date]):Unit
 }
@@ -78,7 +82,9 @@ object SelectResultBox{
 
     override def createResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = {
       val resultBox = ResultBox(resultList,dateList)
-      dateAndTerminal.getChildren.add(resultBox.setParent(parent).pane)
+      resultBox.onComplete{
+        case Success(value) =>  Platform.runLater(() => dateAndTerminal.getChildren.add(value.setParent(parent).pane))
+      }
     }
   }
 }

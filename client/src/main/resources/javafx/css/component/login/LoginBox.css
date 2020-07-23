@@ -1,9 +1,18 @@
 #loginbox{
-    -fx-spacing: 10;
-    -fx-padding: 10;
+    -fx-max-width: 350;
+    -fx-max-height: 450;
+    -fx-spacing: 20;
+    -fx-padding: 50;
     -fx-alignment: center;
 }
 
-#error{
-    -fx-text-fill: #ff3936;
+#internalBox{
+    -fx-max-width: 250;
+    -fx-max-height: 350;
+    -fx-spacing: 20;
+    -fx-padding: 20;
+    -fx-alignment: center;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
 }

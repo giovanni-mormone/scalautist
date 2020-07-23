@@ -66,9 +66,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
 object ManagerHome{
 
-  def apply(): ManagerHome = new ManagerHomeFX()
+  def apply(userName: String, userId:String): ManagerHome = new ManagerHomeFX(userName,userId)
 
-  private class ManagerHomeFX extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
+  private class ManagerHomeFX(userName: String, userId:String) extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
     with ManagerHome{
     @FXML
     var nameLabel: Label = _
@@ -116,8 +116,8 @@ object ManagerHome{
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
       notificationButton.setOnAction(_=>openAccordion())
-
-
+      nameLabel.setText(resources.println("username-label",userName))
+      idLabel.setText(resources.println("id-label",userId))
     }
     //rabbit manda la notificacion, pero donde la manda? llega primero que el inizializate?
     private def openAccordion(): Unit ={

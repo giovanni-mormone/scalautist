@@ -1,0 +1,10 @@
+#recruitBox{
+    -fx-alignment:TOP_CENTER;
+    -fx-max-width:270;
+    -fx-spacing:10.0;
+    -fx-padding: 5;
+}
+
+.combo-box{
+    -fx-min-width: 270;
+}

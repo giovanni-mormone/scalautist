@@ -7,6 +7,6 @@ import view.fxview.mainview.ManagerView
 class ManagerLaunch extends Application{
 
   override def start(primaryStage: Stage): Unit =
-    ManagerView(primaryStage)
+    ManagerView(primaryStage,"aa","0")
 
 }

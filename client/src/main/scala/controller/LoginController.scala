@@ -56,10 +56,10 @@ object LoginController {
         myView.firstUserAccess()
       case Some(user) if user.ruolo == 1 =>
         storeLoginData(user.matricola, Some(user.userName))
-        myView.managerAccess()
+        user.matricola.foreach(x=> myView.managerAccess(user.userName,x.toString))
       case Some(user) if user.ruolo == 2 =>
         storeLoginData(user.matricola, Some(user.userName))
-        myView.humanResourcesAccess()
+        user.matricola.foreach(x=> myView.humanResourcesAccess(user.userName,x.toString))
       case Some(user) if user.ruolo == 3 =>
         storeLoginData(user.matricola, Some(user.userName))
         myView.driverAccess()

@@ -79,6 +79,7 @@ object FXHelperFactory {
       myStage.initModality(Modality.APPLICATION_MODAL)
       myStage initOwner parent
       myStage.showAndWait()
+
     }
 
     /**
