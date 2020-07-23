@@ -12,6 +12,7 @@ import javafx.scene.Node
 import javafx.scene.control.{Button, TableView}
 import javafx.scene.layout.AnchorPane
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, CreateTable}
+import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.parent.GroupParamsParent
 import view.fxview.component.manager.subcomponent.util.{GroupSelectionTable, ParamsForAlgoritm}
 import view.fxview.component.{AbstractComponent, Component}
@@ -19,9 +20,12 @@ import view.fxview.util.ResourceBundleUtil._
 
 trait GroupParamsBox extends Component[GroupParamsParent] {
 
+  def updateGroup(group: Group): Unit
 }
 
 object GroupParamsBox {
+
+  case class Group(date: List[LocalDate], rule: Int, ruleName: String)
 
   def apply(params: ParamsForAlgoritm, rule: List[Regola]): GroupParamsBox =
     new GroupParamsBoxFX(params, rule)
@@ -57,11 +61,11 @@ object GroupParamsBox {
       run.setText(resources.getResource("runftxt"))
 
       reset.setOnAction(_ => parent.resetGroupsParams())
-      add.setOnAction(_ => parent.openModal(params.dateI, params.dateF))
+      add.setOnAction(_ => parent.openModal(params.dateI, params.dateF, rule))
     }
 
     private def initTable(): Unit = {
-      val fieldList = List("id", "rule", "date")
+      val fieldList = List("rule", "date")
       CreateTable.createColumns[GroupSelectionTable](groupstab, fieldList, dim= 50)
     }
 
@@ -70,6 +74,10 @@ object GroupParamsBox {
         CreateDatePicker.changingDatePickerSkin(group.fold(List.empty[LocalDate])(_.date.map(_.toLocalDate)))._1
       val node: Node = datePicker.getPopupContent
       dateg.getChildren.add(node)
+    }
+
+    override def updateGroup(group: Group): Unit = {
+      println(group)
     }
   }
 }

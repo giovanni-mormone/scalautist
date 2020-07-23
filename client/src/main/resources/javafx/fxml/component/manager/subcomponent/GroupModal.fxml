@@ -5,12 +5,14 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane prefHeight="316.0" prefWidth="600.0">
          <children>
             <DatePicker fx:id="days" layoutX="15.0" layoutY="25.0"/>
+            <ComboBox fx:id="rules" layoutX="15.0" layoutY="70.0"/>
             <TextArea fx:id="chosen" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
          </children>
       </Pane>

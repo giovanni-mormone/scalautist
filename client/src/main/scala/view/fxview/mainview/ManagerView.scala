@@ -16,7 +16,7 @@ import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.{GroupModal, ParamsModal}
+import view.fxview.component.manager.subcomponent.{GroupModal, GroupParamsBox, ParamsModal}
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.modal.Modal
@@ -169,10 +169,10 @@ object ManagerView {
         modalResource.show()
       })
 
-    override def openModal(initDate: LocalDate, endDate: LocalDate): Unit = {
+    override def openModal(initDate: LocalDate, endDate: LocalDate, rules: List[Regola]): Unit = {
       Platform.runLater(() => {
         modalResource = Modal[ModalGruopParent, Component[ModalGruopParent], ModalGruopParent](myStage, caller = this,
-          GroupModal(initDate, endDate))
+          GroupModal(initDate, endDate, rules))
         modalResource.show()
       })
     }
@@ -215,5 +215,9 @@ object ManagerView {
 
     override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
 
+    override def updateGroups(group: GroupParamsBox.Group): Unit = {
+      modalResource.close()
+      managerHome.updateGroup(group)
+    }
   }
 }

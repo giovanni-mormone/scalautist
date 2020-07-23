@@ -20,6 +20,7 @@ import javafx.scene.layout.{BorderPane, VBox}
 import org.controlsfx.control.PopOver
 import view.fxview.{FXHelperFactory, NotificationHelper}
 import view.fxview.NotificationHelper.NotificationParameters
+import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
@@ -94,6 +95,11 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    */
   def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
 
+  /**
+   *
+   * @param group
+   */
+  def updateGroup(group: Group): Unit
 }
 
 object ManagerHome{
@@ -133,6 +139,7 @@ object ManagerHome{
     var managerRichiestaBoxView:ManagerRichiestaBox = _
     var chooseParamsBox: ChooseParamsBox = _
     var selectResultBox:SelectResultBox = _
+    var gruopParamBox: GroupParamsBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -205,8 +212,8 @@ object ManagerHome{
       chooseParamsBox.loadParam(param)
 
     override def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit = {
-      val box = GroupParamsBox(params, rule)
-      baseManager.setCenter(box.setParent(parent).pane)
+      gruopParamBox = GroupParamsBox(params, rule)
+      baseManager.setCenter(gruopParamBox.setParent(parent).pane)
     }
 
     override def drawResultTerminal(terminal: List[Terminale]): Unit = {
@@ -222,5 +229,8 @@ object ManagerHome{
     override def drawNotifica(str: String,tag:Long): Unit = {
       NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
     }
+
+    override def updateGroup(group: Group): Unit =
+      gruopParamBox.updateGroup(group)
   }
 }
