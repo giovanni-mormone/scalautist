@@ -173,7 +173,7 @@ object Algoritmo extends Algoritmo{
     val joinPersona = for{
       persona<-PersonaTableQuery.tableQuery()
       contratto<-StoricoContrattoTableQuery.tableQuery()
-      if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal)
+      if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal) && contratto.dataInizio <= algorithmExecute.dateI
     }yield (contratto,persona)
     InstancePersona.operation().execJoin(joinPersona).flatMap {
       case Some(person) =>getAllContract(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))

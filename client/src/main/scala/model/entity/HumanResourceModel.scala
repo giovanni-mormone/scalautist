@@ -1,6 +1,7 @@
 package model.entity
 
 import java.sql.Date
+import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
@@ -251,7 +252,7 @@ object HumanResourceModel {
     }
 
     override def salaryCalculation():Future[Response[List[Stipendio]]] = {
-      val request = Post(getURI("calcolostipendio"),transform(Dates(new Date(System.currentTimeMillis()))))
+      val request = Post(getURI("calcolostipendio"),transform(Dates(Date.valueOf(LocalDate.now()))))
       callServerSalary(request)
     }
 
@@ -272,7 +273,7 @@ object HumanResourceModel {
 
     override def updateTerminale(terminale: Terminale): Future[Response[Int]] = {
       val request = Post(getURI("updateterminale"),transform(terminale))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+      callRequest(request)
     }
     override def createTerminale(terminale: Terminale): Future[Response[Terminale]] = {
       val request = Post(getURI("createterminale"),transform(terminale))
@@ -281,12 +282,12 @@ object HumanResourceModel {
 
     override def deleteTerminale(id: Int): Future[Response[Int]] = {
       val request = Post(getURI("deleteterminale"),transform(id))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+      callRequest(request)
     }
 
     override def updateZona(zona: Zona): Future[Response[Int]] = {
       val request = Post(getURI("updatezona"), transform(zona))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
+      callRequest(request)
     }
 
     override def deleteZona(zona: Int): Future[Response[Zona]] = {

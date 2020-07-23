@@ -5,9 +5,9 @@
 
 <AnchorPane stylesheets="@../css/ModalBase.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox fx:id="vbox" alignment="BOTTOM_CENTER" prefHeight="80.0" prefWidth="230.0">
+      <VBox fx:id="vbox">
          <children>
-            <Label fx:id="messageLabel" wrapText="true" />
+            <Label fx:id="messageLabel" />
             <FlowPane alignment="BOTTOM_RIGHT" columnHalignment="RIGHT" rowValignment="BOTTOM">
                <children>
                   <Button fx:id="confirmationButton" defaultButton="true" mnemonicParsing="false"/>

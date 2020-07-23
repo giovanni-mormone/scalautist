@@ -156,6 +156,7 @@ object ManagerController {
       model.getResultAlgorithm(idTerminal.head,date,date1).onComplete {
         case Failure(exception) => println(exception)
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
       }
     }
 
@@ -165,8 +166,8 @@ object ManagerController {
 
 object t extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,5,31))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
   val terminals=List(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))

@@ -18,6 +18,8 @@ import view.fxview.component.driver.subcomponent.parent.{DriverHomeParent, Drive
 import view.fxview.component.modal.Modal
 
 trait DriverView extends DialogView{
+  def drawNotification(str: String, tag: Long): Unit
+
   /**
    *
    */
@@ -76,6 +78,8 @@ object DriverView {
       driverHome.setParent(this)
       pane.getChildren.add(driverHome.pane)
       myController.startupDriverCheck()
+      myController.startListenNotification()
+
     }
 
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl DriverView
@@ -138,5 +142,10 @@ object DriverView {
         })
       case _ => super.showMessageFromKey(message)
     }
+
+    override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>driverHome.drawNotifica(str,tag))
+
+    //override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
+
   }
 }

@@ -7,25 +7,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.DatePicker?>
 
-<VBox alignment="TOP_CENTER" fillWidth="false" maxHeight="-Infinity"
-      maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="320.0" prefWidth="400.0"
-      spacing="10.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <TextField fx:id="name" promptText="Nome" />
-      <TextField fx:id="surname" promptText="Cognome" />
-      <TextField fx:id="tel" />
-      <DatePicker fx:id="recruitDate" prefWidth="180.0" showWeekNumbers="true" />
-      <ComboBox fx:id="role" prefWidth="150.0" />
-      <ComboBox fx:id="contractTypes" prefHeight="25.0" prefWidth="140.0" />
-      <ComboBox fx:id="shift1" prefWidth="150.0" />
-      <ComboBox fx:id="shift2" prefWidth="150.0" />
-      <ComboBox fx:id="day1" prefWidth="150.0" />
-      <ComboBox fx:id="day2" prefWidth="150.0" />
-      <ComboBox fx:id="zones" prefWidth="150.0" />
-      <ComboBox fx:id="terminals" prefWidth="150.0" />
-      <Button fx:id="save" mnemonicParsing="false" text="Salva" />
-   </children>
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-   </padding>
+<VBox fx:id="recruitBox" stylesheets="@../../../../css/component/humanresources/subcomponent/RecruitBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <TextField fx:id="name" promptText="Nome"/>
+   <TextField fx:id="surname" promptText="Cognome"/>
+   <TextField fx:id="tel"/>
+   <DatePicker fx:id="recruitDate" showWeekNumbers="true"/>
+   <ComboBox fx:id="role"/>
+   <ComboBox fx:id="contractTypes"/>
+   <ComboBox fx:id="shift1"/>
+   <ComboBox fx:id="shift2"/>
+   <ComboBox fx:id="day1"/>
+   <ComboBox fx:id="day2"/>
+   <ComboBox fx:id="zones"/>
+   <ComboBox fx:id="terminals"/>
+   <Button fx:id="save" mnemonicParsing="false" text="Salva"/>
 </VBox>

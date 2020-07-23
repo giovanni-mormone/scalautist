@@ -50,9 +50,9 @@ trait ManagerView extends DialogView {
 
 object ManagerView {
 
-  def apply(stage: Stage): ManagerView = new ManagerViewFX(stage)
+  def apply(stage: Stage,userName: String, userId:String): ManagerView = new ManagerViewFX(stage,userName,userId)
 
-  private class ManagerViewFX(stage: Stage) extends AbstractFXDialogView(stage)
+  private class ManagerViewFX(stage: Stage,userName: String, userId:String) extends AbstractFXDialogView(stage)
     with ManagerView with ManagerHomeParent{
 
     private var myController: ManagerController = _
@@ -64,7 +64,7 @@ object ManagerView {
       super.initialize(location, resources)
       myController = ManagerController()
       myController.setView(this)
-      managerHome = ManagerHome()
+      managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
       myController.startListenNotification()
     }

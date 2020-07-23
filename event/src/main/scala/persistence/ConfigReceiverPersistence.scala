@@ -14,7 +14,7 @@ object ConfigReceiverPersistence {
   private class ConfigReceiverImpl(nameQueue:String,routingKey:Seq[String]) extends ConfigReceiverPersistence{
 
     import emitter.ConnectionStart._
-    val EXCHANGE_NAME = "info_algorithm_logs"
+    val EXCHANGE_NAME = "general_info"
     val NAME_QUEUE: String = nameQueue
     override def start(): Unit = {
       channel.exchangeDeclare(EXCHANGE_NAME, "topic",true)

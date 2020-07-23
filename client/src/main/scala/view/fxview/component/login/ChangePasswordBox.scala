@@ -37,6 +37,8 @@ object ChangePasswordBox{
     @FXML
     var changePasswordButton: Button = _
     @FXML
+    var goBackButton: Button = _
+    @FXML
     var passError: Label = _
     @FXML
     var confirmError: Label = _
@@ -53,6 +55,7 @@ object ChangePasswordBox{
       oldPasswordField.setPromptText(resources.getResource("old-password"))
       confirmPasswordField.setPromptText(resources.getResource("confirm-pass"))
       changePasswordButton.setText(resources.getResource("change-pass"))
+      goBackButton.setText(resources.getResource("go-back"))
       confirmError setVisible false
       passError setVisible false
       changePasswordButton setDisable true
@@ -60,7 +63,7 @@ object ChangePasswordBox{
       oldPasswordField.textProperty().addListener((_,_,_)=> checkPassword(passwordField.getText))
       passwordField.textProperty().addListener((_,_,newV)=> checkPassword(newV))
       confirmPasswordField.textProperty().addListener((_,_,newV)=>  checkConfirmPassword(newV,passwordField.getText))
-
+      goBackButton.setOnAction(_ => parent.goBack())
       changePasswordButton.setOnAction(_ => parent.changePass(oldPasswordField getText ,confirmPasswordField getText))
     }
 

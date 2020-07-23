@@ -53,3 +53,7 @@ select * from GiornoSets
 select * from RichiestaSets
 select * from AssenzaSets
 select * from RisultatoSets
+select * from PersoneSets
+select * from DisponibilitaStraordinarioSets
+select * from PresenzaSets
+select * from StipendioSets order by Valore desc

@@ -91,17 +91,19 @@ trait HRHome extends Component[HRHomeParent]{
  */
 object HRHome{
 
-  def apply(): HRHome = new HomeFX()
+  def apply(userName: String, userId:String): HRHome = new HomeFX(userName,userId)
 
   /**
    * HRHome Fx implementation. It shows Humane resource home view
    *
    */
-  private class HomeFX() extends AbstractComponent[HRHomeParent] ("humanresources/BaseHumanResource")
+  private class HomeFX(userName: String, userId:String) extends AbstractComponent[HRHomeParent] ("humanresources/BaseHumanResource")
     with HRHome {
 
     @FXML
     var nameLabel: Label = _
+    @FXML
+    var idLabel: Label = _
     @FXML
     var baseHR: BorderPane = _
     @FXML
@@ -136,6 +138,8 @@ object HRHome{
       zonaManage.setText(resources.getResource("zonaManage"))
       terminalManger.setText(resources.getResource("terminalManager"))
       changePassword.setText(resources.getResource("changePassword"))
+      nameLabel.setText(resources.println("username-label",userName))
+      idLabel.setText(resources.println("id-label",userId))
 
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)

@@ -11,6 +11,7 @@ import caseclass.CaseClassDB.{Disponibilita, Stipendio, Turno}
 import caseclass.CaseClassHttpMessage.{Dates, Id, InfoHome, InfoShift, Response, StipendioInformations}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
+import persistence.ConfigReceiverPersistence
 
 import scala.concurrent.Future
 
@@ -21,6 +22,8 @@ import scala.concurrent.Future
  * Interface for driver's operation on data
  */
 trait DriverModel {
+  def verifyExistedQueue(userId: Option[Int], notificationReceived: (String, Long) => Unit): Unit
+
 
   /**
    * Method that obtains salary for a person
@@ -114,6 +117,14 @@ object DriverModel {
       c.setTime(new Date(System.currentTimeMillis()))
       val request = Post(getURI("setdisponibilita"), transform((Disponibilita(c.get(Calendar.WEEK_OF_YEAR), giorno1, giorno2), Id(user))))
       callHtpp(request).flatMap(unMarshall)
+    }
+
+    override def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit): Unit = {
+      userId.foreach(queue =>{
+        val receiver = ConfigReceiverPersistence("driver"+queue.toString,queue.toString)
+        receiver.start()
+        receiver.receiveMessage(f)
+      })
     }
   }
 

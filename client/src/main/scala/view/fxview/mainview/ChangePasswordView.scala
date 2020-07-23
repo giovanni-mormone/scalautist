@@ -55,7 +55,7 @@ object ChangePasswordView{
     }
 
     override def close(): Unit =
-      myStage close
+      myStage.close()
 
     override def errorChange(): Unit ={
       Platform.runLater(() =>{
@@ -76,5 +76,11 @@ object ChangePasswordView{
       pane.getChildren.remove(FXHelperFactory.loadingBox)
       changePasswordBox.enable()
     }
+
+    override def goBack(): Unit =
+      Platform.runLater(() => {
+        stopLoading()
+        back()
+      })
   }
 }

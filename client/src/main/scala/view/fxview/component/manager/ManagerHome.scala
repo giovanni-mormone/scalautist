@@ -12,7 +12,8 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Button, Label, TitledPane}
 import javafx.scene.layout.{BorderPane, VBox}
 import org.controlsfx.control.PopOver
-import view.fxview.FXHelperFactory
+import view.fxview.{FXHelperFactory, NotificationHelper}
+import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.{AbstractComponent, Component}
@@ -65,9 +66,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
 object ManagerHome{
 
-  def apply(): ManagerHome = new ManagerHomeFX()
+  def apply(userName: String, userId:String): ManagerHome = new ManagerHomeFX(userName,userId)
 
-  private class ManagerHomeFX extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
+  private class ManagerHomeFX(userName: String, userId:String) extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
     with ManagerHome{
     @FXML
     var nameLabel: Label = _
@@ -115,8 +116,8 @@ object ManagerHome{
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
       notificationButton.setOnAction(_=>openAccordion())
-
-
+      nameLabel.setText(resources.println("username-label",userName))
+      idLabel.setText(resources.println("id-label",userId))
     }
     //rabbit manda la notificacion, pero donde la manda? llega primero que el inizializate?
     private def openAccordion(): Unit ={
@@ -164,21 +165,10 @@ object ManagerHome{
     override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = selectResultBox.createResult(resultList,dateList)
 
     private def consumeNotification(tag:Long): Unit ={
-
     }
 
     override def drawNotifica(str: String,tag:Long): Unit = {
-      val firstTitled = new TitledPane
-      firstTitled.setText(str)
-      firstTitled.setId(tag.toString)
-      val content = new VBox
-      val label = new Label("Orario")
-      content.getChildren.add(label)
-      firstTitled.setContent(content)
-      firstTitled.setOnMouseClicked(_=>consumeNotification(tag))
-      accordion.getPanes.add(firstTitled)
-      popover.getRoot.getChildren.removeIf(_=>popover.getRoot.getChildren.contains(accordion))
-      popover.getRoot.getChildren.add(accordion)
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
     }
   }
 }

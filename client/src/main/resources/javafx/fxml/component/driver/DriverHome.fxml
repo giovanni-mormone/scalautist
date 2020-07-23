@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.PopOver?>
 
 
 <BorderPane fx:id="driverHome" prefHeight="800.0" prefWidth="600.0"
@@ -12,9 +13,14 @@
            <Menu fx:id="home" mnemonicParsing="false"/>
            <Menu fx:id="turni" mnemonicParsing="false"/>
            <Menu fx:id="stipendi" mnemonicParsing="false"/>
+           <Menu fx:id="notifiche" mnemonicParsing="false"/>
        </MenuBar>
    </top>
     <Label fx:id="labelHome"/>
     <Label fx:id="labelTurni"/>
     <Label fx:id="labelStipendio"/>
+    <Label fx:id="labelNotifiche">
+        <PopOver fx:id="popover"/>
+    </Label>
+    <Accordion fx:id="accordion"></Accordion>
 </BorderPane>

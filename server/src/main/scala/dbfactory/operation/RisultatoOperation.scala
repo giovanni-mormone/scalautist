@@ -218,7 +218,7 @@ object RisultatoOperation extends RisultatoOperation {
         || (contract.dataInizio>=dateI && contract.dataFine<=dateF)
         || (contract.dataFine>=dateI && contract.dataFine<=dateF)
         || (contract.dataInizio>=dateI && contract.dataInizio<=dateF)
-        || (contract.dataInizio<=dateF && Some(contract.dataFine).isEmpty)))
+        || (contract.dataInizio<=dateF && !contract.dataFine.isDefined)))
     }yield(person.id,person.terminaleId,contract.dataInizio,contract.dataFine)
 
     InstancePersona.operation().execJoin(joinPersonContract)

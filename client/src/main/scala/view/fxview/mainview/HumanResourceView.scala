@@ -142,7 +142,7 @@ trait HumanResourceView extends DialogView {
  */
 object HumanResourceView {
 
-  def apply(stage: Stage): HumanResourceView = new HumanResourceHomeFX(stage)
+  def apply(stage: Stage,userName: String, userId:String): HumanResourceView = new HumanResourceHomeFX(stage,userName, userId)
 
   /**
    * HumanResourceView FX implementation
@@ -150,7 +150,7 @@ object HumanResourceView {
    * @param stage
    *              Stage that load view
    */
-  private class HumanResourceHomeFX(stage: Stage) extends AbstractFXDialogView(stage)
+  private class HumanResourceHomeFX(stage: Stage,userName: String, userId:String) extends AbstractFXDialogView(stage)
     with HumanResourceView with HRHomeParent with HRModalBoxParent {
 
     private var myController: HumanResourceController = _
@@ -173,7 +173,7 @@ object HumanResourceView {
     ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl HRViewParent
 
     private def homeView(): Unit = {
-      hrHome = HRHome()
+      hrHome = HRHome(userName,userId)
       hrHome.setParent(this)
       pane.getChildren.clear()
       pane.getChildren.add(hrHome.pane)

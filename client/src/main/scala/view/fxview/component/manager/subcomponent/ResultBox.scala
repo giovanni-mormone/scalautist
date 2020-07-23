@@ -12,16 +12,20 @@ import javafx.scene.layout.{HBox, VBox}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.manager.subcomponent.parent.SelectResultParent
 
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 trait ResultBox extends Component[SelectResultParent]{
-  def createDriverResult():Unit
+  def createDriverResult(): Future[Boolean]
 
 }
 object ResultBox {
 
-  def apply(result: List[ResultAlgorithm],listDate:List[Date]): ResultBox ={
+  def apply(result: List[ResultAlgorithm],listDate:List[Date]): Future[ResultBox] ={
     val results:ResultBox = new ResultBoxFX(result,listDate)
-    results.createDriverResult()
-    results
+    results.createDriverResult().collect{
+      case _ => results
+    }
   }
 
   private class ResultBoxFX(result: List[ResultAlgorithm],listDate:List[Date]) extends AbstractComponent[SelectResultParent]("manager/subcomponent/ResultBox")
@@ -44,11 +48,11 @@ object ResultBox {
 
     }
 
-    override def createDriverResult(): Unit = {
-      result.foreach(res=>{
+    override def createDriverResult(): Future[Boolean] = Future{
+      result.map(res=>{
         val driver = DriverResultBox(res)
         father.getChildren.add(driver.setParent(parent).pane)
-      })
+      }).foldLeft(true)((default,actual) => default)
     }
   }
 
