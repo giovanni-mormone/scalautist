@@ -4,8 +4,9 @@ import java.net.URL
 import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
+import java.util.stream.Collectors
 
-import caseclass.CaseClassDB.Regola
+import caseclass.CaseClassDB.{GiornoInSettimana, Regola}
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, Label, TableView}
@@ -15,6 +16,8 @@ import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiest
 import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+
+import scala.jdk.CollectionConverters
 
 trait ChangeSettimanaRichiesta extends Component[ChangeSettimanaRichiestaParent] {
 
@@ -40,28 +43,38 @@ object ChangeSettimanaRichiesta{
     @FXML
     var titleS: Label = _
     @FXML
+    var error: Label = _
+    @FXML
     var dayShiftN: TableView[ShiftTable] = _
     @FXML
     var dayShiftS: TableView[ShiftTable] = _
 
-    case class DailyReq(day: Int, shift: Int, quantity: Int = 0)
+    case class DailyReq(day: Int, shift: Int, quantity: Int = 0, rule: String)
 
     var daysInfo: List[DailyReq] = List.empty
+    val NONE: String = "NONE"
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      daysInfo = params.request.getOrElse(List.empty).map(req => DailyReq(req.giornoId, req.turnoId, req.quantita))
+      daysInfo = params.requestN.getOrElse(List.empty)
+        .map(req => DailyReq(req.giornoId, req.turnoId, req.quantita, rules.find(_.idRegola.contains(req.regolaId))
+          .fold(Regola(NONE, Some(0)))(x => x).nomeRegola))
       initButton()
       initCombo()
       initLabel()
       initTable()
-      enableButton()
     }
 
     private def initButton(): Unit = {
       run.setText(resources.getResource("runtxt"))
-      run.setOnAction(_ => parent.groupParam(params))
-      run.setDisable(true)
+      run.setOnAction(_ => {
+        if(control())
+          parent.groupParam(params)//RemakeParams())
+        else
+          error.setVisible(true)
+        println(remakeParams())
+      })
+      run.setDisable(false)
 
       reset.setText(resources.getResource("resettxt"))
       reset.setOnAction(_ => parent.resetWeekParams())
@@ -70,16 +83,13 @@ object ChangeSettimanaRichiesta{
     private def initCombo(): Unit = {
       val list = calcolateWeeks()
       list.foreach(week => weekS.getItems.add(week.toString))
-      weekS.getCheckModel.getCheckedItems.addListener(
-        new ListChangeListener[String]() {
-          override def onChanged(c: ListChangeListener.Change[_ <: String]): Unit =
-            enableButton()
-        })
     }
 
     private def initLabel(): Unit = {
       titleN.setText(resources.getResource("weekN"))
       titleS.setText(resources.getResource("weekS"))
+      error.setText(resources.getResource("errortxt"))
+      error.setVisible(false)
     }
 
     private def initTable(): Unit = {
@@ -94,20 +104,14 @@ object ChangeSettimanaRichiesta{
       CreateTable.createColumns[ShiftTable](dayShiftS, List("combo"))
     }
 
-    private def enableButton(): Unit =
-      run.setDisable(false)//TODO
-
-    /*private def controlSpecialWeek(): Boolean = {
-      if(getweeks.nonEmpty)
-        !ruleS.getSelectionModel.isEmpty
-      else true
-    }*/
+    private def control(): Boolean =
+      getElements(dayShiftN).size == getSelectedElements(dayShiftN).size
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
-      val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
+      val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
       (1 to 6).map( shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
-        new ShiftTable(shiftStringMap.getOrElse(shift, "ERROR"), info.head, info(1), info(2), info(3), info(4), info(5), rules.map(_.nomeRegola))//, Some(createComboRule()))
+        new ShiftTable(SHIFT_STRING_MAP.getOrElse(shift, NONE), info.head, info(1), info(2), info(3), info(4), info(5), rules.map(_.nomeRegola))
       }).toList
     }
 
@@ -115,7 +119,40 @@ object ChangeSettimanaRichiesta{
       (1 to 6).map(day => infoDays.find(info => info.day == day && info.shift == shift)
         .fold("0")(_.quantity.toString)).toList
 
-    private def getweeks: List[Int] = {
+    private def getElements(tableView: TableView[ShiftTable]): Set[ShiftTable] = {
+      new CollectionConverters.ListHasAsScala[ShiftTable](
+        tableView.getItems.stream().map[ShiftTable](x => x)
+          .collect(Collectors.toList[ShiftTable])).asScala.toSet
+    }
+
+    private def getSelectedElements(tableView: TableView[ShiftTable]): Set[ShiftTable] = {
+      new CollectionConverters.ListHasAsScala[ShiftTable](
+        tableView.getItems.filtered(_.getSelected.isDefined)
+          .stream().map[ShiftTable](x => x).collect(Collectors.toList[ShiftTable])).asScala.toSet
+    }
+
+    private def remakeParams(): List[GiornoInSettimana] = {
+      val SHIFT_INT_MAP: Map[String, Int] = Map("2-6" -> 1 , "6-10" -> 2, "10-14" -> 3 , "14-18" -> 4, "18-22" -> 5, "22-2" -> 6)
+      val ERROR_ID = -1
+      val singleDays: List[DailyReq] = getElements(dayShiftN).toList
+        .flatMap(day => {
+          val shift = SHIFT_INT_MAP.getOrElse(day.getShift, ERROR_ID)
+          val rule = day.getSelected.getOrElse(NONE)
+          List(
+            DailyReq(1, shift, day.getMonday.toInt, rule),
+            DailyReq(2, shift, day.getTuesday.toInt, rule),
+            DailyReq(3, shift, day.getWednesday.toInt, rule),
+            DailyReq(4, shift, day.getThursday.toInt, rule),
+            DailyReq(5, shift, day.getFriday.toInt, rule),
+            DailyReq(6, shift, day.getSaturday.toInt, rule)
+          )
+        }).filter(_.quantity != 0)
+      calcolateWeeks().filter(week => !weekS.getCheckModel.getCheckedItems.contains(week.toString))
+        .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
+        rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
+    }
+
+    private def getSelectedWeeks: List[Int] = {
       var weeks: List[Int] = List.empty
       weekS.getCheckModel.getCheckedItems.forEach(selected => weeks = weeks :+ selected.toInt)
       weeks

@@ -48,6 +48,12 @@ object ParamsModal {
       initTable()
       initCheckBox()
       initTextField()
+      initTextArea()
+    }
+
+    private def initTextArea(): Unit = {
+      terminals.setEditable(false)
+      days.setEditable(false)
     }
 
     private def initButton(): Unit = {
@@ -98,7 +104,8 @@ object ParamsModal {
       val chosen = selectedItem(idp)
       if (chosen.isDefined) {
         val daysString = chosen.toList.flatMap(_.giornoInSettimana).flatten.map(info =>
-          daysStringMap.getOrElse(info.giornoId, NONE) + "\t" + shiftStringMap.getOrElse(info.turnoId,NONE) )
+          daysStringMap.getOrElse(info.giornoId, NONE) + "\t" + shiftStringMap.getOrElse(info.turnoId,NONE) +
+            "\t" + info.quantita )
         val terminalString = temrinals.collect{
           case terminal if chosen.head.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId)) =>
             terminal.idTerminale.head + "\t" + terminal.nomeTerminale

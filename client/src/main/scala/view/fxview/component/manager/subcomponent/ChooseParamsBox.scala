@@ -194,7 +194,7 @@ object ChooseParamsBox {
     }
 
     private def getParams: ParamsForAlgoritm =
-      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days, ruleN)
+      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days)
   }
 
 }
