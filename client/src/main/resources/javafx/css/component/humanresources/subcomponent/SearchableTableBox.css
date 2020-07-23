@@ -1,0 +1,9 @@
+#vbox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+#hbox{
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}

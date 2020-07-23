@@ -1,4 +1,4 @@
-#baseManager{
+#baseManager,#baseHR{
     -fx-alignment: center;
     -fx-min-height: 700;
     -fx-fill-width: true;
@@ -7,7 +7,24 @@
     -fx-padding: 10;
 }
 
+#notificationBox{
+    -fx-alignment: TOP_RIGHT;
+    -fx-pref-height:50;
+    -fx-pref-width:60;
+}
+
 #optionsBox{
     -fx-spacing:10;
     -fx-alignment: center;
+}
+
+#topMenu{
+    -fx-spacing: 10;
+    -fx-alignment: top-right;
+    -fx-padding: 10;
+}
+
+.topMenuLabel{
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
 }

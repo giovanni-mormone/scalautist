@@ -79,20 +79,20 @@ class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaH
 
   behavior of "Result algorithm"
   it should "return None if terminal not contains result" in {
-    val future: Future[Response[List[ResultAlgorithm]]] = model.getResultAlgorithm(idTerminaleNotContainsResult, dataINotContainsResult,dataFNotContainsResult)
+    val future: Future[Response[(List[ResultAlgorithm],List[Date])]] = model.getResultAlgorithm(idTerminaleNotContainsResult, dataINotContainsResult,dataFNotContainsResult)
     future map {info => assert(info.statusCode ==statusCodes.NOT_FOUND) }
   }
   it should "return list length 14 if terminal contains result" in {
-    val future: Future[Response[List[ResultAlgorithm]]] = model.getResultAlgorithm(idTerminaleContainsResult2,dataIContainsResult, dataFContainsResult)
-    future map {info => assert(info.payload.head.length==14) }
+    val future: Future[Response[(List[ResultAlgorithm],List[Date])]] = model.getResultAlgorithm(idTerminaleContainsResult2,dataIContainsResult, dataFContainsResult)
+    future map {info => assert(info.payload.head._1.length==14) }
   }
   it should "return list length 14 if terminal contains result without call server" in {
-    val future: Future[Response[List[ResultAlgorithm]]] = model.getResultAlgorithm(idTerminaleContainsResult2,dataIContainsResult, dataFContainsResult)
-    future map {info => assert(info.payload.head.length==14) }
+    val future: Future[Response[(List[ResultAlgorithm],List[Date])]] = model.getResultAlgorithm(idTerminaleContainsResult2,dataIContainsResult, dataFContainsResult)
+    future map {info => assert(info.payload.head._1.length==14) }
   }
   it should "return list length 3 if terminal contains result" in {
-    val future: Future[Response[List[ResultAlgorithm]]] = model.getResultAlgorithm(idTerminaleContainsResult,dataIContainsResult, dataFContainsResult)
-    future map {info => assert(info.payload.head.length==3) }
+    val future: Future[Response[(List[ResultAlgorithm],List[Date])]] = model.getResultAlgorithm(idTerminaleContainsResult,dataIContainsResult, dataFContainsResult)
+    future map {info => assert(info.payload.head._1.length==3) }
   }
 
 

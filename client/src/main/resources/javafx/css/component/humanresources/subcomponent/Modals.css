@@ -1,0 +1,14 @@
+#modal{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-fill-width: false;
+}
+
+.combo-box,.text-field{
+    -fx-min-width: 270;
+}
+
+#hbox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}

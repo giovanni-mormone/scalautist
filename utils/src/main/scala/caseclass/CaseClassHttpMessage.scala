@@ -264,4 +264,11 @@ object CaseClassHttpMessage {
    *              The ending date of the algorithm
    */
   final case class CheckResultRequest(terminalsId: List[Int], dateI: Date, dateF: Date)
+
+  /**
+   *
+   * @param title
+   * @param body
+   */
+  final case class Notifica(title:String,body:String)
 }

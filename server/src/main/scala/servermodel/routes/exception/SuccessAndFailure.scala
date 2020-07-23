@@ -11,6 +11,7 @@ import scala.util.{Failure, Success, Try}
 object SuccessAndFailure {
   def anotherSuccessAndFailure[A](result:Try[A]): StandardRoute =result match {
     case Success(None) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
+    case Success((None,_)) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success(Some(List())) =>    complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success(Some(statusCodes.NOT_FOUND)) =>    complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success(Some(statusCodes.ERROR_CODE1)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE1))
@@ -27,7 +28,6 @@ object SuccessAndFailure {
 
   private def failure[A](result:Try[A]): StandardRoute =result match {
     case Success(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
-    case Failure(e) =>println(e)
-      complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
+    case Failure(_) => complete(StatusCodes.InternalServerError,Response[Int](StatusCodes.InternalServerError.intValue))
   }
 }

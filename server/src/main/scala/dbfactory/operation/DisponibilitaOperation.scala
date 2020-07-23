@@ -3,13 +3,15 @@ package dbfactory.operation
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.Disponibilita
+import dbfactory.util.Helper._
+import caseclass.CaseClassDB.{Disponibilita, Persona}
 import caseclass.CaseClassHttpMessage.InfoReplacement
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstancePersona, InstanceRisultato, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table._
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
+import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
@@ -81,6 +83,7 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
    *         [[messagecodes.StatusCodes.ERROR_CODE1]]  if update not have success event
    */
   def updateDisponibilita(element: Disponibilita,idUser:Int): Future[Option[Int]]
+  def updateAvailabilityWeekFissi(date:Date): Future[List[Option[Int]]]
 }
 
 object DisponibilitaOperation extends DisponibilitaOperation{
@@ -95,7 +98,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   private val SATURDAY=0
   private val SUCCESS_UPDATE = 1
   private val DEFAULT_RESPONSE = Future.successful(None)
-
   private object convertToQueryPersonStoricAvail{
 
     private val DEFAULT_YEAR = 0
@@ -300,5 +302,48 @@ object DisponibilitaOperation extends DisponibilitaOperation{
           }
           case None =>  Future.successful(Some(StatusCodes.NOT_FOUND))
         }
+  }
+  override def updateAvailabilityWeekFissi(date:Date): Future[List[Option[Int]]] = {
+    val week = getWeekNumber(date)
+    val join = for{
+      persona<- PersonaTableQuery.tableQuery()
+      storico<- StoricoContrattoTableQuery.tableQuery()
+      contratto <- ContrattoTableQuery.tableQuery()
+      if(persona.ruolo===3 && persona.id === storico.personaId &&
+        storico.contrattoId===contratto.id) && (!storico.dataFine.isDefined || storico.dataFine>date) && contratto.turnoFisso===true
+    }yield persona
+    InstancePersona.operation().execJoin(join).flatMap{
+      case Some(persone) =>
+        val previousWeek = persone.flatMap(_.disponibilita.toList)
+        InstanceDisponibilita.operation().selectFilter(x=>x.settimana===week || x.id.inSet(previousWeek)).flatMap {
+        case Some(availability) => updateAvailability(availability,week,persone)
+      }
+    }
+  }
+  private def updateAvailability(availability:List[Disponibilita],week:Int,persone:List[Persona]): Future[List[Option[Int]]] ={
+    val (actualAvailability, previousAvailabiliti) = availability.partition(_.settimana==week)
+    @scala.annotation.tailrec
+    def _updateAvailability(persona: List[Persona], previousAvailability:List[Disponibilita]): Future[List[Option[Int]]] = previousAvailability match {
+      case ::(availability, next) if persona.exists(_.disponibilita.equals(availability.idDisponibilita))=>
+      val newPerson  = persona.map{
+        case person if person.disponibilita.equals(availability.idDisponibilita)=>
+          actualAvailability.find(actual => ((actual.giorno1 == availability.giorno1 && actual.giorno2 == availability.giorno2)
+            ||(actual.giorno2 == availability.giorno1 && actual.giorno1 == availability.giorno2))) match {
+            case Some(actualAvailabili) => person.copy(disponibilita = actualAvailabili.idDisponibilita)
+            case None =>person
+          }
+        case person => person
+      }
+        _updateAvailability(newPerson,next)
+      case ::(_,next)=> _updateAvailability(persona,next)
+      case Nil =>updateAvailabilityDriver(persona)
+    }
+    _updateAvailability(persone,previousAvailabiliti)
+  }
+  private def updateAvailabilityDriver(persona: List[Persona]): Future[List[Option[Int]]] ={
+    Future.sequence(persona.map(person=>PersonaOperation.update(person).collect {
+      case Some(StatusCodes.SUCCES_CODE) =>Some(StatusCodes.SUCCES_CODE)
+      case _ =>None
+    }))
   }
 }

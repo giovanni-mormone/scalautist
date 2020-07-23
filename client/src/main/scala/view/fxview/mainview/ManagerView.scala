@@ -1,10 +1,12 @@
 package view.fxview.mainview
 
 import java.net.URL
+import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import caseclass.CaseClassDB
+import caseclass.CaseClassDB.{Regola, Terminale, Turno}
+import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -19,11 +21,15 @@ import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.modal.Modal
 
 trait ManagerView extends DialogView {
+  def drawNotification(str: String, tag: Long): Unit
 
-  def drawShiftRequest(value: List[Turno]):Unit
+  def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
+
+  def drawShiftRequest(value: List[CaseClassDB.Turno]): Unit
 
   def drawRichiesta(terminal: List[Terminale]): Unit
 
+  def sendRichiesta(richiesta: InfoRichiesta): Unit
 
   /**
    * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
@@ -55,6 +61,8 @@ trait ManagerView extends DialogView {
    */
   def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit
 
+
+
   /**
    *
    * @param params
@@ -66,14 +74,18 @@ trait ManagerView extends DialogView {
    * @param params
    */
   def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola])
+
+  def drawResultTerminal(terminal: List[Terminale]): Unit
+
+  def consumeNotification(tag: Long): Unit
 }
 
 object ManagerView {
 
-  def apply(stage: Stage): ManagerView = new ManagerViewFX(stage)
+  def apply(stage: Stage,userName: String, userId:String): ManagerView = new ManagerViewFX(stage,userName,userId)
 
-  private class ManagerViewFX(stage: Stage) extends AbstractFXDialogView(stage)
-    with ManagerView with ManagerHomeParent {
+  private class ManagerViewFX(stage: Stage,userName: String, userId:String) extends AbstractFXDialogView(stage)
+    with ManagerView with ManagerHomeParent{
 
     private var modalResource: Modal = _
     private var myController: ManagerController = _
@@ -85,8 +97,9 @@ object ManagerView {
       super.initialize(location, resources)
       myController = ManagerController()
       myController.setView(this)
-      managerHome = ManagerHome()
+      managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
+      myController.startListenNotification()
     }
 
     /////////CALLS FROM CHILDREN TO DRAW -> SEND TO CONTROLLER/////////////
@@ -136,11 +149,8 @@ object ManagerView {
     }
 
     override def showBackMessage(str: String): Unit = {
-       if(alertMessage(str)) managerHome.reDrawRichiesta()
+      if(alertMessage(str)) managerHome.reDrawRichiesta()
     }
-
-    override def sendRichiesta(richiesta: InfoRichiesta): Unit =
-      myController.sendRichiesta(richiesta)
 
     override def drawRunAlgorithm(terminals: List[Terminale]): Unit =
       Platform.runLater(() => managerHome.drawChooseParams(terminals))
@@ -181,5 +191,19 @@ object ManagerView {
 
     override def resetGroupsParams(): Unit =
       drawParamsPanel()
+
+    override def sendRichiesta(richiesta: InfoRichiesta): Unit = myController.sendRichiesta(richiesta)
+
+    override def drawResultPanel(): Unit = myController.dataToResultPanel()
+
+    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() => managerHome.drawResultTerminal(terminal))
+
+    override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = myController.resultForTerminal(value,date,date1)
+
+    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = Platform.runLater(() => managerHome.drawResult(resultList,dateList))
+
+    override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>managerHome.drawNotifica(str,tag))
+
+    override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
   }
 }

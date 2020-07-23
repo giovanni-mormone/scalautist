@@ -1,7 +1,9 @@
 package view.fxview.component.driver.subcomponent
 
 import java.net.URL
+import java.time.LocalDate
 import java.util.ResourceBundle
+
 import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.Stipendio
 import caseclass.CaseClassHttpMessage.{InfoPresenza, StipendioInformations}
@@ -89,7 +91,13 @@ object SalaryBox{
     private def createDatePicker(information: StipendioInformations):Node={
 
       val myCalendar = information.turni.map(value=>Option(value,CreateDatePicker.sqlDateToCalendar(value.data)))
-      val (datePickerSkin,finishDate) = myCalendar.head.map(day=>CreateDatePicker.createDatePickerSkin(day._2)).head
+      val (datePickerSkin,finishDate) = myCalendar match {
+        case ::(head, _) => head match {
+          case Some(value) => CreateDatePicker.createDatePickerSkin(value._2)
+          case None => CreateDatePicker.createDatePickerSkin(LocalDate.now)
+        }
+        case Nil => CreateDatePicker.createDatePickerSkin(LocalDate.now)
+      }
       finishDate.setDayCellFactory(_=>CreateDatePicker.drawDatePicker(myCalendar))
       datePickerSkin.getPopupContent
     }
@@ -123,7 +131,7 @@ object SalaryBox{
 
       val isStraordinario=true
       val map = turni.groupBy(_.straordinario).map(key=>key._1->key._2.length)
-      (map.getOrElse(!isStraordinario,0),map.getOrElse(isStraordinario,0))
+      (map.getOrElse(isStraordinario,0),map.getOrElse(!isStraordinario,0))
 
     }
 

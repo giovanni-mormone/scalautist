@@ -8,8 +8,11 @@ package view.fxview.component.login
  *
  */
 trait ChangePasswordParent{
+  def goBack(): Unit
+
   /**
    * Called to submit the new password chosen by the user. It should be called by a
+   *
    * @param oldPassword
    *                    The oldPassword submitted by the user.
    * @param newPassword

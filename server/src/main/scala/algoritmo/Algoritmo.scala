@@ -45,6 +45,7 @@ trait Algoritmo {
    *         [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers
    *         [[messagecodes.StatusCodes.ERROR_CODE8]] if not exist shift in database
    *         [[messagecodes.StatusCodes.ERROR_CODE9]] if a driver not contains a contract
+   *         [[messagecodes.StatusCodes.ERROR_CODE10]] if the algorithm is already running
    *
    */
   def shiftAndFreeDayCalculus(algorithmExecute: AlgorithmExecute):Future[Option[Int]]
@@ -72,7 +73,7 @@ object Algoritmo extends Algoritmo{
     lock.lock()
     if(running){
       lock.unlock()
-      future(StatusCodes.ERROR_CODE1)
+      future(StatusCodes.ERROR_CODE10)
     }
     else{
       running = true
@@ -172,7 +173,7 @@ object Algoritmo extends Algoritmo{
     val joinPersona = for{
       persona<-PersonaTableQuery.tableQuery()
       contratto<-StoricoContrattoTableQuery.tableQuery()
-      if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal)
+      if persona.id===contratto.personaId && persona.terminaleId.inSet(algorithmExecute.idTerminal) && contratto.dataInizio <= algorithmExecute.dateI
     }yield (contratto,persona)
     InstancePersona.operation().execJoin(joinPersona).flatMap {
       case Some(person) =>getAllContract(algorithmExecute,InfoForAlgorithm(shift,theoricalRequest,person))

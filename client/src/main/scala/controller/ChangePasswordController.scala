@@ -1,5 +1,6 @@
 package controller
 
+import messagecodes.StatusCodes
 import model.entity.PersonaModel
 import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.ChangePasswordView
@@ -42,6 +43,9 @@ object ChangePasswordController{
     override def changePassword(oldPassword: String, newPassword: String): Unit = newPassword match{
       case x if PasswordHelper.passwordRegex().matches(x) =>
         myModel.changePassword(Utils.userId.getOrElse(0),oldPassword,newPassword).onComplete{
+          case Success(value) if value.statusCode == StatusCodes.NOT_FOUND =>
+            println(value)
+            myView.errorChange()
           case Success(_) => myView.okChange()
           case _ => myView.errorChange()
         }

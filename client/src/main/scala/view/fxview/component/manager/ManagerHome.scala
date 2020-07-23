@@ -1,6 +1,7 @@
 package view.fxview.component.manager
 
 import java.net.URL
+import java.sql.Date
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
@@ -9,6 +10,17 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.BorderPane
 import view.fxview.FXHelperFactory
+import caseclass.{CaseClassDB, CaseClassHttpMessage}
+import caseclass.CaseClassDB.{Terminale, Turno}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
+import view.fxview.util.ResourceBundleUtil._
+import javafx.fxml.FXML
+import javafx.scene.control.{Accordion, Button, Label, TitledPane}
+import javafx.scene.layout.{BorderPane, VBox}
+import org.controlsfx.control.PopOver
+import view.fxview.{FXHelperFactory, NotificationHelper}
+import view.fxview.NotificationHelper.NotificationParameters
+import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.manager.subcomponent.{ChangeSettimanaRichiesta, ChooseParamsBox, FillHolesBox, GroupParamsBox, ManagerRichiestaBox}
@@ -20,6 +32,11 @@ import view.fxview.util.ResourceBundleUtil._
  * trait of methods that allow user to do desired operations.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
+  def drawNotifica(str: String,tag:Long): Unit
+
+  def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
+
+  def drawResultTerminal(terminal: List[Terminale]): Unit
 
   /**
    * Method used to draw the panel that allow to choose params for run assignment algorithm
@@ -81,9 +98,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
 object ManagerHome{
 
-  def apply(): ManagerHome = new ManagerHomeFX()
+  def apply(userName: String, userId:String): ManagerHome = new ManagerHomeFX(userName,userId)
 
-  private class ManagerHomeFX extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
+  private class ManagerHomeFX(userName: String, userId:String) extends AbstractComponent[ManagerHomeParent]("manager/BaseManager")
     with ManagerHome{
     @FXML
     var nameLabel: Label = _
@@ -107,10 +124,15 @@ object ManagerHome{
     var richiestaButton: Button = _
     @FXML
     var idLabel: Label = _
+    @FXML
+    var popover: PopOver = _
+    @FXML
+    var accordion:Accordion= _
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
     var chooseParamsBox: ChooseParamsBox = _
+    var selectResultBox:SelectResultBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -126,8 +148,15 @@ object ManagerHome{
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
       generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
+      printResultButton.setOnAction(_=> parent.drawResultPanel())
+      notificationButton.setOnAction(_=>openAccordion())
+      nameLabel.setText(resources.println("username-label",userName))
+      idLabel.setText(resources.println("id-label",userId))
     }
-
+    //rabbit manda la notificacion, pero donde la manda? llega primero que el inizializate?
+    private def openAccordion(): Unit ={
+      popover.show(notificationButton)
+    }
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
       fillHolesView = FillHolesBox()
       baseManager.setCenter(fillHolesView.setParent(parent).pane)
@@ -180,5 +209,18 @@ object ManagerHome{
       baseManager.setCenter(box.setParent(parent).pane)
     }
 
+    override def drawResultTerminal(terminal: List[Terminale]): Unit = {
+      selectResultBox = SelectResultBox(terminal)
+      baseManager.setCenter(selectResultBox.setParent(parent).pane)
+    }
+
+    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = selectResultBox.createResult(resultList,dateList)
+
+    private def consumeNotification(tag:Long): Unit ={
+    }
+
+    override def drawNotifica(str: String,tag:Long): Unit = {
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
+    }
   }
 }

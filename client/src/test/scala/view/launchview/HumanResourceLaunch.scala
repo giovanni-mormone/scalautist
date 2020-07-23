@@ -6,5 +6,5 @@ import view.fxview.mainview.HumanResourceView
 
 class HumanResourceLaunch  extends Application{
   override def start(primaryStage: Stage): Unit =
-    HumanResourceView(primaryStage)
+    HumanResourceView(primaryStage,"aa","0")
 }

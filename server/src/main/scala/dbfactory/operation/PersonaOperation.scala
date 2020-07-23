@@ -7,6 +7,7 @@ import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.util.Helper._
 import emitter.ConfigEmitter
 import messagecodes.StatusCodes
+import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -75,8 +76,8 @@ object PersonaOperation extends PersonaOperation {
   private val CODICE_CONDUCENTE: Int = 3
   private val LAST_TURNO: Int = 6
   private val FIRST_TURNO: Int = 1
-  private val notificationEmitter = ConfigEmitter("person_emitter")
-
+  private val notificationEmitter = ConfigEmitterPersistence("persona_emitter","licenzia","assumi")
+  notificationEmitter.start()
   private val selectPersone: (PersonaTableRep => Rep[Boolean]) => Future[Option[List[Persona]]] =
     filter =>  InstancePersona.operation().selectFilter(filter)
 
@@ -135,7 +136,7 @@ object PersonaOperation extends PersonaOperation {
   override def delete(element: Int): Future[Option[Int]] = {
     super.delete(element).collect{
       case x =>
-        notificationEmitter.sendMessage("Licenziato un conducente")
+        notificationEmitter.sendMessage("Licenziato un conducente","licenzia")
         x
     }
   }
@@ -143,7 +144,7 @@ object PersonaOperation extends PersonaOperation {
   override def deleteAll(element: List[Int]): Future[Option[Int]] = {
     super.deleteAll(element).collect{
       case Some(x) =>
-        notificationEmitter.sendMessage("licenziati " + x + " conducenti")
+        notificationEmitter.sendMessage("licenziati " + x + " conducenti","licenzia")
         Some(x)
     }
   }
@@ -164,7 +165,7 @@ object PersonaOperation extends PersonaOperation {
       person <- insert(persona)
       contract <- if(person.isDefined) StoricoContrattoOperation.insert(constructContratto(contratto,person)) else Future.successful(None)
     }yield if (contract.isDefined) {
-      notificationEmitter.sendMessage("Inserita persona, il tizio si chiama " + persona.nome + " " + persona.cognome)
+      notificationEmitter.sendMessage("Inserita persona, il tizio si chiama " + persona.nome + " " + persona.cognome,"assumi")
       person
     } else None
 

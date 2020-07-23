@@ -90,6 +90,8 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
   protected var pane: StackPane = _
   protected var generalResources: ResourceBundle = _
   protected val myStage = new Stage()
+  private val PREDEF_WIDTH_SIZE: Double = 350
+  private val PREDEF_HEIGHT_SIZE: Double = 300
   /**
    * Stage of this view.
    */
@@ -97,6 +99,9 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
     myStage.setTitle(resources.getResource("nome"))
+    myStage.setResizable(false)
+    myStage.setMinWidth(PREDEF_WIDTH_SIZE)
+    myStage.setMinHeight(PREDEF_HEIGHT_SIZE)
     generalResources = resources
   }
 

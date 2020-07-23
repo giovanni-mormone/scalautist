@@ -46,8 +46,6 @@ object DateAndTerminalBox{
       title.setText(resources.getResource("title-label"))
       next.setText(resources.getResource("next-button"))
       terminals.foreach(value=>terminal.getItems.add(value.nomeTerminale))
-
-
       next.setOnAction(_=>callParent())
     }
     private def callParent(): Unit =

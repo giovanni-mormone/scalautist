@@ -5,6 +5,8 @@ import java.time.LocalDate
 
 import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
+import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
@@ -15,6 +17,11 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+  def consumeNotification(tag: Long): Unit
+
+  def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit
+
+  def dataToResultPanel(): Unit
 
   def runAlgorithm(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
 
@@ -73,6 +80,7 @@ trait ManagerController extends AbstractController[ManagerView]{
    *
    */
   def groupParam(params: ParamsForAlgoritm): Unit
+  def startListenNotification():Unit
 }
 
 object ManagerController {
@@ -83,6 +91,13 @@ object ManagerController {
 
   private class ManagerControllerImpl extends ManagerController {
 
+    private def notificationReceived(message:String,tag:Long):Unit={
+        myView.drawNotification(message,tag)
+    }
+
+    override def startListenNotification(): Unit ={
+       model.verifyExistedQueue(Utils.userId,notificationReceived)
+    }
     override def dataToAbsencePanel(): Unit = {
 
       model.allAbsences().onComplete{
@@ -162,24 +177,24 @@ object ManagerController {
       val params = List(InfoAlgorithm(
         Parametro(true, "mai", Some(1)),
         List(ZonaTerminale(2, 3, Some(1), Some(1))),
-        Some(List(GiornoInSettimana(1, 1, 2, Some(1), Some(30)), GiornoInSettimana(2, 2, 2, Some(1), Some(30)),
-          GiornoInSettimana(3, 3, 2, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, Some(1), Some(30)),
-          GiornoInSettimana(5, 5, 2, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, Some(1), Some(20))
+        Some(List(GiornoInSettimana(1, 1, 2, 1, Some(1), Some(30)), GiornoInSettimana(2, 2, 2, 3, Some(1), Some(30)),
+          GiornoInSettimana(3, 3, 2, 5, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, 3, Some(1), Some(30)),
+          GiornoInSettimana(5, 5, 2, 1, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, 3, Some(1), Some(20))
         ))),
         InfoAlgorithm(
           Parametro(false, "menn", Some(2)),
           List(ZonaTerminale(3, 2, Some(3), Some(2))),
-          Some(List(GiornoInSettimana(1, 1, 1, Some(2), Some(32)), GiornoInSettimana(2, 2, 1, Some(2), Some(32)),
-            GiornoInSettimana(3, 3, 1, Some(2), Some(32)), GiornoInSettimana(4, 4, 1, Some(2), Some(32)),
-            GiornoInSettimana(5, 5, 1, Some(2), Some(32)), GiornoInSettimana(3, 5, 1, Some(2), Some(32)),
-            GiornoInSettimana(3, 2, 1, Some(2), Some(32))
+          Some(List(GiornoInSettimana(1, 1, 1, 0, Some(2), Some(32)), GiornoInSettimana(2, 2, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(3, 3, 1, 4, Some(2), Some(32)), GiornoInSettimana(4, 4, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(5, 5, 1, 6, Some(2), Some(32)), GiornoInSettimana(3, 5, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(3, 2, 1, 0, Some(2), Some(32))
           ))),
         InfoAlgorithm(
           Parametro(false, "maggiorata", Some(3)),
           List(ZonaTerminale(2, 8, Some(1), Some(3)), ZonaTerminale(1, 5, Some(3), Some(4)), ZonaTerminale(2, 3, Some(3), Some(5))),
-          Some(List(GiornoInSettimana(1, 6, 2, Some(1), Some(23)), GiornoInSettimana(2, 5, 2, Some(1), Some(23)),
-            GiornoInSettimana(3, 4, 2, Some(1), Some(23)), GiornoInSettimana(4, 3, 2, Some(1), Some(23)),
-            GiornoInSettimana(5, 2, 2, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, Some(1), Some(23))
+          Some(List(GiornoInSettimana(1, 6, 2, 0, Some(1), Some(23)), GiornoInSettimana(2, 5, 2, 1, Some(1), Some(23)),
+            GiornoInSettimana(3, 4, 2, 2, Some(1), Some(23)), GiornoInSettimana(4, 3, 2, 3, Some(1), Some(23)),
+            GiornoInSettimana(5, 2, 2, 4, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, 5, Some(1), Some(23))
           ))))
       val rules: List[Regola] = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
       myView.modalOldParamDraw(params, terminals, rules)
@@ -195,13 +210,30 @@ object ManagerController {
       val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
       myView.drawGroupParam(params, groups, rules)
     }
+
+    override def dataToResultPanel(): Unit =
+      HumanResourceModel().getAllTerminale.onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawResultTerminal(value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
+    override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit = {
+      model.getResultAlgorithm(idTerminal.head,date,date1).onComplete {
+        case Failure(exception) => println(exception)
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
+      }
+    }
+
+    override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
   }
 }
 
 object t extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,12,31))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,7,31))
   val terminals=List(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
@@ -216,7 +248,7 @@ object t extends App{
   val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
   val threeSaturday=true
   val algorithmExecute: AlgorithmExecute =
-    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,Some(gruppi),Some(normalWeek),Some(specialWeek),threeSaturday)
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,None,None,None,threeSaturday)
   ManagerController().runAlgorithm(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>println(value)
@@ -227,8 +259,8 @@ object t extends App{
 
 object t2 extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,5,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,1,31))
   val terminals=List(15)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
@@ -254,11 +286,11 @@ object t2 extends App{
     case Success(value) =>
       println("FINE???" + value)
   }
-  /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
+  ManagerController().runAlgorithm(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>
       println("FINE???" + value)
-  }*/
+  }
   /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
     case Failure(exception) => println(exception)
     case Success(value) =>

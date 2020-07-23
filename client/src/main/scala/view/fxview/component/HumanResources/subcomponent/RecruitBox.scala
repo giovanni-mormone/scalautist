@@ -309,7 +309,7 @@ object RecruitBox {
       if(isDriver && contractTypeFI5FU.fix) {
         val day = Calendar.getInstance()
         day.setTime(Date.valueOf(recruitDate.getValue))
-        Some(Disponibilita(day.getWeekYear, getComboSelected(day1), getComboSelected(day2)))
+        Some(Disponibilita(day.get(Calendar.WEEK_OF_YEAR), getComboSelected(day1), getComboSelected(day2)))
       }
       else
         None

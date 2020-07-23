@@ -7,42 +7,48 @@ import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.{Stipendio, Turno}
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformations}
 import javafx.fxml.FXML
-import javafx.scene.control.{Label, Menu}
+import javafx.scene.control.{Accordion, Label, Menu}
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.{BorderPane, Pane}
-import view.fxview.FXHelperFactory
+import org.controlsfx.control.PopOver
+import view.fxview.{FXHelperFactory, NotificationHelper}
+import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.driver.subcomponent.{HomeBox, SalaryBox, ShiftBox}
 import view.fxview.component.driver.subcomponent.parent.DriverHomeParent
 import view.fxview.component.{AbstractComponent, Component}
 
-trait DriverHome extends Component[DriverHomeParent]{
+trait DriverHome extends Component[DriverHomeParent] {
   /**
    * draw common information for a driver, for example, shift in the day
    * extra day in week and calendar
    */
-  def drawHome(infoHome: InfoHome):Unit
+  def drawHome(infoHome: InfoHome): Unit
 
   /**
    * draw all shifth of a driver in the week
    */
-  def drawShift(shift: InfoShift):Unit
+  def drawShift(shift: InfoShift): Unit
 
   /**
    * method that call his parent and send list with all salary of a person
+   *
    * @param list list of all salary for a person
    */
-  def drawSalary(list:List[Stipendio]):Unit
+  def drawSalary(list: List[Stipendio]): Unit
 
   /**
    * method which enable view information for a salary in the specific month
+   *
    * @param information case class with all presenze, absence and salary for a month
    */
-  def informationSalary(information:StipendioInformations):Unit
+  def informationSalary(information: StipendioInformations): Unit
 
   /**
    * set a Vbox in the center of the DriverHome, this happens if is present a error
    */
-  def stopLoading():Unit
+  def stopLoading(): Unit
+
+  def drawNotifica(str: String, tag: Long): Unit
 }
 object DriverHome{
   def apply(): DriverHome = new DriverHomeFX()
@@ -59,11 +65,19 @@ object DriverHome{
     @FXML
     var stipendi:Menu = _
     @FXML
+    var notifiche:Menu = _
+    @FXML
     var labelHome:Label = _
     @FXML
     var labelTurni:Label = _
     @FXML
     var labelStipendio:Label = _
+    @FXML
+    var labelNotifiche:Label = _
+    @FXML
+    var popover: PopOver = _
+    @FXML
+    var accordion: Accordion = _
 
     var homeBox:HomeBox = _
 
@@ -71,13 +85,16 @@ object DriverHome{
 
     var salaryBox:SalaryBox = _
 
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       labelHome.setText(resources.getResource("home-label"))
       labelTurni.setText(resources.getResource("turno-label"))
       labelStipendio.setText(resources.getResource("stipendi-label"))
+      labelNotifiche.setText(resources.getResource("notifiche-label"))
       home.setGraphic(labelHome)
       turni.setGraphic(labelTurni)
       stipendi.setGraphic(labelStipendio)
+      notifiche.setGraphic(labelNotifiche)
       labelHome.setOnMouseClicked((_:MouseEvent)=>{
         callMethod((startLoading,parent.drawHomePanel))
       })
@@ -86,6 +103,9 @@ object DriverHome{
       })
       labelStipendio.setOnMouseClicked((_:MouseEvent)=>{
         callMethod((startLoading,parent.drawSalaryPanel))
+      })
+      labelNotifiche.setOnMouseClicked((_:MouseEvent)=>{
+        openAccordion()
       })
     }
     private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
@@ -129,6 +149,18 @@ object DriverHome{
     override def stopLoading(): Unit ={
       endLoading()
       driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
+    }
+
+    private def openAccordion(): Unit ={
+      popover.show(labelNotifiche)
+    }
+
+    private def consumeNotification(tag: Long): Unit={
+
+    }
+
+    override def drawNotifica(str: String,tag:Long): Unit = {
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
     }
   }
 }
