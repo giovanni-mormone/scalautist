@@ -131,7 +131,7 @@ object ChangeSettimanaRichiesta{
           .stream().map[ShiftTable](x => x).collect(Collectors.toList[ShiftTable])).asScala.toSet
     }
 
-    private def remakeParams(): List[GiornoInSettimana] = {
+    private def remakeParams(): ParamsForAlgoritm = {
       val SHIFT_INT_MAP: Map[String, Int] = Map("2-6" -> 1 , "6-10" -> 2, "10-14" -> 3 , "14-18" -> 4, "18-22" -> 5, "22-2" -> 6)
       val ERROR_ID = -1
       val singleDays: List[DailyReq] = getElements(dayShiftN).toList
@@ -147,9 +147,10 @@ object ChangeSettimanaRichiesta{
             DailyReq(6, shift, day.getSaturday.toInt, rule)
           )
         }).filter(_.quantity != 0)
-      calcolateWeeks().filter(week => !weekS.getCheckModel.getCheckedItems.contains(week.toString))
+      val daysReq = calcolateWeeks().filter(week => !getSelectedWeeks.contains(week))
         .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
         rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
+      params.copy(requestN = Some(daysReq))
     }
 
     private def getSelectedWeeks: List[Int] = {

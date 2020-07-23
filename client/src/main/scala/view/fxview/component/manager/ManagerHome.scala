@@ -92,7 +92,7 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   /**
    *
    */
-  def drawGroupsParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit
+  def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
 
 }
 
@@ -204,8 +204,8 @@ object ManagerHome{
     override def drawLoadedParam(param: InfoAlgorithm): Unit =
       chooseParamsBox.loadParam(param)
 
-    override def drawGroupsParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit = {
-      val box = GroupParamsBox(params, groups, rule)
+    override def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit = {
+      val box = GroupParamsBox(params, rule)
       baseManager.setCenter(box.setParent(parent).pane)
     }
 

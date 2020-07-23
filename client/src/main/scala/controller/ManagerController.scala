@@ -206,9 +206,8 @@ object ManagerController {
     }
 
     override def groupParam(params: ParamsForAlgoritm): Unit = {
-      val groups = List(GruppoA(15, List(Date.valueOf(LocalDate.now())), 1))
       val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
-      myView.drawGroupParam(params, groups, rules)
+      myView.drawGroupParam(params, rules)
     }
 
     override def dataToResultPanel(): Unit =

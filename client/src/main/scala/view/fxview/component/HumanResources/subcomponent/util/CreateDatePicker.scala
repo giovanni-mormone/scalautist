@@ -129,4 +129,14 @@ case object CreateDatePicker{
     }
   }
 
+  def createDatePicker(dateI: LocalDate, dateF: LocalDate, dateNo: List[LocalDate]): DatePicker = {
+    val dp = new DatePicker()
+    dp.setDayCellFactory(_ => new DateCell(){
+      override def updateItem(date:LocalDate, empty:Boolean): Unit = {
+        super.updateItem(date, empty)
+        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF))
+      }
+    })
+    dp
+  }
 }

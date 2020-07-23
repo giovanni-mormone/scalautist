@@ -1,5 +1,7 @@
 package view.fxview.component.manager.subcomponent.parent
 
-trait ModalGruopParent {
+import view.fxview.component.modal.ModalParent
+
+trait ModalGruopParent extends ModalParent {
 
 }

@@ -3,7 +3,7 @@ package view.fxview.component.manager.subcomponent.util
 import javafx.beans.property.SimpleStringProperty
 import view.fxview.component.HumanResources.subcomponent.util.{SelectionTableField, TableArgument}
 
-class GroupSelectionTable(idg: String, ruleg: String, dateg: String) extends SelectionTableField with TableArgument{
+class GroupSelectionTable(idg: String, ruleg: String, dateg: String) extends TableArgument{
 
   var id = new SimpleStringProperty(idg)
   var rule = new SimpleStringProperty(ruleg)

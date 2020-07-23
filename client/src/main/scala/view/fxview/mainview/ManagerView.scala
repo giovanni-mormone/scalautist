@@ -2,6 +2,7 @@ package view.fxview.mainview
 
 import java.net.URL
 import java.sql.Date
+import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
@@ -15,8 +16,8 @@ import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.ParamsModal
-import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalParamParent}
+import view.fxview.component.manager.subcomponent.{GroupModal, ParamsModal}
+import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.modal.Modal
 
@@ -73,7 +74,7 @@ trait ManagerView extends DialogView {
    *
    * @param params
    */
-  def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola])
+  def drawGroupParam(params: ParamsForAlgoritm,  rule: List[Regola])
 
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
@@ -168,6 +169,14 @@ object ManagerView {
         modalResource.show()
       })
 
+    override def openModal(initDate: LocalDate, endDate: LocalDate): Unit = {
+      Platform.runLater(() => {
+        modalResource = Modal[ModalGruopParent, Component[ModalGruopParent], ModalGruopParent](myStage, caller = this,
+          GroupModal(initDate, endDate))
+        modalResource.show()
+      })
+    }
+
     override def weekParams(params: ParamsForAlgoritm): Unit =
       myController.weekParam(params)
 
@@ -186,8 +195,8 @@ object ManagerView {
     override def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]): Unit =
       Platform.runLater(() => managerHome.drawWeekParams(params, rules))
 
-    override def drawGroupParam(params: ParamsForAlgoritm, groups: List[GruppoA], rule: List[Regola]): Unit =
-      Platform.runLater(() => managerHome.drawGroupsParam(params, groups, rule))
+    override def drawGroupParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit =
+      Platform.runLater(() => managerHome.drawGroupsParam(params, rule))
 
     override def resetGroupsParams(): Unit =
       drawParamsPanel()
@@ -205,5 +214,6 @@ object ManagerView {
     override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>managerHome.drawNotifica(str,tag))
 
     override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
+
   }
 }
