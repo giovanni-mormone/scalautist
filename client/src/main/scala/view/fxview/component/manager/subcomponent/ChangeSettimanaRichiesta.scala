@@ -36,10 +36,6 @@ object ChangeSettimanaRichiesta{
     @FXML
     var weekS: CheckComboBox[String] = _
     @FXML
-    var ruleN: ComboBox[String] = _
-    @FXML
-    var ruleS: ComboBox[String] = _
-    @FXML
     var titleN: Label = _
     @FXML
     var titleS: Label = _
@@ -54,7 +50,7 @@ object ChangeSettimanaRichiesta{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      daysInfo = params.request.getOrElse(List.empty).map(req => DailyReq(req.giornoId, req.turnoId, 2))
+      daysInfo = params.request.getOrElse(List.empty).map(req => DailyReq(req.giornoId, req.turnoId, req.quantita))
       initButton()
       initCombo()
       initLabel()
@@ -79,20 +75,6 @@ object ChangeSettimanaRichiesta{
           override def onChanged(c: ListChangeListener.Change[_ <: String]): Unit =
             enableButton()
         })
-
-      rules.foreach(rule => {
-        ruleN.getItems.add(rule.nomeRegola)
-        ruleS.getItems.add(rule.nomeRegola)
-      })
-      ruleN.setPromptText(resources.getResource("ruletxt"))
-      ruleS.setPromptText(resources.getResource("ruletxt"))
-      ruleS.setOnAction(_ => enableButton())
-      ruleN.setOnAction(_ => enableButton())
-
-      if(params.ruleNormal.isDefined) {
-        rules.find(rule => rule.idRegola.contains(params.ruleNormal.head))
-          .fold()(rule => ruleN.getSelectionModel.select(rule.nomeRegola))
-      }
     }
 
     private def initLabel(): Unit = {
@@ -104,26 +86,28 @@ object ChangeSettimanaRichiesta{
       CreateTable.fillTable[ShiftTable](dayShiftN, getElements())
       CreateTable.createColumns[ShiftTable](dayShiftN, List("shift"))
       CreateTable.createEditableColumns[ShiftTable](dayShiftN, ShiftTable.editableShiftTable)
+      CreateTable.createColumns[ShiftTable](dayShiftN, List("combo"))
 
       CreateTable.fillTable[ShiftTable](dayShiftS, getElements(List.empty))
       CreateTable.createColumns[ShiftTable](dayShiftS, List("shift"))
       CreateTable.createEditableColumns[ShiftTable](dayShiftS, ShiftTable.editableShiftTable)
+      CreateTable.createColumns[ShiftTable](dayShiftS, List("combo"))
     }
 
     private def enableButton(): Unit =
-      run.setDisable(!(!ruleN.getSelectionModel.isEmpty && controlSpecialWeek()))
+      run.setDisable(false)//TODO
 
-    private def controlSpecialWeek(): Boolean = {
+    /*private def controlSpecialWeek(): Boolean = {
       if(getweeks.nonEmpty)
         !ruleS.getSelectionModel.isEmpty
       else true
-    }
+    }*/
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
       val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
       (1 to 6).map( shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
-        new ShiftTable(shiftStringMap.getOrElse(shift, "ERROR"), info.head, info(1), info(2), info(3), info(4), info(5))
+        new ShiftTable(shiftStringMap.getOrElse(shift, "ERROR"), info.head, info(1), info(2), info(3), info(4), info(5), rules.map(_.nomeRegola))//, Some(createComboRule()))
       }).toList
     }
 
