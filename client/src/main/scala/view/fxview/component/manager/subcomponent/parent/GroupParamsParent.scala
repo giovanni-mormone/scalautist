@@ -14,5 +14,5 @@ trait GroupParamsParent {
   /**
    *
    */
-  def openModal(initDate: LocalDate, endDate: LocalDate, rules: List[Regola]): Unit
+  def openModal(initDate: LocalDate, endDate: LocalDate, dateNo: List[LocalDate], rules: List[Regola]): Unit
 }

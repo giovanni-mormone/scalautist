@@ -169,10 +169,10 @@ object ManagerView {
         modalResource.show()
       })
 
-    override def openModal(initDate: LocalDate, endDate: LocalDate, rules: List[Regola]): Unit = {
+    override def openModal(initDate: LocalDate, endDate: LocalDate, dateNo: List[LocalDate], rules: List[Regola]): Unit = {
       Platform.runLater(() => {
         modalResource = Modal[ModalGruopParent, Component[ModalGruopParent], ModalGruopParent](myStage, caller = this,
-          GroupModal(initDate, endDate, rules))
+          GroupModal(initDate, endDate, dateNo, rules))
         modalResource.show()
       })
     }

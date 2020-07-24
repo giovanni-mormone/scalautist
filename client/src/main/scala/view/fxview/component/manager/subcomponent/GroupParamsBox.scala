@@ -1,6 +1,7 @@
 package view.fxview.component.manager.subcomponent
 
 import java.net.URL
+import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
 
@@ -14,7 +15,7 @@ import javafx.scene.layout.AnchorPane
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, CreateTable}
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.parent.GroupParamsParent
-import view.fxview.component.manager.subcomponent.util.{GroupSelectionTable, ParamsForAlgoritm}
+import view.fxview.component.manager.subcomponent.util.{GroupSelectionTable, GroupToTable, ParamsForAlgoritm}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -47,8 +48,11 @@ object GroupParamsBox {
     @FXML
     var dateg: AnchorPane = _
 
+    private var groups: List[(Group, GroupToTable)] = List.empty[(Group, GroupToTable)]
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      groups = List.empty[(Group, GroupToTable)]
       initButtons()
       initTable()
       initDate()
@@ -61,23 +65,48 @@ object GroupParamsBox {
       run.setText(resources.getResource("runftxt"))
 
       reset.setOnAction(_ => parent.resetGroupsParams())
-      add.setOnAction(_ => parent.openModal(params.dateI, params.dateF, rule))
+      add.setOnAction(_ => parent.openModal(params.dateI, params.dateF, allDate(), rule))
+      sub.setOnAction(_ => {
+        val toDelete = getSelectedRow
+        groups = groups.filter(group => !findGroup(toDelete, group))
+        CreateTable.fillTable[GroupSelectionTable](groupstab, groups.map(_._2))
+      })
+    }
+
+    private def getSelectedRow: GroupSelectionTable = {
+      groupstab.getSelectionModel.getSelectedItem
+    }
+
+    private def allDate(): List[LocalDate] =
+      groups.flatMap(_._1.date)
+
+    private def findGroup(toFind: GroupSelectionTable, group: (Group, GroupToTable)): Boolean = {
+      if(toFind == null)
+        return false
+      group._2.regola.equals(toFind.rule.get()) &&
+        toFind.date.get().equals(group._2.date.map(_.toLocalDate)
+          .map(date => date.getDayOfMonth + "/" + date.getMonth + "/" + date.getYear).reduce((dl, d) => dl + "; " + d))
     }
 
     private def initTable(): Unit = {
       val fieldList = List("rule", "date")
       CreateTable.createColumns[GroupSelectionTable](groupstab, fieldList, dim= 50)
+      groupstab.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {
+        initDate(groups.find(group => findGroup(getSelectedRow, group)).map(_._1))
+      })
     }
 
-    private def initDate(group: Option[GruppoA] = None): Unit = {
+    private def initDate(group: Option[Group] = None): Unit = {
       val datePicker: DatePickerSkin =
-        CreateDatePicker.changingDatePickerSkin(group.fold(List.empty[LocalDate])(_.date.map(_.toLocalDate)))._1
+        CreateDatePicker.changingDatePickerSkin(group.fold(List.empty[LocalDate])(_.date))._1
       val node: Node = datePicker.getPopupContent
       dateg.getChildren.add(node)
     }
 
     override def updateGroup(group: Group): Unit = {
-      println(group)
+      val newG = (group, GroupToTable(group.ruleName, group.date.map(day => Date.valueOf(day))))
+      groups = newG :: groups
+      CreateTable.fillTable[GroupSelectionTable](groupstab, groups.map(_._2))
     }
   }
 }

@@ -69,6 +69,11 @@ object CreateTable {
     elements.foreach(element => table.getItems.add(element))
   }
 
+  def refillTable[A <: TableArgument](table: TableView[A], elements: List[A]): Unit = {
+    table.getItems.forEach(item => table.getItems.remove(item))
+    fillTable(table, elements)
+  }
+
   def clickListener[A <: TableArgument](table: TableView[A], action: A => Unit): Unit = {
     table.setRowFactory(_ => {
       val row: TableRow[A] = new TableRow[A]()

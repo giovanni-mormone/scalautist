@@ -19,9 +19,10 @@ trait GroupModal extends AbstractComponent[ModalGruopParent] {
 
 object GroupModal {
 
-  def apply(dataI: LocalDate, dataF: LocalDate, rules: List[Regola]): GroupModal = new GroupModalFX(dataI, dataF, rules)
+  def apply(dataI: LocalDate, dataF: LocalDate, dateNo: List[LocalDate], rules: List[Regola]): GroupModal =
+    new GroupModalFX(dataI, dataF, dateNo, rules)
 
-  private class GroupModalFX(dataI: LocalDate, dataF: LocalDate, ruleL: List[Regola])
+  private class GroupModalFX(dataI: LocalDate, dataF: LocalDate, dateNo: List[LocalDate], ruleL: List[Regola])
   extends AbstractComponent[ModalGruopParent]("manager/subcomponent/GroupModal")
   with GroupModal{
 
@@ -37,11 +38,11 @@ object GroupModal {
     var rules: ComboBox[String] = _
 
     private val MIN_DATE: Int = 2
-    private var chosenDate: List[LocalDate] = List.empty[LocalDate]
+    private var chosenDate: List[LocalDate] = dateNo
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      chosenDate = List.empty[LocalDate]
+      chosenDate = dateNo
       initDatePicker()
       initTextArea()
       initButton()
@@ -66,8 +67,8 @@ object GroupModal {
         }
       })
 
-      done.setOnAction(_ => parent.updateGroups(Group(chosenDate, ruleL.find(_.nomeRegola.equals(getRule))
-        .map(_.idRegola.head).getOrElse(-1), getRule)))
+      done.setOnAction(_ => parent.updateGroups(Group(chosenDate.filter(date => !dateNo.contains(date)),
+        ruleL.find(_.nomeRegola.equals(getRule)).map(_.idRegola.head).getOrElse(-1), getRule)))
     }
 
     private def initCombo(): Unit = {
