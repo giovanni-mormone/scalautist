@@ -235,10 +235,19 @@ object ManagerController {
     override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
 
     override def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit = {
-      val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
+      /*val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
         Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
         Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
-      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))*/
+      case class DataToShow(terminals: Response[List[Terminale]], rules: Response[List[Regola]])
+
+      val future: Future[DataToShow] = for{
+        terminals <- model.
+        rules <- model.
+      } yield DataToShow(terminals, rules)
+      future.onComplete{
+        case Success(data) if data.
+      }
       myView.drawShowParams(info, name, terminals, rules)
     }
   }
