@@ -11,6 +11,8 @@ object TextFieldControl {
       if (!word.isEmpty && !checker.checkRegex.matches(s"${word.last}") || word.length > maxChar)
         component.setText(old)
 
-  def controlString(string: String, checker: Checker, maxChar: Int = MAX_CHARS): Boolean =
-    !string.isEmpty && !checker.checkRegex.matches(string) || string.length > maxChar
+  def controlString(string: String, checker: Checker, maxChar: Int = MAX_CHARS): Boolean = {
+    val e = checker.checkRegex.matches(string)
+    string.isEmpty || !checker.checkRegex.matches(string) || string.length > maxChar
+  }
 }

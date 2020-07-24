@@ -4,20 +4,17 @@ import java.net.URL
 import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
-import java.util.stream.Collectors
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Regola}
+import caseclass.CaseClassDB.Regola
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, Label, TableView}
+import javafx.scene.control.{Button, Label}
+import javafx.scene.layout.{Pane, VBox}
 import org.controlsfx.control.CheckComboBox
-import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
 import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
-
-import scala.jdk.CollectionConverters
 
 trait ChangeSettimanaRichiesta extends Component[ChangeSettimanaRichiestaParent] {
 
@@ -45,17 +42,20 @@ object ChangeSettimanaRichiesta{
     @FXML
     var error: Label = _
     @FXML
-    var dayShiftN: TableView[ShiftTable] = _
+    var dayShiftN: Pane = _
     @FXML
-    var dayShiftS: TableView[ShiftTable] = _
+    var dayShiftS: VBox = _
 
     case class DailyReq(day: Int, shift: Int, quantity: Int = 0, rule: String)
 
     var daysInfo: List[DailyReq] = List.empty
     val NONE: String = "NONE"
+    var specialWeeks: List[TableParamSettimana] = List.empty
+    var normalWeek: TableParamSettimana = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      specialWeeks = List.empty
       daysInfo = params.requestN.getOrElse(List.empty)
         .map(req => DailyReq(req.giornoId, req.turnoId, req.quantita, rules.find(_.idRegola.contains(req.regolaId))
           .fold(Regola(NONE, Some(0)))(x => x).nomeRegola))
@@ -69,7 +69,7 @@ object ChangeSettimanaRichiesta{
       run.setText(resources.getResource("runtxt"))
       run.setOnAction(_ => {
         if(control())
-          parent.groupParam(params)//RemakeParams())
+          parent.groupParam(params)
         else
           error.setVisible(true)
         println(remakeParams())
@@ -83,6 +83,27 @@ object ChangeSettimanaRichiesta{
     private def initCombo(): Unit = {
       val list = calcolateWeeks()
       list.foreach(week => weekS.getItems.add(week.toString))
+      weekS.getCheckModel.getCheckedItems.addListener(
+        new ListChangeListener[String]() {
+          override def onChanged(c: ListChangeListener.Change[_ <: String]): Unit = {
+            if(weekS.getCheckModel.getCheckedItems.size() < specialWeeks.size)
+              dropTable()
+            else
+              drawTable()
+          }
+        })
+    }
+
+    private def dropTable(): Unit = {
+      specialWeeks = specialWeeks.tail
+      dayShiftS.getChildren.clear()
+      specialWeeks.foreach(table => dayShiftS.getChildren.add(table.pane))
+    }
+
+    private def drawTable(): Unit = {
+      specialWeeks = TableParamSettimana(getElements(List.empty[DailyReq])) :: specialWeeks
+      dayShiftS.getChildren.clear()
+      specialWeeks.foreach(table => dayShiftS.getChildren.add(table.pane))
     }
 
     private def initLabel(): Unit = {
@@ -93,19 +114,12 @@ object ChangeSettimanaRichiesta{
     }
 
     private def initTable(): Unit = {
-      CreateTable.fillTable[ShiftTable](dayShiftN, getElements())
-      CreateTable.createColumns[ShiftTable](dayShiftN, List("shift"))
-      CreateTable.createEditableColumns[ShiftTable](dayShiftN, ShiftTable.editableShiftTable)
-      CreateTable.createColumns[ShiftTable](dayShiftN, List("combo"))
-
-      CreateTable.fillTable[ShiftTable](dayShiftS, getElements(List.empty))
-      CreateTable.createColumns[ShiftTable](dayShiftS, List("shift"))
-      CreateTable.createEditableColumns[ShiftTable](dayShiftS, ShiftTable.editableShiftTable)
-      CreateTable.createColumns[ShiftTable](dayShiftS, List("combo"))
+      normalWeek = TableParamSettimana(getElements())
+      dayShiftN.getChildren.add(normalWeek.pane)
     }
 
-    private def control(): Boolean =
-      getElements(dayShiftN).size == getSelectedElements(dayShiftN).size
+    private def control(): Boolean = true
+      //getElements(dayShiftN).size == getSelectedElements(dayShiftN).size
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
       val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
@@ -120,19 +134,7 @@ object ChangeSettimanaRichiesta{
       (1 to 6).map(day => infoDays.find(info => info.day == day && info.shift == shift)
         .fold("0")(_.quantity.toString)).toList
 
-    private def getElements(tableView: TableView[ShiftTable]): Set[ShiftTable] = {
-      new CollectionConverters.ListHasAsScala[ShiftTable](
-        tableView.getItems.stream().map[ShiftTable](x => x)
-          .collect(Collectors.toList[ShiftTable])).asScala.toSet
-    }
-
-    private def getSelectedElements(tableView: TableView[ShiftTable]): Set[ShiftTable] = {
-      new CollectionConverters.ListHasAsScala[ShiftTable](
-        tableView.getItems.filtered(_.getSelected.isDefined)
-          .stream().map[ShiftTable](x => x).collect(Collectors.toList[ShiftTable])).asScala.toSet
-    }
-
-    private def remakeParams(): ParamsForAlgoritm = {
+    private def remakeParams(): ParamsForAlgoritm = params/*{
       val SHIFT_INT_MAP: Map[String, Int] = Map("2-6" -> 1 , "6-10" -> 2, "10-14" -> 3 , "14-18" -> 4, "18-22" -> 5, "22-2" -> 6)
       val ERROR_ID = -1
       val singleDays: List[DailyReq] = getElements(dayShiftN).toList
@@ -152,7 +154,7 @@ object ChangeSettimanaRichiesta{
         .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
         rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
       params.copy(requestN = Some(daysReq))
-    }
+    }*/
 
     private def getSelectedWeeks: List[Int] = {
       var weeks: List[Int] = List.empty

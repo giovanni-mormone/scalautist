@@ -1,5 +1,6 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
+import com.sun.javafx.scene.control.skin.TableViewSkin
 import javafx.scene.control.cell.{PropertyValueFactory, TextFieldTableCell}
 import javafx.scene.control.{TableColumn, TableRow, TableView}
 import regularexpressionutilities.NumbersChecker
@@ -56,7 +57,7 @@ object CreateTable {
   }
 
   private def notNumber(str: String): Boolean =
-    TextFieldControl.controlString(str, NumbersChecker, 4)
+    TextFieldControl.controlString(str, NumbersChecker)
 
   private def setFactoryAndWidth[A](column: TableColumn[A, String], name: String,dim:Int=DEFAULT_DIM): Unit ={
     column.setId(name.toLowerCase())
@@ -83,5 +84,10 @@ object CreateTable {
       })
       row
     })
+  }
+
+  def createSkinTable[A](): (TableViewSkin[A], TableView[A]) = {
+    val table = new TableView[A]()
+    (new TableViewSkin[A](table), table)
   }
 }
