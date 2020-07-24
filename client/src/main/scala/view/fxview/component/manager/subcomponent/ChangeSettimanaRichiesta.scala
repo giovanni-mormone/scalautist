@@ -5,7 +5,7 @@ import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.Regola
+import caseclass.CaseClassDB.{GiornoInSettimana, Regola}
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
@@ -52,6 +52,7 @@ object ChangeSettimanaRichiesta{
     val NONE: String = "NONE"
     var specialWeeks: List[TableParamSettimana] = List.empty
     var normalWeek: TableParamSettimana = _
+    val ERROR_ID: Int = -1
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
@@ -69,10 +70,9 @@ object ChangeSettimanaRichiesta{
       run.setText(resources.getResource("runtxt"))
       run.setOnAction(_ => {
         if(control())
-          parent.groupParam(params)
+          parent.groupParam(remakeParams())
         else
           error.setVisible(true)
-        println(remakeParams())
       })
       run.setDisable(false)
 
@@ -95,13 +95,14 @@ object ChangeSettimanaRichiesta{
     }
 
     private def dropTable(): Unit = {
-      specialWeeks = specialWeeks.tail
+      specialWeeks = specialWeeks.tail.map(_ => TableParamSettimana(getElements(List.empty[DailyReq])))
       dayShiftS.getChildren.clear()
       specialWeeks.foreach(table => dayShiftS.getChildren.add(table.pane))
     }
 
     private def drawTable(): Unit = {
-      specialWeeks = TableParamSettimana(getElements(List.empty[DailyReq])) :: specialWeeks
+      specialWeeks = TableParamSettimana(getElements(List.empty[DailyReq])) ::
+        specialWeeks.map(_ => TableParamSettimana(getElements(List.empty[DailyReq])))
       dayShiftS.getChildren.clear()
       specialWeeks.foreach(table => dayShiftS.getChildren.add(table.pane))
     }
@@ -118,8 +119,13 @@ object ChangeSettimanaRichiesta{
       dayShiftN.getChildren.add(normalWeek.pane)
     }
 
-    private def control(): Boolean = true
-      //getElements(dayShiftN).size == getSelectedElements(dayShiftN).size
+    private def control(): Boolean = {
+      val normalRows = normalWeek.getElements()
+      val specialRows = specialWeeks.flatMap(week => week.getElements())
+      normalRows.size == normalRows.count(_.getSelected.isDefined) &&
+      specialRows.size == specialRows.count(_.getSelected.isDefined)
+    }
+
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
       val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
@@ -134,10 +140,32 @@ object ChangeSettimanaRichiesta{
       (1 to 6).map(day => infoDays.find(info => info.day == day && info.shift == shift)
         .fold("0")(_.quantity.toString)).toList
 
-    private def remakeParams(): ParamsForAlgoritm = params/*{
+    private def remakeParams(): ParamsForAlgoritm = {
+
+      val daysReqN = getReqFromTable(normalWeek)
+      val daysReqS = specialWeeks.flatMap(weekTab => getReqFromTable(weekTab, special = true))
+
+      params.copy(requestN = Some(daysReqN), requestS = Some(daysReqS))
+    }
+
+    private def getReqFromTable(table: TableParamSettimana, special: Boolean = false): List[GiornoInSettimana] = {
+      val singleDays: List[DailyReq] = getDailyReqFromTable(table)
+      composeRequest(singleDays, special)
+    }
+
+    private def composeRequest(singleDays: List[DailyReq], special: Boolean): List[GiornoInSettimana] = {
+      val condition = (week: Int) => {
+        val result = getSelectedWeeks.contains(week)
+        if(!special) !result else result
+      }
+      calcolateWeeks().filter(week => condition(week))
+        .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
+          rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
+    }
+
+    private def getDailyReqFromTable(table: TableParamSettimana): List[DailyReq] = {
       val SHIFT_INT_MAP: Map[String, Int] = Map("2-6" -> 1 , "6-10" -> 2, "10-14" -> 3 , "14-18" -> 4, "18-22" -> 5, "22-2" -> 6)
-      val ERROR_ID = -1
-      val singleDays: List[DailyReq] = getElements(dayShiftN).toList
+      table.getElements().toList
         .flatMap(day => {
           val shift = SHIFT_INT_MAP.getOrElse(day.getShift, ERROR_ID)
           val rule = day.getSelected.getOrElse(NONE)
@@ -149,12 +177,8 @@ object ChangeSettimanaRichiesta{
             DailyReq(5, shift, day.getFriday.toInt, rule),
             DailyReq(6, shift, day.getSaturday.toInt, rule)
           )
-        }).filter(_.quantity != 0)
-      val daysReq = calcolateWeeks().filter(week => !getSelectedWeeks.contains(week))
-        .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
-        rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
-      params.copy(requestN = Some(daysReq))
-    }*/
+        })
+    }
 
     private def getSelectedWeeks: List[Int] = {
       var weeks: List[Int] = List.empty
