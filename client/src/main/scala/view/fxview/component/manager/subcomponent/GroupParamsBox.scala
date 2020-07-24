@@ -73,12 +73,12 @@ object GroupParamsBox {
       })
       run.setOnAction(_ => {
         val gruppi = groups.map(group => GruppoA(0, group._2.date, group._1.rule))
-        /*parent.startAlgorithm(AlgorithmExecute(
-          params.dateI, params.dateF, params.terminals.map(_.idTerminale.head),
+        parent.showParams(AlgorithmExecute(
+          Date.valueOf(params.dateI), Date.valueOf(params.dateF), params.terminals.map(_.idTerminale.head),
           Option(gruppi),
-          params.requestN.toList.flatten.map(req => SettimanaN(req.giornoId, req.turnoId, req.quantita, req.regolaId)),
-          params.requestS.toList.flatten.map(req => SettimanaS(req.giornoId, req.turnoId, req.quantita, req.regolaId, ))
-        ))*/
+          Option(params.requestN.toList.flatten.map(req => SettimanaN(req.giornoId, req.turnoId, req.quantita, req.regolaId))),
+          params.requestS, params.roleS
+        ))
 
       })
     }
