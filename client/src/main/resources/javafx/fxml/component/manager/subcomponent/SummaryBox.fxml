@@ -15,7 +15,7 @@
    <HBox fx:id="infoBox">
       <Button fx:id="indietro"/>
       <VBox fx:id="shiftInfoLabel"/>
-      <Button fx:id="avanti"/>
+      <Button fx:id="avanti" />
    </HBox>
 
 </VBox>

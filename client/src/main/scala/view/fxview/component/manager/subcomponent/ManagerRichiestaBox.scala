@@ -12,9 +12,12 @@ import view.fxview.util.ResourceBundleUtil._
  *  Trait which allows to perform operations on richiesta view.
  */
 trait ManagerRichiestaBox extends Component[ManagerRichiestaParent]{
+  def cancelAction(): Unit
+
 
   /**
    * method which allow return action and save information which has been completed in actual view
+   *
    * @param valueForDay value that user insert in view, represent idDay that contains a list with
    *                    id shift and yours respective quantity
    */
@@ -151,5 +154,8 @@ object ManagerRichiestaBox{
 
     override def nextAction(listShiftRequest: InfoRichiesta): Unit =
       parent.sendRichiesta(listShiftRequest)
+
+    override def cancelAction(): Unit =
+      parent.showBackMessage(resources.getResource("advertencia"))
   }
 }
