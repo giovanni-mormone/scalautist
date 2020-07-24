@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Regola
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN}
 import com.sun.javafx.scene.control.skin.DatePickerSkin
 import javafx.fxml.FXML
 import javafx.scene.Node

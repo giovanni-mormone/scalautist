@@ -9,6 +9,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextArea}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.manager.subcomponent.parent.ShowParamAlgorithmBoxParent
+import view.fxview.component.manager.subcomponent.util.ShiftUtil
 import view.fxview.util.ResourceBundleUtil._
 
 trait ShowParamAlgorithmBox  extends Component[ShowParamAlgorithmBoxParent] {
@@ -69,14 +70,19 @@ object ShowParamAlgorithmBox {
 
       writeOnTextArea(terminals, resources.getResource("terminaltxt"),
         info.idTerminal.map(ter => terminal.find(_.idTerminale.contains(ter)).fold(NONE)(_.nomeTerminale)))
+
       writeOnTextArea(group, resources.getResource("grouptxt"),
         info.gruppo.fold(List.empty[String])(_.flatMap(_.date.map(_.toString))))
+
       writeOnTextArea(weekN, resources.getResource("nweek"),
         info.settimanaNormale.fold(List.empty[String])
-        (_.map(day => getDayName(day.idDay) + " " + getShiftName(day.turnoId) + " " + day.quantita + " " + getRuleName(day.regola))))
+        (_.map(day => getDayName(day.idDay) + " " + ShiftUtil.getShiftName(day.turnoId) +
+          " " + day.quantita + " " + getRuleName(day.regola))))
+
       writeOnTextArea(weekS, resources.getResource("sweek"),
         info.settimanaSpeciale.fold(List.empty[String])
-        (_.map(day=> day.date.toString + " " + getShiftName(day.turnoId) + " " + day.quantita + " " + getRuleName(day.regola))))
+        (_.map(day=> day.date.toString + " " + ShiftUtil.getShiftName(day.turnoId) + " " +
+          day.quantita + " " + getRuleName(day.regola))))
     }
 
     private def initButton(): Unit = {
@@ -89,14 +95,9 @@ object ShowParamAlgorithmBox {
     private def getRuleName(id: Int): String =
       rules.find(_.idRegola.contains(id)).fold(NONE)(_.nomeRegola)
 
-    private def getShiftName(key: Int): String = {
-      val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
-      SHIFT_STRING_MAP.getOrElse(key, NONE)
-    }
-
     private def getDayName(key: Int): String = {
-      val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi", 5 -> "Venerdi", 6 -> "Sabato")
-      SHIFT_STRING_MAP.getOrElse(key, NONE)
+      val DAYS_STRING_MAP: Map[Int, String] = Map(1 -> "Lunedi", 2 -> "Martedi", 3 -> "Mercoledi", 4 -> "Giovedi", 5 -> "Venerdi", 6 -> "Sabato")
+      DAYS_STRING_MAP.getOrElse(key, NONE)
     }
 
   }

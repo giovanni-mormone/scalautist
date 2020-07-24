@@ -13,7 +13,7 @@ import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{Pane, VBox}
 import org.controlsfx.control.CheckComboBox
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
-import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable}
+import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftUtil, ShiftTable}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -56,7 +56,6 @@ object ChangeSettimanaRichiesta{
     private val ERROR_ID: Int = -1
     private var LAST_WEEK_DAY: Int = 6
     private var FIRST_WEEK_DAY_SHIFT: Int = 1
-    private var N_SHIFT: Int = 6
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
@@ -133,13 +132,12 @@ object ChangeSettimanaRichiesta{
     }
 
     private def yesDataInRow(week: ShiftTable): Boolean =
-      !(FIRST_WEEK_DAY_SHIFT to N_SHIFT).map(week.get).forall(_.toInt == 0)
+      !(FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(week.get).forall(_.toInt == 0)
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
-      val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
-      (FIRST_WEEK_DAY_SHIFT to SHIFT_STRING_MAP.size).map( shift => {
+      (FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
-        new ShiftTable(SHIFT_STRING_MAP.getOrElse(shift, NONE), info.head, info(1), info(2), info(3), info(4), info(5),
+        new ShiftTable(ShiftUtil.getShiftName(shift), info.head, info(1), info(2), info(3), info(4), info(5),
           rules.map(_.nomeRegola), infoDays.find(day => day.shift == shift).map(_.rule))
       }).toList
     }
@@ -156,10 +154,6 @@ object ChangeSettimanaRichiesta{
       params.copy(requestN = Some(daysReqN), requestS = Some(daysReqS))
     }
 
-    private def getShiftId(key: String): Int = {
-      val SHIFT_INT_MAP: Map[String, Int] = Map("2-6" -> 1 , "6-10" -> 2, "10-14" -> 3 , "14-18" -> 4, "18-22" -> 5, "22-2" -> 6)
-      SHIFT_INT_MAP.getOrElse(key, ERROR_ID)
-    }
 
     private def getSpecialReqFromTable: List[SettimanaS] = {
       val weeksNum: List[Int] = getSelectedWeeks
@@ -172,7 +166,7 @@ object ChangeSettimanaRichiesta{
       weekInfo.toList.flatMap(info => {
         val daysDate = getDates(info._2, params.dateI)
         info._1.getElements().toList.flatMap(shiftInfo => {
-          val shiftId = getShiftId(shiftInfo.getShift)
+          val shiftId = ShiftUtil.getShiftId(shiftInfo.getShift)
           val rule: Int = rules.find(_.nomeRegola.equals(shiftInfo.getSelected.getOrElse(0))).fold(ERROR_ID)(_.idRegola.get)
           (FIRST_WEEK_DAY_SHIFT to LAST_WEEK_DAY).map(index =>
                 SettimanaS(index, shiftId, shiftInfo.get(index).toInt, rule, Date.valueOf(daysDate(index - 1))))
@@ -187,7 +181,6 @@ object ChangeSettimanaRichiesta{
 
       for(i <- FIRST_WEEK_DAY_SHIFT until LAST_WEEK_DAY)
         days = days :+ first.plusDays(i)
-      println(days)
       days
     }
 
@@ -209,7 +202,7 @@ object ChangeSettimanaRichiesta{
     private def getDailyReqFromTable(table: TableParamSettimana): List[DailyReq] = {
       table.getElements().toList
         .flatMap(day => {
-          val shift = getShiftId(day.getShift)
+          val shift = ShiftUtil.getShiftId(day.getShift)
           val rule = day.getSelected.getOrElse(NONE)
           (FIRST_WEEK_DAY_SHIFT to LAST_WEEK_DAY).map(index => DailyReq(index, shift, day.get(index).toInt, rule))
         })
