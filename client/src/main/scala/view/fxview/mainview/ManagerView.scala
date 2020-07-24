@@ -22,6 +22,15 @@ import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.modal.Modal
 
 trait ManagerView extends DialogView {
+  /**
+   *
+   * @param info
+   * @param name
+   * @param terminals
+   * @param rules
+   */
+  def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
+
   def drawNotification(str: String, tag: Long): Unit
 
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
@@ -220,11 +229,18 @@ object ManagerView {
       managerHome.updateGroup(group)
     }
 
-    override def showParams(info: AlgorithmExecute): Unit =
-      managerHome
+    override def showParams(info: AlgorithmExecute, name: Option[String]): Unit =
+      myController.showParamAlgorithm(info, name)
 
-    /*override def startAlgorithm(info: AlgorithmExecute): Unit =
-      myController.runAlgorithm(info)*/
+    override def run(info: AlgorithmExecute, name: Option[String]): Unit =
+      myController.runAlgorithm(info)
+
+    override def resetParams(): Unit =
+      drawParamsPanel()
+
+    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit = {
+      managerHome.drawShowParams(info, name, terminals, rules)
+    }
 
   }
 }

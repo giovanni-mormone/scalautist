@@ -78,8 +78,7 @@ object GroupParamsBox {
           Option(gruppi),
           Option(params.requestN.toList.flatten.map(req => SettimanaN(req.giornoId, req.turnoId, req.quantita, req.regolaId))),
           params.requestS, params.roleS
-        ))
-
+        ), params.name)
       })
     }
 

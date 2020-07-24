@@ -17,6 +17,13 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+  /**
+   *
+   * @param info
+   * @param name
+   */
+  def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit
+
   def consumeNotification(tag: Long): Unit
 
   def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit
@@ -80,6 +87,7 @@ trait ManagerController extends AbstractController[ManagerView]{
    *
    */
   def groupParam(params: ParamsForAlgoritm): Unit
+
   def startListenNotification():Unit
 }
 
@@ -225,6 +233,14 @@ object ManagerController {
     }
 
     override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
+
+    override def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit = {
+      val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
+        Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
+        Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
+      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      myView.drawShowParams(info, name, terminals, rules)
+    }
   }
 }
 

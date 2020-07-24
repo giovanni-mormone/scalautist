@@ -4,35 +4,35 @@ import java.net.URL
 import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import caseclass.CaseClassDB.{Regola, Terminale, Turno}
+import caseclass.CaseClassHttpMessage._
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label}
+import javafx.scene.control.{Accordion, Button, Label}
 import javafx.scene.layout.BorderPane
-import view.fxview.FXHelperFactory
-import caseclass.{CaseClassDB, CaseClassHttpMessage}
-import caseclass.CaseClassDB.{Terminale, Turno}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
-import view.fxview.util.ResourceBundleUtil._
-import javafx.fxml.FXML
-import javafx.scene.control.{Accordion, Button, Label, TitledPane}
-import javafx.scene.layout.{BorderPane, VBox}
 import org.controlsfx.control.PopOver
-import view.fxview.{FXHelperFactory, NotificationHelper}
 import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
-import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.component.manager.subcomponent.{ChangeSettimanaRichiesta, ChooseParamsBox, FillHolesBox, GroupParamsBox, ManagerRichiestaBox}
+import view.fxview.component.manager.subcomponent._
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+import view.fxview.{FXHelperFactory, NotificationHelper}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
  * trait of methods that allow user to do desired operations.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
+  /**
+   *
+   * @param info
+   * @param name
+   * @param terminals
+   * @param rules
+   */
+  def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
+
   def drawNotifica(str: String,tag:Long): Unit
 
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
@@ -100,6 +100,13 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param group
    */
   def updateGroup(group: Group): Unit
+
+  /**
+   *
+   * @param info
+   * @param name
+   */
+  def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
 }
 
 object ManagerHome{
@@ -140,6 +147,7 @@ object ManagerHome{
     var chooseParamsBox: ChooseParamsBox = _
     var selectResultBox:SelectResultBox = _
     var gruopParamBox: GroupParamsBox = _
+    var showParam: ShowParamAlgorithmBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -232,5 +240,14 @@ object ManagerHome{
 
     override def updateGroup(group: Group): Unit =
       gruopParamBox.updateGroup(group)
+
+    override def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit = {
+
+    }
+
+    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit = {
+      showParam = ShowParamAlgorithmBox(info, name, rules, terminals)
+      baseManager.setCenter(showParam.setParent(parent).pane)
+    }
   }
 }
