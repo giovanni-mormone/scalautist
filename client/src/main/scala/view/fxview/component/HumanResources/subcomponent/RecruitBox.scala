@@ -2,10 +2,8 @@ package view.fxview.component.HumanResources.subcomponent
 
 import java.net.URL
 import java.sql.Date
-import java.time.LocalDate
 import java.util.{Calendar, ResourceBundle}
 
-import akka.http.scaladsl.model.headers
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
 import javafx.fxml.FXML

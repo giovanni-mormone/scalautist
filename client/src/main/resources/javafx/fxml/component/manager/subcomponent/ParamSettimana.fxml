@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import javafx.scene.control.TableView?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="250.0" prefWidth="600.0">
+         <children>
+            <Label fx:id="error" layoutX="15.0" layoutY="5.0" text="Label" />
+            <Label fx:id="titleN" layoutX="29.0" layoutY="18.0" text="Label" />
+            <Pane fx:id="dayShiftN" layoutX="15.0" layoutY="40.0" prefHeight="200.0" prefWidth="550.0" />
+         </children>
+      </Pane>
+      <Pane prefHeight="300.0" prefWidth="600.0">
+         <children>
+            <Label fx:id="titleS" layoutX="28.0" layoutY="14.0" text="Label" />
+            <CheckComboBox fx:id="weekS" layoutX="428.0" layoutY="2.0" prefWidth="150.0" />
+            <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                        layoutX="28.0" layoutY="30.0" prefHeight="200.0" prefWidth="550.0">
+               <VBox fx:id="dayShiftS" />
+            </ScrollPane>
+         </children>
+      </Pane>
+      <Pane prefHeight="50.0" prefWidth="600.0">
+         <children>
+            <Button fx:id="reset" layoutX="423.0" layoutY="1.0" mnemonicParsing="false" text="Button" />
+            <Button fx:id="run" layoutX="505.0" layoutY="1.0" mnemonicParsing="false" text="Button" />
+         </children>
+      </Pane>
+   </children>
+</VBox>

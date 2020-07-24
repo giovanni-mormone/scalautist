@@ -11,6 +11,12 @@
 }
 #back{
     -fx-background-color:#10E7DC;
+
+}
+#back:hover{
+    -fx-background-color:#10E7DC;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
 }
 #back:hover{
     -fx-background-color:#10E7DC;

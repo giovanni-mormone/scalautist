@@ -4,6 +4,12 @@ import java.net.URL
 import java.sql.Date
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import javafx.fxml.FXML
+import javafx.scene.control.{Button, Label}
+import javafx.scene.layout.BorderPane
+import view.fxview.FXHelperFactory
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import caseclass.CaseClassDB.{Terminale, Turno}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
@@ -14,11 +20,17 @@ import javafx.scene.layout.{BorderPane, VBox}
 import org.controlsfx.control.PopOver
 import view.fxview.{FXHelperFactory, NotificationHelper}
 import view.fxview.NotificationHelper.NotificationParameters
+import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.{ChangeSettimanaRichiesta, ChooseParamsBox, FillHolesBox, GroupParamsBox, ManagerRichiestaBox}
 import view.fxview.component.{AbstractComponent, Component}
-/** @author Gianni Mormone, Fabian Aspee Encina
- *  Trait which allows to perform operations on richiesta view.
+import view.fxview.util.ResourceBundleUtil._
+
+/**
+ * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
+ * trait of methods that allow user to do desired operations.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
   def drawNotifica(str: String,tag:Long): Unit
@@ -28,8 +40,12 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
   /**
-   * method that re paint all element that belong to Richiesta
+   * Method used to draw the panel that allow to choose params for run assignment algorithm
+   *
+   * @param terminals List of [[caseclass.CaseClassDB.Terminale]]
    */
+  def drawChooseParams(terminals: List[Terminale]): Unit
+
   def reDrawRichiesta(): Unit
 
   /**
@@ -62,6 +78,28 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   def loadingReplacements(): Unit
 
   def stopLoadingReplacements(): Unit
+
+  /**
+   *
+   */
+  def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit
+
+  /**
+   *
+   * @param param
+   */
+  def drawLoadedParam(param: InfoAlgorithm): Unit
+
+  /**
+   *
+   */
+  def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
+
+  /**
+   *
+   * @param group
+   */
+  def updateGroup(group: Group): Unit
 }
 
 object ManagerHome{
@@ -99,7 +137,9 @@ object ManagerHome{
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
+    var chooseParamsBox: ChooseParamsBox = _
     var selectResultBox:SelectResultBox = _
+    var gruopParamBox: GroupParamsBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -114,6 +154,7 @@ object ManagerHome{
       richiestaButton.setText(resources.getResource("richiesta-button"))
       manageAbsenceButton.setOnAction(_ => parent.drawAbsencePanel())
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
+      generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
       notificationButton.setOnAction(_=>openAccordion())
       nameLabel.setText(resources.println("username-label",userName))
@@ -157,6 +198,24 @@ object ManagerHome{
       managerRichiestaBoxView.drawShiftRequest(listShift)
     }
 
+    override def drawChooseParams(terminals: List[Terminale]): Unit = {
+      chooseParamsBox = ChooseParamsBox(terminals)
+      baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
+    }
+
+    override def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit = {
+      val box = ChangeSettimanaRichiesta(params, rules)
+      baseManager.setCenter(box.setParent(parent).pane)
+    }
+
+    override def drawLoadedParam(param: InfoAlgorithm): Unit =
+      chooseParamsBox.loadParam(param)
+
+    override def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit = {
+      gruopParamBox = GroupParamsBox(params, rule)
+      baseManager.setCenter(gruopParamBox.setParent(parent).pane)
+    }
+
     override def drawResultTerminal(terminal: List[Terminale]): Unit = {
       selectResultBox = SelectResultBox(terminal)
       baseManager.setCenter(selectResultBox.setParent(parent).pane)
@@ -170,5 +229,8 @@ object ManagerHome{
     override def drawNotifica(str: String,tag:Long): Unit = {
       NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
     }
+
+    override def updateGroup(group: Group): Unit =
+      gruopParamBox.updateGroup(group)
   }
 }

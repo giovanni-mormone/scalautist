@@ -21,6 +21,9 @@
 
 #next:hover{
     -fx-background-color: #10E7DC;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+
 }
 #errorLabelTerminal,#errorLabel{
     -fx-font-size: 12;

@@ -201,6 +201,13 @@
     -fx-font-size: 14px;
 }
 
+
+.date-picker > .arrow-button {
+    -fx-border-radius: 33px;
+    -fx-background-radius: 33px;
+}
+
+
 .table-view .column-header,
 .tree-table-view > .column-header{
     -fx-background-color:linear-gradient(#1B9CE5,#6CDAEE);

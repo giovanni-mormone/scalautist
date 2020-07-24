@@ -2,14 +2,14 @@ package dbfactory.operation
 
 import java.sql.Date
 import java.time.LocalDate
-import java.util.Calendar
 
 import dbfactory.util.Helper._
 import caseclass.CaseClassDB.{Disponibilita, Persona}
 import caseclass.CaseClassHttpMessage.InfoReplacement
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstancePersona, InstanceRisultato, InstanceStoricoContratto}
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.setting.Table.{AssenzaTableQuery, ContrattoTableQuery, DisponibilitaTableQuery, PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery}
+import dbfactory.setting.Table._
+import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
@@ -17,7 +17,6 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 /**
  * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
  *

@@ -3,11 +3,14 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
+import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
 import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.mainview.ManagerView
 
 import scala.concurrent.Future
@@ -57,6 +60,26 @@ trait ManagerController extends AbstractController[ManagerView]{
   def replacementSelected(idRisultato: Int, idPersona: Int):Unit
 
   def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
+
+  /**
+   * Method that asks model to find data about the terminals before draw the panel
+   */
+  def chooseParams(): Unit
+
+  /**
+   * Method asks the old params list to draw modal
+   */
+  def modalOldParams(terminals: List[Terminale]): Unit
+
+  /**
+   *
+   */
+  def weekParam(params: ParamsForAlgoritm): Unit
+
+  /**
+   *
+   */
+  def groupParam(params: ParamsForAlgoritm): Unit
   def startListenNotification():Unit
 }
 
@@ -132,17 +155,58 @@ object ManagerController {
         case _ => myView.showMessageFromKey("general-error")
       }
     }
-    def statusAlgorithm(message:String):Unit={
+
+    def statusAlgorithm(message:String):Unit=
       println(s"$message")
-    }
 
-    //TODO MODIFICARE I TIPI DI RITORNO
-    override def runAlgorithm(algorithmExecute: AlgorithmExecute):  Future[Response[Int]]  = {
+    override def runAlgorithm(algorithmExecute: AlgorithmExecute): Future[Response[Int]] =
       model.runAlgorithm(algorithmExecute,statusAlgorithm)
+
+    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] =
+      model.verifyOldResult(dataToCheck)
+
+    override def chooseParams(): Unit = {
+      val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
+        Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
+        Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
+      myView.drawRunAlgorithm(terminals)
     }
 
-    override def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]] = {
-      model.verifyOldResult(dataToCheck)
+    override def modalOldParams(terminals: List[Terminale]): Unit = {
+      val params = List(InfoAlgorithm(
+        Parametro(true, "mai", Some(1)),
+        List(ZonaTerminale(2, 3, Some(1), Some(1))),
+        Some(List(GiornoInSettimana(1, 1, 2, 1, Some(1), Some(30)), GiornoInSettimana(2, 2, 2, 3, Some(1), Some(30)),
+          GiornoInSettimana(3, 3, 2, 5, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, 3, Some(1), Some(30)),
+          GiornoInSettimana(5, 5, 2, 1, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, 3, Some(1), Some(20))
+        ))),
+        InfoAlgorithm(
+          Parametro(false, "menn", Some(2)),
+          List(ZonaTerminale(3, 2, Some(3), Some(2))),
+          Some(List(GiornoInSettimana(1, 1, 1, 0, Some(2), Some(32)), GiornoInSettimana(2, 2, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(3, 3, 1, 4, Some(2), Some(32)), GiornoInSettimana(4, 4, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(5, 5, 1, 6, Some(2), Some(32)), GiornoInSettimana(3, 5, 1, 2, Some(2), Some(32)),
+            GiornoInSettimana(3, 2, 1, 0, Some(2), Some(32)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
+          ))),
+        InfoAlgorithm(
+          Parametro(false, "maggiorata", Some(3)),
+          List(ZonaTerminale(2, 8, Some(1), Some(3)), ZonaTerminale(1, 5, Some(3), Some(4)), ZonaTerminale(2, 3, Some(3), Some(5))),
+          Some(List(GiornoInSettimana(1, 6, 2, 0, Some(1), Some(23)), GiornoInSettimana(2, 5, 2, 1, Some(1), Some(23)),
+            GiornoInSettimana(3, 4, 2, 2, Some(1), Some(23)), GiornoInSettimana(4, 3, 2, 3, Some(1), Some(23)),
+            GiornoInSettimana(5, 2, 2, 4, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, 5, Some(1), Some(23)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
+          ))))
+      val rules: List[Regola] = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      myView.modalOldParamDraw(params, terminals, rules)
+    }
+
+    override def weekParam(params: ParamsForAlgoritm): Unit = {
+      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      myView.drawWeekParam(params, rules)
+    }
+
+    override def groupParam(params: ParamsForAlgoritm): Unit = {
+      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
+      myView.drawGroupParam(params, rules)
     }
 
     override def dataToResultPanel(): Unit =
