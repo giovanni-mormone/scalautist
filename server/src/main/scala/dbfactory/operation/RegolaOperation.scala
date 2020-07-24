@@ -4,6 +4,7 @@ import caseclass.CaseClassDB.Regola
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceRegola
 import dbfactory.implicitOperation.OperationCrud
 import slick.jdbc.SQLServerProfile.api._
+
 import scala.concurrent.Future
 trait RegolaOperation extends OperationCrud[Regola]{
   /**
@@ -28,3 +29,4 @@ object RegolaOperation extends RegolaOperation {
   override def regolaSettimana():Future[Option[List[Regola]]]=
     InstanceRegola.operation().selectFilter(_.id.inSet(weekRule))
 }
+

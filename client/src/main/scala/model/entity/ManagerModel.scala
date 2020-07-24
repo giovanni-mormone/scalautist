@@ -17,6 +17,7 @@ import utils.TransferObject.InfoRichiesta
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano
@@ -28,13 +29,14 @@ trait ManagerModel {
    * Method that return all rule that contains a group for the algorithm
    * @return Future of Option of List of Regola that contains all Rule for group for the algorithm
    */
-  def groupRule():Future[Response[Regola]]
+  def groupRule():Future[Response[List[Regola]]]
   /**
    * Method that return all rule that contains a normal week and special week for the algorithm
    * @return Future of Option of List of Regola that contains all Rule for a normal
    *         week and special week for the algorithm
    */
-  def weekRule():Future[Response[Regola]]
+  def weekRule():Future[Response[List[Regola]]]
+
   def consumeNotification(tag: Long,userId: Option[Int]): Unit
 
   def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit):Unit
@@ -228,14 +230,26 @@ object ManagerModel {
       receiver.consumeNotification(tag)
     }
 
-    override def groupRule(): Future[Response[Regola]] = {
+    override def groupRule(): Future[Response[List[Regola]]] = {
       val request = Post(getURI("regolagroup"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Regola]])
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
     }
 
-    override def weekRule(): Future[Response[Regola]] = {
+    override def weekRule(): Future[Response[List[Regola]]] = {
       val request = Post(getURI("regolaweek"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Regola]])
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
     }
 }
+}
+object sds extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+  ManagerModel().groupRule().onComplete {
+    case Failure(exception) =>println(exception)
+    case Success(value) =>print(value)
+  }
+  ManagerModel().weekRule().onComplete {
+    case Failure(exception) =>println(exception)
+    case Success(value) =>print(value)
+  }
+  while(true){}
 }
