@@ -25,5 +25,5 @@ trait GroupParamsParent {
    *
    * @param info
    */
-  def startAlgorithm(info: AlgorithmExecute): Unit
+  def showParams(info: AlgorithmExecute): Unit
 }

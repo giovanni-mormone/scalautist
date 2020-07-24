@@ -79,7 +79,7 @@ object GroupParamsBox {
           params.requestN.toList.flatten.map(req => SettimanaN(req.giornoId, req.turnoId, req.quantita, req.regolaId)),
           params.requestS.toList.flatten.map(req => SettimanaS(req.giornoId, req.turnoId, req.quantita, req.regolaId, ))
         ))*/
-        
+
       })
     }
 

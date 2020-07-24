@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<HBox fx:id="prams"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+
+   <Label fx:id="sabato" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+   <TextArea fx:id="terminals" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+   <TextArea fx:id="group" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+   <TextArea fx:id="weekN" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+   <TextArea fx:id="weekS" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
+</HBox>

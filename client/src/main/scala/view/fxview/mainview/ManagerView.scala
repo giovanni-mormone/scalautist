@@ -220,7 +220,11 @@ object ManagerView {
       managerHome.updateGroup(group)
     }
 
-    override def startAlgorithm(info: AlgorithmExecute): Unit =
-      myController.runAlgorithm(info)
+    override def showParams(info: AlgorithmExecute): Unit =
+      managerHome
+
+    /*override def startAlgorithm(info: AlgorithmExecute): Unit =
+      myController.runAlgorithm(info)*/
+
   }
 }
