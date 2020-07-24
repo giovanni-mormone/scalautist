@@ -11,7 +11,7 @@ import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
 import javafx.scene.Node
 import javafx.scene.control.{Label, ListView}
-import javafx.scene.layout.{HBox, Pane}
+import javafx.scene.layout.{AnchorPane, HBox, Pane, VBox}
 import view.fxview.FXHelperFactory
 import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker
 import view.fxview.component.driver.subcomponent.parent.SalaryBoxParent
@@ -37,27 +37,12 @@ object SalaryBox{
     @FXML
     var salaryList: ListView[Stipendio] = _
     @FXML
-    var salaryInfo: HBox = _
+    var internalVBox: VBox = _
     @FXML
-    var tittle:Label=_
+    var title: Label = _
     @FXML
-    var day:Pane=_
-    @FXML
-    var dayM:Label=_
-    @FXML
-    var normalDay:Label=_
-    @FXML
-    var shift:Pane=_
-    @FXML
-    var shiftValue:Label=_
-    @FXML
-    var extraValue:Label=_
-    @FXML
-    var absence:Pane=_
-    @FXML
-    var Illness:Label=_
-    @FXML
-    var holiday:Label=_
+    var datePickerA: AnchorPane = _
+
     private var datepicker:Node=_
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -74,8 +59,8 @@ object SalaryBox{
         def changed(ov:ObservableValue[_<:Stipendio], oldValue:Stipendio, newValue:Stipendio):Unit=
         {
           newValue.idStipendio.foreach(x=>{
-            salaryInfo.getChildren.remove(datepicker)
-            salaryInfo.getChildren.add(FXHelperFactory.loadingBox)
+            datePickerA.getChildren.remove(datepicker)
+            datePickerA.getChildren.add(FXHelperFactory.loadingBox)
             parent.infoSalary(x)
           })
         }
@@ -83,9 +68,9 @@ object SalaryBox{
 
     }
     override def paneInfoSalary(information: StipendioInformations): Unit = {
-      salaryInfo.getChildren.remove(FXHelperFactory.loadingBox)
+      datePickerA.getChildren.remove(FXHelperFactory.loadingBox)
       datepicker=createDatePicker(information)
-      salaryInfo.getChildren.add(datepicker)
+      datePickerA.getChildren.add(datepicker)
       generalInfo(information)
     }
     private def createDatePicker(information: StipendioInformations):Node={
@@ -103,30 +88,24 @@ object SalaryBox{
     }
 
     private def generalInfo(informations: StipendioInformations): Unit ={
-
-      tittle.setText(resources.getResource("general-info"))
+      internalVBox.getChildren.clear()
+      title.setText(resources.println("general-info",""))
       val (extra,normal) = totalExtraAndNormal(informations.turni)
-      dayM.setText(resources.println("extra-day",extra))
-      normalDay.setText(resources.println("normal-day",normal))
-      infoShiftAndExtra(extra,normal,informations)
-      infoAssenza(informations)
-    }
-
-    private def infoShiftAndExtra(normal:Int,extra:Int,informations: StipendioInformations):Unit={
-
-      shiftValue.setText(resources.println("shift-value",informations.infoValore.valoreTotaleTurni/normal))
-      extraValue.setText(resources.println("extra-value",informations.infoValore.valoreTotaleTurni/extra))
-      shiftValue.setText(resources.println("shift-total-value",informations.infoValore.valoreTotaleTurni))
-      extraValue.setText(resources.println("extra-total-value",informations.infoValore.valoreTotaleStraordinari))
-      extraValue.setText(resources.println("total",informations.infoValore.valoreTotaleStraordinari+informations.infoValore.valoreTotaleTurni))
-
-    }
-    private def infoAssenza(informations: StipendioInformations):Unit={
-
-      Illness.setText(resources.println("illness-day",informations.infoAssenza.assenzePerMalattia))
-      holiday.setText(resources.println("holiday",informations.infoAssenza.assenzePerFerie))
+      val fExtra = if(extra==0)0 else informations.infoValore.valoreTotaleTurni/extra
+      val fNormal =if(normal==0)0 else informations.infoValore.valoreTotaleTurni/normal
+      val dayM = LabelAndValueBox("extra-day",extra.toString).setParent(parent).pane
+      val normalDay = LabelAndValueBox("normal-day",normal.toString).setParent(parent).pane
+      val shiftValue = LabelAndValueBox("shift-value",fNormal.toString).setParent(parent).pane
+      val extraValue = LabelAndValueBox("extra-value",fExtra.toString).setParent(parent).pane
+      val shiftTotalValue = LabelAndValueBox("shift-total-value",informations.infoValore.valoreTotaleTurni.toString).setParent(parent).pane
+      val extraTotalValue = LabelAndValueBox("extra-total-value",informations.infoValore.valoreTotaleStraordinari.toString).setParent(parent).pane
+      val totalValue = LabelAndValueBox("total",informations.infoValore.valoreTotaleStraordinari+informations.infoValore.valoreTotaleTurni.toString).setParent(parent).pane
+      val illNess = LabelAndValueBox("illness-day",informations.infoAssenza.assenzePerMalattia.toString).setParent(parent).pane
+      val holiday = LabelAndValueBox("holiday",informations.infoAssenza.assenzePerFerie.toString).setParent(parent).pane
+      internalVBox.getChildren.addAll(title,dayM,normalDay,shiftValue,extraValue,shiftTotalValue,extraTotalValue,totalValue,illNess,holiday)
 
     }
+
     private def totalExtraAndNormal(turni:List[InfoPresenza]):(Int,Int)= {
 
       val isStraordinario=true

@@ -4,12 +4,9 @@
 <?import javafx.scene.layout.*?>
 
 
-<HBox fx:id="baseBox"  stylesheets="@../../../../css/component/manager/subcomponent/LabelTextFieldBox.css"
-      maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<HBox fx:id="baseBox" stylesheets="@../../../../css/component/manager/subcomponent/LabelTextFieldBox.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label fx:id="shiftLabel" text="Label" />
-      <TextField fx:id="quantity" />
-      <Label fx:id="errorLabel" />
-   </children>
+   <Label fx:id="shiftLabel" text="Label"/>
+   <TextField fx:id="quantity"/>
+   <Label fx:id="errorLabel" styleClass="error"/>
 </HBox>

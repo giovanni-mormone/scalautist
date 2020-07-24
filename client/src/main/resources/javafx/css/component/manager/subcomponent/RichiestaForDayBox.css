@@ -2,25 +2,24 @@
     -fx-spacing: 10;
     -fx-alignment: top-center;
     -fx-fill-width: false;
-    -fx-pref-width: 600.0;
-    -fx-pref-height:400.0;
 }
 
 #sonRequest{
     -fx-spacing: 60;
-    -fx-pref-width: 400.0;
-    -fx-pref-height:100.0;
-    -fx-alignment: top-center;
+    -fx-padding: 50 0 0 0;
+    -fx-alignment: bottom-center;
+}
+#back{
+    -fx-background-color:#10E7DC;
 }
 #cancel{
-    -fx-pref-width: 100;
-    -fx-pref-height: 15;
-    -fx-background-color: linear-gradient(#ff5400, #be1d00);
-    -fx-text-fill: white;
+    -fx-background-color:#F79E02
 }
 #next{
-    -fx-pref-width: 100;
-    -fx-pref-height: 15;
-    -fx-background-color: linear-gradient(green, darkgreen);
-    -fx-text-fill: white;
+    -fx-background-color: #0074E1;
+}
+#titleDay{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
 }

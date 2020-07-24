@@ -4,21 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="requestForDay" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../../../css/component/manager/subcomponent/RichiestaForDayBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label fx:id="titleDay"/>
-      <HBox fx:id="sonRequest">
-         <children>
-            <Button fx:id="back" mnemonicParsing="false" text="Button" />
-            <Button fx:id="cancel" mnemonicParsing="false" text="Button" />
-            <Button fx:id="next" mnemonicParsing="false" text="Button" />
-         </children>
-         <padding>
-            <Insets top="50.0" />
-         </padding>
-         <VBox.margin >
-            <Insets top="50.0" />
-         </VBox.margin>
-      </HBox>
-   </children>
+<VBox fx:id="requestForDay" stylesheets="@../../../../css/component/manager/subcomponent/RichiestaForDayBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="titleDay"/>
+   <HBox fx:id="sonRequest">
+      <Button fx:id="back" mnemonicParsing="false" text="Button"/>
+      <Button fx:id="cancel" mnemonicParsing="false" text="Button"/>
+      <Button fx:id="next" mnemonicParsing="false" text="Button"/>
+   </HBox>
 </VBox>

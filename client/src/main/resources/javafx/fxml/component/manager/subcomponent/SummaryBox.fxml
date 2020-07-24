@@ -3,21 +3,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="basebox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../../../css/component/manager/subcomponent/SummaryBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox alignment="TOP_CENTER">
-         <children>
-            <Label fx:id="dataI" />
-             <Label fx:id="dataF" />
-         </children>
-      </HBox>
-      <Label fx:id="terminalLabel" alignment="CENTER" contentDisplay="CENTER" />
-      <Label fx:id="dayLabel" alignment="CENTER" contentDisplay="CENTER" />
-      <HBox fx:id="infoBox">
-         <Button fx:id="indietro" />
-         <VBox fx:id="shiftInfoLabel" prefHeight="400.0" prefWidth="300.0" />
-         <Button fx:id="avanti" />
-      </HBox>
+<VBox fx:id="basebox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      stylesheets="@../../../../css/component/manager/subcomponent/SummaryBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <HBox alignment="TOP_CENTER">
+      <Label fx:id="dataI"/>
+      <Label fx:id="dataF"/>
+   </HBox>
+   <Label fx:id="terminalLabel" contentDisplay="CENTER"/>
+   <Label fx:id="dayLabel" contentDisplay="CENTER"/>
+   <HBox fx:id="infoBox">
+      <Button fx:id="indietro"/>
+      <VBox fx:id="shiftInfoLabel"/>
+      <Button fx:id="avanti"/>
+   </HBox>
 
-   </children>
 </VBox>

@@ -20,6 +20,14 @@ import view.fxview.component.login.LoginBox
  */
 trait LoginView extends BaseView{
   /**
+   * show a message in the modal like a pop-up
+   *
+   * @param message
+   *                String of message to show
+   */
+  def result(message: String): Unit
+
+  /**
    * Method that shows a message of error in case of a bad login(e.g. wrong username or password)
    */
   def badLogin():Unit
@@ -137,6 +145,11 @@ object LoginView{
         ManagerView(myStage,userName,userId)
       })
     }
+
+    override def result(message: String): Unit = Platform.runLater(()=>{
+      this.showMessageFromKey(message)
+      stopLoading()
+    })
   }
 
   def apply(stage:Stage):LoginView = new LoginViewFX(stage)

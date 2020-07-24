@@ -1,6 +1,5 @@
 package servermodel.routes.masterroute
 
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.{Directives, Route}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Dates}
 import io.swagger.v3.oas.annotations.Operation
@@ -10,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.RisultatoRoute._
-
+import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import scala.concurrent.duration._
 /**
  * @author Francesco Cassano, Fabian Aspee Encina
@@ -61,10 +60,6 @@ object MasterRouteRisultato extends Directives {
       new ApiResponse (responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  val timeoutResponse: HttpResponse = HttpResponse(
-    StatusCodes.EnhanceYourCalm,
-    entity = "Unable to serve response within time limit, please enhance your calm.")
-
   def resultAlgorithm(): Route =
     path("getresultalgorithm") {
       withRequestTimeout(10 minute) {
