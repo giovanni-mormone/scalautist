@@ -10,8 +10,8 @@
    <HBox fx:id="datepickerBox">
       <DatePicker fx:id="datepickerInit"/>
       <DatePicker fx:id="datepickerFinish"/>
-      <Label fx:id="errorLabel" styleClass="error"/>
    </HBox>
+   <Label fx:id="errorLabel" styleClass="error"/>
    <CheckComboBox fx:id="terminal"/>
    <Label fx:id="errorLabelTerminal" styleClass="error"/>
    <Button fx:id="next" mnemonicParsing="false" text="Button"/>

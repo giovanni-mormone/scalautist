@@ -5,19 +5,29 @@
 }
 
 #sonRequest{
-    -fx-spacing: 60;
+    -fx-spacing: 30;
     -fx-padding: 50 0 0 0;
     -fx-alignment: bottom-center;
 }
 #back{
     -fx-background-color:#10E7DC;
 }
-#cancel{
-    -fx-background-color:#F79E02
+#back:hover{
+    -fx-background-color:#10E7DC;
+    -fx-border-color: black;
+}
+#cancel:hover{
+    -fx-background-color:#F79E02;
+    -fx-border-color: black;
 }
 #next{
     -fx-background-color: #0074E1;
 }
+#next:hover{
+    -fx-background-color: #0074E1;
+    -fx-border-color: black;
+}
+
 #titleDay{
     -fx-text-fill: #7c8a96;
     -fx-font-size: 22;
