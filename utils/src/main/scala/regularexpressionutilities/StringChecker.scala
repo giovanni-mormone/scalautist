@@ -43,6 +43,12 @@ object NumberChecker extends Checker {
   override def checkRegex: Regex = regex
 }
 
+object NumbersChecker extends Checker {
+  private val regex: Regex = "^[-]?\\d*$".r
+
+  override def checkRegex: Regex = regex
+}
+
 /**
  * @author Francesco Cassano
  *

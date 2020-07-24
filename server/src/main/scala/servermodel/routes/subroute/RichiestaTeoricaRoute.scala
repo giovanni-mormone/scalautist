@@ -3,7 +3,7 @@ package servermodel.routes.subroute
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{as, complete, entity, post, _}
 import akka.http.scaladsl.server.Route
-import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, Id, Request, Response}
+import caseclass.CaseClassHttpMessage._
 import dbfactory.operation.RichiestaTeoricaOperation
 import jsonmessages.JsonFormats._
 import servermodel.routes.exception.SuccessAndFailure.anotherSuccessAndFailure
@@ -39,8 +39,12 @@ object RichiestaTeoricaRoute {
     post {
       entity(as[Request[AssignRichiestaTeorica]]) {
         case Request(Some(theoReq)) =>
-          onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
-            case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+          onComplete(RichiestaTeoricaOperation.controlInfo(theoReq.request, theoReq.days)){
+            case Success(Some(statusCodes.SUCCES_CODE)) =>
+              onComplete(RichiestaTeoricaOperation.saveRichiestaTeorica(theoReq.request, theoReq.days)){
+                case Success(Some(statusCodes.SUCCES_CODE)) => complete(Response[Int](statusCodes.SUCCES_CODE))
+                case other => anotherSuccessAndFailure(other)
+              }
             case other => anotherSuccessAndFailure(other)
           }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)

@@ -3,13 +3,11 @@ package dbfactory.operation
 import caseclass.CaseClassDB.Terminale
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.InstanceTerminale
 import dbfactory.implicitOperation.OperationCrud
-import dbfactory.table.TerminaleTable.TerminaleTableRep
-import messagecodes.StatusCodes
+import messagecodes.StatusCodes.{ERROR_CODE2, SUCCES_CODE}
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 /**
  * @author Giovanni Mormone
@@ -34,8 +32,8 @@ trait TerminaleOperation extends OperationCrud[Terminale]{
 object TerminaleOperation extends TerminaleOperation {
   def verifyTerminal(idTerminal: Int): Future[Option[Int]] = {
     select(idTerminal).collect {
-      case Some(_) => Option(StatusCodes.SUCCES_CODE)
-      case None => Option(StatusCodes.ERROR_CODE2)
+      case Some(_) => Option(SUCCES_CODE)
+      case None => Option(ERROR_CODE2)
     }
   }
 
