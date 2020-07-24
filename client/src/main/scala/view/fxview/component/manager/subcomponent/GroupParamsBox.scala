@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Regola
-import caseclass.CaseClassHttpMessage.GruppoA
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA, SettimanaN, SettimanaS}
 import com.sun.javafx.scene.control.skin.DatePickerSkin
 import javafx.fxml.FXML
 import javafx.scene.Node
@@ -70,6 +70,15 @@ object GroupParamsBox {
         val toDelete = getSelectedRow
         groups = groups.filter(group => !findGroup(toDelete, group))
         CreateTable.fillTable[GroupSelectionTable](groupstab, groups.map(_._2))
+      })
+      run.setOnAction(_ => {
+        val gruppi = groups.map(group => GruppoA(0, group._2.date, group._1.rule))
+        parent.startAlgorithm(AlgorithmExecute(
+          params.dateI, params.dateF, params.terminals.map(_.idTerminale.head),
+          Option(gruppi),
+          params.requestN.toList.flatten.map(req => SettimanaN(req.giornoId, req.turnoId, req.quantita, req.regolaId)),
+          params.requestS.toList.flatten.map(req => SettimanaS(req.giornoId, req.turnoId, req.quantita, req.regolaId, ))
+        ))
       })
     }
 

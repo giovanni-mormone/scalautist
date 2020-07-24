@@ -159,7 +159,6 @@ object ManagerController {
     def statusAlgorithm(message:String):Unit=
       println(s"$message")
 
-    //TODO MODIFICARE I TIPI DI RITORNO
     override def runAlgorithm(algorithmExecute: AlgorithmExecute): Future[Response[Int]] =
       model.runAlgorithm(algorithmExecute,statusAlgorithm)
 

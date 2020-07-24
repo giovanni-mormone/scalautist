@@ -219,5 +219,8 @@ object ManagerView {
       modalResource.close()
       managerHome.updateGroup(group)
     }
+
+    override def startAlgorithm(info: AlgorithmExecute): Unit =
+      myController.runAlgorithm(info)
   }
 }
