@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
+import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import servermodel.routes.subroute.RichiestaTeoricaRoute._
-
+import scala.concurrent.duration._
 /**
 * @author Francesco Cassano
 * This object manage routes that act on the RichiestaTeorica entity and its related entities
@@ -29,7 +30,12 @@ object MasterRouteRichiestaTeorica extends Directives {
   )
   def saveRequest(): Route =
     path("definedailyrequest") {
-      saveRichiestaTeorica()
+      withRequestTimeout(10 minute) {
+        withRequestTimeoutResponse(request => timeoutResponse) {
+          saveRichiestaTeorica()
+        }
+
+      }
     }
 
   val routeRichiestaTeorica: Route =

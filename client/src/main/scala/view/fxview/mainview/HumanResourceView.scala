@@ -296,7 +296,7 @@ object HumanResourceView {
       Platform.runLater(()=> this.showMessage(message))
 
     override def result(message: String): Unit =
-      Platform.runLater(() => modalResource.showMessage(message))
+      Platform.runLater(() => this.showMessageFromKey(message))
 
     override def dialog(message: String): Unit = {
       Platform.runLater(() => {

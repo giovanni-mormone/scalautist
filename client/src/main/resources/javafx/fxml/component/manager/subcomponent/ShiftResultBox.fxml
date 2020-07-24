@@ -4,11 +4,9 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox fx:id="shiftResult" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<VBox fx:id="shiftResult"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label fx:id="firstShift"/>
-      <Label fx:id="secondShift"/>
-      <Label fx:id="extraOrdinary"/>
-   </children>
+   <Label fx:id="firstShift"/>
+   <Label fx:id="secondShift"/>
+   <Label fx:id="extraOrdinary"/>
 </VBox>

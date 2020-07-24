@@ -1,14 +1,11 @@
 package controller
 
 import caseclass.CaseClassDB.Persona
-import caseclass.CaseClassHttpMessage.{Request, Response}
-import com.typesafe.config.ConfigFactory
+import caseclass.CaseClassHttpMessage.Response
 import model.entity.PersonaModel
-import regularexpressionutilities.PasswordHelper
 import view.fxview.mainview.LoginView
 
-import scala.sys.Prop
-import scala.util.{Failure, Properties, Success}
+import scala.util.{Failure, Success}
 
 /**
  * @author Giovanni Mormone.
@@ -45,8 +42,8 @@ object LoginController {
       case (s1, s2) if s1.trim.length == 0 || s2.trim.length == 0 => myView.badLogin()
       case _ =>
         myModel.login(username, password).onComplete {
-          case Success(Response(int, persona)) => checkLoginResult(persona)
-          case Failure(exception) => println(exception)
+          case Success(Response(_, persona)) => checkLoginResult(persona)
+          case Failure(_) => myView.result("GeneralError-ConnectionFail")
         }
     }
 

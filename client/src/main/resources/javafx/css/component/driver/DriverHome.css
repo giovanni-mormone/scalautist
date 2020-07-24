@@ -1,7 +1,10 @@
 #driverHome{
     -fx-alignment: center;
-    -fx-min-height: 700;
     -fx-fill-width: true;
-    -fx-min-width: 800;
-    -fx-padding: 10;
+    -fx-spacing: 20;
+    -fx-border-insets: 30;
+}
+#menu{
+    -fx-background-color: #1B9CE5;
+    -fx-min-height:30;
 }

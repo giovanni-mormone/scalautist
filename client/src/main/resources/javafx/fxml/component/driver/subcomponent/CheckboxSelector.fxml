@@ -6,9 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox alignment="CENTER" prefHeight="22.0" prefWidth="443.0" spacing="10.0" stylesheets="@../../../../css/component/driver/subcomponent/CheckboxSelector.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <Label fx:id="field"/>
-        <CheckBox fx:id="checkbox" mnemonicParsing="false" />
-    </children>
+<HBox fx:id="baseHBox" stylesheets="@../../../../css/component/driver/subcomponent/CheckboxSelector.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="field"/>
+    <CheckBox fx:id="checkbox" mnemonicParsing="false"/>
 </HBox>
