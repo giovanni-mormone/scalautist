@@ -64,6 +64,7 @@ object RichiestaForDayBox{
       next.setText(resources.getResource("next-button"))
       next.setOnAction(_=>nextAction())
       back.setOnAction(_=>backAction())
+      cancel.setOnAction(_=>cancelAction())
     }
 
     def addChildren(listShift: List[Turno]): Unit ={
@@ -110,6 +111,8 @@ object RichiestaForDayBox{
     def backAction(): Unit =
       parent.backAction(idDay->son.map(son=>son.getQuantity))
 
+    def cancelAction(): Unit =
+      parent.cancelAction()
 
     private def checkTextField(): Unit ={
       son.map(son => son->son.verifyData) match {

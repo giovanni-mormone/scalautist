@@ -11,12 +11,28 @@
 }
 #back{
     -fx-background-color:#10E7DC;
+
+}
+#back:hover{
+    -fx-background-color:#10E7DC;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
 }
 #cancel{
-    -fx-background-color:#F79E02
+    -fx-background-color:#F79E02;
+}
+#cancel:hover{
+    -fx-background-color:#F79E02;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
 }
 #next{
     -fx-background-color: #0074E1;
+}
+#next:hover{
+    -fx-background-color: #0074E1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
 }
 #titleDay{
     -fx-text-fill: #7c8a96;

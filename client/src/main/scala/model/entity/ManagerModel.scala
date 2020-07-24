@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, Parametro, RichiestaTeorica}
+import caseclass.CaseClassDB.{Giorno, Parametro, Regola, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
@@ -24,6 +24,17 @@ import scala.concurrent.Future
  * Interface for System Manager's operation on data
  */
 trait ManagerModel {
+  /**
+   * Method that return all rule that contains a group for the algorithm
+   * @return Future of Option of List of Regola that contains all Rule for group for the algorithm
+   */
+  def groupRule():Future[Response[Regola]]
+  /**
+   * Method that return all rule that contains a normal week and special week for the algorithm
+   * @return Future of Option of List of Regola that contains all Rule for a normal
+   *         week and special week for the algorithm
+   */
+  def weekRule():Future[Response[Regola]]
   def consumeNotification(tag: Long,userId: Option[Int]): Unit
 
   def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit):Unit
@@ -216,5 +227,15 @@ object ManagerModel {
       val receiver = ConfigReceiverPersistence("manager"+userId,"assumi")
       receiver.consumeNotification(tag)
     }
-  }
+
+    override def groupRule(): Future[Response[Regola]] = {
+      val request = Post(getURI("regolagroup"))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Regola]])
+    }
+
+    override def weekRule(): Future[Response[Regola]] = {
+      val request = Post(getURI("regolaweek"))
+      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[Regola]])
+    }
+}
 }
