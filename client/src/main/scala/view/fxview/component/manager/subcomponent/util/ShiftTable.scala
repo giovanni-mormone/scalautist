@@ -8,13 +8,16 @@ import javafx.scene.control.ComboBox
 import view.fxview.component.HumanResources.subcomponent.util.TableArgument
 
 class ShiftTable(shiftVal: String, mondayVal: String, tuesdayVal: String, wednesdayVal: String,
-                 thursdayVal: String, fridayVal: String, saturdayVal: String, combos: List[String])
+                 thursdayVal: String, fridayVal: String, saturdayVal: String, combos: List[String],
+                 selected: Option[String] = None)
   extends TableArgument {
 
-  val elements = {
+  val element = {
     val el = FXCollections.observableArrayList[String]()
     combos.foreach(rule => el.add(rule))
-    el
+    val combo =  new ComboBox[String](el)
+    selected.fold()(rule => combo.getSelectionModel.select(rule))
+    combo
   }
   var shift = new SimpleStringProperty(shiftVal)
   var monday = new SimpleStringProperty(mondayVal)
@@ -23,7 +26,7 @@ class ShiftTable(shiftVal: String, mondayVal: String, tuesdayVal: String, wednes
   var thursday = new SimpleStringProperty(thursdayVal)
   var friday = new SimpleStringProperty(fridayVal)
   var saturday = new SimpleStringProperty(saturdayVal)
-  var comboBox = new ComboBox[String](elements)
+  var comboBox = element
 
   def getShift: String = shift.get
   def getMonday: String = monday.get

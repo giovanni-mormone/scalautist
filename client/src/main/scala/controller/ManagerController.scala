@@ -187,14 +187,14 @@ object ManagerController {
           Some(List(GiornoInSettimana(1, 1, 1, 0, Some(2), Some(32)), GiornoInSettimana(2, 2, 1, 2, Some(2), Some(32)),
             GiornoInSettimana(3, 3, 1, 4, Some(2), Some(32)), GiornoInSettimana(4, 4, 1, 2, Some(2), Some(32)),
             GiornoInSettimana(5, 5, 1, 6, Some(2), Some(32)), GiornoInSettimana(3, 5, 1, 2, Some(2), Some(32)),
-            GiornoInSettimana(3, 2, 1, 0, Some(2), Some(32))
+            GiornoInSettimana(3, 2, 1, 0, Some(2), Some(32)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
           ))),
         InfoAlgorithm(
           Parametro(false, "maggiorata", Some(3)),
           List(ZonaTerminale(2, 8, Some(1), Some(3)), ZonaTerminale(1, 5, Some(3), Some(4)), ZonaTerminale(2, 3, Some(3), Some(5))),
           Some(List(GiornoInSettimana(1, 6, 2, 0, Some(1), Some(23)), GiornoInSettimana(2, 5, 2, 1, Some(1), Some(23)),
             GiornoInSettimana(3, 4, 2, 2, Some(1), Some(23)), GiornoInSettimana(4, 3, 2, 3, Some(1), Some(23)),
-            GiornoInSettimana(5, 2, 2, 4, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, 5, Some(1), Some(23))
+            GiornoInSettimana(5, 2, 2, 4, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, 5, Some(1), Some(23)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
           ))))
       val rules: List[Regola] = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
       myView.modalOldParamDraw(params, terminals, rules)

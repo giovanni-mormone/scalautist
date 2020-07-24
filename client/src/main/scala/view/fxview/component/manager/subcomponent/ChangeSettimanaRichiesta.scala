@@ -111,7 +111,8 @@ object ChangeSettimanaRichiesta{
       val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
       (1 to 6).map( shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
-        new ShiftTable(SHIFT_STRING_MAP.getOrElse(shift, NONE), info.head, info(1), info(2), info(3), info(4), info(5), rules.map(_.nomeRegola))
+        new ShiftTable(SHIFT_STRING_MAP.getOrElse(shift, NONE), info.head, info(1), info(2), info(3), info(4), info(5),
+          rules.map(_.nomeRegola), infoDays.find(day => day.shift == shift).map(_.rule))
       }).toList
     }
 
