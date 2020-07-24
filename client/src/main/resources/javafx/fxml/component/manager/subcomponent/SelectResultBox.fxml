@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<VBox fx:id="dateAndTerminal" alignment="TOP_CENTER"  xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <Label fx:id="title" alignment="TOP_LEFT" text="Label" />
-        <HBox fx:id="datepickerBox" alignment="TOP_CENTER">
-            <children>
-                <DatePicker fx:id="datepickerInit" />
-                <DatePicker fx:id="datepickerFinish" />
-                <ComboBox fx:id="terminal" prefWidth="150.0" />
-                <Button fx:id="carica" prefHeight="25.0" prefWidth="122.0" />
-            </children>
-        </HBox>
-          <Label fx:id="errorLabel" prefHeight="17.0" prefWidth="0.0" />
-    </children>
-    <padding>
-        <Insets top="10.0" />
-    </padding>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="dateAndTerminal" stylesheets="@../../../../css/component/manager/subcomponent/SelectResultBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="title"/>
+    <HBox fx:id="datepickerBox">
+        <DatePicker fx:id="datepickerInit"/>
+        <DatePicker fx:id="datepickerFinish"/>
+        <ComboBox fx:id="terminal"/>
+        <Button fx:id="carica" />
+    </HBox>
+    <Label fx:id="errorLabel" styleClass="error"/>
 </VBox>

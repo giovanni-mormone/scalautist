@@ -12,10 +12,7 @@
 <VBox fx:id="vbox" stylesheets="@../../../../css/component/humanresources/subcomponent/SearchableTableBox.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <ComboBox fx:id="searchBox" />
-   <TableView fx:id="terminalTable">
-       <columns>
-       </columns>
-   </TableView>
+   <TableView fx:id="terminalTable"/>
    <HBox fx:id="hbox">
       <ComboBox fx:id="addBox" />
       <TextField fx:id="newName"/>

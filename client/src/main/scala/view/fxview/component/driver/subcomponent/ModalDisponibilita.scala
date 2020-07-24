@@ -27,7 +27,7 @@ object ModalDisponibilita {
       with ModalDisponibilita{
 
     @FXML
-    var baseBox: VBox = _
+    var internalVBox: VBox = _
     @FXML
     var confirm: Button = _
     @FXML
@@ -48,7 +48,7 @@ object ModalDisponibilita {
         val selector = CheckBoxSelector(day)
         selector.setParent(this)
         selectors = selector::selectors
-        pane.getChildren.add(1,selector.pane)
+        internalVBox.getChildren.add(selector.pane)
       })
     }
 

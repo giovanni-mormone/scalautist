@@ -10,10 +10,7 @@
 <VBox fx:id="vbox" stylesheets="@../../../../css/component/humanresources/subcomponent/SearchableTableBox.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <TextField fx:id="searchBox"/>
-   <TableView fx:id="zonaTable">
-      <columns>
-      </columns>
-   </TableView>
+   <TableView fx:id="zonaTable"/>
    <HBox fx:id="hbox">
       <TextField fx:id="newName"/>
       <Button fx:id="zonaButton" mnemonicParsing="false" text="Button"/>

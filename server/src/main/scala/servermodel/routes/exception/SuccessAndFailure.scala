@@ -1,14 +1,18 @@
 package servermodel.routes.exception
 
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
 import caseclass.CaseClassHttpMessage.Response
 import messagecodes.{StatusCodes => statusCodes}
 import jsonmessages.JsonFormats._
+
 import scala.util.{Failure, Success, Try}
 
 object SuccessAndFailure {
+  val timeoutResponse: HttpResponse = HttpResponse(
+    StatusCodes.EnhanceYourCalm,
+    entity = "Unable to serve response within time limit, please enhance your calm.")
   def anotherSuccessAndFailure[A](result:Try[A]): StandardRoute =result match {
     case Success(None) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success((None,_)) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
