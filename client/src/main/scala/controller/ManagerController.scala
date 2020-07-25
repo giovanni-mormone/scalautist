@@ -7,6 +7,7 @@ import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Z
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
 import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
+import javafx.application.Platform
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
@@ -276,8 +277,13 @@ object ManagerController {
 
     override def saveParam(param: InfoAlgorithm): Unit =
       model.saveParameters(param).onComplete {
-        case Success(value) => myView.showMessageFromKey("GeneralError-Success")
-        case _ => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.SUCCES_CODE, _)) => Platform.runLater(() => myView.showMessageFromKey("GeneralError-Success"))
+        case Success(Response(StatusCodes.ERROR_CODE1, _)) => Platform.runLater(() => myView.showMessage("Exist error while insert Parametro"))
+        case Success(Response(StatusCodes.ERROR_CODE2, _)) => Platform.runLater(() => myView.showMessage("Exist error while insert GiornoInSettimana"))
+        case Success(Response(StatusCodes.ERROR_CODE3, _)) => Platform.runLater(() => myView.showMessage("ZonaTerminal is empty or name parameter is empty"))
+        case Success(Response(StatusCodes.ERROR_CODE4, _)) => Platform.runLater(() => myView.showMessage("Regola not exist"))
+        case Success(Response(StatusCodes.ERROR_CODE5, _)) => Platform.runLater(() => myView.showMessage("GiornoInSettimana contains quantity less that zero"))
+        case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
   }
 }

@@ -3,6 +3,7 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB
 import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAlgorithm}
 import javafx.fxml.FXML
@@ -91,7 +92,6 @@ object ShowParamAlgorithmBox {
 
       reset.setOnAction(_ => parent.resetParams())
       run.setOnAction(_ => {
-        parent.run(info)
         name.fold()(name => {
           parent.saveParam(InfoAlgorithm(Parametro(info.regolaTreSabato, name),
                         info.idTerminal.collect{
@@ -101,7 +101,16 @@ object ShowParamAlgorithmBox {
                         },
             info.settimanaNormale.map(nWeek => nWeek.map(day => GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
           ))
+          println(InfoAlgorithm(Parametro(info.regolaTreSabato, name),
+            info.idTerminal.collect{
+              case id if terminal.exists(_.idTerminale.contains(id)) =>
+                terminal.find(_.idTerminale.contains(id))
+                  .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
+            },
+            info.settimanaNormale.map(nWeek => nWeek.map(day => GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
+          ))
         })
+        parent.run(info)
         parent.resetParams()
       })
     }
