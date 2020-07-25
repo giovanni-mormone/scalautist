@@ -116,7 +116,8 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param name
    */
   def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
-   * Initialize zona Manager view before show
+
+  /** Initialize zona Manager view before show
    *
    * @param zones
    * List of [[caseclass.CaseClassDB.Zona]]

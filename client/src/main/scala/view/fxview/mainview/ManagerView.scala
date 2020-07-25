@@ -289,10 +289,13 @@ object ManagerView {
       Platform.runLater(() => managerHome.drawShowParams(info, name, terminals, rules))
 
     override def showInfoParam(data: DataForParamasModel): Unit = {
-      Platform.runLater(() =>{
+      Platform.runLater(() => {
         modalResource.close()
         modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
           ParamsModal(data))
+      })
+    }
+
     override def drawZonaView(zones: List[Zona]): Unit =
       Platform.runLater(() => managerHome.drawZona(zones))
 
@@ -301,7 +304,6 @@ object ManagerView {
 
     override def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
       Platform.runLater(() => {
-//        homeView()
         modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], ManagerHomeModalParent](myStage, this, ModalTerminal(zoneList, terminal))
         modalResource.show()
       })
