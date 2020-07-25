@@ -125,7 +125,7 @@ object ChangeSettimanaRichiesta{
     }
 
     private def control(): Boolean = {
-      val normalRows = normalWeek.getElements()
+      val normalRows = normalWeek.getElements().toList.filter(yesDataInRow)
       val specialRows = specialWeeks.flatMap(week => week.getElements().toList.filter(yesDataInRow))
       normalRows.size == normalRows.count(_.getSelected.isDefined) &&
       specialRows.size == specialRows.count(_.getSelected.isDefined)
@@ -184,19 +184,14 @@ object ChangeSettimanaRichiesta{
       days
     }
 
-    private def getReqFromTable(table: TableParamSettimana, special: Boolean = false): List[GiornoInSettimana] = {
+    private def getReqFromTable(table: TableParamSettimana): List[GiornoInSettimana] = {
       val singleDays: List[DailyReq] = getDailyReqFromTable(table).filter(_.quantity > 0)
-      composeRequest(singleDays, special)
+      composeRequest(singleDays)
     }
 
-    private def composeRequest(singleDays: List[DailyReq], special: Boolean): List[GiornoInSettimana] = {
-      val condition = (week: Int) => {
-        val result = getSelectedWeeks.contains(week)
-        if(!special) !result else result
-      }
-      calcolateWeeks().filter(week => condition(week))
-        .flatMap(week => singleDays.map(req => GiornoInSettimana(req.day, req.shift,
-          rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity, idSettimana = Some(week))))
+    private def composeRequest(singleDays: List[DailyReq]): List[GiornoInSettimana] = {
+      singleDays.map(req => GiornoInSettimana(req.day, req.shift,
+          rules.find(_.nomeRegola.equals(req.rule)).fold(ERROR_ID)(_.idRegola.head), req.quantity))
     }
 
     private def getDailyReqFromTable(table: TableParamSettimana): List[DailyReq] = {

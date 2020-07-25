@@ -66,11 +66,45 @@ object ParamsModal {
       initTable()
       initCheckBox()
       initTextField()
+      data.info.fold()(info => {
+        printParamsInfo(info)
+      })
+    }
+
+    private def printParamsInfo(info: InfoAlgorithm): Unit = {
+      initDays()
+      val INIT_DAY: String = resources.getResource(key = "daystxtA") + "\n"
+      val INIT_TERMINAL: String = resources.getResource(key = "terminaltxtA") + "\n"
+      val NONE: String = "NONE"
+
+      terminals.getChildren.clear()
+      terminalColumn1.setText(resources.getResource("terminal-label-id"))
+      terminalColumn2.setText(resources.getResource("terminal-label-name"))
+      terminals.getChildren.addAll(terminalsHeader)
+      /*info.zonaTerminale.collect{
+        case terminal if data.terminals.exists(x => x.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId))) =>
+          terminal.idTerminale.foreach( x => terminals.getChildren.add(TerminalModalLabels(x.toString,terminal.nomeTerminale).setParent(parent).pane))
+
+
+        days.getChildren.clear()
+        dayColumn1.setText(resources.getResource("day-label"))
+        dayColumn2.setText(resources.getResource("shift-label"))
+        dayColumn3.setText(resources.getResource("variation-label"))
+        days.getChildren.addAll(daysHeader)
+        chosen.toList.flatMap(_.giornoInSettimana).flatten.foreach(info =>
+          days.getChildren.add(DayInWeekModalLabels(daysStringMap.getOrElse(info.giornoId,""),
+            shiftStringMap.getOrElse(info.turnoId,""),
+            info.quantita.toString).setParent(parent).pane))
+
+        sabato.setSelected(chosen.head.parametro.treSabato)
+        rules.find(_.idRegola.contains(chosen.head.giornoInSettimana.head.head.regolaId))
+          .fold(rule.setText(NONE))(rulef => rule.setText(rulef.nomeRegola))
+      }*/
     }
 
     private def initButton(): Unit = {
       open.setText(resources.getResource(key = "buttontxt"))
-      open.setDisable(true)
+      data.info.fold(open.setDisable(true))(_ => open.setDisable(false))
       open.setOnAction(_ => selectedItem(selectedItemId()).fold()(info => parent.loadParam(infoAlgorithm)))
     }
 
@@ -79,7 +113,6 @@ object ParamsModal {
       CreateTable.createColumns[ParamsTable](params, fieldsList)
       CreateTable.fillTable[ParamsTable](params, data.oldsParam)
       params.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {
-        enableButton()
         showParamsInfo(selectedItemId())
       })
       data.info.fold()(_.parametro.idParametri.fold()(id => data.oldsParam.find(_.idParametri.contains(id))
@@ -100,9 +133,6 @@ object ParamsModal {
         2 -> resources.getResource("tuesday"), 3 -> resources.getResource("wednesday"),
         4 -> resources.getResource("thursday"), 5 -> resources.getResource("friday"),
         6 -> resources.getResource("saturday"), 7 -> resources.getResource("sunday"))
-
-    private def enableButton(): Unit =
-      open.setDisable(params.getSelectionModel.getSelectedItem == null)
 
     private def showInTextArea(textArea: TextArea, elements: List[String], init: String = ""): Unit = {
       val text: String = init + elements.reduce( (data, el) => data + "\n" + el)
