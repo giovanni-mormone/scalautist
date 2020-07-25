@@ -111,13 +111,13 @@ trait ManagerView extends DialogView {
    *
    * @param params
    */
-  def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola])
+  def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]):Unit
 
   /**
    *
    * @param params
    */
-  def drawGroupParam(params: ParamsForAlgoritm,  rule: List[Regola])
+  def drawGroupParam(params: ParamsForAlgoritm,  rule: List[Regola]):Unit
 
   def drawResultTerminal(terminal: List[Terminale]): Unit
 

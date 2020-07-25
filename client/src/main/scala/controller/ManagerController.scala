@@ -287,9 +287,10 @@ object ManagerController {
     override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit =
       idTerminal.foreach(idTerminal=>
         model.getResultAlgorithm(idTerminal,date,date1).onComplete {
-          case Failure(exception) => println(exception)
           case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
           case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
+          case _ => myView.showMessageFromKey("general-error")
+
         }
       )
 

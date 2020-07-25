@@ -8,6 +8,7 @@ import javafx.scene.layout.StackPane
 import javafx.stage.{Modality, Stage}
 import view.DialogView
 import view.fxview.loader.FXLoader
+import view.fxview.util.ResourceBundleUtil._
 
 
 /**

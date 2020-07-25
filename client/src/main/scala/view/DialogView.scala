@@ -1,7 +1,7 @@
 package view
 
 /**
- * @author Giovanni Mormone.
+ * @author Giovanni Mormone, Fabian Aspee Encina
  *
  * Extension of [[view.BaseView]]. Adds the functionality to show a dialog with a message.
  */
@@ -12,7 +12,16 @@ trait DialogView extends BaseView{
    */
   def showMessage(message:String): Unit
 
-  def showMessageFromKey(message:String):Unit
+  /**
+   * Shows a message loaded from a resource bundle to the user.
+   * @param key
+   */
+  def showMessageFromKey(key:String):Unit
 
+  /**
+   *
+   * @param message
+   * @return
+   */
   def alertMessage(message:String):Boolean
 }

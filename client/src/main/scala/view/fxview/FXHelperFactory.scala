@@ -35,6 +35,7 @@ object FXHelperFactory {
    *         The created modal.
    */
   def modalWithMessage(parent:Stage, message:String): BaseView = new FXModal(parent,message)
+
   def modalAlert(myStage: Stage, message: String):Boolean = {
     import javafx.scene.control.Alert
     import javafx.scene.control.Alert.AlertType
@@ -44,6 +45,7 @@ object FXHelperFactory {
     val result = alert.showAndWait
     if (result.get eq ButtonType.OK) true else false
   }
+
   /**
    * A simple javafx box to containing [[javafx.scene.control.ProgressIndicator]].
    */
