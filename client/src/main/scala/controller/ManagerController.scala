@@ -20,6 +20,12 @@ import scala.util.{Failure, Success}
 trait ManagerController extends AbstractController[ManagerView]{
   def consumeNotification(tag: Long): Unit
 
+  /**
+   * method that return result of the algorithm for a terminal and time frame
+   * @param value id of terminal for we want select result
+   * @param date init date for select result
+   * @param date1 end date for select result
+   */
   def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit
 
   def dataToResultPanel(): Unit
@@ -170,9 +176,9 @@ object ManagerController {
 
       model.allAbsences().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) => payload.foreach(result => myView.drawAbsence(result))
-        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.showMessageFromKey("no-absences-day")
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case _ => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.result("no-absences-day")
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.result("bad-request-error")
+        case _ => myView.result("general-error")
       }
     }
 

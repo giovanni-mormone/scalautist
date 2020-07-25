@@ -205,11 +205,12 @@ object ManagerHome{
       fillHolesView.drawSubstituteList(replacement)
     }
 
-    override def startLoading(): Unit =
-      baseManager.setCenter(FXHelperFactory.loadingBox)
-
     override def loadingReplacements(): Unit =
       fillHolesView.startLoading()
+
+    override def startLoading(): Unit = {
+      baseManager.setCenter(FXHelperFactory.loadingBox)
+    }
 
     override def stopLoadingReplacements(): Unit =
       fillHolesView.endLoading()
