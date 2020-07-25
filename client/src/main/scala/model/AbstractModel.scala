@@ -11,34 +11,18 @@ import caseclass.CaseClassHttpMessage.{Request, Response}
 import jsonmessages.JsonFormats._
 import utils.Execution
 
-import scala.annotation.nowarn
-import scala.concurrent.{ExecutionContextExecutor, Future, Promise}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 abstract class AbstractModel extends Model{
-  private val dispatcher: ModelDispatcher = ModelDispatcher()
+
+  private val dispatcher: ModelDispatcher =ModelDispatcher()
   protected implicit val system: ActorSystem = dispatcher.system
   override def getURI(request: String): String = dispatcher.address + "/" + request
   protected def transform[A](value:A): Request[A] =Request(Some(value))
   implicit protected val execution: ExecutionContextExecutor = Execution.executionContext
 
 
-  //=================================ATTENZIONEE==========================================================||
-  override def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit =function match {
-    case Success(Some(List())) => promise.success(None)
-    case Success(Some(value)) => promise.success(Some(value))
-    case Success(_) => promise.success(None)
-    case t => failure(t.failed,promise)
-  }
-
-  @nowarn
-  override def failure[A](function:Try[Throwable], promise:Promise[Option[A]]): Unit = function match {
-    case Failure(_) => promise.success(None)
-  }
-  //=================================ATTENZIONEE==========================================================||
-
-
-  def unMarshall(v1: Option[HttpResponse]): Future[Response[Int]] = Unmarshal(v1).to[Response[Int]]
+  protected def unMarshall(v1: Option[HttpResponse]): Future[Response[Int]] = Unmarshal(v1).to[Response[Int]]
 
 
   private val found: PartialFunction[HttpResponse, Option[HttpResponse]] = new PartialFunction[HttpResponse, Option[HttpResponse]] {
@@ -47,8 +31,7 @@ abstract class AbstractModel extends Model{
     override def apply(response: HttpResponse): Option[HttpResponse] = Some(response)
   }
 
-
-  protected def callHtpp(request: HttpRequest):Future[Option[HttpResponse]] =
+  protected def callHttp(request: HttpRequest):Future[Option[HttpResponse]] =
     doHttp(request).collect(found)
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)
@@ -64,6 +47,6 @@ abstract class AbstractModel extends Model{
   }
 
   protected def callRequest(request:HttpRequest):Future[Response[Int]] =
-    callHtpp(request).flatMap(unMarshall)
+    callHttp(request).flatMap(unMarshall)
   protected def getYear:Int=getCalendar.get(Calendar.YEAR)
 }

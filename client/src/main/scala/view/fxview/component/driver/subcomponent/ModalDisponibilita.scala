@@ -32,7 +32,7 @@ object ModalDisponibilita {
     var confirm: Button = _
     @FXML
     var title: Label = _
-
+    private val FIRST_ELEMENT = 1
     private var selected: List[String] = List.empty
     private var selectors: List[CheckBoxSelector] = List.empty
     private val DAYS_TO_WORK: Int = 2
@@ -72,7 +72,9 @@ object ModalDisponibilita {
 
     private def sendToParent(): Unit = {
       if (selected.size == DAYS_TO_WORK)
-        parent.selectedDays(selected.head,selected.tail.head)
+        selected.lift(FIRST_ELEMENT).zip(selected.lift(selected.length))
+          .foreach(values=>parent.selectedDays(values._1,values._2))
+
     }
   }
 }

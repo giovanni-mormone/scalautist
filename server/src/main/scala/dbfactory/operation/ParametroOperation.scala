@@ -76,7 +76,7 @@ object ParametroOperation extends ParametroOperation {
   }
   private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
     (idParametri,infoAlgorithm.giornoInSettimana) match {
-      case (Some(id),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
+      case (Some(_),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
         case Some(StatusCodes.SUCCES_CODE) =>selectedIdGiorno(giornoInSettimana,idParametri)
           .flatMap(giorno=> GiornoInSettimanaOperation.insertAll(giorno).flatMap {
           case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)

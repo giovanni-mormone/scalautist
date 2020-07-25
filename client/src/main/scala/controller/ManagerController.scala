@@ -98,10 +98,10 @@ trait ManagerController extends AbstractController[ManagerView]{
   def dataToAbsencePanel(): Unit
 
   /**
-   *
-   * @param idRisultato
-   * @param idTerminale
-   * @param idTurno
+   * method that call model and await result with all driver that can be replacement
+   * @param idRisultato id for search driver in database table risutlatoSets
+   * @param idTerminale represent a terminal where driver is absence
+   * @param idTurno represent shift that we want replace
    */
   def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit
 
@@ -284,13 +284,15 @@ object ManagerController {
         case _ => myView.showMessageFromKey("general-error")
       }
 
-    override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit = {
-      model.getResultAlgorithm(idTerminal.head,date,date1).onComplete {
-        case Failure(exception) => println(exception)
-        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
-        case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
-      }
-    }
+    override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit =
+      idTerminal.foreach(idTerminal=>
+        model.getResultAlgorithm(idTerminal,date,date1).onComplete {
+          case Failure(exception) => println(exception)
+          case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
+          case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
+        }
+      )
+
 
     override def terminalModalData(terminalId: Int): Unit = {
       case class terminalMData(zoneL: Response[List[Zona]], terminalS: Response[Terminale])
@@ -405,52 +407,3 @@ object t extends App{
   }
   while (true){}
 }
-
-
-object t2 extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,1,31))
-  val terminals=List(15)
-  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val thirdDateGroup: Date =Date.valueOf(LocalDate.of(2020,7,24))
-  val secondDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,15))
-  val firstDateGroup2: Date =Date.valueOf(LocalDate.of(2020,8,10))
-  val secondDateGroup3: Date =Date.valueOf(LocalDate.of(2020,9,16))
-  val firstDateGroup3: Date =Date.valueOf(LocalDate.of(2020,7,10))
-  val thirdDateGroup2: Date =Date.valueOf(LocalDate.of(2020,7,15))
-  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup,thirdDateGroup),1),GruppoA(2,List(firstDateGroup2,secondDateGroup2,secondDateGroup3),2))
-  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
-  val specialWeek = List(SettimanaS(3,2,15,3,Date.valueOf(LocalDate.of(2020,7,8))),SettimanaS(3,3,15,3,Date.valueOf(LocalDate.of(2020,7,8))))
-  val threeSaturday=false
-  val algorithmExecute: AlgorithmExecute =
-    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,None,None,None,false)
-
-  val checkData: CheckResultRequest =
-    CheckResultRequest(terminals, timeFrameInit,timeFrameFinish)
-
-
-  ManagerController().verifyOldResult(checkData).onComplete{
-    case Failure(exception) => println(exception)
-    case Success(value) =>
-      println("FINE???" + value)
-  }
-  ManagerController().runAlgorithm(algorithmExecute).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>
-      println("FINE???" + value)
-  }
-  /*ManagerController().runAlgorithm(algorithmExecute).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>
-      println("FINE2???" + value)
-  }
-  ManagerController().runAlgorithm(algorithmExecute).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>
-      println("FINE3???" + value)
-  }*/
-  while (true){}
-}
-
