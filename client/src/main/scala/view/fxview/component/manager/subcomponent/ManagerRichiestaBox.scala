@@ -95,7 +95,8 @@ object ManagerRichiestaBox{
       this.idTerminal=idTerminal
       this.date=date
       this.date1=date1
-      parent.selectShift(idTerminal.head)
+      idTerminal.headOption.foreach(id=>parent.selectShift(id))
+
     }
 
     override def drawShiftRequest(listShift: List[Turno],position:Int=0): Unit = {
