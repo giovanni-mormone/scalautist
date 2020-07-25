@@ -1,4 +1,4 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.manager.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -7,15 +7,15 @@ import caseclass.CaseClassDB.{Terminale, Zona}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TableView, TextField}
 import regularexpressionutilities.NameChecker
-import view.fxview.component.HumanResources.subcomponent.parent.TerminalParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TerminalTable, TextFieldControl}
+import view.fxview.component.manager.subcomponent.parent.TerminalParent
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Francesco Cassano
  *
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.subcomponent.parent.TerminalParent]]
+ * of [[TerminalParent]]
  */
 trait TerminalBox extends Component[TerminalParent] {
 
@@ -24,7 +24,7 @@ trait TerminalBox extends Component[TerminalParent] {
 /**
  * @author Francesco Cassano
  *
- *  Companion object of [[view.fxview.component.HumanResources.subcomponent.TerminalBox]]
+ *  Companion object of [[TerminalBox]]
  *
  */
 object TerminalBox {
@@ -32,7 +32,7 @@ object TerminalBox {
   def apply(zoneList: List[Zona], terminalList: List[Terminale]): TerminalBox = new TerminalBoxFX(zoneList, terminalList)
 
   /**
-   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.TerminalBox]]
+   * javaFX private implementation of [[TerminalBox]]
    *
    * @param zoneList
    *                 List of reference [[caseclass.CaseClassDB.Zona]]  of the terminals
@@ -40,7 +40,7 @@ object TerminalBox {
    *                     List of [[caseclass.CaseClassDB.Terminale]] to manage
    */
   private class TerminalBoxFX(zoneList: List[Zona], terminalList: List[Terminale])
-    extends AbstractComponent[TerminalParent]("humanresources/subcomponent/TerminalBox") with TerminalBox {
+    extends AbstractComponent[TerminalParent]("manager/subcomponent/TerminalBox") with TerminalBox {
 
     @FXML
     var terminalTable: TableView[TerminalTable] = _
@@ -90,7 +90,7 @@ object TerminalBox {
 
     private def initializeTable(): Unit = {
       val fieldsList: List[String] = List("id", "name")
-      CreateTable.createColumns[TerminalTable](terminalTable, fieldsList)
+      CreateTable.createColumns[TerminalTable](terminalTable, fieldsList,250)
       CreateTable.fillTable[TerminalTable](terminalTable, terminalList)
       CreateTable.clickListener[TerminalTable](terminalTable,
         terminal  => parent.openTerminalModal(terminal.id.get().toInt)
@@ -98,10 +98,10 @@ object TerminalBox {
     }
 
     private def initilizePrompt(resources: ResourceBundle): Unit = {
-      terminalButton.setText(resources.getString("add"))
-      newName.setPromptText(resources.getString("nametxt"))
-      searchBox.setPromptText(resources.getString("chooseZone"))
-      addBox.setPromptText(resources.getString("chooseZone"))
+      terminalButton.setText(resources.getResource("add"))
+      newName.setPromptText(resources.getResource("nametxt"))
+      searchBox.setPromptText(resources.getResource("chooseZone"))
+      addBox.setPromptText(resources.getResource("chooseZone"))
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////   Get

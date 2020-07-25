@@ -9,6 +9,7 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Gru
 import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
+import controller.HumanResourceController.model
 import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.mainview.ManagerView
@@ -25,6 +26,53 @@ trait ManagerController extends AbstractController[ManagerView]{
 
   def runAlgorithm(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
 
+  /**
+   * save a new zone into db
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]] to save
+   */
+  def saveZona(zone: Zona): Unit
+
+  /**
+   * update selected zone
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]] to update
+   */
+  def updateZona(zone: Zona): Unit
+
+  /**
+   * delete selected zone
+   *
+   * @param zone
+   *             instance of [[caseclass.CaseClassDB.Zona]] to delete
+   */
+  def deleteZona(zone: Zona): Unit
+
+  /**
+   * insert terminal into db
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to save
+   */
+  def saveTerminal(terminal: Terminale): Unit
+
+  /**
+   * update selected terminal
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to update
+   */
+  def updateTerminal(terminal: Terminale): Unit
+
+  /**
+   * delete selected terminal
+   *
+   * @param terminal
+   *                  instance of [[caseclass.CaseClassDB.Terminale]] to delete
+   */
+  def deleteTerminal(terminal: Terminale): Unit
 
   /**
    * method that send to server a theorical request with all info for a time frame
@@ -80,6 +128,26 @@ trait ManagerController extends AbstractController[ManagerView]{
    *
    */
   def groupParam(params: ParamsForAlgoritm): Unit
+
+  /**
+   * getZonaData method retrieves all data needed to draw zona view
+   *
+   */
+  def dataToZone(): Unit
+
+  /**
+   * getTerminalData method retrieves all data needed to draw zona view
+   *
+   */
+  def dataToTerminal(): Unit
+
+  /**
+   * draw the terminal modal to manage it
+   *
+   * @param terminalId
+   *                   terminal id to manage
+   */
+  def terminalModalData(terminalId: Int): Unit
   def startListenNotification():Unit
 }
 
@@ -223,6 +291,90 @@ object ManagerController {
         case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
       }
     }
+
+    override def terminalModalData(terminalId: Int): Unit = {
+      case class terminalMData(zoneL: Response[List[Zona]], terminalS: Response[Terminale])
+      val future: Future[terminalMData] = for{
+        zones <- getZone
+        terminal <- model.getTerminale(terminalId)
+      } yield terminalMData(zones, terminal)
+      future.onComplete {
+        case Success(terminalMData(responseZ,responseT)) if responseZ.statusCode == StatusCodes.SUCCES_CODE
+        && responseT.statusCode == StatusCodes.SUCCES_CODE=>
+          responseZ.payload.zip(responseT.payload).foreach{
+            case (zone,terminal) => myView.openTerminalModal(zone, terminal)
+          }
+        case Success(terminalMData(_,responseT)) if responseT.statusCode == StatusCodes.NOT_FOUND=> myView.showMessageFromKey("terminal-not-found")
+        case _ => myView.showMessageFromKey("GeneralError-Unknown")
+      }
+    }
+
+    override def dataToTerminal(): Unit = {
+      case class TerminalData(zoneL: Response[List[Zona]], terminalL: Response[List[Terminale]])
+      val future: Future[TerminalData] = for {
+        terminals <- model.getAllTerminale
+        zones <- getZone
+      } yield TerminalData(zones, terminals)
+      future.onComplete {
+        case Success(TerminalData(zoneL,terminalL)) if terminalL.statusCode == StatusCodes.SUCCES_CODE &&
+          zoneL.statusCode == StatusCodes.SUCCES_CODE =>
+          zoneL.payload.zip(terminalL.payload).foreach{
+            case (zone,terminal) => myView.drawTerminaleView(zone, terminal)
+          }
+        case Success(TerminalData(responseZ,responseT)) if responseT.statusCode == StatusCodes.NOT_FOUND ||
+          responseZ.statusCode == StatusCodes.NOT_FOUND => myView.showMessageFromKey("not-found-error")
+        case _ => myView.showMessageFromKey("GeneralError-Unknown")
+      }
+    }
+
+    override def dataToZone(): Unit =
+      getZone.onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE,Some(zones))) => myView.drawZonaView(zones)
+        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("not-found-error")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
+    override def saveZona(zone: Zona): Unit =
+      model.setZona(zone).onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshZonaPanel("ok-zone-request")
+        case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
+    override def updateZona(zone: Zona): Unit =
+      model.updateZona(zone).onComplete {
+          case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshZonaPanel("ok-zone-update")
+          case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+          case _ => myView.showMessageFromKey("general-error")
+        }
+    override def deleteZona(zone: Zona): Unit =
+      zone.idZone.foreach(id =>model.deleteZona(id).onComplete{
+          case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshZonaPanel("ok-zone-delete")
+          case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+          case _ => myView.showMessageFromKey("general-error")
+        })
+    override def saveTerminal(terminal: Terminale): Unit =
+      model.createTerminale(terminal).onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshTerminalPanel("ok-terminal-request")
+        case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+    override def updateTerminal(terminal: Terminale): Unit =
+      model.updateTerminale(terminal).onComplete{
+          case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshTerminalPanel("ok-terminal-update")
+          case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+          case _ => myView.showMessageFromKey("general-error")
+        }
+    override def deleteTerminal(terminal: Terminale): Unit =
+      terminal.idTerminale.foreach(id=>model.deleteTerminale(id).onComplete{
+          case Success(Response(StatusCodes.SUCCES_CODE, _)) => myView.refreshTerminalPanel("ok-terminal-delete")
+          case Success(Response(_,None)) => myView.showMessageFromKey("bad-request")
+          case _ => myView.showMessageFromKey("general-error")
+        })
+
+    private def getZone: Future[Response[List[Zona]]] =
+      model.getAllZone
+
 
     override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
   }

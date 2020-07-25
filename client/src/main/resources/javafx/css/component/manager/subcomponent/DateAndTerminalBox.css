@@ -1,10 +1,12 @@
 #dateAndTerminal{
     -fx-alignment: TOP_CENTER;
-    -fx-spacing: 50.0;
+    -fx-spacing: 10.0;
 }
 #datepickerBox{
+    -fx-min-height: 100;
+    -fx-max-height: 100;
     -fx-spacing: 40;
-    -fx-alignment: TOP_CENTER;
+    -fx-alignment: CENTER;
 }
 #title{
     -fx-text-fill: #7c8a96;
@@ -14,18 +16,20 @@
 }
 
 #terminal{
-    -fx-min-width: 250;
+    -fx-max-width: 300;
 }
+
 #next:hover{
     -fx-background-color: #10E7DC;
     -fx-border-radius: 20;
     -fx-background-radius: 20;
-
 }
-#errorLabelTerminal{
+
+#errorLabelTerminal,#errorLabel{
     -fx-font-size: 12;
     -fx-min-width: 150;
     -fx-max-width: 150;
+    -fx-min-height: 100;
     -fx-alignment: center;
     -fx-text-alignment: center;
 }

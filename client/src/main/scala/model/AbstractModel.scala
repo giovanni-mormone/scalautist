@@ -63,5 +63,7 @@ abstract class AbstractModel extends Model{
     year
   }
 
+  protected def callRequest(request:HttpRequest):Future[Response[Int]] =
+    callHtpp(request).flatMap(unMarshall)
   protected def getYear:Int=getCalendar.get(Calendar.YEAR)
 }

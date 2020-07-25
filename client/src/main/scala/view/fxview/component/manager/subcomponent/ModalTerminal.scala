@@ -1,4 +1,4 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.manager.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -6,31 +6,31 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.{Terminale, Zona}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ComboBox, TextField}
-import regularexpressionutilities.{NameChecker, ZonaChecker}
-import view.fxview.component.{AbstractComponent, Component}
-import view.fxview.component.HumanResources.subcomponent.parent.{ModalTerminalParent, ModalZoneParent}
+import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
-
+import view.fxview.component.manager.subcomponent.parent.ModalTerminalParent
+import view.fxview.component.{AbstractComponent, Component}
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Francesco Cassano
  *
  * Box that is drawn inside modal to manage information about a [[caseclass.CaseClassDB.Terminale]] instance.
  * It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.subcomponent.parent.ModalTerminalParent]]
+ * of [[ModalTerminalParent]]
  */
 trait ModalTerminal extends Component[ModalTerminalParent] {
 
 }
 
 /**
- * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalTerminal]]
+ * Companion object of [[ModalTerminal]]
  */
 object ModalTerminal {
 
   def apply(zones: List[Zona], terminal: Terminale): ModalTerminal = new ModalTerminalFX(zones, terminal)
 
   /**
-   * JavaFX implementation of [[view.fxview.component.HumanResources.subcomponent.ModalTerminal]]
+   * JavaFX implementation of [[ModalTerminal]]
    *
    * @param zonesList
    *                  list of reference [[caseclass.CaseClassDB.Zona]] of the terminals
@@ -38,7 +38,7 @@ object ModalTerminal {
    *                 list of [[caseclass.CaseClassDB.Terminale]] to manage
    */
   private class ModalTerminalFX(zonesList: List[Zona], terminal: Terminale)
-    extends AbstractComponent[ModalTerminalParent]("humanresources/subcomponent/ModalTerminal")
+    extends AbstractComponent[ModalTerminalParent]("manager/subcomponent/ModalTerminal")
       with ModalTerminal {
 
     @FXML
@@ -58,7 +58,7 @@ object ModalTerminal {
 
       manageTerminalText()
 
-      delete.setText(resources.getString("delete"))
+      delete.setText(resources.getResource("delete"))
       delete.setOnAction(_ => parent.deleteTerminal(terminal))
 
       updateButton(resources)
@@ -77,7 +77,7 @@ object ModalTerminal {
     }
 
     private def updateButton(resourceBundle: ResourceBundle): Unit = {
-      update.setText(resourceBundle.getString("update"))
+      update.setText(resourceBundle.getResource("update"))
       update.setOnAction(_ => parent.updateTerminal(
         Terminale(name.getText(),
           zonesList.filter(zone => zones.getSelectionModel.getSelectedItem.equals(zone.zones)).head.idZone.head,

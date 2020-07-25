@@ -6,7 +6,8 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.{Regola, Terminale}
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, TableView, TextArea, TextField}
+import javafx.scene.control.{Button, CheckBox, Label, TableView, TextArea, TextField}
+import javafx.scene.layout.{HBox, VBox}
 import view.fxview.component.AbstractComponent
 import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ModalParamParent
@@ -31,13 +32,27 @@ object ParamsModal {
     @FXML
     var open: Button = _
     @FXML
-    var days: TextArea = _
+    var days: VBox = _
     @FXML
-    var terminals: TextArea = _
+    var terminals: VBox = _
+    @FXML
+    var terminalColumn1: Label = _
+    @FXML
+    var terminalColumn2: Label = _
+    @FXML
+    var dayColumn1: Label = _
+    @FXML
+    var dayColumn2: Label = _
+    @FXML
+    var dayColumn3: Label = _
     @FXML
     var sabato: CheckBox = _
     @FXML
     var rule: TextField = _
+    @FXML
+    var terminalsHeader: HBox = _
+    @FXML
+    var daysHeader: HBox = _
 
     var daysStringMap: Map[Int, String] = Map.empty
     val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
@@ -48,12 +63,6 @@ object ParamsModal {
       initTable()
       initCheckBox()
       initTextField()
-      initTextArea()
-    }
-
-    private def initTextArea(): Unit = {
-      terminals.setEditable(false)
-      days.setEditable(false)
     }
 
     private def initButton(): Unit = {
@@ -103,15 +112,26 @@ object ParamsModal {
 
       val chosen = selectedItem(idp)
       if (chosen.isDefined) {
-        val daysString = chosen.toList.flatMap(_.giornoInSettimana).flatten.map(info =>
-          daysStringMap.getOrElse(info.giornoId, NONE) + "\t" + shiftStringMap.getOrElse(info.turnoId,NONE) +
-            "\t" + info.quantita )
-        val terminalString = temrinals.collect{
-          case terminal if chosen.head.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId)) =>
-            terminal.idTerminale.head + "\t" + terminal.nomeTerminale
+
+        terminals.getChildren.clear()
+        terminalColumn1.setText(resources.getResource("terminal-label-id"))
+        terminalColumn2.setText(resources.getResource("terminal-label-name"))
+        terminals.getChildren.addAll(terminalsHeader)
+        temrinals.collect{
+                    case terminal if chosen.exists(x => x.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId))) =>
+                      terminal.idTerminale.foreach( x => terminals.getChildren.add(TerminalModalLabels(x.toString,terminal.nomeTerminale).setParent(parent).pane))
         }
-        showInTextArea(days, daysString, INIT_DAY)
-        showInTextArea(terminals, terminalString, INIT_TERMINAL)
+
+        days.getChildren.clear()
+        dayColumn1.setText(resources.getResource("day-label"))
+        dayColumn2.setText(resources.getResource("shift-label"))
+        dayColumn3.setText(resources.getResource("variation-label"))
+        days.getChildren.addAll(daysHeader)
+        chosen.toList.flatMap(_.giornoInSettimana).flatten.foreach(info =>
+          days.getChildren.add(DayInWeekModalLabels(daysStringMap.getOrElse(info.giornoId,""),
+            shiftStringMap.getOrElse(info.turnoId,""),
+            info.quantita.toString).setParent(parent).pane))
+
         sabato.setSelected(chosen.head.parametro.treSabato)
         rules.find(_.idRegola.contains(chosen.head.giornoInSettimana.head.head.regolaId))
           .fold(rule.setText(NONE))(rulef => rule.setText(rulef.nomeRegola))

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.CheckComboBox?>
+<?import javafx.geometry.Insets?>
 <VBox fx:id="dateAndTerminal" stylesheets="@../../../../css/component/manager/subcomponent/DateAndTerminalBox.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <BorderPane.margin>
+      <Insets left="50.0"/>
+   </BorderPane.margin>
    <Label fx:id="title" text="Label"/>
    <HBox fx:id="datepickerBox">
       <DatePicker fx:id="datepickerInit"/>
       <DatePicker fx:id="datepickerFinish"/>
-      <Label fx:id="errorLabel" styleClass="error"/>
    </HBox>
+   <Label fx:id="errorLabel" styleClass="error"/>
    <CheckComboBox fx:id="terminal"/>
    <Label fx:id="errorLabelTerminal" styleClass="error"/>
    <Button fx:id="next" mnemonicParsing="false" text="Button"/>

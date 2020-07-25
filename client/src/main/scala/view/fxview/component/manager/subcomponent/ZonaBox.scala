@@ -1,28 +1,29 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.manager.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
-import view.fxview.util.ResourceBundleUtil._
+
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
 import regularexpressionutilities.NameChecker
-import view.fxview.component.HumanResources.subcomponent.parent.ZonaParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TextFieldControl, ZonaTable}
+import view.fxview.component.manager.subcomponent.parent.ZonaParent
 import view.fxview.component.{AbstractComponent, Component}
+import view.fxview.util.ResourceBundleUtil._
 
 /**
  * @author Francesco Cassano
  *
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.subcomponent.parent.ZonaParent]]
+ * of [[ZonaParent]]
  */
 trait ZonaBox extends Component[ZonaParent] {
 
 }
 
 /**
- * Companion object of [[view.fxview.component.HumanResources.subcomponent.ZonaBox]]
+ * Companion object of ZonaBox
  *
  */
 object ZonaBox {
@@ -30,13 +31,13 @@ object ZonaBox {
   def apply(zones: List[Zona]): ZonaBox = new ZonaBoxFX(zones)
 
   /**
-   * javaFX private implementation of [[view.fxview.component.HumanResources.subcomponent.ZonaBox]]
+   * javaFX private implementation of [[ZonaBox]]
    *
    * @param zones
    *              List of [[caseclass.CaseClassDB.Zona]] to manage
    */
   private class ZonaBoxFX(zones: List[Zona])
-    extends AbstractComponent[ZonaParent]("humanresources/subcomponent/ZonaBox") with ZonaBox {
+    extends AbstractComponent[ZonaParent]("manager/subcomponent/ZonaBox") with ZonaBox {
 
     @FXML
     var zonaTable: TableView[ZonaTable] = _
@@ -57,7 +58,7 @@ object ZonaBox {
 
     private def initializeTable(): Unit = {
       val columnFields = List("id", "name")
-      CreateTable.createColumns[ZonaTable](zonaTable, columnFields)
+      CreateTable.createColumns[ZonaTable](zonaTable, columnFields,250)
       CreateTable.fillTable[ZonaTable](zonaTable, zones)
       CreateTable.clickListener[ZonaTable](
         zonaTable,

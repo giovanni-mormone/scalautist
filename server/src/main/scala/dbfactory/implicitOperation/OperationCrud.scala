@@ -1,6 +1,8 @@
 package dbfactory.implicitOperation
 
-import scala.concurrent.Future
+import utils.Execution
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
  * @author Fabian Aspée Encina
@@ -11,6 +13,9 @@ import scala.concurrent.Future
  * @tparam A Is a case class [[caseclass.CaseClassDB]] that is passed as a parameter
  */
 abstract class OperationCrud[A](implicit crud:Crud[A]) {
+
+  implicit protected val execution: ExecutionContextExecutor = Execution.executionContext
+
   /**
    * Generic Method which enable select one record in any table in database by Id
    * @param element Id of record what select in database

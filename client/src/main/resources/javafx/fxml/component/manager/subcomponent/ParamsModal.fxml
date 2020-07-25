@@ -8,23 +8,37 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TextField?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Pane prefHeight="316.0" prefWidth="600.0">
-         <children>
-            <TableView fx:id="params" layoutX="15.0" layoutY="25.0" prefHeight="325.0" prefWidth="200.0"/>
-            <TextArea fx:id="terminals" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
-            <TextArea fx:id="days" layoutX="230.0" layoutY="200.0" prefHeight="150.0" prefWidth="200.0" />
-            <CheckBox fx:id="sabato" layoutX="460.0" layoutY="25.0" />
-            <TextField fx:id="rule" layoutX="460.0" layoutY="50.0" />
-         </children>
-      </Pane>
-      <Pane prefHeight="90.0" prefWidth="600.0">
-         <children>
-            <Button fx:id="open" layoutX="460.0" layoutY="30.0" mnemonicParsing="false" prefHeight="27.0"
-                    prefWidth="101.0" text="Button" />
-         </children>
-      </Pane>
-   </children>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/ParamasModal.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <VBox fx:id="internalvbox">
+      <HBox fx:id="internalhbox">
+         <TableView fx:id="params" />
+         <VBox fx:id="scrollbox">
+            <ScrollPane fx:id="scrollpane">
+               <VBox fx:id="internalBox">
+                  <VBox fx:id="terminals">
+                     <HBox fx:id="terminalsHeader">
+                        <Label fx:id="terminalColumn1"/>
+                        <Label fx:id="terminalColumn2"/>
+                     </HBox>
+                  </VBox>
+                  <VBox fx:id="days">
+                     <HBox fx:id="daysHeader">
+                        <Label fx:id="dayColumn1"/>
+                        <Label fx:id="dayColumn2"/>
+                        <Label fx:id="dayColumn3"/>
+                     </HBox>
+                  </VBox>
+               </VBox>
+            </ScrollPane>
+         </VBox>
+      </HBox>
+      <CheckBox fx:id="sabato" />
+      <TextField fx:id="rule" />
+   </VBox>
+   <Button fx:id="open" mnemonicParsing="false"/>
 </VBox>

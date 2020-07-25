@@ -7,12 +7,14 @@ import regularexpressionutilities.NumbersChecker
 
 object CreateTable {
 
-  val DEFAULT_DIM: Int = 177
+  val DEFAULT_DIM: Int = 30
 
   def createColumns[A <: TableArgument](table: TableView[A], columns: List[String], dim: Int = DEFAULT_DIM): Unit = {
 
     columns.foreach(name => {
       val column: TableColumn[A, String] = createTableColumn(name.toUpperCase())
+      column.setResizable(false)
+      table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY)
       setFactoryAndWidth(column, name, dim)
       table.getColumns.add(column)
     })
@@ -31,10 +33,10 @@ object CreateTable {
 
     columns.foreach(name => {
       val column: TableColumn[A, String] = createTableColumn(name._1.toUpperCase)
-      setFactoryAndWidth(column, name._1)
+      setFactoryAndWidth(column, name._1,177)
       name._2.foreach(nestedColumn=>{
         val columnNested: TableColumn[A, String] = createTableColumn(nestedColumn.toUpperCase)
-        setFactoryAndWidth(columnNested, nestedColumn)
+        setFactoryAndWidth(columnNested, nestedColumn,177)
         column.getColumns.add(columnNested)
       })
       table.setMaxSize(430,200)

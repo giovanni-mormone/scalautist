@@ -3,7 +3,6 @@ package dbfactory.operation
 import java.sql.Date
 import java.time.LocalDate
 
-import dbfactory.util.Helper._
 import caseclass.CaseClassDB.{Disponibilita, Persona}
 import caseclass.CaseClassHttpMessage.InfoReplacement
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, InstanceDisponibilita, InstancePersona, InstanceRisultato, InstanceStoricoContratto}
@@ -11,11 +10,9 @@ import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table._
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
-import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 /**
  * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
@@ -113,7 +110,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       QueryPersonStoricAvail(idPerson._1,week,day,idPerson._3,idPerson._4,date)
     }
   }
-  import convertToQueryPersonStoricAvail._
   //identifies driver by id
   private val RUOLO_DRIVER=3
   // TODO Controllare anche la settimana :) \(-_-)/
@@ -187,12 +183,10 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       storico<-StoricoContrattoTableQuery.tableQuery()
       disp<-DisponibilitaTableQuery.tableQuery()
       risultato<-RisultatoTableQuery.tableQuery()
-      if( persona.id===storico.personaId && risultato.personeId===persona.id && risultato.data===dat.date &&
-        persona.disponibilitaId===disp.id && persona.id.inSet(dat.idPerson.toList.flatten) &&
-        disp.settimana===dat.week && (disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) &&
-        (storico.turnoId=!=dat.idTurno || storico.turnoId1=!=dat.idTurno) && persona.terminaleId===dat.idTerminale
-        && (storico.dataFine>dat.date || Some(storico.dataFine).isEmpty)
-        && Some(persona.disponibilitaId).isDefined && storico.dataInizio<=dat.date && storico.dataFine>=dat.date)
+      if(persona.id===storico.personaId && persona.disponibilitaId===disp.id && risultato.personeId===persona.id && persona.terminaleId===dat.idTerminale
+        && risultato.data===dat.date && risultato.turnoId =!= dat.idTurno && disp.settimana===dat.week &&
+        ((disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) && ((storico.dataFine >= dat.date || !storico.dataFine.isDefined) && storico.dataInizio <= dat.date))
+        && persona.id.inSet(dat.idPerson.toList.flatten) && persona.disponibilitaId.isDefined)
     } yield storico.personaId
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons
       .filter(id=>persons.count(_ == id)==SHIFT_IN_DAY)).map(_.distinct))

@@ -51,24 +51,6 @@ trait HRHome extends Component[HRHomeParent]{
   def drawFire(employees: List[Persona]): Unit
 
   /**
-   * Initialize zona Manager view before show
-   *
-   * @param zones
-   *                List of [[caseclass.CaseClassDB.Zona]]
-   */
-  def drawZona(zones: List[Zona]): Unit
-
-  /**
-   * Initialize Terminal Manager view before show
-   *
-   * @param zones
-   *             List of [[caseclass.CaseClassDB.Zona]]
-   * @param terminals
-   *                  List of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
-
-  /**
    *
    * @param employees
    */
@@ -123,10 +105,8 @@ object HRHome{
 
     var recruitView: RecruitBox = _
     var fireView: FireBox = _
-    var zonaView: ZonaBox = _
     var illBox: IllBox = _
     var holidayBox: HolidayBox = _
-    var terminalView: TerminalBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText("I am HR king, and I BENEDICO to you!")
@@ -144,11 +124,9 @@ object HRHome{
 
       recruitButton.setOnAction(_ => parent.drawRecruitPanel)
       firesButton.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.fire))
-      zonaManage.setOnAction(_ => parent.drawZonePanel)
       changePassword.setOnAction(_ => parent.drawChangePassword)
       illness.setOnAction(_ => parent.drawEmployeePanel(EmployeeView.ill))
       holidays.setOnAction(_ => parent.drawHoliday())
-      terminalManger.setOnAction(_ => parent.drawTerminalPanel)
     }
 
     /////////////////////////////////////////////////////////////////////////////////// panel drawing method
@@ -162,17 +140,13 @@ object HRHome{
     override def drawFire(employees: List[Persona]): Unit =
       baseHR.setCenter(fireBox(employees))
 
-    override def drawZona(zones: List[Zona]): Unit =
-      baseHR.setCenter(zonaBox(zones))
-
     override def drawIllBox(employees: List[Persona]): Unit =
       baseHR.setCenter(illBox(employees))
 
     override def drawHolidayBox(employees: List[Ferie]): Unit =
       baseHR.setCenter(holidayBox(employees))
 
-    override def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit =
-      baseHR.setCenter(terminalBox(zones, terminals))
+
 
     ////////////////////////////////////////////////////////////////////////////////////// View Initializer
 
@@ -186,18 +160,6 @@ object HRHome{
       fireView = FireBox(employees)
       fireView.setParent(parent)
       fireView.pane
-    }
-
-    private def zonaBox(zones: List[Zona]): Pane = {
-      zonaView = ZonaBox(zones)
-      zonaView.setParent(parent)
-      zonaView.pane
-    }
-
-    private def terminalBox(zones: List[Zona], terminals: List[Terminale]): Pane = {
-      terminalView = TerminalBox(zones, terminals)
-      terminalView.setParent(parent)
-      terminalView.pane
     }
 
     private def illBox(employees: List[Persona]): Pane = {

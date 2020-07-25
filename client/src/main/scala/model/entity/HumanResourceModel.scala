@@ -91,20 +91,6 @@ trait HumanResourceModel{
   def getTerminale(id:Int): Future[Response[Terminale]]
 
   /**
-   * method that return a None if terminal if update and Int if terminal if insert
-   * @param terminale identifies a terminal we want update into database
-   * @return Response of Int that can be empty
-   */
-  def updateTerminale(terminale:Terminale): Future[Response[Int]]
-
-  /**
-   * method that delete a terminal by id
-   * @param id identifies a terminal into database, then select terminale associate to id and delete
-   * @return Option of list of terminal that can be empty
-   */
-  def deleteTerminale(id:Int): Future[Response[Int]]
-
-  /**
    * method that return Option of List of Terminale if exist
    * @return Option of List of Terminale
    */
@@ -115,42 +101,6 @@ trait HumanResourceModel{
    * @return Option of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
-
-  /**
-   * Insert zona into database, this case class not contains id for zona
-   *  in the init operation, but result contain your id
-   *
-   * @param zona case class that represent struct for a zona in database
-   * @return Future of Option of zona that represent zona insert into database
-   *          with your Id
-   */
-  def setZona(zona: Zona):Future[Response[Zona]]
-
-  /**
-   * method that update a Zona instance and return a Response of Zona, this can be empty if it fails
-   *
-   * @param zona zona we want update in database
-   * @return Future of Response of Int, can be None if operation if update another case is
-   *         some with id of zona
-   */
-  def updateZona(zona: Zona): Future[Response[Int]]
-
-  /**
-   * method that delete a Zona instance and return a Response of Zona, this can be empty if it fails
-   *
-   * @param zona id that represent a zone in database
-   * @return Future of Response of Zona
-   */
-  def deleteZona(zona: Int): Future[Response[Zona]]
-
-  /**
-   * Insert terminal into database, this case class not contains id for terminal
-   * in the init operation, but result contain your id
-   * @param terminale case class that represent struct for a terminal in database
-   * @return Future of Response of Terminal that represent terminal insert into database
-   *         with your Id
-   */
-  def createTerminale(terminale:Terminale): Future[Response[Terminale]]
 
   /**
    * method that return all contract in database
@@ -256,10 +206,6 @@ object HumanResourceModel {
       callServerSalary(request)
     }
 
-    override def setZona(zona: Zona): Future[Response[Zona]] = {
-      val request = Post(getURI("createzona"),transform(zona))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
-    }
 
     override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
       val request = Post(getURI("getholidaybyperson"),Request(Some(getYear)))
@@ -269,30 +215,6 @@ object HumanResourceModel {
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
-    }
-
-    override def updateTerminale(terminale: Terminale): Future[Response[Int]] = {
-      val request = Post(getURI("updateterminale"),transform(terminale))
-      callRequest(request)
-    }
-    override def createTerminale(terminale: Terminale): Future[Response[Terminale]] = {
-      val request = Post(getURI("createterminale"),transform(terminale))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
-    }
-
-    override def deleteTerminale(id: Int): Future[Response[Int]] = {
-      val request = Post(getURI("deleteterminale"),transform(id))
-      callRequest(request)
-    }
-
-    override def updateZona(zona: Zona): Future[Response[Int]] = {
-      val request = Post(getURI("updatezona"), transform(zona))
-      callRequest(request)
-    }
-
-    override def deleteZona(zona: Int): Future[Response[Zona]] = {
-      val request = Post(getURI("deletezona"), transform(zona))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
 
     override def getAllTerminale: Future[Response[List[Terminale]]] = {
@@ -308,9 +230,6 @@ object HumanResourceModel {
 
     private def callServer(request: HttpRequest):Future[Response[Login]] =
       callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
-
-    private def callRequest(request:HttpRequest):Future[Response[Int]] =
-      callHtpp(request).flatMap(unMarshall)
 
     private def callServerSalary(request: HttpRequest)=
       callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])

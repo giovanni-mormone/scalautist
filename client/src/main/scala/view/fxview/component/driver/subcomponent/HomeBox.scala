@@ -45,7 +45,7 @@ object HomeBox{
     private def costructInfoShiftTable():Unit = {
 
       val columnFields=List("Orario","Turno")
-      CreateTable.createColumns[InfoHomeTable](tableTurno, columnFields)
+      CreateTable.createColumns[InfoHomeTable](tableTurno, columnFields,177)
       CreateTable.fillTable[InfoHomeTable](tableTurno, infoHome.turno)
       tableTurno.setStyle("Tableview.css")
 
