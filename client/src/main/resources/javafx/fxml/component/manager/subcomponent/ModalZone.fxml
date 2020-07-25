@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="modal" stylesheets="@../../../../css/component/humanresources/subcomponent/Modals.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <TextField fx:id="id" editable="false"/>
+   <TextField fx:id="name" />
+   <HBox fx:id="hbox">
+      <Button fx:id="delete" mnemonicParsing="false" />
+      <Button fx:id="update" mnemonicParsing="false" />
+   </HBox>
+</VBox>

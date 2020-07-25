@@ -7,27 +7,22 @@
 
 <BorderPane fx:id="baseManager" stylesheets="@../../../css/component/manager/BaseManager.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <top>
-        <HBox fx:id="topMenu" >
-            <children>
-                <Label fx:id="nameLabel" styleClass="topMenuLabel"/>
-                <Label fx:id="idLabel" styleClass="topMenuLabel"/>
-                <Button fx:id="notificationButton" >
-                    <PopOver fx:id="popover"/>
-                </Button>
-            </children>
+        <HBox fx:id="topMenu">
+            <Label fx:id="nameLabel" styleClass="topMenuLabel"/>
+            <Label fx:id="idLabel" styleClass="topMenuLabel"/>
+            <Button fx:id="notificationButton">
+                <PopOver fx:id="popover"/>
+            </Button>
         </HBox>
     </top>
     <left>
         <VBox fx:id="optionsBox">
-            <children>
-                <Button fx:id="generateTurnsButton" mnemonicParsing="false" />
-                <Button fx:id="manageAbsenceButton" mnemonicParsing="false" />
-                <Button fx:id="redoTurnsButton" mnemonicParsing="false" />
-                <Button fx:id="printResultButton" mnemonicParsing="false" />
-                <Button fx:id="manageZoneButton" mnemonicParsing="false" />
-                <Button fx:id="manageTerminalButton" mnemonicParsing="false" />
-                <Button fx:id="richiestaButton" mnemonicParsing="false" />
-            </children>
+            <Button fx:id="generateTurnsButton" mnemonicParsing="false"/>
+            <Button fx:id="manageAbsenceButton" mnemonicParsing="false"/>
+            <Button fx:id="printResultButton" mnemonicParsing="false"/>
+            <Button fx:id="manageZoneButton" mnemonicParsing="false"/>
+            <Button fx:id="manageTerminalButton" mnemonicParsing="false"/>
+            <Button fx:id="richiestaButton" mnemonicParsing="false"/>
         </VBox>
     </left>
     <Accordion fx:id="accordion"/>

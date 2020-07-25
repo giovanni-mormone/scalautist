@@ -1,5 +1,5 @@
 #vBoxExternal{
-    -fx-alignment: center;
+    -fx-alignment: center-left;
     -fx-max-width: 1000;
     -fx-max-height: 900;
     -fx-fill-height: false;
@@ -13,7 +13,9 @@
     -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
 }
 #internalHbox{
-    -fx-spacing: 20;
+    -fx-spacing: 30;
+    -fx-padding: 0 0 0 30;
+    -fx-alignment: center;
 }
 #internalVBox{ 
     -fx-alignment: center;

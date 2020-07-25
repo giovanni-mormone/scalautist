@@ -43,7 +43,7 @@ object ChangeSettimanaRichiesta{
     @FXML
     var error: Label = _
     @FXML
-    var dayShiftN: Pane = _
+    var dayShiftN: VBox = _
     @FXML
     var dayShiftS: VBox = _
 

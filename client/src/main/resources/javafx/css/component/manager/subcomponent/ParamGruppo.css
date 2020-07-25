@@ -1,0 +1,49 @@
+#vbox{
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
+}
+#grouphbox,#groupvbox,#buttonbox,#buttonbox2{
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+#buttonbox > .button {
+    -fx-min-width: 40;
+    -fx-max-width: 40;
+}
+
+#reset:hover,#run:hover {
+    -fx-border-color: transparent;
+    -fx-background-color: #0074E1;
+}
+
+#add{
+    -fx-background-color: #0074E1;
+}
+#sub{
+    -fx-background-color: #6CDAEE;
+}
+
+#add:hover{
+    -fx-background-color: #10E7DC;
+    -fx-border-color: transparent;
+}
+#sub:hover{
+    -fx-border-color: transparent;
+    -fx-background-color: #10E7DC;
+}
+
+.table-view .table-cell{
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}

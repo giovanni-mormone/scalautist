@@ -1,5 +1,7 @@
 package view.fxview.component.HumanResources.subcomponent.parent
 
+import view.fxview.component.manager.subcomponent.parent.TerminalParent
+
 
 /**
  * @author Francesco Cassano
@@ -8,8 +10,8 @@ package view.fxview.component.HumanResources.subcomponent.parent
  * It extends home view's children parent
  *
  */
-trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent with IllBoxParent
-  with HolidayBoxParent with TerminalParent {
+trait HRHomeParent extends RecruitParent with FiresParent with IllBoxParent
+  with HolidayBoxParent {
 
   /**
    * It notify parent that recruitView must be shown
@@ -30,18 +32,6 @@ trait HRHomeParent extends RecruitParent with FiresParent with ZonaParent with I
    */
   def drawChangePassword: Unit
 
-  /**
-   * It notify parent that a manage zones view must be shown
-   *
-   */
-  def drawZonePanel: Unit
-
-  /**
-   * It notify parent that a manage terminal view must be shown
-   *
-   */
-  def drawTerminalPanel: Unit
-   
    /**
    * draw view for holiday
    */

@@ -6,7 +6,8 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.{Parametro, Regola, Terminale}
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, TableView, TextArea, TextField}
+import javafx.scene.control.{Button, CheckBox, Label, TableView, TextArea, TextField}
+import javafx.scene.layout.{HBox, VBox}
 import view.fxview.component.AbstractComponent
 import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ModalParamParent
@@ -33,13 +34,27 @@ object ParamsModal {
     @FXML
     var open: Button = _
     @FXML
-    var days: TextArea = _
+    var days: VBox = _
     @FXML
-    var terminals: TextArea = _
+    var terminals: VBox = _
+    @FXML
+    var terminalColumn1: Label = _
+    @FXML
+    var terminalColumn2: Label = _
+    @FXML
+    var dayColumn1: Label = _
+    @FXML
+    var dayColumn2: Label = _
+    @FXML
+    var dayColumn3: Label = _
     @FXML
     var sabato: CheckBox = _
     @FXML
     var rule: TextField = _
+    @FXML
+    var terminalsHeader: HBox = _
+    @FXML
+    var daysHeader: HBox = _
 
     var daysStringMap: Map[Int, String] = Map.empty
     var infoAlgorithm: InfoAlgorithm = _
@@ -51,12 +66,6 @@ object ParamsModal {
       initTable()
       initCheckBox()
       initTextField()
-      initTextArea()
-    }
-
-    private def initTextArea(): Unit = {
-      terminals.setEditable(false)
-      days.setEditable(false)
     }
 
     private def initButton(): Unit = {

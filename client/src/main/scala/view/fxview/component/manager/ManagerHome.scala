@@ -9,6 +9,11 @@ import caseclass.CaseClassHttpMessage._
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Button, Label}
 import javafx.scene.layout.BorderPane
+import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm}
+import javafx.fxml.FXML
+import javafx.scene.control.{Accordion, Button, Label}
+import javafx.scene.layout.{BorderPane, Pane}
 import org.controlsfx.control.PopOver
 import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
@@ -108,6 +113,23 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param name
    */
   def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
+   * Initialize zona Manager view before show
+   *
+   * @param zones
+   *                List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZona(zones: List[Zona]): Unit
+
+  /**
+   * Initialize Terminal Manager view before show
+   *
+   * @param zones
+   *             List of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals
+   *                  List of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
+
 }
 
 object ManagerHome{
@@ -127,8 +149,6 @@ object ManagerHome{
     @FXML
     var manageAbsenceButton: Button = _
     @FXML
-    var redoTurnsButton: Button = _
-    @FXML
     var printResultButton: Button = _
     @FXML
     var manageZoneButton: Button = _
@@ -147,6 +167,10 @@ object ManagerHome{
     var managerRichiestaBoxView:ManagerRichiestaBox = _
     var chooseParamsBox: ChooseParamsBox = _
     var selectResultBox:SelectResultBox = _
+    var terminalView: TerminalBox = _
+    var zonaView: ZonaBox = _
+
+
     var gruopParamBox: GroupParamsBox = _
     var showParam: ShowParamAlgorithmBox = _
 
@@ -156,7 +180,6 @@ object ManagerHome{
       notificationButton.setText(resources.getResource("notification-button"))
       generateTurnsButton.setText(resources.getResource("generate-turns-button"))
       manageAbsenceButton.setText(resources.getResource("manage-absence-button"))
-      redoTurnsButton.setText(resources.getResource("redo-turns-button"))
       printResultButton.setText(resources.getResource("print-result-button"))
       manageZoneButton.setText(resources.getResource("manage-zone-button"))
       manageTerminalButton.setText(resources.getResource("manage-terminal-button"))
@@ -166,6 +189,9 @@ object ManagerHome{
       generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
       notificationButton.setOnAction(_=>openAccordion())
+      manageZoneButton.setOnAction(_ => parent.drawZonePanel())
+      manageTerminalButton.setOnAction(_ => parent.drawTerminalPanel())
+
       nameLabel.setText(resources.println("username-label",userName))
       idLabel.setText(resources.println("id-label",userId))
     }
@@ -251,5 +277,24 @@ object ManagerHome{
       baseManager.setCenter(showParam.setParent(parent).pane)
     }
 
+    override def drawZona(zones: List[Zona]): Unit =
+      baseManager.setCenter(zonaBox(zones))
+
+    override def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit =
+      baseManager.setCenter(terminalBox(zones, terminals))
+
+    private def zonaBox(zones: List[Zona]): Pane = {
+      zonaView = ZonaBox(zones)
+      zonaView.setParent(parent)
+      zonaView.pane
+    }
+
+    private def terminalBox(zones: List[Zona], terminals: List[Terminale]): Pane = {
+      terminalView = TerminalBox(zones, terminals)
+      terminalView.setParent(parent)
+      terminalView.pane
+    }
   }
+
+
 }

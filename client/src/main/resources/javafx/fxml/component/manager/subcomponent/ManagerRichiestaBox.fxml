@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <VBox fx:id="externalVBox" stylesheets="@../../../../css/component/manager/subcomponent/ManagerBox.css" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml">
-
+    <BorderPane.margin>
+        <Insets left="50.0"/>
+    </BorderPane.margin>
 </VBox>

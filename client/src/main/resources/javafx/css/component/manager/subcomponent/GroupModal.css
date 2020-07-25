@@ -1,0 +1,14 @@
+#vbox{
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
+#buttonbox,#hbox{
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}
+
+.text-area{
+    -fx-max-width: 200;
+}

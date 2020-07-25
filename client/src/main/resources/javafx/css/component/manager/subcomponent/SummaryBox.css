@@ -1,11 +1,16 @@
-#baseBox{
-    -fx-spacing: 100;
+#basebox{
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+#datebox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
 }
 #dataI,#dataF{
     -fx-text-fill: #7c8a96;
     -fx-font-weight: bold;
     -fx-alignment: top-center;
-    -fx-spacing: 20;
+    -fx-font-size: 18
 }
 
 #terminalLabel{
@@ -16,21 +21,29 @@
     -fx-text-alignment: center;
     -fx-spacing: 20;
 }
-#shiftLabel{
-    -fx-alignment: inherit;
-}
-#quantityLabel{
-    -fx-alignment: inherit;
-}
+
 #dayLabel{
     -fx-text-fill: #7c8a96;
     -fx-font-weight: bold;
     -fx-alignment: top-center;
+    -fx-text-alignment: center;
     -fx-spacing: 20;
+    -fx-font-size: 20;
 }
-#indietro:hover{
-    -fx-background-color: #10E7DC;
+
+#indietro,#avanti{
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
 }
-#avanti:hover{
+#shiftInfoLabel{
+    -fx-alignment: center;
+}
+#infoBox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+#indietro:hover,#avanti:hover{
     -fx-background-color: #10E7DC;
 }
