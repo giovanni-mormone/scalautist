@@ -3,7 +3,7 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Regola, Terminale}
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale}
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, CheckBox, TableView, TextArea, TextField}
@@ -19,10 +19,12 @@ trait ParamsModal extends AbstractComponent[ModalParamParent] {
 
 object ParamsModal {
 
-  def apply(oldsParam: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): ParamsModal =
-    new ParamsModalFX(oldsParam, terminals, rules)
+  case class DataForParamasModel(oldsParam: List[Parametro], terminals: List[Terminale],
+                                 rules: List[Regola], info: Option[InfoAlgorithm] = None)
 
-  private class ParamsModalFX(paramsList: List[InfoAlgorithm], temrinals: List[Terminale], rules: List[Regola])
+  def apply(data: DataForParamasModel): ParamsModal = new ParamsModalFX(data)
+
+  private class ParamsModalFX(data: DataForParamasModel)
     extends AbstractComponent[ModalParamParent]("manager/subcomponent/ParamsModal")
     with ParamsModal {
 
@@ -40,10 +42,11 @@ object ParamsModal {
     var rule: TextField = _
 
     var daysStringMap: Map[Int, String] = Map.empty
-    val shiftStringMap: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14", 4 -> "14-18", 5 -> "18-22", 6 -> "22-2")
+    var infoAlgorithm: InfoAlgorithm = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      data.info.fold()(i => infoAlgorithm = i)
       initButton()
       initTable()
       initCheckBox()
@@ -59,17 +62,19 @@ object ParamsModal {
     private def initButton(): Unit = {
       open.setText(resources.getResource(key = "buttontxt"))
       open.setDisable(true)
-      open.setOnAction(_ => selectedItem(selectedItemId()).fold()(info => parent.loadParam(info)))
+      open.setOnAction(_ => selectedItem(selectedItemId()).fold()(info => parent.loadParam(infoAlgorithm)))
     }
 
     private def initTable(): Unit = {
       val fieldsList: List[String] = List("id", "name")
       CreateTable.createColumns[ParamsTable](params, fieldsList)
-      CreateTable.fillTable[ParamsTable](params, paramsList.map(_.parametro))
+      CreateTable.fillTable[ParamsTable](params, data.oldsParam)
       params.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {
         enableButton()
         showParamsInfo(selectedItemId())
       })
+      data.info.fold()(_.parametro.idParametri.fold()(id => data.oldsParam.find(_.idParametri.contains(id))
+        .fold()(param => params.getSelectionModel.select(param))))
     }
 
     private def initCheckBox(): Unit = {
@@ -96,30 +101,11 @@ object ParamsModal {
     }
 
     private def showParamsInfo(idp: Int): Unit = {
-      initDays()
-      val INIT_DAY: String = resources.getResource(key = "daystxtA") + "\n"
-      val INIT_TERMINAL: String = resources.getResource(key = "terminaltxtA") + "\n"
-      val NONE: String = "NONE"
-
-      val chosen = selectedItem(idp)
-      if (chosen.isDefined) {
-        val daysString = chosen.toList.flatMap(_.giornoInSettimana).flatten.map(info =>
-          daysStringMap.getOrElse(info.giornoId, NONE) + "\t" + shiftStringMap.getOrElse(info.turnoId,NONE) +
-            "\t" + info.quantita )
-        val terminalString = temrinals.collect{
-          case terminal if chosen.head.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId)) =>
-            terminal.idTerminale.head + "\t" + terminal.nomeTerminale
-        }
-        showInTextArea(days, daysString, INIT_DAY)
-        showInTextArea(terminals, terminalString, INIT_TERMINAL)
-        sabato.setSelected(chosen.head.parametro.treSabato)
-        rules.find(_.idRegola.contains(chosen.head.giornoInSettimana.head.head.regolaId))
-          .fold(rule.setText(NONE))(rulef => rule.setText(rulef.nomeRegola))
-      }
+      parent.getInfoToShow(idp, data)
     }
 
-    private def selectedItem(idp: Int): Option[InfoAlgorithm] = {
-      paramsList.find(_.parametro.idParametri.contains(idp))
+    private def selectedItem(idp: Int): Option[Parametro] = {
+      data.oldsParam.find(_.idParametri.contains(idp))
     }
 
     private def selectedItemId(): Int = {

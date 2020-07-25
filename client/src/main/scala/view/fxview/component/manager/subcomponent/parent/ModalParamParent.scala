@@ -1,12 +1,19 @@
 package view.fxview.component.manager.subcomponent.parent
 
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
+import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.modal.ModalParent
 
 /**
- * //TODO
+ *
  */
 trait ModalParamParent extends ModalParent {
+
+  /**
+   *
+   * @param idp
+   */
+  def getInfoToShow(idp: Int, data: DataForParamasModel): Unit
 
   /**
    *

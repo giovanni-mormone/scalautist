@@ -4,7 +4,7 @@ object ShiftUtil {
 
   private val NONE: String = "None"
   private val ERROR_ID: Int = -1
-  val N_SHIFT = SHIFT_STRING_MAP.size
+  val N_SHIFT = 6
 
   private val SHIFT_STRING_MAP: Map[Int, String] = Map(1 -> "2-6", 2 -> "6-10", 3 -> "10-14",
                                                         4 -> "14-18", 5 -> "18-22", 6 -> "22-2")

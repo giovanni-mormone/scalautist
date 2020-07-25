@@ -24,6 +24,7 @@ import view.fxview.{FXHelperFactory, NotificationHelper}
  * trait of methods that allow user to do desired operations.
  */
 trait ManagerHome extends Component[ManagerHomeParent]{
+
   /**
    *
    * @param info
@@ -249,5 +250,6 @@ object ManagerHome{
       showParam = ShowParamAlgorithmBox(info, name, rules, terminals)
       baseManager.setCenter(showParam.setParent(parent).pane)
     }
+
   }
 }

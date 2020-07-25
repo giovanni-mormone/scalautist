@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Regola, Terminale, Turno}
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno}
 import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
 import javafx.application.Platform
@@ -16,6 +16,7 @@ import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
+import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.{GroupModal, GroupParamsBox, ParamsModal}
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
@@ -69,9 +70,13 @@ trait ManagerView extends DialogView {
    *
    * @param olds list of [[caseclass.CaseClassDB.Parametro]]
    */
-  def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit
+  def modalOldParamDraw(olds: List[Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
 
-
+  /**
+   *
+   * @param data
+   */
+  def showInfoParam(data: DataForParamasModel)
 
   /**
    *
@@ -171,10 +176,10 @@ object ManagerView {
     override def modalOldParam(terminals: List[Terminale]): Unit =
       myController.modalOldParams(terminals)
 
-    override def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit =
+    override def modalOldParamDraw(olds: List[Parametro], terminals: List[Terminale], rules: List[Regola]): Unit =
       Platform.runLater(() =>{
         modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
-          ParamsModal(olds, terminals, rules))
+          ParamsModal(DataForParamasModel(olds, terminals, rules)))
         modalResource.show()
       })
 
@@ -238,9 +243,19 @@ object ManagerView {
     override def resetParams(): Unit =
       drawParamsPanel()
 
-    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit = {
-      managerHome.drawShowParams(info, name, terminals, rules)
+    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit =
+      Platform.runLater(() => managerHome.drawShowParams(info, name, terminals, rules))
+
+    override def showInfoParam(data: DataForParamasModel): Unit = {
+      Platform.runLater(() =>{
+        modalResource.close()
+        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
+          ParamsModal(data))
+        modalResource.show()
+      })
     }
 
+    override def getInfoToShow(idp: Int, data: DataForParamasModel): Unit =
+      myController.getInfoParamToShow(idp, data)
   }
 }

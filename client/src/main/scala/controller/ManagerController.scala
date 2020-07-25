@@ -10,6 +10,7 @@ import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
+import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.mainview.ManagerView
 
@@ -17,6 +18,13 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ManagerController extends AbstractController[ManagerView]{
+
+  /**
+   *
+   * @param idp
+   */
+  def getInfoParamToShow(idp: Int, data: DataForParamasModel): Unit
+
   /**
    *
    * @param info
@@ -174,47 +182,44 @@ object ManagerController {
       model.verifyOldResult(dataToCheck)
 
     override def chooseParams(): Unit = {
-      val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
-        Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
-        Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
-      myView.drawRunAlgorithm(terminals)
+      HumanResourceModel().getAllTerminale.onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawRunAlgorithm(value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
     }
 
     override def modalOldParams(terminals: List[Terminale]): Unit = {
-      val params = List(InfoAlgorithm(
-        Parametro(true, "mai", Some(1)),
-        List(ZonaTerminale(2, 3, Some(1), Some(1))),
-        Some(List(GiornoInSettimana(1, 1, 2, 1, Some(1), Some(30)), GiornoInSettimana(2, 2, 2, 3, Some(1), Some(30)),
-          GiornoInSettimana(3, 3, 2, 5, Some(1), Some(30)), GiornoInSettimana(4, 4, 2, 3, Some(1), Some(30)),
-          GiornoInSettimana(5, 5, 2, 1, Some(1), Some(30)), GiornoInSettimana(3, 5, 2, 3, Some(1), Some(20))
-        ))),
-        InfoAlgorithm(
-          Parametro(false, "menn", Some(2)),
-          List(ZonaTerminale(3, 2, Some(3), Some(2))),
-          Some(List(GiornoInSettimana(1, 1, 1, 0, Some(2), Some(32)), GiornoInSettimana(2, 2, 1, 2, Some(2), Some(32)),
-            GiornoInSettimana(3, 3, 1, 4, Some(2), Some(32)), GiornoInSettimana(4, 4, 1, 2, Some(2), Some(32)),
-            GiornoInSettimana(5, 5, 1, 6, Some(2), Some(32)), GiornoInSettimana(3, 5, 1, 2, Some(2), Some(32)),
-            GiornoInSettimana(3, 2, 1, 0, Some(2), Some(32)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
-          ))),
-        InfoAlgorithm(
-          Parametro(false, "maggiorata", Some(3)),
-          List(ZonaTerminale(2, 8, Some(1), Some(3)), ZonaTerminale(1, 5, Some(3), Some(4)), ZonaTerminale(2, 3, Some(3), Some(5))),
-          Some(List(GiornoInSettimana(1, 6, 2, 0, Some(1), Some(23)), GiornoInSettimana(2, 5, 2, 1, Some(1), Some(23)),
-            GiornoInSettimana(3, 4, 2, 2, Some(1), Some(23)), GiornoInSettimana(4, 3, 2, 3, Some(1), Some(23)),
-            GiornoInSettimana(5, 2, 2, 4, Some(1), Some(23)), GiornoInSettimana(3, 1, 2, 5, Some(1), Some(23)), GiornoInSettimana(6, 2, 2, 4, Some(1), Some(23))
-          ))))
-      val rules: List[Regola] = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
-      myView.modalOldParamDraw(params, terminals, rules)
+    case class LoadParams(params: Response[List[Parametro]], weekRule: Response[List[Regola]])
+
+      val future: Future[LoadParams] = for{
+        params <- model.getOldParameter
+        weekRule <- model.weekRule()
+      } yield LoadParams(params, weekRule)
+      future.onComplete{
+        case Success(data) if data.weekRule.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.modalOldParamDraw(data.params.payload.getOrElse(List.empty), terminals,
+            data.weekRule.payload.getOrElse(List.empty))
+        case Success(_) => myView.showMessageFromKey("result-not-found")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
     }
 
     override def weekParam(params: ParamsForAlgoritm): Unit = {
-      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
-      myView.drawWeekParam(params, rules)
+      model.weekRule().onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawWeekParam(params, value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
     }
 
     override def groupParam(params: ParamsForAlgoritm): Unit = {
-      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))
-      myView.drawGroupParam(params, rules)
+      model.groupRule().onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawGroupParam(params, value)
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
     }
 
     override def dataToResultPanel(): Unit =
@@ -235,24 +240,35 @@ object ManagerController {
     override def consumeNotification(tag: Long): Unit = model.consumeNotification(tag,Utils.userId)
 
     override def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit = {
-      /*val terminals = List(Terminale("massimino", 2, Some(3)), Terminale("mingo", 2, Some(2)),
-        Terminale("sing", 2, Some(4)), Terminale("osso", 2, Some(5)),
-        Terminale("berta", 3, Some(7)), Terminale("fosso", 3, Some(8)) )
-      val rules = List(Regola("PasquAnsia", Some(1)), Regola("SpecialGianni", Some(2)), Regola("mortoFra", Some(3)))*/
-      case class DataToShow(terminals: Response[List[Terminale]], rules: Response[List[Regola]])
+
+      case class DataToShow(terminals: Response[List[Terminale]], weekRule: Response[List[Regola]],
+                            groupRule: Response[List[Regola]])
 
       val future: Future[DataToShow] = for{
-        terminals <- model.
-        rules <- model.
-      } yield DataToShow(terminals, rules)
+        terminals <- HumanResourceModel().getAllTerminale
+        weekRule <- model.weekRule()
+        gruopRule <- model.groupRule()
+      } yield DataToShow(terminals, weekRule, gruopRule)
       future.onComplete{
-        case Success(data) if data.
+        case Success(data) if data.terminals.statusCode == StatusCodes.SUCCES_CODE &&
+          data.groupRule.statusCode == StatusCodes.SUCCES_CODE && data.weekRule.statusCode == StatusCodes.SUCCES_CODE =>
+          myView.drawShowParams(info, name, data.terminals.payload.getOrElse(List.empty),
+            data.groupRule.payload.getOrElse(List.empty) ::: data.weekRule.payload.getOrElse(List.empty))
+        case Success(_) => myView.showMessageFromKey("result-not-found")
+        case _ => myView.showMessageFromKey("general-error")
       }
-      myView.drawShowParams(info, name, terminals, rules)
+
     }
+
+    override def getInfoParamToShow(idp: Int, data: DataForParamasModel): Unit =
+      model.getParameterById(idp).onComplete{
+        case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.showInfoParam(data.copy(info = Some(value)))
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
   }
 }
-
+/*
 object t extends App{
   import scala.concurrent.ExecutionContext.Implicits.global
   val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,7,1))
@@ -326,4 +342,4 @@ object t2 extends App{
   }*/
   while (true){}
 }
-
+*/
