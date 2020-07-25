@@ -1,9 +1,14 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
+import java.util.stream.Collectors
+
 import com.sun.javafx.scene.control.skin.TableViewSkin
 import javafx.scene.control.cell.{PropertyValueFactory, TextFieldTableCell}
 import javafx.scene.control.{TableColumn, TableRow, TableView}
 import regularexpressionutilities.NumbersChecker
+import view.fxview.component.manager.subcomponent.util.ShiftTable
+
+import scala.jdk.CollectionConverters
 
 object CreateTable {
 
@@ -91,5 +96,11 @@ object CreateTable {
   def createSkinTable[A](): (TableViewSkin[A], TableView[A]) = {
     val table = new TableView[A]()
     (new TableViewSkin[A](table), table)
+  }
+
+  def getElements[A](table: TableView[A]): Set[A] = {
+    new CollectionConverters.ListHasAsScala[A](
+      table.getItems.stream().map[A](x => x)
+        .collect(Collectors.toList[A])).asScala.toSet
   }
 }

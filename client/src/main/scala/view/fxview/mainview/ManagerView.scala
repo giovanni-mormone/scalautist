@@ -303,10 +303,11 @@ object ManagerView {
       Platform.runLater(() => managerHome.drawShowParams(info, name, terminals, rules))
 
     override def showInfoParam(data: DataForParamasModel): Unit = {
+      Platform.runLater(() => modalResource.close())
       Platform.runLater(() => {
-        modalResource.close()
         modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
           ParamsModal(data))
+        modalResource.show()
       })
     }
 

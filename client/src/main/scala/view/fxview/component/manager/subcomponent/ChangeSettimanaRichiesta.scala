@@ -46,6 +46,8 @@ object ChangeSettimanaRichiesta{
     var dayShiftN: VBox = _
     @FXML
     var dayShiftS: VBox = _
+    @FXML
+    var alert: Label = _
 
     case class DailyReq(day: Int, shift: Int, quantity: Int = 0, rule: String)
 
@@ -115,6 +117,7 @@ object ChangeSettimanaRichiesta{
     private def initLabel(): Unit = {
       titleN.setText(resources.getResource("weekN"))
       titleS.setText(resources.getResource("weekS"))
+      alert.setText(resources.getResource("alert"))
       error.setText(resources.getResource("errortxt"))
       error.setVisible(false)
     }
@@ -135,11 +138,12 @@ object ChangeSettimanaRichiesta{
       !(FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(week.get).forall(_.toInt == 0)
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
-      (FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(shift => {
+      val n = (FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
         new ShiftTable(ShiftUtil.getShiftName(shift), info.head, info(1), info(2), info(3), info(4), info(5),
           rules.map(_.nomeRegola), infoDays.find(day => day.shift == shift).map(_.rule))
       }).toList
+      n
     }
 
     private def getInfoShiftForDays(shift: Int, infoDays: List[DailyReq]): List[String] =

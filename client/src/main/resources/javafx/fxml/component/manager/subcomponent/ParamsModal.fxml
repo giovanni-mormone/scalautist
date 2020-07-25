@@ -38,7 +38,6 @@
          </VBox>
       </HBox>
       <CheckBox fx:id="sabato" />
-      <TextField fx:id="rule" />
    </VBox>
    <Button fx:id="open" mnemonicParsing="false"/>
 </VBox>

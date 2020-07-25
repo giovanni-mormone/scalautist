@@ -11,7 +11,7 @@ import javafx.scene.layout.{HBox, VBox}
 import view.fxview.component.AbstractComponent
 import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ModalParamParent
-import view.fxview.component.manager.subcomponent.util.ParamsTable
+import view.fxview.component.manager.subcomponent.util.{ParamsTable, ShiftUtil}
 import view.fxview.util.ResourceBundleUtil._
 
 trait ParamsModal extends AbstractComponent[ModalParamParent] {
@@ -50,8 +50,6 @@ object ParamsModal {
     @FXML
     var sabato: CheckBox = _
     @FXML
-    var rule: TextField = _
-    @FXML
     var terminalsHeader: HBox = _
     @FXML
     var daysHeader: HBox = _
@@ -61,11 +59,10 @@ object ParamsModal {
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      data.info.fold()(i => infoAlgorithm = i)
+      data.info.fold()(info => infoAlgorithm = info)
       initButton()
       initTable()
       initCheckBox()
-      initTextField()
       data.info.fold()(info => {
         printParamsInfo(info)
       })
@@ -82,51 +79,60 @@ object ParamsModal {
       terminalColumn2.setText(resources.getResource("terminal-label-name"))
       terminals.getChildren.addAll(terminalsHeader)
 
-      /*info.zonaTerminale.collect{
-        case terminal if data.terminals.exists(x => x.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId))) =>
-          terminal.idTerminale.foreach( x => terminals.getChildren.add(TerminalModalLabels(x.toString,terminal.nomeTerminale).setParent(parent).pane))
+      info.zonaTerminale.map(_.terminaleId)
+        .foreach(idTer => data.terminals.find(_.idTerminale.contains(idTer))
+          .fold()(terminal =>
+            terminals.getChildren.add(TerminalModalLabels(idTer.toString, terminal.nomeTerminale).setParent(parent).pane)
+          ))
 
+      days.getChildren.clear()
+      dayColumn1.setText(resources.getResource("day-label"))
+      dayColumn2.setText(resources.getResource("shift-label"))
+      dayColumn3.setText(resources.getResource("variation-label"))
+      days.getChildren.addAll(daysHeader)
 
-        days.getChildren.clear()
-        dayColumn1.setText(resources.getResource("day-label"))
-        dayColumn2.setText(resources.getResource("shift-label"))
-        dayColumn3.setText(resources.getResource("variation-label"))
-        days.getChildren.addAll(daysHeader)
-        chosen.toList.flatMap(_.giornoInSettimana).flatten.foreach(info =>
-          days.getChildren.add(DayInWeekModalLabels(daysStringMap.getOrElse(info.giornoId,""),
-            shiftStringMap.getOrElse(info.turnoId,""),
-            info.quantita.toString).setParent(parent).pane))
+      info.giornoInSettimana
+        .fold()(_.foreach(day => {
+          days.getChildren.add(DayInWeekModalLabels(daysStringMap.getOrElse(day.giornoId, NONE),
+            ShiftUtil.getShiftName(day.turnoId),
+            day.quantita.toString,
+            data.rules.find(_.idRegola.contains(day.regolaId)).fold(NONE)(_.nomeRegola)
+          ).setParent(parent).pane)
+        }))
 
-        sabato.setSelected(chosen.head.parametro.treSabato)
-        rules.find(_.idRegola.contains(chosen.head.giornoInSettimana.head.head.regolaId))
-          .fold(rule.setText(NONE))(rulef => rule.setText(rulef.nomeRegola))
-      }*/
+      sabato.setSelected(info.parametro.treSabato)
+
     }
 
     private def initButton(): Unit = {
       open.setText(resources.getResource(key = "buttontxt"))
       data.info.fold(open.setDisable(true))(_ => open.setDisable(false))
-      open.setOnAction(_ => selectedItem(selectedItemId()).fold()(info => parent.loadParam(infoAlgorithm)))
+      open.setOnAction(_ => selectedItem(selectedItemId()).fold()(_ => {
+        val n = infoAlgorithm
+        parent.loadParam(infoAlgorithm)
+      }))
     }
 
     private def initTable(): Unit = {
       val fieldsList: List[String] = List("id", "name")
       CreateTable.createColumns[ParamsTable](params, fieldsList)
       CreateTable.fillTable[ParamsTable](params, data.oldsParam)
+
+      data.info.fold()(_.parametro.idParametri.fold()(id => {
+        val n: Int = CreateTable.getElements(params).toList.map(_.id.get().toInt).sorted.indexWhere(_ == id)
+        if(n >= 0)
+          params.getSelectionModel.select(n)
+      }))
+
       params.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {
         showParamsInfo(selectedItemId())
       })
-      data.info.fold()(_.parametro.idParametri.fold()(id => data.oldsParam.find(_.idParametri.contains(id))
-        .fold()(param => params.getSelectionModel.select(param))))
+
     }
 
     private def initCheckBox(): Unit = {
       sabato.setText(resources.getResource("sabato"))
       sabato.setDisable(true)
-    }
-
-    private def initTextField(): Unit = {
-      rule.setEditable(false)
     }
 
     private def initDays(): Unit =

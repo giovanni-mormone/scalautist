@@ -93,26 +93,37 @@ object ShowParamAlgorithmBox {
       reset.setOnAction(_ => parent.resetParams())
       run.setOnAction(_ => {
         name.fold()(name => {
-          parent.saveParam(InfoAlgorithm(Parametro(info.regolaTreSabato, name),
-                        info.idTerminal.collect{
-                          case id if terminal.exists(_.idTerminale.contains(id)) =>
-                            terminal.find(_.idTerminale.contains(id))
-                            .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
-                        },
-            info.settimanaNormale.map(nWeek => nWeek.map(day => GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
+          parent.saveParam( InfoAlgorithm(
+              Parametro(info.regolaTreSabato, name),
+              info.idTerminal.collect{
+                case id if terminal.exists(_.idTerminale.contains(id)) =>
+                  terminal.find(_.idTerminale.contains(id))
+                  .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
+              },
+              getGiorniInSettimana
           ))
-          println(InfoAlgorithm(Parametro(info.regolaTreSabato, name),
+          println(InfoAlgorithm(
+            Parametro(info.regolaTreSabato, name),
             info.idTerminal.collect{
               case id if terminal.exists(_.idTerminale.contains(id)) =>
                 terminal.find(_.idTerminale.contains(id))
                   .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
             },
-            info.settimanaNormale.map(nWeek => nWeek.map(day => GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
+            getGiorniInSettimana
           ))
         })
         parent.run(info)
         parent.resetParams()
       })
+    }
+
+    private def getGiorniInSettimana: Option[List[GiornoInSettimana]] = {
+      val weekDays = info.settimanaNormale.map(nWeek => nWeek.map(day =>
+        GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
+      if(weekDays.isDefined)
+        if(weekDays.getOrElse(List.empty).isEmpty)
+          return None
+      weekDays
     }
 
     private def getRuleName(id: Int): String =
