@@ -31,27 +31,17 @@ trait ManagerModel {
    *
    * @return Future of Option of List of Regola that contains all Rule for group for the algorithm
    */
-<<<<<<< HEAD
-  def groupRule(): Future[Response[Regola]]
-
-=======
   def groupRule():Future[Response[List[Regola]]]
->>>>>>> 8ee194d78c25b0774e3adf35780325835a59055e
   /**
    * Method that return all rule that contains a normal week and special week for the algorithm
    *
    * @return Future of Option of List of Regola that contains all Rule for a normal
    *         week and special week for the algorithm
    */
-<<<<<<< HEAD
-  def weekRule(): Future[Response[Regola]]
 
-  def consumeNotification(tag: Long, userId: Option[Int]): Unit
-=======
   def weekRule():Future[Response[List[Regola]]]
 
   def consumeNotification(tag: Long,userId: Option[Int]): Unit
->>>>>>> 8ee194d78c25b0774e3adf35780325835a59055e
 
   def verifyExistedQueue(userId: Option[Int], f: (String, Long) => Unit): Unit
 

@@ -110,6 +110,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
       QueryPersonStoricAvail(idPerson._1,week,day,idPerson._3,idPerson._4,date)
     }
   }
+  import convertToQueryPersonStoricAvail.datToQueryPersonStoricAvail
   //identifies driver by id
   private val RUOLO_DRIVER=3
   // TODO Controllare anche la settimana :) \(-_-)/

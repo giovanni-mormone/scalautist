@@ -236,11 +236,19 @@ object ManagerView {
 
     override def drawResultPanel(): Unit = myController.dataToResultPanel()
 
-    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() => managerHome.drawResultTerminal(terminal))
+    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() =>
+      managerHome.drawResultTerminal(terminal)
+     )
 
-    override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = myController.resultForTerminal(value,date,date1)
+    override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = {
+      managerHome.loadingResult()
+      myController.resultForTerminal(value,date,date1)
+    }
 
-    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = Platform.runLater(() => managerHome.drawResult(resultList,dateList))
+    override def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit = Platform.runLater(() => {
+      managerHome.stopLoadingResult()
+      managerHome.drawResult(resultList,dateList)
+    })
 
     override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>managerHome.drawNotifica(str,tag))
 

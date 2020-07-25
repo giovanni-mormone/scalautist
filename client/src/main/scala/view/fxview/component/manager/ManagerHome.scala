@@ -21,10 +21,10 @@ import view.fxview.{FXHelperFactory, NotificationHelper}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
- * trait of methods that allow user to do desired operations.
+ *         trait of methods that allow user to do desired operations.
  */
-trait ManagerHome extends Component[ManagerHomeParent]{
-  def drawNotifica(str: String,tag:Long): Unit
+trait ManagerHome extends Component[ManagerHomeParent] {
+  def drawNotifica(str: String, tag: Long): Unit
 
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
 
@@ -41,12 +41,14 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   /**
    * method that send all shift that existing in system and allow draw this
+   *
    * @param listShift list with all shift in the system
    */
   def drawShiftRichiesta(listShift: List[Turno]): Unit
 
   /**
-   *  method that send all terminal that existing in system and allow draw this
+   * method that send all terminal that existing in system and allow draw this
+   *
    * @param terminal list with all terminal existing in system
    */
   def drawRichiesta(terminal: List[Terminale]): Unit
@@ -55,14 +57,15 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * Method used to draw the list of turns that needs a replacement
    *
    * @param absences
-   *                 The list of turns that needs a replacement
+   * The list of turns that needs a replacement
    */
   def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit
 
   /**
    * Method used to draw the list of people avalaible for the turn that needs a replacement
+   *
    * @param replacement
-   *                    The people avalaible for the turn that needs a replacement
+   * The people avalaible for the turn that needs a replacement
    */
   def drawManageReplacement(replacement: List[InfoReplacement]): Unit
 
@@ -96,7 +99,7 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * Initialize zona Manager view before show
    *
    * @param zones
-   *                List of [[caseclass.CaseClassDB.Zona]]
+   * List of [[caseclass.CaseClassDB.Zona]]
    */
   def drawZona(zones: List[Zona]): Unit
 
@@ -104,12 +107,15 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * Initialize Terminal Manager view before show
    *
    * @param zones
-   *             List of [[caseclass.CaseClassDB.Zona]]
+   * List of [[caseclass.CaseClassDB.Zona]]
    * @param terminals
-   *                  List of [[caseclass.CaseClassDB.Terminale]]
+   * List of [[caseclass.CaseClassDB.Terminale]]
    */
   def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
 
+  def loadingResult(): Unit
+
+  def stopLoadingResult(): Unit
 }
 
 object ManagerHome{
@@ -197,6 +203,12 @@ object ManagerHome{
 
     override def stopLoadingReplacements(): Unit =
       fillHolesView.endLoading()
+
+    override def loadingResult(): Unit =
+      selectResultBox.startLoading()
+
+    override def stopLoadingResult(): Unit =
+      selectResultBox.endLoading()
 
     override def drawRichiesta(terminal: List[Terminale]): Unit = {
       managerRichiestaBoxView = ManagerRichiestaBox(terminal)
