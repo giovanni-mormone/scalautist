@@ -135,7 +135,7 @@ object ChangeSettimanaRichiesta{
       !(FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(week.get).forall(_.toInt == 0)
 
     private def getElements(infoDays: List[DailyReq] = daysInfo): List[ShiftTable] = {
-      (FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(shift => { //
+      (FIRST_WEEK_DAY_SHIFT to ShiftUtil.N_SHIFT).map(shift => {
         val info: List[String] = getInfoShiftForDays(shift, infoDays)
         new ShiftTable(ShiftUtil.getShiftName(shift), info.head, info(1), info(2), info(3), info(4), info(5),
           rules.map(_.nomeRegola), infoDays.find(day => day.shift == shift).map(_.rule))

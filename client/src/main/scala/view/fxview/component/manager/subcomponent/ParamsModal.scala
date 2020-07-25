@@ -81,6 +81,7 @@ object ParamsModal {
       terminalColumn1.setText(resources.getResource("terminal-label-id"))
       terminalColumn2.setText(resources.getResource("terminal-label-name"))
       terminals.getChildren.addAll(terminalsHeader)
+
       /*info.zonaTerminale.collect{
         case terminal if data.terminals.exists(x => x.zonaTerminale.exists(zt => terminal.idTerminale.contains(zt.terminaleId))) =>
           terminal.idTerminale.foreach( x => terminals.getChildren.add(TerminalModalLabels(x.toString,terminal.nomeTerminale).setParent(parent).pane))
@@ -133,11 +134,6 @@ object ParamsModal {
         2 -> resources.getResource("tuesday"), 3 -> resources.getResource("wednesday"),
         4 -> resources.getResource("thursday"), 5 -> resources.getResource("friday"),
         6 -> resources.getResource("saturday"), 7 -> resources.getResource("sunday"))
-
-    private def showInTextArea(textArea: TextArea, elements: List[String], init: String = ""): Unit = {
-      val text: String = init + elements.reduce( (data, el) => data + "\n" + el)
-      textArea.setText(text)
-    }
 
     private def showParamsInfo(idp: Int): Unit = {
       parent.getInfoToShow(idp, data)

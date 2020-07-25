@@ -47,7 +47,7 @@ trait ManagerController extends AbstractController[ManagerView]{
 
   def dataToResultPanel(): Unit
 
-  def runAlgorithm(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
+  def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit
 
   /**
    * save a new zone into db
@@ -250,8 +250,18 @@ object ManagerController {
     def statusAlgorithm(message:String):Unit=
       println(s"$message")
 
-    override def runAlgorithm(algorithmExecute: AlgorithmExecute): Future[Response[Int]] =
-      model.runAlgorithm(algorithmExecute,statusAlgorithm)
+    override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
+      model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) => {
+          Platform.runLater(() => myView.showMessageFromKey("start-algorithm"))
+          startListenNotification()
+        }
+        case Success(Response(StatusCodes.ERROR_CODE10,_)) => {
+          Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+          startListenNotification()
+        }
+        case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
+      }
 
     override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] =
       model.verifyOldResult(dataToCheck)
