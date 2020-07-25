@@ -2,12 +2,14 @@ package view.fxview.component.HumanResources
 
 import java.net.URL
 import java.util.ResourceBundle
+
 import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.HumanResources.subcomponent._
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
@@ -167,5 +169,7 @@ object HRHome{
       holidayBox.setParent(parent)
       holidayBox.pane
     }
+    override def startLoading(): Unit =
+      baseHR.setCenter(FXHelperFactory.loadingBox)
   }
 }

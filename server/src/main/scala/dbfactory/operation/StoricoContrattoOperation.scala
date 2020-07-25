@@ -6,7 +6,6 @@ import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.StoricoContrattoTable.StoricoContrattoTableRep
 import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

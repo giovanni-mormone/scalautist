@@ -7,7 +7,7 @@
 <VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/ParamGruppo.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <BorderPane.margin>
-      <Insets left="50.0"/>
+      <Insets left="30.0" right="30" bottom="30" top="20"/>
    </BorderPane.margin>
    <HBox fx:id="grouphbox">
       <VBox fx:id="groupvbox">

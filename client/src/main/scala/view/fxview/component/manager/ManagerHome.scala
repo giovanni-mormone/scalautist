@@ -83,9 +83,13 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * The people avalaible for the turn that needs a replacement
    */
   def drawManageReplacement(replacement: List[InfoReplacement]): Unit
-
+  /**
+   * method that show loading icon
+   */
   def loadingReplacements(): Unit
-
+  /**
+   * method that remove loading icon
+   */
   def stopLoadingReplacements(): Unit
 
   /**
@@ -134,8 +138,14 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    */
   def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
 
+  /**
+   * method that show loading icon
+   */
   def loadingResult(): Unit
 
+  /**
+   * method that remove loading icon
+   */
   def stopLoadingResult(): Unit
 }
 

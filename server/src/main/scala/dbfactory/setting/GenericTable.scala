@@ -42,8 +42,6 @@ abstract class GenericTable[T](tag: Tag, name: String,nameId:String) extends Tab
  */
 abstract class GenericTableQuery[C, T <: AbstractTable[C]: runtime.TypeTag] {
 
-  // look at following code: Students, if you want to initialize Students
-  // you're gonna need a tag parameter, that's why we pass tag here
   private val table: TableQuery[T] = TableQuery.apply(tag => GenericTableQuery.createClassByConstructor[T](tag))
   /**
    * method which call table which call scalaReflection to generate instance table

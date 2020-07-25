@@ -6,6 +6,7 @@ import java.util.ResourceBundle
 import javafx.fxml.{FXML, Initializable}
 import javafx.geometry.Pos
 import javafx.scene.control.{Button, Label}
+import javafx.scene.image.Image
 import javafx.scene.layout.VBox
 import javafx.stage.{Modality, Stage}
 import view.BaseView
@@ -69,7 +70,8 @@ object FXHelperFactory {
     @FXML
     var confirmationButton:Button = _
     private val myStage = new Stage()
-
+    private val image = new Image(getClass.getResource("../../images/program_icon.png").toString)
+    myStage.getIcons.add(image)
     FXLoader.loadScene(myStage,this,"ModalBase")
 
     /**
