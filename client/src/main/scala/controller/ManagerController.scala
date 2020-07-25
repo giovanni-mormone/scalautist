@@ -21,6 +21,13 @@ trait ManagerController extends AbstractController[ManagerView]{
 
   /**
    *
+   * @param param
+   */
+  def saveParam(param: InfoAlgorithm): Unit
+
+
+  /**
+   *
    * @param idp
    */
   def getInfoParamToShow(idp: Int, data: DataForParamasModel): Unit
@@ -264,6 +271,12 @@ object ManagerController {
       model.getParameterById(idp).onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.showInfoParam(data.copy(info = Some(value)))
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case _ => myView.showMessageFromKey("general-error")
+      }
+
+    override def saveParam(param: InfoAlgorithm): Unit =
+      model.saveParameters(param).onComplete {
+        case Success(value) => myView.showMessageFromKey("GeneralError-Success")
         case _ => myView.showMessageFromKey("general-error")
       }
   }

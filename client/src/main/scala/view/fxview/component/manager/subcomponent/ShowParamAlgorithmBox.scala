@@ -3,8 +3,8 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Regola, Terminale}
-import caseclass.CaseClassHttpMessage.AlgorithmExecute
+import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, ZonaTerminale}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAlgorithm}
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label, TextArea}
 import view.fxview.component.{AbstractComponent, Component}
@@ -90,6 +90,20 @@ object ShowParamAlgorithmBox {
       reset.setText(resources.getResource("resettxt"))
 
       reset.setOnAction(_ => parent.resetParams())
+      run.setOnAction(_ => {
+        parent.run(info)
+        name.fold()(name => {
+          parent.saveParam(InfoAlgorithm(Parametro(info.regolaTreSabato, name),
+                        info.idTerminal.collect{
+                          case id if terminal.exists(_.idTerminale.contains(id)) =>
+                            terminal.find(_.idTerminale.contains(id))
+                            .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
+                        },
+            info.settimanaNormale.map(nWeek => nWeek.map(day => GiornoInSettimana(day.idDay, day.turnoId, day.regola, day.quantita)))
+          ))
+        })
+        parent.resetParams()
+      })
     }
 
     private def getRuleName(id: Int): String =

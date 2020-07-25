@@ -237,7 +237,7 @@ object ManagerView {
     override def showParams(info: AlgorithmExecute, name: Option[String]): Unit =
       myController.showParamAlgorithm(info, name)
 
-    override def run(info: AlgorithmExecute, name: Option[String]): Unit =
+    override def run(info: AlgorithmExecute): Unit =
       myController.runAlgorithm(info)
 
     override def resetParams(): Unit =
@@ -257,5 +257,8 @@ object ManagerView {
 
     override def getInfoToShow(idp: Int, data: DataForParamasModel): Unit =
       myController.getInfoParamToShow(idp, data)
+
+    override def saveParam(param: InfoAlgorithm): Unit =
+      myController.saveParam(param)
   }
 }
