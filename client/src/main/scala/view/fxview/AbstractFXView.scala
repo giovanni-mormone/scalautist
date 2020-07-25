@@ -7,6 +7,7 @@ import javafx.application.Platform
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.Scene
 import javafx.scene.control.{Button, Label}
+import javafx.scene.image.Image
 import javafx.scene.layout.{BorderPane, StackPane}
 import javafx.stage.{Modality, Stage}
 import model.entity.HumanResourceModel
@@ -31,6 +32,8 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
   @FXML
   protected var pane: StackPane = _
   protected var generalResources: ResourceBundle = _
+  private val image = new Image(getClass.getResource("../../../images/program_icon.png").toString)
+  myStage.getIcons.add(image)
   /**
    * Stage of this view.
    */

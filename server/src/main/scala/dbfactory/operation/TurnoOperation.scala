@@ -3,7 +3,6 @@ import caseclass.CaseClassDB.Turno
 import dbfactory.implicitOperation.OperationCrud
 import messagecodes.StatusCodes
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 trait TurnoOperation extends OperationCrud[Turno]{
 }

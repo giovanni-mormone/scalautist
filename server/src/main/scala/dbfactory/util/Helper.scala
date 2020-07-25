@@ -1,11 +1,10 @@
 package dbfactory.util
-import slick.jdbc.SQLServerProfile.api._
 import caseclass.CaseClassDB.Persona
-import dbfactory.operation.AssenzaOperation.{NOT_RISULTATO_ID, NOT_RISULTATO_PERSONE_ID, NOT_RISULTATO_TURNO_ID}
 import dbfactory.table.PersonaTable.PersonaTableRep
+import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.{ExecutionContext, Future}
-import ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 object Helper {
   val EMPTY_STRING: String =""
   type tuplePerson = (String, String, String,Option[String], Int,Boolean,String,Option[Int], Option[Int], Option[Int])

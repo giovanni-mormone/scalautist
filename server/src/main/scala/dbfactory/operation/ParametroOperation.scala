@@ -1,12 +1,14 @@
 package dbfactory.operation
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, ZonaTerminale}
-import caseclass.CaseClassHttpMessage.InfoAlgorithm
+import caseclass.CaseClassDB.{Giorno, GiornoInSettimana, Parametro, ZonaTerminale}
+import caseclass.CaseClassHttpMessage.{InfoAlgorithm, RequestGiorno}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiornoInSettimana, InstanceRegola, InstanceZonaTerminal}
 import dbfactory.implicitOperation.OperationCrud
+import dbfactory.operation.RichiestaTeoricaOperation._
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
+import utils.DateConverter.nameOfDayFromId
 
 import scala.concurrent.Future
 
@@ -38,9 +40,11 @@ trait ParametroOperation extends OperationCrud[Parametro]{
    * @return Future of Option of InfoAlgorithm
    */
   def getParameter(idParameter:Int):Future[Option[InfoAlgorithm]]
-}
-object ParametroOperation extends ParametroOperation {
 
+}
+
+object ParametroOperation extends ParametroOperation {
+  private val DEFAULT_SHIFT = 0
   override def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm): Future[Option[Int]] = infoAlgorithm match {
     case value if value.zonaTerminale.isEmpty || value.parametro.nome.isEmpty =>
       Future.successful(Some(StatusCodes.ERROR_CODE3))
@@ -52,13 +56,32 @@ object ParametroOperation extends ParametroOperation {
     }yield result
   }
 
+  private def selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana],parametroId:Option[Int]): Future[List[GiornoInSettimana]]= {
+      def _selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana],newGiornoInSettimana:List[GiornoInSettimana]=List.empty):Future[List[GiornoInSettimana]]=giornoInSettimana match {
+        case  List(giorno) =>  selectIdGiornoAndInsertGiornoInSettimana(giorno,parametroId).collect(x=>newGiornoInSettimana:+x)
+        case ::(giorno, next) => selectIdGiornoAndInsertGiornoInSettimana(giorno,parametroId).flatMap(x =>
+          _selectedIdGiorno(next,newGiornoInSettimana:+x)
+        )
+      }
+    _selectedIdGiorno(giornoInSettimana)
+  }
+  private def selectIdGiornoAndInsertGiornoInSettimana(giorno:GiornoInSettimana,parametroId:Option[Int]):Future[GiornoInSettimana]={
+    selectGiornoId(RequestGiorno(Giorno(giorno.quantita, nameOfDayFromId(giorno.giornoId), giorno.giornoId), DEFAULT_SHIFT))
+      .collect{
+        case Some(id) =>
+          val newGiorno = giorno.copy(giornoId = id, parametriId = parametroId)
+          GiornoInSettimanaOperation.insert(newGiorno)
+          newGiorno
+      }
+  }
   private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
     (idParametri,infoAlgorithm.giornoInSettimana) match {
       case (Some(id),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
-        case Some(StatusCodes.SUCCES_CODE) => GiornoInSettimanaOperation.insertAll(giornoInSettimana.map(value=>value.copy(parametriId = Some(id)))).flatMap {
+        case Some(StatusCodes.SUCCES_CODE) =>selectedIdGiorno(giornoInSettimana,idParametri)
+          .flatMap(giorno=> GiornoInSettimanaOperation.insertAll(giorno).flatMap {
           case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
           case None =>deleteParametri(idParametri)
-        }
+        })
         case Some(StatusCodes.ERROR_CODE4) =>deleteParametri(idParametri).collect(_=>Some(StatusCodes.ERROR_CODE4))
       }
       case (Some(_),None)=>insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)

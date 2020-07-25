@@ -23,13 +23,14 @@ import dbfactory.table.ZonaTable.ZonaTableRep
 import dbfactory.table.ZonaTerminaleTable.ZonaTerminaleTableRep
 import dbfactory.util.Helper._
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 /** @author Fabian Aspee Encina
  * Trait which enables operation generic in all tables [[caseclass.CaseClassDB]]
  * @tparam A Is a case class that represent instance of the table in database
  */
 trait Crud[A]{
+
   /**
    *
    * @param element Id for select one element in a table in the database

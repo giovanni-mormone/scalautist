@@ -21,12 +21,15 @@ trait DriverView extends DialogView{
   def drawNotification(str: String, tag: Long): Unit
 
   /**
-   *
+   * this method draw information of the driver, this is a shift in the day and
+   * extra shift that this can have.
+   * @param infoHome case class with information of driver for day
    */
   def drawHomeView(infoHome: InfoHome):Unit
 
   /**
    * method which draw view that contains all shift of a driver into 7 days
+   * @param shift all shift for the next seven days
    */
   def drawShiftView(shift: InfoShift):Unit
 
@@ -42,6 +45,10 @@ trait DriverView extends DialogView{
    */
   def informationSalary(information:StipendioInformations):Unit
 
+  /**
+   *
+   * @param days list with day and availability for driver
+   */
   def drawDisponibilitaPanel(days: List[String]): Unit
 
   def disponibilityInserted(): Unit

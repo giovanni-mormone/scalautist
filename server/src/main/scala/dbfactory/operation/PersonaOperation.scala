@@ -5,12 +5,10 @@ import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilit
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.PersonaTable.PersonaTableRep
 import dbfactory.util.Helper._
-import emitter.ConfigEmitter
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /** @author Fabian Aspée Encina, Giovanni Mormone
