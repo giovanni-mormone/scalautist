@@ -8,7 +8,6 @@ import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /** @author Fabian Aspee Encina

@@ -14,7 +14,7 @@ import view.fxview.component.Component
 import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.parent._
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
-import view.fxview.component.HumanResources.subcomponent.{ModalAbsence, ModalTerminal, ModalZone}
+import view.fxview.component.HumanResources.subcomponent.ModalAbsence
 import view.fxview.component.modal.Modal
 
 /**
@@ -63,34 +63,6 @@ trait HumanResourceView extends DialogView {
    *                      list of [[caseclass.CaseClassHttpMessage.Ferie]] to show
    */
   def drawHolidayView(employeesList: List[Ferie]):Unit
-
-  /**
-   * Show the zone view
-   *
-   * @param zones
-   *              List of [[caseclass.CaseClassDB.Zona]]
-   */
-  def drawZonaView(zones: List[Zona]): Unit
-
-  /**
-   * show terminal view
-   *
-   * @param zones
-   *              Listo of [[caseclass.CaseClassDB.Zona]]
-   * @param terminals
-   *                   Listo of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit
-
-  /**
-   * show terminal modal
-   *
-   * @param zoneList
-   *                 List of [[caseclass.CaseClassDB.Zona]]
-   * @param terminal
-   *                 instance of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit
 
   /**
    * show a message in the modal like a pop-up
@@ -190,30 +162,10 @@ object HumanResourceView {
     override def fireClicked(employees: Set[Int]): Unit =
       myController.fires(employees)
 
-    /////////////////////////////////////////////////////////   zona
-    override def newZona(zona: Zona): Unit =
-      myController.saveZona(zona)
-
-    override def deleteZona(zona: Zona): Unit =
-      myController.deleteZona(zona)
-
-    override def updateZona(zona: Zona): Unit =
-      myController.updateZona(zona)
 
     /////////////////////////////////////////////////////////   assenza
     override def saveAbsence(assenza: Assenza): Unit =
       myController.saveAbsence(assenza)
-
-    /////////////////////////////////////////////////////////   terminale
-    override def newTerminale(terminal: Terminale): Unit =
-      myController.saveTerminal(terminal)
-
-    override def deleteTerminal(terminal: Terminale): Unit =
-      myController.deleteTerminal(terminal)
-
-
-    override def updateTerminal(terminal: Terminale): Unit =
-      myController.updateTerminal(terminal)
 
     /////////////////////////////////////////////////////////ModalAbsence
     override def openModal(item:Ferie, isMalattia: Boolean): Unit =myController.absencePerson(item,isMalattia)
@@ -226,17 +178,9 @@ object HumanResourceView {
     override def drawEmployeePanel(viewToDraw: String): Unit =
       myController.dataToFireAndIll(viewToDraw)
 
-    override def drawZonePanel: Unit =
-      myController.dataToZone()
-
-    override def drawTerminalPanel: Unit =
-      myController.dataToTerminal()
-
     override def drawHoliday(): Unit =
       myController.dataToHoliday()
 
-    override def openTerminalModal(terminal: Int): Unit =
-      myController.terminalModalData(terminal)
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
 
@@ -253,12 +197,6 @@ object HumanResourceView {
       case EmployeeView.ill => Platform.runLater(() => hrHome.drawIllBox(employeesList))
     }
 
-    override def drawZonaView(zones: List[Zona]): Unit =
-      Platform.runLater(() => hrHome.drawZona(zones))
-
-    override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
-      Platform.runLater(() => hrHome.drawTerminal(zones, terminals))
-
     override def drawHolidayView(employeesList: List[Ferie]): Unit =
       Platform.runLater(() => hrHome.drawHolidayBox(employeesList))
 
@@ -271,26 +209,6 @@ object HumanResourceView {
         modalResource.show()
       })
 
-    /////////////////////////////////////////////////////////   disegni modal
-
-    override def openZonaModal(zona: Zona): Unit = {
-      Platform.runLater(() => {
-        homeView()
-        modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], HRModalBoxParent](myStage, this, ModalZone(zona))
-        modalResource.show()
-      })
-    }
-
-
-    def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
-      Platform.runLater(() => {
-        homeView()
-        modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], HRModalBoxParent](myStage, this, ModalTerminal(zoneList, terminal))
-        modalResource.show()
-      })
-    }
-
-    ////////////////////////////////////////////////////////////// esito modal
 
     override def message(message: String): Unit =
       Platform.runLater(()=> this.showMessage(message))

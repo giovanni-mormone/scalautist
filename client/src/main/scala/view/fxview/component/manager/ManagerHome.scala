@@ -4,29 +4,20 @@ import java.net.URL
 import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{GruppoA, InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement}
+import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.BorderPane
-import view.fxview.FXHelperFactory
-import caseclass.{CaseClassDB, CaseClassHttpMessage}
-import caseclass.CaseClassDB.{Terminale, Turno}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
-import view.fxview.util.ResourceBundleUtil._
-import javafx.fxml.FXML
-import javafx.scene.control.{Accordion, Button, Label, TitledPane}
-import javafx.scene.layout.{BorderPane, VBox}
+import javafx.scene.control.{Accordion, Button, Label}
+import javafx.scene.layout.{BorderPane, Pane}
 import org.controlsfx.control.PopOver
-import view.fxview.{FXHelperFactory, NotificationHelper}
 import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
-import view.fxview.component.manager.subcomponent.{FillHolesBox, ManagerRichiestaBox, SelectResultBox}
 import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.component.manager.subcomponent.{ChangeSettimanaRichiesta, ChooseParamsBox, FillHolesBox, GroupParamsBox, ManagerRichiestaBox}
+import view.fxview.component.manager.subcomponent._
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+import view.fxview.{FXHelperFactory, NotificationHelper}
 
 /**
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
@@ -100,6 +91,25 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param group
    */
   def updateGroup(group: Group): Unit
+
+  /**
+   * Initialize zona Manager view before show
+   *
+   * @param zones
+   *                List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZona(zones: List[Zona]): Unit
+
+  /**
+   * Initialize Terminal Manager view before show
+   *
+   * @param zones
+   *             List of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals
+   *                  List of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit
+
 }
 
 object ManagerHome{
@@ -119,8 +129,6 @@ object ManagerHome{
     @FXML
     var manageAbsenceButton: Button = _
     @FXML
-    var redoTurnsButton: Button = _
-    @FXML
     var printResultButton: Button = _
     @FXML
     var manageZoneButton: Button = _
@@ -139,6 +147,10 @@ object ManagerHome{
     var managerRichiestaBoxView:ManagerRichiestaBox = _
     var chooseParamsBox: ChooseParamsBox = _
     var selectResultBox:SelectResultBox = _
+    var terminalView: TerminalBox = _
+    var zonaView: ZonaBox = _
+
+
     var gruopParamBox: GroupParamsBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -147,7 +159,6 @@ object ManagerHome{
       notificationButton.setText(resources.getResource("notification-button"))
       generateTurnsButton.setText(resources.getResource("generate-turns-button"))
       manageAbsenceButton.setText(resources.getResource("manage-absence-button"))
-      redoTurnsButton.setText(resources.getResource("redo-turns-button"))
       printResultButton.setText(resources.getResource("print-result-button"))
       manageZoneButton.setText(resources.getResource("manage-zone-button"))
       manageTerminalButton.setText(resources.getResource("manage-terminal-button"))
@@ -157,6 +168,9 @@ object ManagerHome{
       generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
       notificationButton.setOnAction(_=>openAccordion())
+      manageZoneButton.setOnAction(_ => parent.drawZonePanel())
+      manageTerminalButton.setOnAction(_ => parent.drawTerminalPanel())
+
       nameLabel.setText(resources.println("username-label",userName))
       idLabel.setText(resources.println("id-label",userId))
     }
@@ -232,5 +246,25 @@ object ManagerHome{
 
     override def updateGroup(group: Group): Unit =
       gruopParamBox.updateGroup(group)
+
+    override def drawZona(zones: List[Zona]): Unit =
+      baseManager.setCenter(zonaBox(zones))
+
+    override def drawTerminal(zones: List[Zona], terminals: List[Terminale]): Unit =
+      baseManager.setCenter(terminalBox(zones, terminals))
+
+    private def zonaBox(zones: List[Zona]): Pane = {
+      zonaView = ZonaBox(zones)
+      zonaView.setParent(parent)
+      zonaView.pane
+    }
+
+    private def terminalBox(zones: List[Zona], terminals: List[Terminale]): Pane = {
+      terminalView = TerminalBox(zones, terminals)
+      terminalView.setParent(parent)
+      terminalView.pane
+    }
   }
+
+
 }

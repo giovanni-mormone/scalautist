@@ -28,3 +28,10 @@
     -fx-font-size: 26px;
     -fx-font-weight: bold;
 }
+
+#optionsBox > .button{
+    -fx-max-width: 180;
+    -fx-min-width: 180;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}

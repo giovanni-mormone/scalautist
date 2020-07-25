@@ -6,23 +6,17 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ComboBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Pane prefHeight="316.0" prefWidth="600.0">
-         <children>
-            <DatePicker fx:id="days" layoutX="15.0" layoutY="25.0"/>
-            <ComboBox fx:id="rules" layoutX="15.0" layoutY="70.0"/>
-            <TextArea fx:id="chosen" layoutX="230.0" layoutY="25.0" prefHeight="150.0" prefWidth="200.0"/>
-         </children>
-      </Pane>
-      <Pane prefHeight="90.0" prefWidth="600.0">
-         <children>
-            <Button fx:id="add" layoutX="200.0" layoutY="30.0" mnemonicParsing="false" prefHeight="27.0"
-                    prefWidth="101.0" text="Button" />
-            <Button fx:id="done" layoutX="460.0" layoutY="30.0" mnemonicParsing="false" prefHeight="27.0"
-                    prefWidth="101.0" text="Button" />
-         </children>
-      </Pane>
-   </children>
+
+<?import javafx.scene.layout.HBox?>
+<VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/GroupModal.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <HBox fx:id="hbox">
+      <DatePicker fx:id="days" />
+      <ComboBox fx:id="rules" />
+   </HBox>
+   <TextArea fx:id="chosen" />
+   <HBox fx:id="buttonbox">
+      <Button fx:id="add" mnemonicParsing="false"/>
+      <Button fx:id="done" mnemonicParsing="false"/>
+   </HBox>
 </VBox>

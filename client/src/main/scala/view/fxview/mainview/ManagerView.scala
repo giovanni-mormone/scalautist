@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.ResourceBundle
 
 import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{Regola, Terminale, Turno}
+import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
 import javafx.application.Platform
@@ -16,9 +16,9 @@ import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.{GroupModal, GroupParamsBox, ParamsModal}
-import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent}
+import view.fxview.component.manager.subcomponent.parent._
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.{GroupModal, GroupParamsBox, ModalTerminal, ModalZone, ParamsModal}
 import view.fxview.component.modal.Modal
 
 trait ManagerView extends DialogView {
@@ -31,6 +31,34 @@ trait ManagerView extends DialogView {
   def drawRichiesta(terminal: List[Terminale]): Unit
 
   def sendRichiesta(richiesta: InfoRichiesta): Unit
+
+  /**
+   * Show the zone view
+   *
+   * @param zones
+   *              List of [[caseclass.CaseClassDB.Zona]]
+   */
+  def drawZonaView(zones: List[Zona]): Unit
+
+  /**
+   * show terminal view
+   *
+   * @param zones
+   *              Listo of [[caseclass.CaseClassDB.Zona]]
+   * @param terminals
+   *                   Listo of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit
+
+  /**
+   * show terminal modal
+   *
+   * @param zoneList
+   *                 List of [[caseclass.CaseClassDB.Zona]]
+   * @param terminal
+   *                 instance of [[caseclass.CaseClassDB.Terminale]]
+   */
+  def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit
 
   /**
    * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
@@ -78,6 +106,9 @@ trait ManagerView extends DialogView {
 
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
+  def refreshTerminalPanel(messageKey: String): Unit
+  def refreshZonaPanel(messageKey: String): Unit
+
   def consumeNotification(tag: Long): Unit
 }
 
@@ -86,7 +117,7 @@ object ManagerView {
   def apply(stage: Stage,userName: String, userId:String): ManagerView = new ManagerViewFX(stage,userName,userId)
 
   private class ManagerViewFX(stage: Stage,userName: String, userId:String) extends AbstractFXDialogView(stage)
-    with ManagerView with ManagerHomeParent{
+    with ManagerView with ManagerHomeParent with ManagerHomeModalParent{
 
     private var modalResource: Modal = _
     private var myController: ManagerController = _
@@ -222,5 +253,78 @@ object ManagerView {
 
     override def startAlgorithm(info: AlgorithmExecute): Unit =
       myController.runAlgorithm(info)
+
+    override def drawZonaView(zones: List[Zona]): Unit =
+      Platform.runLater(() => managerHome.drawZona(zones))
+
+    override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
+      Platform.runLater(() => managerHome.drawTerminal(zones, terminals))
+
+    override def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
+      Platform.runLater(() => {
+//        homeView()
+        modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], ManagerHomeModalParent](myStage, this, ModalTerminal(zoneList, terminal))
+        modalResource.show()
+      })
+    }
+
+      override def openZonaModal(zona: Zona): Unit = {
+        Platform.runLater(() => {
+//          homeView()
+          modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
+          modalResource.show()
+        })
+      }
+
+    /////////////////////////////////////////////////////////   zona
+    override def newZona(zona: Zona): Unit =
+      myController.saveZona(zona)
+
+    override def deleteZona(zona: Zona): Unit =
+      myController.deleteZona(zona)
+
+    override def updateZona(zona: Zona): Unit =
+      myController.updateZona(zona)
+
+    /////////////////////////////////////////////////////////   terminale
+    override def newTerminale(terminal: Terminale): Unit =
+      myController.saveTerminal(terminal)
+
+    override def deleteTerminal(terminal: Terminale): Unit =
+      myController.deleteTerminal(terminal)
+
+    override def updateTerminal(terminal: Terminale): Unit =
+      myController.updateTerminal(terminal)
+
+    override def drawZonePanel(): Unit =
+      myController.dataToZone()
+
+    override def drawTerminalPanel(): Unit =
+      myController.dataToTerminal()
+
+    override def openTerminalModal(terminal: Int): Unit =
+      myController.terminalModalData(terminal)
+
+    override def refreshTerminalPanel(messageKey: String): Unit =
+      Platform.runLater(() => {
+        showMessageFromKey(messageKey)
+        verifyModalResource(drawTerminalPanel)
+      })
+
+    override def refreshZonaPanel(messageKey: String): Unit =
+      Platform.runLater(() => {
+        showMessageFromKey(messageKey)
+        verifyModalResource(drawZonePanel)
+      })
+
+    private def verifyModalResource(function: () => Unit): Unit = {
+      Option(modalResource) match {
+        case None => function()
+        case _ =>
+          modalResource.close()
+          function()
+      }
+    }
   }
+
 }

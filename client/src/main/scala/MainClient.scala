@@ -13,7 +13,7 @@ private class Main extends Application{
   override def start(primaryStage: Stage): Unit = {
     val image = new Image(getClass.getResource("images/program_icon.png").toString)
     primaryStage.getIcons.add(image)
-    ManagerView(primaryStage,"Juan","123").show()
-    //LoginView(primaryStage).show()
+    //ManagerView(primaryStage,"Juan","123").show()
+    LoginView(primaryStage).show()
   }
 }

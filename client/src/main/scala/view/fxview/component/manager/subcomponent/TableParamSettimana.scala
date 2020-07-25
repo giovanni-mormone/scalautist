@@ -6,6 +6,8 @@ import java.util.stream.Collectors
 
 import javafx.fxml.FXML
 import javafx.scene.control.TableView
+import javafx.scene.control.TableView.ResizeFeatures
+import javafx.util.Callback
 import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
@@ -34,7 +36,7 @@ object TableParamSettimana {
       CreateTable.fillTable[ShiftTable](table, elements)
       CreateTable.createColumns[ShiftTable](table, List("shift"))
       CreateTable.createEditableColumns[ShiftTable](table, ShiftTable.editableShiftTable)
-      CreateTable.createColumns[ShiftTable](table, List("combo"))
+      CreateTable.createColumns[ShiftTable](table, List("combo"),150)
     }
 
     override def getElements(): Set[ShiftTable] = {

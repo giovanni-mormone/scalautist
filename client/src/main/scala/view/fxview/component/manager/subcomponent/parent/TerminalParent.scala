@@ -1,6 +1,6 @@
-package view.fxview.component.HumanResources.subcomponent.parent
+package view.fxview.component.manager.subcomponent.parent
 
-import caseclass.CaseClassDB.{Terminale, Zona}
+import caseclass.CaseClassDB.Terminale
 
 /**
  * @author Francesco Cassano

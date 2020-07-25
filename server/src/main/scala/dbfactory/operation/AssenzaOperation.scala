@@ -13,9 +13,7 @@ import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /** @author Giovanni Mormone, Fabian Aspee
  *  Trait which allows to perform operations on the assenze table.

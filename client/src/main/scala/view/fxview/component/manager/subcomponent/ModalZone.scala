@@ -1,4 +1,4 @@
-package view.fxview.component.HumanResources.subcomponent
+package view.fxview.component.manager.subcomponent
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -7,34 +7,34 @@ import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TextField}
 import regularexpressionutilities.ZonaChecker
-import view.fxview.component.HumanResources.subcomponent.parent.ModalZoneParent
 import view.fxview.component.HumanResources.subcomponent.util.TextFieldControl
+import view.fxview.component.manager.subcomponent.parent.ModalZoneParent
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Francesco Cassano
  *
  * Box that is drawn inside modal to manage information about a [[caseclass.CaseClassDB.Zona]] instance.
  * It extends [[view.fxview.component.Component]]
- * of [[view.fxview.component.HumanResources.subcomponent.parent.ModalZoneParent]]
+ * of [[ModalZoneParent]]
  */
 trait ModalZone extends Component[ModalZoneParent] {
 
 }
 
 /**
- * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+ * Companion object of [[ModalZone]]
  */
 object ModalZone {
 
   def apply(zona: Zona): ModalZone = new ModalZoneFX(zona)
 
   /**
-   * JavaFX implementation of [[view.fxview.component.HumanResources.subcomponent.ModalZone]]
+   * JavaFX implementation of [[ModalZone]]
    * @param zona
    */
   private class ModalZoneFX(zona: Zona)
-    extends AbstractComponent[ModalZoneParent]("humanresources/subcomponent/ModalZone") with ModalZone {
+    extends AbstractComponent[ModalZoneParent]("manager/subcomponent/ModalZone") with ModalZone {
 
     @FXML
     var id: TextField = _
@@ -51,10 +51,10 @@ object ModalZone {
 
       manageZonaText()
 
-      delete.setText(resources.getString("delete"))
+      delete.setText(resources.getResource("delete"))
       delete.setOnAction(_ => parent.deleteZona(zona))
 
-      update.setText(resources.getString("update"))
+      update.setText(resources.getResource("update"))
       update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone)))
 
       ableToChange

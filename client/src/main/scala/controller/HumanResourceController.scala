@@ -18,8 +18,6 @@ import scala.util.{Failure, Success, Try}
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
 
-
-
   /**
    * Absence saves a new absence on the db
    *
@@ -68,54 +66,6 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
   def passwordRecovery(user: Int): Unit
 
   /**
-   * save a new zone into db
-   *
-   * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]] to save
-   */
-  def saveZona(zone: Zona): Unit
-
-  /**
-   * update selected zone
-   *
-   * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]] to update
-   */
-  def updateZona(zone: Zona): Unit
-
-  /**
-   * delete selected zone
-   *
-   * @param zone
-   *             instance of [[caseclass.CaseClassDB.Zona]] to delete
-   */
-  def deleteZona(zone: Zona): Unit
-
-  /**
-   * insert terminal into db
-   *
-   * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]] to save
-   */
-  def saveTerminal(terminal: Terminale): Unit
-
-  /**
-   * update selected terminal
-   *
-   * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]] to update
-   */
-  def updateTerminal(terminal: Terminale): Unit
-
-  /**
-   * delete selected terminal
-   *
-   * @param terminal
-   *                  instance of [[caseclass.CaseClassDB.Terminale]] to delete
-   */
-  def deleteTerminal(terminal: Terminale): Unit
-
-  /**
    * getRecruitData method retrieves all data needed to recruit employee
    *
    */
@@ -142,26 +92,6 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    *
    */
   def dataToHoliday(): Unit
-
-  /**
-   * getZonaData method retrieves all data needed to draw zona view
-   *
-   */
-  def dataToZone(): Unit
-
-  /**
-   * getTerminalData method retrieves all data needed to draw zona view
-   *
-   */
-  def dataToTerminal(): Unit
-
-  /**
-   * draw the terminal modal to manage it
-   *
-   * @param terminalId
-   *                   terminal id to manage
-   */
-  def terminalModalData(terminalId: Int): Unit
 
   /**
    * Verify if a driver have absence within year
@@ -279,27 +209,6 @@ object HumanResourceController {
     override def holiday(assenza: Assenza): Unit =
       model.holidays(assenza).onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.holiday))
 
-    override def saveZona(zone: Zona): Unit =
-      model.setZona(zone).onComplete(result => responseValutation[Zona](result, _ => None, _ => None, EmployeeView.zone))
-
-    override def updateZona(zone: Zona): Unit =
-      model.updateZona(zone)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.zone, messageOnModal = true))
-
-    override def deleteZona(zone: Zona): Unit =
-      model.deleteZona(zone.idZone.head)
-        .onComplete(result => responseValutation[Zona](result, _ => None, _ => None, EmployeeView.zone, messageOnModal = true))
-
-    override def saveTerminal(terminal: Terminale): Unit =
-      model.createTerminale(terminal).onComplete(result => responseValutation[Terminale](result, _ => None, _ => None, EmployeeView.terminal))
-
-    override def updateTerminal(terminal: Terminale): Unit =
-      model.updateTerminale(terminal)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.terminal, messageOnModal = true))
-
-    override def deleteTerminal(terminal: Terminale): Unit =
-      model.deleteTerminale(terminal.idTerminale.head)
-        .onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.terminal, messageOnModal = true))
 
     override def saveAbsence(absence: Assenza): Unit = {
       if(absence.malattia)
@@ -366,37 +275,6 @@ object HumanResourceController {
       }
     }
 
-    override def dataToZone(): Unit =
-       getZone.onComplete(zones =>
-         responseValutation[List[Zona]](zones,
-           zone => myView.drawZonaView(zone),
-           _ => None,
-           EmployeeView.zone,
-           showSuccess = false)
-       )
-
-    override def dataToTerminal(): Unit = {
-      case class TerminalData(zoneL: Response[List[Zona]], terminalL: Response[List[Terminale]])
-      val future: Future[TerminalData] = for {
-        terminals <- model.getAllTerminale
-        zones <- getZone
-      } yield TerminalData(zones, terminals)
-      future.onComplete {
-        case Success(data) if data.terminalL.statusCode == StatusCodes.SUCCES_CODE &&
-            data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
-          myView.drawTerminaleView(data.zoneL.payload.head, data.terminalL.payload.head)
-        case Success(data) if data.terminalL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.terminalL), _ => None, EmployeeView.terminal)
-        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None, EmployeeView.zone)
-        case Failure(_: ConnectionException) =>
-          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
-        case Failure(_ : StreamTcpException) =>
-          showResult(messageOnModal = false, ErrorName.NOTCONN, GEN_ERR)
-        case _ => showResult(messageOnModal = false, ErrorName.UNKNOWN, GEN_ERR)
-      }
-    }
-
     override def getTerminals(zona: Zona): Unit =
       model.getTerminalByZone(zona.idZone.head).onComplete(terminals =>
         responseValutation[List[Terminale]](terminals,
@@ -406,27 +284,7 @@ object HumanResourceController {
           showSuccess = false)
       )
 
-    override def terminalModalData(terminalId: Int): Unit = {
-      case class terminalMData(zoneL: Response[List[Zona]], terminalS: Response[Terminale])
-      val future: Future[terminalMData] = for{
-        zones <- getZone
-        terminal <- model.getTerminale(terminalId)
-      } yield terminalMData(zones, terminal)
-      future.onComplete {
-        case Success(data) if data.terminalS.statusCode == StatusCodes.SUCCES_CODE &&
-          data.zoneL.statusCode == StatusCodes.SUCCES_CODE =>
-          myView.openTerminalModal(data.zoneL.payload.head, data.terminalS.payload.head)
-        case Success(data) if data.terminalS.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.terminalS), _ => None, EmployeeView.terminal)
-        case Success(data) if data.zoneL.statusCode != StatusCodes.SUCCES_CODE =>
-          notSuccessCodes(Try(data.zoneL), _ => None, EmployeeView.zone)
-        case Failure(_: ConnectionException) =>
-          showResult(messageOnModal = true, ErrorName.NOTCONN, GEN_ERR)
-        case Failure(_ : StreamTcpException) =>
-          showResult(messageOnModal = true, ErrorName.NOTCONN, GEN_ERR)
-        case _ => showResult(messageOnModal = false, ErrorName.UNKNOWN, GEN_ERR)
-      }
-    }
+
 
     override def absencePerson(item:Ferie,isMalattia:Boolean): Unit =
       model.getAbsenceInYearForPerson(item.idPersona)
