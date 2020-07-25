@@ -77,7 +77,7 @@ trait HumanResourceController extends AbstractController[HumanResourceView] {
    * @param zona
    *             The zone of interest
    */
-  def getTerminals(zona: Zona): Unit
+  def selectTerminals(zona: Zona): Unit
 
   /**
    * getAllPersona asks model for the employees list
@@ -191,11 +191,12 @@ object HumanResourceController {
 
     override def fires(ids: Set[Int]): Unit = {
       if(ids.nonEmpty) {
-        val future: Future[Response[Int]] =
-          if (ids.size > 1)
-            model.firesAll(ids)
-          else
-            model.fires(ids.head)
+        val future: Future[Response[Int]]= ids match {
+          case id if id.size>1=> model.firesAll(ids)
+          case id => id.headOption match {
+            case Some(ids) =>  model.fires(ids)
+          }
+        }
 
         future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
       }
@@ -212,19 +213,19 @@ object HumanResourceController {
 
     override def saveAbsence(absence: Assenza): Unit = {
       if(absence.malattia)
-        model.illnessPeriod(absence).onComplete{result => sendMessageModal(result)}
+        model.illnessPeriod(absence).onComplete{result => sendMessageModal(result, absence.malattia)}
       else
-        model.holidays(absence).onComplete{result => sendMessageModal(result)}
+        model.holidays(absence).onComplete{result => sendMessageModal(result, absence.malattia)}
     }
 
-    private def sendMessageModal(t:Try[Response[Int]]):Unit = t match {
-      case Success(Response(StatusCodes.SUCCES_CODE,_))=>myView.result("insert-absence-ok")
-      case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.result("bad-request-error")
-      case Success(Response(StatusCodes.ERROR_CODE1,_))=>myView.result("already-exist-error")
-      case Success(Response(StatusCodes.ERROR_CODE2,_))=>myView.result("greater-day-holiday-error")
-      case Success(Response(StatusCodes.ERROR_CODE3,_))=>myView.result("year-error")
-      case Success(Response(StatusCodes.ERROR_CODE4,_))=>myView.result("init-date-error")
-      case Success(Response(StatusCodes.ERROR_CODE5,_))=>myView.result("greater-day-error")
+    private def sendMessageModal(t:Try[Response[Int]],isMalattia:Boolean):Unit = t match {
+      case Success(Response(StatusCodes.SUCCES_CODE,_))=>myView.resultAbsence("insert-absence-ok",isMalattia)
+      case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.resultAbsence("bad-request-error",isMalattia)
+      case Success(Response(StatusCodes.ERROR_CODE1,_))=>myView.resultAbsence("already-exist-error",isMalattia)
+      case Success(Response(StatusCodes.ERROR_CODE2,_))=>myView.resultAbsence("greater-day-holiday-error",isMalattia)
+      case Success(Response(StatusCodes.ERROR_CODE3,_))=>myView.resultAbsence("year-error",isMalattia)
+      case Success(Response(StatusCodes.ERROR_CODE4,_))=>myView.resultAbsence("init-date-error",isMalattia)
+      case Success(Response(StatusCodes.ERROR_CODE5,_))=>myView.resultAbsence("greater-day-error",isMalattia)
       case _  => myView.result("general-error")
     }
 
@@ -275,14 +276,17 @@ object HumanResourceController {
       }
     }
 
-    override def getTerminals(zona: Zona): Unit =
-      model.getTerminalByZone(zona.idZone.head).onComplete(terminals =>
-        responseValutation[List[Terminale]](terminals,
-          terminal => myView.drawTerminal(terminal),
-          _ => None,
-          EmployeeView.terminal,
-          showSuccess = false)
+    override def selectTerminals(zona: Zona): Unit =
+      zona.idZone.foreach(id=>
+        model.getTerminalByZone(id).onComplete(terminals =>
+          responseValutation[List[Terminale]](terminals,
+            terminal => myView.drawTerminal(terminal),
+            _ => None,
+            EmployeeView.terminal,
+            showSuccess = false)
+        )
       )
+
 
 
 

@@ -99,11 +99,13 @@ object DateConverter {
     new Date(calendar.getTimeInMillis)
   }
 
-  val nameOfDay:Date=>String = date=>{
-    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
-    days(dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1)
-  }
+  val nameOfDay:Date=>String = date=>
+    nameOfDayFromId(dateToCalendar(date).get(Calendar.DAY_OF_WEEK)-1)
 
+  val nameOfDayFromId:Int=>String = date=>{
+    val days = Array[String]("Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato")
+    days(date)
+  }
   val createListDay:Date=>List[Date]=dateList=>{
     val calendar = dateToCalendar(dateList)
     (0 to 6).toList.map(day=>{

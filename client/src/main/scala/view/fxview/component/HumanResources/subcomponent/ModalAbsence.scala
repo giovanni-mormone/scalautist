@@ -18,9 +18,8 @@ import view.fxview.util.ResourceBundleUtil._
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
  * * of [[view.fxview.component.HumanResources.subcomponent.parent.ModalAbsenceParent]]
  */
-trait ModalAbsence extends Component[ModalAbsenceParent]{
+trait ModalAbsence extends Component[ModalAbsenceParent]
 
-}
 
 /**
  * Companion object of [[view.fxview.component.HumanResources.subcomponent.ModalAbsence]]
@@ -54,7 +53,6 @@ object ModalAbsence{
       if(isMalattia)button.setText(resources.getResource("absence-button")) else button.setText(resources.getResource("holiday-button"))
       nameSurname.setText(s"${item.nomeCognome}")
       setInitDate(assenza)
-      initDate.setOnShowing(t=>println(initDate.getProperties))
       initDate.setOnAction(_=>enableFinishDate())
       finishDate.setOnAction(_=>enableButton())
       button.setOnAction(_=>saveAbscence())

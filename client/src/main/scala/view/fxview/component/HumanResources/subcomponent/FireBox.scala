@@ -3,7 +3,7 @@ package view.fxview.component.HumanResources.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 import java.util.stream.Collectors
-
+import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB.Persona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
@@ -20,10 +20,7 @@ import scala.language.postfixOps
  * Interface used for communicate with the view. It extends [[view.fxview.component.Component]]
  * of [[view.fxview.component.HumanResources.subcomponent.parent.FiresParent]]
  */
-trait FireBox extends Component[FiresParent]{
-
-}
-
+trait FireBox extends Component[FiresParent]
 /**
  * Companion object of [[view.fxview.component.HumanResources.subcomponent.FireBox]]
  *
@@ -58,19 +55,19 @@ object FireBox {
       initializeSearch(resources)
     }
 
-    private def initializeButton(resources: ResourceBundle) = {
-      fireButton.setText(resources.getString("fire"))
+    private def initializeButton(resources: ResourceBundle): Unit = {
+      fireButton.setText(resources.getResource("fire"))
       fireButton.setOnAction(_ => parent.fireClicked(getSelectedElements))
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
-      searchBox.setPromptText(resourceBundle.getString("search"))
+      searchBox.setPromptText(resourceBundle.getResource("search"))
 
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[PersonaTableWithSelection](
-          employeeTable, employees.filter(person => person.cognome.toLowerCase.contains(word.toLowerCase) ||
+          employeeTable,  employees.filter(person => person.cognome.toLowerCase.contains(word.toLowerCase) ||
                                               person.nome.toLowerCase.contains(word.toLowerCase) ||
-                                              person.matricola.head.toString.contains(word)))
+                                              person.matricola.exists(id=>id.toString.contains(word))))
       })
     }
 

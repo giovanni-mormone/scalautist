@@ -6,7 +6,6 @@ import dbfactory.implicitOperation.OperationCrud
 import messagecodes.StatusCodes.{ERROR_CODE2, SUCCES_CODE}
 import slick.jdbc.SQLServerProfile.api._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

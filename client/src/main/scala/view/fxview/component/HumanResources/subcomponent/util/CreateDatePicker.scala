@@ -22,6 +22,7 @@ case object CreateDatePicker{
   val MAX_MONTH_TO_SHOW: Int = 5
   val LAST_DAY_OF_MONTH_TO_START: Int = 15
   val MAX_MONTH_FOR_SHIFT_ELABORATION: Int = 6
+  val ONE_DAY:Int= 1
 
   def createDataPicker(dataPicker: DatePickerC,assenza: Option[List[Option[(LocalDate,LocalDate)]]]=None): Unit = {
     dataPicker.finishDate.setEditable(false)
@@ -30,7 +31,7 @@ case object CreateDatePicker{
 
   private def setDate(dataPicker: DatePickerC,assenza: Option[List[Option[(LocalDate,LocalDate)]]]=None): DateCell = new DateCell() {
     val minDate: LocalDate = dataPicker.today.minusYears(dataPicker.behind.years).minusMonths(dataPicker.behind.months).minusDays(dataPicker.behind.days)
-    val maxDate: LocalDate = dataPicker.today.plusYears(dataPicker.after.years).plusMonths(dataPicker.after.months).plusDays(dataPicker.after.days)
+    val maxDate: LocalDate = dataPicker.today.plusYears(dataPicker.after.years).plusMonths(dataPicker.after.months).plusDays(dataPicker.after.days-ONE_DAY)
     override def updateItem(date:LocalDate, empty:Boolean):Unit={
       super.updateItem(date, empty)
       val finalDayInYear = LocalDate.of(Calendar.getInstance().get(Calendar.YEAR), 12, 31)

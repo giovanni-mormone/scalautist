@@ -1,6 +1,7 @@
 import javafx.application.Application
 import javafx.scene.image.Image
 import javafx.stage.Stage
+import model.ModelDispatcher
 import view.fxview.mainview.{DriverView, HumanResourceView, LoginView, ManagerView}
 
 object MainClient{
@@ -11,8 +12,7 @@ object MainClient{
 
 private class Main extends Application{
   override def start(primaryStage: Stage): Unit = {
-    val image = new Image(getClass.getResource("images/program_icon.png").toString)
-    primaryStage.getIcons.add(image)
+   // ModelDispatcher()
     //ManagerView(primaryStage,"Juan","123").show()
     LoginView(primaryStage).show()
   }

@@ -1,6 +1,5 @@
 package dbfactory.operation
 import java.sql.Date
-import java.time.LocalDate
 
 import caseclass.CaseClassDB.Assenza
 import caseclass.CaseClassHttpMessage.{Ferie, InfoAbsenceOnDay}
@@ -8,7 +7,6 @@ import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, Ins
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table._
 import dbfactory.util.Helper._
-import emitter.ConfigEmitter
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._

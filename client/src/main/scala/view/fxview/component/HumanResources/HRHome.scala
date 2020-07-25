@@ -2,12 +2,14 @@ package view.fxview.component.HumanResources
 
 import java.net.URL
 import java.util.ResourceBundle
+
 import view.fxview.util.ResourceBundleUtil._
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Ferie
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
+import view.fxview.FXHelperFactory
 import view.fxview.component.HumanResources.subcomponent._
 import view.fxview.component.HumanResources.subcomponent.parent.HRHomeParent
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
@@ -51,14 +53,14 @@ trait HRHome extends Component[HRHomeParent]{
   def drawFire(employees: List[Persona]): Unit
 
   /**
-   *
-   * @param employees
+   * method that draw all driver in the system. this allow give a illness to the driver
+   * @param employees list with all driver in the system
    */
   def drawIllBox(employees: List[Persona]): Unit
 
   /**
-   *
-   * @param employees
+   * method that draw all driver in the system. this allow give a holiday to the driver
+   * @param employees  list with all driver in the system
    */
   def drawHolidayBox(employees: List[Ferie]): Unit
 }
@@ -95,10 +97,6 @@ object HRHome{
     @FXML
     var changePassword: Button = _
     @FXML
-    var zonaManage: Button = _
-    @FXML
-    var terminalManger: Button = _
-    @FXML
     var illness: Button = _
     @FXML
     var holidays: Button = _
@@ -115,8 +113,6 @@ object HRHome{
       firesButton.setText(resources.getResource("fire-button"))
       illness.setText(resources.getResource("illness-button"))
       holidays.setText(resources.getResource("holiday-button"))
-      zonaManage.setText(resources.getResource("zonaManage"))
-      terminalManger.setText(resources.getResource("terminalManager"))
       changePassword.setText(resources.getResource("changePassword"))
       nameLabel.setText(resources.println("username-label",userName))
       idLabel.setText(resources.println("id-label",userId))
@@ -173,5 +169,7 @@ object HRHome{
       holidayBox.setParent(parent)
       holidayBox.pane
     }
+    override def startLoading(): Unit =
+      baseHR.setCenter(FXHelperFactory.loadingBox)
   }
 }

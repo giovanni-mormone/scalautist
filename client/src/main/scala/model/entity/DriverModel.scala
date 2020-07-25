@@ -90,33 +90,33 @@ object DriverModel {
       callServerSalary(request)
     }
     private def callServerSalary(request: HttpRequest)=
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
     override def getInfoForSalary(id: Int):Future[Response[StipendioInformations]] = {
       val request = Post(getURI("getinfostipendio"),transform(id))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[StipendioInformations]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[StipendioInformations]])
     }
 
     override def getTurniInDay(userId: Int): Future[Response[InfoHome]] = {
       val request = Post(getURI("getturniinday"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoHome]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoHome]])
     }
 
     override def getTurniSettimanali(userId: Int): Future[Response[InfoShift]] = {
       val request = Post(getURI("getturniinweek"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoShift]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoShift]])
     }
 
     override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
       val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(new Date(System.currentTimeMillis()))))
-      callHtpp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
+      callHttp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
 
     override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]] = {
       val c = Calendar.getInstance()
       c.setTime(new Date(System.currentTimeMillis()))
       val request = Post(getURI("setdisponibilita"), transform((Disponibilita(c.get(Calendar.WEEK_OF_YEAR), giorno1, giorno2), Id(user))))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
 
     override def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit): Unit = {
