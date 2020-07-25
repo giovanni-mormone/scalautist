@@ -13,20 +13,19 @@ import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
-import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 /**
  * @author Giovanni Mormone, Fabian Aspee, Francesco Cassano
- * Allows to perform operation on RichiestaTeoricaSet table
+ *         Allows to perform operation on RichiestaTeoricaSet table
  */
-trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica]{
+trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica] {
 
   /**
    * Control that the information passed are good for the query
    *
    * @param requests List of [[caseclass.CaseClassDB.RichiestaTeorica]]
-   * @param days List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
+   * @param days     List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
    * @return Operation result code:
    *         [[ERROR_CODE4]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
    *         [[ERROR_CODE5]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
@@ -46,7 +45,7 @@ trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica]{
    * associated to the same period.
    *
    * @param requests List of [[caseclass.CaseClassDB.RichiestaTeorica]]
-   * @param days List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
+   * @param days     List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
    * @return
    * Future of Int that represent status of operation:
    * [[messagecodes.StatusCodes.SUCCES_CODE]] if the operation is successful
@@ -62,6 +61,13 @@ trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica]{
    *
    */
   def saveRichiestaTeorica(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]]
+
+  /**
+   * method that allow select Giorno with quantity if this exist in another case this case class allow insert a new giorno in database
+   * @param day case class that contains info for request to database in table giorno
+   * @return id of giorno
+   */
+  def selectGiornoId(day: RequestGiorno): Future[Option[Int]]
 }
 
 object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
@@ -83,12 +89,12 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
   }
 
   private def verifyDays(days: List[RequestGiorno]): Future[Option[Boolean]] = Future(
-      Option(days.map(day => (day.day.nomeGiorno,
-              if (day.day.idGiornoSettimana >= MIN_IN_WEEK && day.day.idGiornoSettimana <= MAX_IN_WEEK) Some(WEEK(day.day.idGiornoSettimana - 1)) else None) match {
-        case (valName, Some(nameDay)) if valName.equals(nameDay) => Some(SUCCES_CODE)
-        case _ => None
-      }).forall(_.isDefined))
-    )
+    Option(days.map(day => (day.day.nomeGiorno,
+      if (day.day.idGiornoSettimana >= MIN_IN_WEEK && day.day.idGiornoSettimana <= MAX_IN_WEEK) Some(WEEK(day.day.idGiornoSettimana - 1)) else None) match {
+      case (valName, Some(nameDay)) if valName.equals(nameDay) => Some(SUCCES_CODE)
+      case _ => None
+    }).forall(_.isDefined))
+  )
 
   private def verifyRequest(daysOk: Option[Boolean], requests: List[RichiestaTeorica]): Future[Option[Boolean]] =
     daysOk.filter(_ != false).map(_ =>InstanceTerminale.operation().execQueryFilter(_.id, filter => filter.id.inSet(requests.map(_.terminaleId)))
@@ -117,15 +123,15 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
       && request.dataInizio.compareTo(request.dataFine) < 0)
       && requests.forall(x => requests.headOption.exists(m => m.dataInizio == x.dataInizio && m.dataFine == x.dataFine))){
       if(requests.forall(x => requests.count(_.terminaleId == x.terminaleId) == 1)) {
-          checkOverlappingDates(requests).flatMap{
-            case None => Future.successful(Some(StatusCodes.ERROR_CODE2))
-            case Some((::(head,tail),List())) => insertRequests(::(head,tail),days)
-            case Some((List(),x)) => updateRequest(x,days)
-            case Some(x) =>
-              insertRequests(x._1,days)
-              updateRequest(x._2,days)
-          }
-        } else Future.successful(Some(StatusCodes.ERROR_CODE9))
+        checkOverlappingDates(requests).flatMap{
+          case None => Future.successful(Some(StatusCodes.ERROR_CODE2))
+          case Some((::(head,tail),List())) => insertRequests(::(head,tail),days)
+          case Some((List(),x)) => updateRequest(x,days)
+          case Some(x) =>
+            insertRequests(x._1,days)
+            updateRequest(x._2,days)
+        }
+      } else Future.successful(Some(StatusCodes.ERROR_CODE9))
 
     } else Future.successful(Some(StatusCodes.ERROR_CODE1))
   }
@@ -167,7 +173,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         InstanceRichiesta.operation().execJoin(filterJoin).flatMap{
           case Some(List(idRichiesta)) => selectGiornoId(giorno).flatMap{
             case Some(giornoId) => RichiestaOperation.update(Richiesta(giorno.shift,giornoId,idRichiestaTeorica,Some(idRichiesta)))
-             case _ => Future.successful(Some(StatusCodes.ERROR_CODE8))
+            case _ => Future.successful(Some(StatusCodes.ERROR_CODE8))
           }
           case _ => Future.successful(Some(StatusCodes.ERROR_CODE7))
         }
@@ -196,7 +202,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
 
   private def checkOverlappingRequests(requests: List[RichiestaTeorica], toCompareList: List[RichiestaTeorica]):Option[(List[RichiestaTeorica],List[RichiestaTeorica])] = {
     @scala.annotation.tailrec
-     def _checkOverlappingRequests(_requests: List[RichiestaTeorica],toCompare: RichiestaTeorica, result: (List[RichiestaTeorica],List[RichiestaTeorica])=(List.empty,List.empty)): Option[(List[RichiestaTeorica],List[RichiestaTeorica])]= _requests match {
+    def _checkOverlappingRequests(_requests: List[RichiestaTeorica],toCompare: RichiestaTeorica, result: (List[RichiestaTeorica],List[RichiestaTeorica])=(List.empty,List.empty)): Option[(List[RichiestaTeorica],List[RichiestaTeorica])]= _requests match {
       case ::(req, next) if req.dataInizio.compareTo(toCompare.dataInizio) < 0 =>
         update(RichiestaTeorica(req.dataInizio, endOfMonth(previousMonthDate(toCompare.dataInizio)), req.terminaleId, req.idRichiestaTeorica))
         _checkOverlappingRequests(next,toCompare,(toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
@@ -219,13 +225,13 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
     case head::tail => selectGiornoId(head).flatMap(id => richiestaOperation(id,idRT,head)).flatMap(_ => insertDay(tail,idRT))
   }
 
-    private def selectGiornoId(day:RequestGiorno): Future[Option[Int]] =
-      InstanceGiorno.operation().execQueryFilter(giorno=>giorno.id,
-        giorno=>giorno.idGiornoSettimana === day.day.idGiornoSettimana && giorno.quantita===day.day.quantita)
-        .flatMap {
-          case Some(value) =>selectId(value)
-          case None =>GiornoOperation.insert(day.day)
-        }
+  override def selectGiornoId(day:RequestGiorno): Future[Option[Int]] =
+    InstanceGiorno.operation().execQueryFilter(giorno=>giorno.id,
+      giorno=>giorno.idGiornoSettimana === day.day.idGiornoSettimana && giorno.quantita===day.day.quantita)
+      .flatMap {
+        case Some(value) =>selectId(value)
+        case None =>GiornoOperation.insert(day.day)
+      }
 
   /**
    * error 3 fallisce inserimento

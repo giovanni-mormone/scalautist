@@ -1,5 +1,6 @@
 package dbfactory.setting
 
+import dbfactory.setting.DB.dbCo
 import slick.basic.DatabaseConfig
 import slick.dbio.{DBIOAction, NoStream}
 import slick.jdbc.JdbcProfile
@@ -32,15 +33,12 @@ trait DB[C, T<: GenericTable[C]]{
  */
 object DB{
   private lazy val dbCo:DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("sqlserver")
+
   /**
    * Get the configured Database.
    * It is instantiated lazily when this method is called for the first time, and must be closed after use.
    */
   private val database = dbCo.db
-  private def close():Unit={
-    dbCo.db.close
-  }
-
   private def run[R](a: DBIOAction[R, NoStream, Nothing]): Future[R]= DB.database.run(a)
 
 

@@ -25,6 +25,13 @@ import view.fxview.component.modal.Modal
  *
  */
 trait HumanResourceView extends DialogView {
+  /**
+   * method that show the result of the operation saveAbsence
+   * @param keyMessage key that represent a message save in BundlePropierties
+   * @param isMalattia represent if this method is called to illness or holiday for refresh
+   */
+  def resultAbsence(keyMessage: String, isMalattia: Boolean): Unit
+
 
   /**
    * Show child's recruit view
@@ -152,36 +159,46 @@ object HumanResourceView {
     }
 
     /////////////////////////////////////////////////////////   assumi
-    override def recruitClicked(persona: Assumi): Unit =
+    override def recruitClicked(persona: Assumi): Unit = {
+      hrHome.startLoading()
       myController.recruit(persona)
+    }
 
     override def loadRecruitTerminals(zona: Zona): Unit =
-      myController.getTerminals(zona)
+      myController.selectTerminals(zona)
 
     /////////////////////////////////////////////////////////   licenzia
-    override def fireClicked(employees: Set[Int]): Unit =
+    override def fireClicked(employees: Set[Int]): Unit = {
+      hrHome.startLoading()
       myController.fires(employees)
+    }
 
 
     /////////////////////////////////////////////////////////   assenza
-    override def saveAbsence(assenza: Assenza): Unit =
+    override def saveAbsence(assenza: Assenza): Unit = {
+      modalResource.startLoading()
       myController.saveAbsence(assenza)
+    }
 
     /////////////////////////////////////////////////////////ModalAbsence
     override def openModal(item:Ferie, isMalattia: Boolean): Unit =myController.absencePerson(item,isMalattia)
 
 
     /////////////////////////////////////////////////////////   disegni pannelli
-    override def drawRecruitPanel: Unit =
+    override def drawRecruitPanel: Unit = {
+      hrHome.startLoading()
       myController.dataToRecruit()
- 
+    }
+
     override def drawEmployeePanel(viewToDraw: String): Unit = {
       hrHome.startLoading()
       myController.dataToFireAndIll(viewToDraw)
     }
 
-    override def drawHoliday(): Unit =
+    override def drawHoliday(): Unit = {
+      hrHome.startLoading()
       myController.dataToHoliday()
+    }
 
 
     ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl HumanResourceView
@@ -195,7 +212,6 @@ object HumanResourceView {
 
  
     override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = Platform.runLater(() =>{
-      hrHome.endLoading()
       viewToDraw match {
         case EmployeeView.fire =>hrHome.drawFire(employeesList)
         case EmployeeView.ill => hrHome.drawIllBox(employeesList)
@@ -218,8 +234,19 @@ object HumanResourceView {
     override def message(message: String): Unit =
       Platform.runLater(()=> this.showMessage(message))
 
-    override def result(message: String): Unit =
-      Platform.runLater(() => this.showMessageFromKey(message))
+
+    override def resultAbsence(keyMessage: String, isMalattia: Boolean): Unit = {
+      this.showMessageFromKey(keyMessage)
+      Platform.runLater(()=>{
+        modalResource.close()
+        if(isMalattia) drawEmployeePanel(EmployeeView.ill)
+        else drawHoliday()
+      })
+    }
+    override def result(message: String): Unit = {
+      this.showMessageFromKey(message)
+      Platform.runLater(()=>{modalResource.close()})
+    }
 
     override def dialog(message: String): Unit = {
       Platform.runLater(() => {
@@ -235,7 +262,8 @@ object HumanResourceView {
         popup = new Popup(myStage)
         popup.showMessage(generalResources.getString(className + "-" + message))
       })
-      
+
     override def errorMessage(message: String): Unit = showMessage(message)
+
   }
 }

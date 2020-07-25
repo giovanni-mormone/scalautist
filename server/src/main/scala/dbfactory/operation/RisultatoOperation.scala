@@ -14,7 +14,6 @@ import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
-import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 /**

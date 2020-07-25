@@ -5,7 +5,6 @@ import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
@@ -24,12 +23,30 @@ import view.fxview.component.modal.Modal
 trait ManagerView extends DialogView {
   def drawNotification(str: String, tag: Long): Unit
 
+  /**
+   * method that draw result for all driver in the time frame
+   * @param resultList all result of the driver with yours information for selected time frame
+   * @param dateList list of all date that the manager wants to see
+   */
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
 
-  def drawShiftRequest(value: List[CaseClassDB.Turno]): Unit
+  /**
+   * method that draw all shift that existing in database this is for theorical request
+   * @param value List with all shift
+   */
+  def drawShiftRequest(value: List[Turno]): Unit
 
+  /**
+   * method that draw all terminal that existing in database this is for theorical request
+   * @param terminal list with all terminal that existing in database
+   */
   def drawRichiesta(terminal: List[Terminale]): Unit
 
+  /**
+   * method that send InfoRichiesta, this case class contains all information
+   * for the request and the terminal that this infoRichiesta is associated
+   * @param richiesta case class that all information relationship with theorical request
+   */
   def sendRichiesta(richiesta: InfoRichiesta): Unit
 
   /**
@@ -64,7 +81,7 @@ trait ManagerView extends DialogView {
    * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
    * a replacement
    *
-   * @param absences
+   * @param absences case class that contains info with all absence for this day
    */
   def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit
 
@@ -89,8 +106,6 @@ trait ManagerView extends DialogView {
    * @param olds list of [[caseclass.CaseClassDB.Parametro]]
    */
   def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit
-
-
 
   /**
    *
@@ -122,7 +137,7 @@ object ManagerView {
     private var modalResource: Modal = _
     private var myController: ManagerController = _
     private var managerHome: ManagerHome = _
-
+    private val REPLACEMENT_WITHOUT_ERROR = "no-replacement-error"
     override def close(): Unit = stage.close()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -162,7 +177,7 @@ object ManagerView {
       Platform.runLater(() => managerHome.drawManageReplacement(replacement))
 
     override def showMessageFromKey(message: String): Unit = message match {
-      case "no-replacement-error" =>
+      case REPLACEMENT_WITHOUT_ERROR =>
         Platform.runLater(() => {
           super.showMessageFromKey(message)
           managerHome.stopLoadingReplacements()
