@@ -67,7 +67,7 @@ object ParametroOperation extends ParametroOperation {
   }
   private def verifyRegolaAndInsert(giornoInSettimana: List[GiornoInSettimana])={
     InstanceRegola.operation().selectFilter(_.id.inSet(giornoInSettimana.map(_.regolaId))).collect {
-      case Some(value) if value.length==giornoInSettimana.map(_.regolaId).length=> Some(StatusCodes.SUCCES_CODE)
+      case Some(value) if value.length==giornoInSettimana.map(_.regolaId).distinct.length=> Some(StatusCodes.SUCCES_CODE)
       case Some(_) => Some(StatusCodes.ERROR_CODE4)
       case None => Some(StatusCodes.ERROR_CODE4)
     }

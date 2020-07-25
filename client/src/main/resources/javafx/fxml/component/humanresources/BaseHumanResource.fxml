@@ -9,24 +9,18 @@
 
 <BorderPane fx:id="baseHR" stylesheets="@../../../css/component/manager/BaseManager.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <HBox fx:id="topMenu" >
-         <children>
-            <Label fx:id="nameLabel" styleClass="topMenuLabel"/>
-            <Label fx:id="idLabel" styleClass="topMenuLabel"/>
-         </children>
+      <HBox fx:id="topMenu">
+         <Label fx:id="nameLabel" styleClass="topMenuLabel"/>
+         <Label fx:id="idLabel" styleClass="topMenuLabel"/>
       </HBox>
    </top>
    <left>
       <VBox fx:id="optionsBox">
-         <children>
-            <Button fx:id="recruitButton" mnemonicParsing="false" />
-            <Button fx:id="firesButton"   mnemonicParsing="false" />
-            <Button fx:id="illness" mnemonicParsing="false" />
-            <Button fx:id="holidays" mnemonicParsing="false" />
-            <Button fx:id="zonaManage" mnemonicParsing="false" />
-            <Button fx:id="terminalManger" mnemonicParsing="false"/>
-            <Button fx:id="changePassword" mnemonicParsing="false"/>
-         </children>
+         <Button fx:id="recruitButton" mnemonicParsing="false"/>
+         <Button fx:id="firesButton" mnemonicParsing="false"/>
+         <Button fx:id="illness" mnemonicParsing="false"/>
+         <Button fx:id="holidays" mnemonicParsing="false"/>
+         <Button fx:id="changePassword" mnemonicParsing="false"/>
       </VBox>
    </left>
 </BorderPane>

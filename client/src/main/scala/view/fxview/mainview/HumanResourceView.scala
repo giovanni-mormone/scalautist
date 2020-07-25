@@ -175,8 +175,10 @@ object HumanResourceView {
     override def drawRecruitPanel: Unit =
       myController.dataToRecruit()
  
-    override def drawEmployeePanel(viewToDraw: String): Unit =
+    override def drawEmployeePanel(viewToDraw: String): Unit = {
+      hrHome.startLoading()
       myController.dataToFireAndIll(viewToDraw)
+    }
 
     override def drawHoliday(): Unit =
       myController.dataToHoliday()
@@ -192,10 +194,13 @@ object HumanResourceView {
       Platform.runLater(() => hrHome.drawRecruitTerminals(terminals))
 
  
-    override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = viewToDraw match {
-      case EmployeeView.fire =>Platform.runLater(() => hrHome.drawFire(employeesList))
-      case EmployeeView.ill => Platform.runLater(() => hrHome.drawIllBox(employeesList))
-    }
+    override def drawEmployeeView(employeesList: List[Persona], viewToDraw: String): Unit = Platform.runLater(() =>{
+      hrHome.endLoading()
+      viewToDraw match {
+        case EmployeeView.fire =>hrHome.drawFire(employeesList)
+        case EmployeeView.ill => hrHome.drawIllBox(employeesList)
+      }
+    })
 
     override def drawHolidayView(employeesList: List[Ferie]): Unit =
       Platform.runLater(() => hrHome.drawHolidayBox(employeesList))
