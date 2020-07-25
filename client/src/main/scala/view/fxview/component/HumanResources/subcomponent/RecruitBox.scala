@@ -6,6 +6,8 @@ import java.util.{Calendar, ResourceBundle}
 
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.Assumi
+import javafx.beans.value
+import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.FXML
 import javafx.scene.control._
 import regularexpressionutilities.{NameChecker, NumberChecker}
@@ -16,7 +18,7 @@ import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker,
 import view.fxview.component.{AbstractComponent, Component}
 
 import scala.language.postfixOps
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Francesco Cassano
  *
@@ -90,19 +92,27 @@ object RecruitBox {
     private val rotateString = "-Rotazione"
     private val TEL_NUMBER: Int = 10
     private var contractTypeFI5FU = ContractProperty()
-
+    private val DEFAULT_ZONA=resources.getResource("default-zona")
+    private val DEFAULT_ID=None
+    private val DEFAULT_ID_INT = 0
+    private var baseDays  = List(resources.getResource("monday"),
+      resources.getResource("tuesday"),
+      resources.getResource("wednesday"),
+      resources.getResource("thursday"),
+      resources.getResource("friday"))
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
+      super.initialize(location, resources)
       initializeComboBox()
       setRecruitDate()
       setActions()
       setPromptText(resources)
     }
 
-    override def setTerminals(l: List[Terminale]): Unit = {
-      terminalList = l
+    override def setTerminals(terminal: List[Terminale]): Unit = {
+      terminalList = terminal
       resetComboBox(terminals)
       terminals.getItems.clear()
-      l.flatMap(t=>List(t.nomeTerminale)).foreach(t => terminals.getItems.add(t))
+      terminal.flatMap(t=>List(t.nomeTerminale)).foreach(t => terminals.getItems.add(t))
       terminals.setDisable(false)
     }
 
@@ -128,7 +138,6 @@ object RecruitBox {
           ableSave()
         })
       }
-
       setNameStringControl(name)
 
       setNameStringControl(surname)
@@ -156,16 +165,23 @@ object RecruitBox {
         ableSave()
       })
 
-      day1.setOnAction(_ => {
-        if (getComboSelected(day1).equals(getComboSelected(day2)))
-          day1.getSelectionModel.clearSelection()
-        ableSave()
+      day1.valueProperty().addListener(new value.ChangeListener[String] {
+        override def changed(observable: ObservableValue[_ <: String], oldValue: String, newValue: String): Unit = {
+          Option(newValue).collect {
+            case newValue if newValue.equals(getComboSelected(day2)) => day2.getSelectionModel.clearSelection()
+          }
+          ableSave()
+        }
       })
 
-      day2.setOnAction(_ => {
-        if (getComboSelected(day2).equals(getComboSelected(day1)))
-          day2.getSelectionModel.clearSelection()
-        ableSave()
+      day2.valueProperty().addListener(new ChangeListener[String] {
+        override def changed(observable: ObservableValue[_ <: String], oldValue: String, newValue: String): Unit = {
+          Option(newValue) collect {
+            case newValue if newValue.equals(getComboSelected(day1)) =>
+              day1.getSelectionModel.clearSelection()
+          }
+          ableSave()
+        }
       })
 
       shift1.setOnAction(_ => {
@@ -200,18 +216,18 @@ object RecruitBox {
 
     private def setPromptText(resources: ResourceBundle): Unit = {
       //set prompt test
-      name.setPromptText(resources.getString("name"))
-      surname.setPromptText(resources.getString("surname"))
-      contractTypes.setPromptText(resources.getString("contract"))
-      shift1.setPromptText(resources.getString("shift"))
-      shift2.setPromptText(resources.getString("shift"))
-      zones.setPromptText(resources.getString("zones"))
-      role.setPromptText(resources.getString("role"))
-      day1.setPromptText(resources.getString("day1"))
-      day2.setPromptText(resources.getString("day2"))
-      terminals.setPromptText(resources.getString("terminals"))
-      tel.setPromptText(resources.getString("tel"))
-      save.setText(resources.getString("save"))
+      name.setPromptText(resources.getResource("name"))
+      surname.setPromptText(resources.getResource("surname"))
+      contractTypes.setPromptText(resources.getResource("contract"))
+      shift1.setPromptText(resources.getResource("shift"))
+      shift2.setPromptText(resources.getResource("shift"))
+      zones.setPromptText(resources.getResource("zones"))
+      role.setPromptText(resources.getResource("role"))
+      day1.setPromptText(resources.getResource("day1"))
+      day2.setPromptText(resources.getResource("day2"))
+      terminals.setPromptText(resources.getResource("terminals"))
+      tel.setPromptText(resources.getResource("tel"))
+      save.setText(resources.getResource("save"))
     }
 
     /////////////////////////////////////////////////////////////////////////////             METODI DI CONTROLLO
@@ -274,12 +290,18 @@ object RecruitBox {
     /////////////////////////////////////////////////////////////////////////////             METODI DI GET
 
     private def getIdZone: Zona =
-      zoneList.filter(zone => zone.zones.equals(getComboSelected(zones))).head
+      zoneList.find(zone => zone.zones.equals(getComboSelected(zones))) match {
+        case Some(zona) =>zona
+        case None =>Zona(DEFAULT_ZONA,DEFAULT_ID)
+      }
 
     private def getIdTerminal: Option[Int] ={
       if(isDriver)
-        terminalList.filter(terminal =>
-          terminal.nomeTerminale.equals(getComboSelected(terminals))).head.idTerminale
+        terminalList.find(terminal =>
+          terminal.nomeTerminale.equals(getComboSelected(terminals))) match {
+          case Some(terminal) => terminal.idTerminale
+          case None => DEFAULT_ID
+        }
       else
         None
     }
@@ -287,21 +309,35 @@ object RecruitBox {
     private def getIdRuolo: Int =
       getComboSelectedIndex(role) + 1
 
+    private def getIdContratto(contratto:Option[Contratto]):Int=
+      contratto.toList.flatMap(_.idContratto.toList) match {
+        case List(id)=> id
+        case _=>DEFAULT_ID_INT
+      }
     private def getContrattoId: Int = {
       if(isDriver) {
         val contract: String = getComboSelected(contractTypes)
         val fixedShift: Boolean = contract.contains(fixedString)
-        contractList.filter(contr => {
+        contractList.find(contr => {
           contract.contains(contr.tipoContratto) && contr.turnoFisso == fixedShift
-        }).head.idContratto.get
+        }) match {
+          case contratto => getIdContratto(contratto)
+          case None =>DEFAULT_ID_INT
+        }
       }
       else
-        contractList.filter(contr => contr.ruolo == getIdRuolo).head.idContratto.get
+        contractList.find(contr => contr.ruolo == getIdRuolo) match {
+          case contratto => getIdContratto(contratto)
+          case None =>DEFAULT_ID_INT
+        }
     }
 
     private def getIdTurno(search: Boolean, component: ComboBox[String]): Option[Int] = {
       if(search)
-        shiftList.filter(shift => shift.fasciaOraria.equals(getComboSelected(component))).head.id
+        shiftList.find(shift => shift.fasciaOraria.equals(getComboSelected(component))) match {
+          case Some(value) => value.id
+          case None => DEFAULT_ID
+        }
       else None
     }
 
@@ -333,9 +369,8 @@ object RecruitBox {
     }
 
     private def refillDays(): Unit = {
-      var baseDays  = List("Lunedi","Martedi","Mercoledi","Giovedi","Venerdi")
       if(!contractTypeFI5FU.week5x2)
-        baseDays = baseDays.appended("Sabato")
+        baseDays = baseDays.appended(resources.getResource("saturday"))
       refillComponent(day2, baseDays)
       refillComponent(day1, baseDays)
     }

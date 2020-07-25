@@ -121,8 +121,6 @@ trait HumanResourceModel{
    */
   def salaryCalculation():Future[Response[List[Stipendio]]]
 
-
-
   /**
    * Method that obtains all day of holiday of a persona
    * @return Option of List with all day of holiday of a persona
@@ -178,27 +176,27 @@ object HumanResourceModel {
 
     override def getTerminalByZone(id: Int): Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getterminalebyzona"), transform(id))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
     override def getAllZone: Future[Response[List[Zona]]] = {
       val request = Post(getURI("getallzona"))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Zona]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Zona]]])
     }
 
     override def getAllContract: Future[Response[List[Contratto]]] = {
       val request = Post(getURI("getallcontratto"))
-      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Contratto]]])
+      callHttp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Contratto]]])
     }
 
     override def getAllPersone: Future[Response[List[Persona]]] = {
       val request = Post(getURI("getallpersona"))
-      callHtpp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Persona]]])
+      callHttp(request).flatMap(resultRequest =>Unmarshal(resultRequest).to[Response[List[Persona]]])
     }
 
     override def getAllShift: Future[Response[List[Turno]]] = {
       val request = Post(getURI("getallturno"))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Turno]]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Turno]]])
     }
 
     override def salaryCalculation():Future[Response[List[Stipendio]]] = {
@@ -209,30 +207,30 @@ object HumanResourceModel {
 
     override def getHolidayByPerson: Future[Response[List[Ferie]]] = {
       val request = Post(getURI("getholidaybyperson"),Request(Some(getYear)))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Ferie]]])
     }
 
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
 
     override def getAllTerminale: Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getallterminale"))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
     override def getAbsenceInYearForPerson(idPersona:Int): Future[Response[List[Assenza]]] = {
       val request: HttpRequest = Post(getURI("getAbsenceInYearForPerson"),Request(Some((idPersona,getYear))))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Assenza]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Assenza]]])
     }
 
 
     private def callServer(request: HttpRequest):Future[Response[Login]] =
-      callHtpp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
+      callHttp(request).flatMap(result=>Unmarshal(result).to[Response[Login]])
 
     private def callServerSalary(request: HttpRequest)=
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[List[Stipendio]]])
 
   }
 

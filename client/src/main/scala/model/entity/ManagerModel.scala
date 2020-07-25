@@ -231,17 +231,17 @@ object ManagerModel {
 
     override def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]] = {
       val request = Post(getURI("allabsences"), transform(Dates(TODAY)))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoAbsenceOnDay]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoAbsenceOnDay]]])
     }
 
     override def extraAvailability(idTerminale: Int, idTurno: Int, idRisultato: Int): Future[Response[List[InfoReplacement]]] = {
       val request = Post(getURI("extraavailability"), transform((idTerminale, idTurno, idRisultato)))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoReplacement]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[InfoReplacement]]])
     }
 
     override def replaceShift(idRisultato: Int, idNewDriver: Int): Future[Response[Int]] = {
       val request = Post(getURI("replaceshift"), transform((idRisultato, idNewDriver)))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
 
     override def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]] = {
@@ -253,7 +253,7 @@ object ManagerModel {
       val requestBody: AssignRichiestaTeorica = AssignRichiestaTeorica(theoreticalRequest, dailyRequest)
       println(requestBody)
       val request = Post(getURI("definedailyrequest"), transform(requestBody))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
 
     override def runAlgorithm(info: AlgorithmExecute,method:String=>Unit): Future[Response[Int]] = {
@@ -261,7 +261,7 @@ object ManagerModel {
       receiver.start()
       receiver.receiveMessage(method)
       val request = Post(getURI("executealgorithm"), transform(info))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
 
     val terminals: mutable.Map[(Int,Date,Date), Future[Response[(List[ResultAlgorithm],List[Date])]]] = collection.mutable.Map[(Int,Date,Date), Future[Response[(List[ResultAlgorithm],List[Date])]]]()
@@ -272,7 +272,7 @@ object ManagerModel {
 
     def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[(List[ResultAlgorithm],List[Date])]] = {
       val request = Post(getURI("getresultalgorithm"), transform((ids, dateI,dateF)))
-      callHtpp(request).flatMap(response => {
+      callHttp(request).flatMap(response => {
         println(response)
         Unmarshal(response).to[Response[(List[ResultAlgorithm],List[Date])]]
       }
@@ -281,22 +281,22 @@ object ManagerModel {
 
     override def getOldParameter: Future[Response[List[Parametro]]] = {
       val request = Post(getURI("getalloldparameters"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Parametro]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Parametro]]])
     }
 
     override def getParameterById(idParameters: Int): Future[Response[InfoAlgorithm]] = {
       val request = Post(getURI("getoldparametersbyid"), transform(idParameters))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[InfoAlgorithm]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[InfoAlgorithm]])
     }
 
     override def saveParameters(parameters: InfoAlgorithm): Future[Response[Int]] = {
       val request = Post(getURI("saveparameter"), transform(parameters))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
 
     override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] = {
       val request = Post(getURI("checkresultprealgorithm"), transform(dataToCheck))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
     }
 
     override def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit): Unit = {
@@ -313,32 +313,32 @@ object ManagerModel {
 
     override def groupRule(): Future[Response[List[Regola]]] = {
       val request = Post(getURI("regolagroup"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
     }
 
     override def weekRule(): Future[Response[List[Regola]]] = {
       val request = Post(getURI("regolaweek"))
-      callHtpp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Regola]]])
     }
 
     override def getTerminale(id: Int): Future[Response[Terminale]] = {
       val request = Post(getURI("getterminale"),transform(id))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
 
     override def getAllZone: Future[Response[List[Zona]]] = {
       val request = Post(getURI("getallzona"))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Zona]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Zona]]])
     }
 
     override def getAllTerminale: Future[Response[List[Terminale]]] = {
       val request: HttpRequest = Post(getURI("getallterminale"))
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[List[Terminale]]])
     }
 
     override def createTerminale(terminale: Terminale): Future[Response[Terminale]] = {
       val request = Post(getURI("createterminale"),transform(terminale))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Terminale]])
     }
 
     override def updateZona(zona: Zona): Future[Response[Int]] = {
@@ -348,12 +348,12 @@ object ManagerModel {
 
     override def deleteZona(zona: Int): Future[Response[Zona]] = {
       val request = Post(getURI("deletezona"), transform(zona))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
 
     override def setZona(zona: Zona): Future[Response[Zona]] = {
       val request = Post(getURI("createzona"),transform(zona))
-      callHtpp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
     }
 
     override def updateTerminale(terminale: Terminale): Future[Response[Int]] = {
@@ -368,16 +368,4 @@ object ManagerModel {
     }
 
   }
-}
-object sds extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
-  ManagerModel().groupRule().onComplete {
-    case Failure(exception) =>println(exception)
-    case Success(value) =>print(value)
-  }
-  ManagerModel().weekRule().onComplete {
-    case Failure(exception) =>println(exception)
-    case Success(value) =>print(value)
-  }
-  while(true){}
 }

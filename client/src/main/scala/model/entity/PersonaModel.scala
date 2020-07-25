@@ -1,14 +1,13 @@
 package model.entity
 import akka.http.scaladsl.client.RequestBuilding.Post
-import akka.http.scaladsl.model.{HttpRequest, StatusCodes}
+import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Request, Response}
 import jsonmessages.JsonFormats._
 import model.AbstractModel
 
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.concurrent.Future
 
 /**
  * @author Francesco Cassano
@@ -68,12 +67,12 @@ object PersonaModel {
       tranformMarshal(request)
     }
     private def tranformMarshal(request: HttpRequest):Future[Response[Persona]]={
-      callHtpp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[Persona]])
+      callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[Persona]])
     }
     override def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Response[Int]] = {
       val newCredential = ChangePassword(user, oldPassword, newPassword)
       val request = Post(getURI("changepassword"), transform(newCredential))
-      callHtpp(request).flatMap(unMarshall)
+      callHttp(request).flatMap(unMarshall)
     }
   }
 

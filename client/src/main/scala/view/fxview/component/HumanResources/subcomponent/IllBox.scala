@@ -10,7 +10,7 @@ import javafx.scene.control.{TableView, TextField}
 import view.fxview.component.HumanResources.subcomponent.parent.IllBoxParent
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, PersonaTable}
 import view.fxview.component.{AbstractComponent, Component}
-
+import view.fxview.util.ResourceBundleUtil._
 /**
  * @author Fabian Aspee Encina
  *
@@ -53,13 +53,13 @@ object IllBox{
     }
 
     private def initializeSearch(resourceBundle: ResourceBundle): Unit = {
-      searchBox.setPromptText(resourceBundle.getString("search"))
+      searchBox.setPromptText(resourceBundle.getResource("search"))
 
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[PersonaTable](
           employeeTable, employees.filter(person => person.cognome.contains(word) ||
             person.nome.contains(word) ||
-            person.matricola.head.toString.contains(word)))
+            person.matricola.exists(id=>id.toString.contains(word))))
       })
     }
   }
