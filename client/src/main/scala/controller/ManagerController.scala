@@ -1,43 +1,43 @@
 package controller
 
 import java.sql.Date
-import java.time.LocalDate
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
-import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Zona}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, InfoAlgorithm, Response}
 import javafx.application.Platform
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
-import controller.HumanResourceController.model
 import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.mainview.ManagerView
+import view.mainview.ManagerView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 trait ManagerController extends AbstractController[ManagerView]{
 
   /**
+   * Allows to save params on the DB
    *
-   * @param param
+   * @param param instance of [[InfoAlgorithm]] to save
    */
   def saveParam(param: InfoAlgorithm): Unit
 
 
   /**
+   * Get the information about the selected param from the DB and show them
    *
-   * @param idp
+   * @param idp id of param to show
+   * @param data instance of [[DataForParamasModel]] that contains the information to draw modal
    */
-  def getInfoParamToShow(idp: Int, data: DataForParamasModel): Unit
+  def infoParamToShow(idp: Int, data: DataForParamasModel): Unit
 
   /**
+   * The method allows to show all selected params before run
    *
-   * @param info
-   * @param name
+   * @param info instance of [[AlgorithmExecute]] that contains all chosen params
+   * @param name optional string. It allows to save params if is defined
    */
   def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit
 
@@ -258,14 +258,12 @@ object ManagerController {
 
     override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
       model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {
-        case Success(Response(StatusCodes.SUCCES_CODE,_)) => {
-          Platform.runLater(() => myView.showMessageFromKey("start-algorithm"))
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
+          Platform.runLater(() => myView.showMessageFromKey(key= "start-algorithm"))
           startListenNotification()
-        }
-        case Success(Response(StatusCodes.ERROR_CODE10,_)) => {
+        case Success(Response(StatusCodes.ERROR_CODE10,_)) =>
           Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
           startListenNotification()
-        }
         case Success(Response(StatusCodes.ERROR_CODE1,_)) => Platform.runLater(() => myView.showMessage("no-driver-ter"))
         case Success(Response(StatusCodes.ERROR_CODE2,_)) => Platform.runLater(() => myView.showMessage("error-date"))
         case Success(Response(StatusCodes.ERROR_CODE3,_)) => Platform.runLater(() => myView.showMessage("error-terminal"))
@@ -332,9 +330,10 @@ object ManagerController {
     override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit =
       idTerminal.foreach(idTerminal=>
         model.getResultAlgorithm(idTerminal,date,date1).onComplete {
-          case Failure(exception) => println(exception)
           case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
           case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
+          case _ => myView.showMessageFromKey("general-error")
+
         }
       )
 
@@ -446,7 +445,7 @@ object ManagerController {
 
     }
 
-    override def getInfoParamToShow(idp: Int, data: DataForParamasModel): Unit =
+    override def infoParamToShow(idp: Int, data: DataForParamasModel): Unit =
       model.getParameterById(idp).onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.showInfoParam(data.copy(info = Some(value)))
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
@@ -456,11 +455,11 @@ object ManagerController {
     override def saveParam(param: InfoAlgorithm): Unit =
       model.saveParameters(param).onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE, _)) => Platform.runLater(() => myView.showMessageFromKey("GeneralError-Success"))
-        case Success(Response(StatusCodes.ERROR_CODE1, _)) => Platform.runLater(() => myView.showMessage("no-save-par"))
-        case Success(Response(StatusCodes.ERROR_CODE2, _)) => Platform.runLater(() => myView.showMessage("no-save-day"))
-        case Success(Response(StatusCodes.ERROR_CODE3, _)) => Platform.runLater(() => myView.showMessage("no-zona-terminal-valid"))
-        case Success(Response(StatusCodes.ERROR_CODE4, _)) => Platform.runLater(() => myView.showMessage("no-rules"))
-        case Success(Response(StatusCodes.ERROR_CODE5, _)) => Platform.runLater(() => myView.showMessage("no-val-day"))
+        case Success(Response(StatusCodes.ERROR_CODE1, _)) => Platform.runLater(() => myView.showMessageFromKey("no-save-par"))
+        case Success(Response(StatusCodes.ERROR_CODE2, _)) => Platform.runLater(() => myView.showMessageFromKey("no-save-day"))
+        case Success(Response(StatusCodes.ERROR_CODE3, _)) => Platform.runLater(() => myView.showMessageFromKey("no-zona-terminal-valid"))
+        case Success(Response(StatusCodes.ERROR_CODE4, _)) => Platform.runLater(() => myView.showMessageFromKey("no-rules"))
+        case Success(Response(StatusCodes.ERROR_CODE5, _)) => Platform.runLater(() => myView.showMessageFromKey("no-val-day"))
         case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
   }

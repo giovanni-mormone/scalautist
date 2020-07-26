@@ -11,7 +11,6 @@ import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
 import utils.TransferObject.InfoRichiesta
-import view.DialogView
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
@@ -20,136 +19,9 @@ import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, Mod
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.manager.subcomponent._
 import view.fxview.component.modal.Modal
+import view.mainview.ManagerView
 
-trait ManagerView extends DialogView {
-  /**
-   *
-   * @param info
-   * @param name
-   * @param terminals
-   * @param rules
-   */
-  def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
-
-  def drawNotification(str: String, tag: Long): Unit
-
-  /**
-   * method that draw result for all driver in the time frame
-   * @param resultList all result of the driver with yours information for selected time frame
-   * @param dateList list of all date that the manager wants to see
-   */
-  def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
-
-  /**
-   * method that draw all shift that existing in database this is for theorical request
-   * @param value List with all shift
-   */
-  def drawShiftRequest(value: List[Turno]): Unit
-
-  /**
-   * method that draw all terminal that existing in database this is for theorical request
-   * @param terminal list with all terminal that existing in database
-   */
-  def drawRichiesta(terminal: List[Terminale]): Unit
-
-  /**
-   * method that send InfoRichiesta, this case class contains all information
-   * for the request and the terminal that this infoRichiesta is associated
-   * @param richiesta case class that all information relationship with theorical request
-   */
-  def sendRichiesta(richiesta: InfoRichiesta): Unit
-
-  /**
-   * Show the zone view
-   *
-   * @param zones
-   *              List of [[caseclass.CaseClassDB.Zona]]
-   */
-  def drawZonaView(zones: List[Zona]): Unit
-
-  /**
-   * show terminal view
-   *
-   * @param zones
-   *              Listo of [[caseclass.CaseClassDB.Zona]]
-   * @param terminals
-   *                   Listo of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit
-
-  /**
-   * show terminal modal
-   *
-   * @param zoneList
-   *                 List of [[caseclass.CaseClassDB.Zona]]
-   * @param terminal
-   *                 instance of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit
-
-  /**
-   * Method used by a [[controller.ManagerController]] to tell the view to draw the list of turns that needs
-   * a replacement
-   *
-   * @param absences case class that contains info with all absence for this day
-   */
-  def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit
-
-  /**
-   * Method used by a [[controller.ManagerController]] to tell the view to draw the list of people that needs
-   * a replacement
-   * @param replacement list of InfoReplacement
-   */
-  def drawReplacement(replacement: List[InfoReplacement]): Unit
-
-  /**
-   * Method used by a [[controller.ManagerController]] to tell the view to draw the panel to choice parameters to run
-   * shift assignment algorithm
-   *
-   * @param terminals the list of [[caseclass.CaseClassDB.Terminale]]
-   */
-  def drawRunAlgorithm(terminals: List[Terminale]): Unit
-
-  /**
-   * The method draws the list of [[caseclass.CaseClassDB.Parametro]] and it allows to choose params
-   *
-   * @param olds list of [[caseclass.CaseClassDB.Parametro]]
-   */
-  def modalOldParamDraw(olds: List[Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
-
-  /**
-   *
-   * @param data
-   */
-  def showInfoParam(data: DataForParamasModel)
-
-  /**
-   *
-   * @param params
-   */
-  def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola])
-
-  /**
-   *
-   * @param params
-   */
-  def drawGroupParam(params: ParamsForAlgoritm,  rule: List[Regola])
-
-  def drawResultTerminal(terminal: List[Terminale]): Unit
-
-  def refreshTerminalPanel(messageKey: String): Unit
-  def refreshZonaPanel(messageKey: String): Unit
-
-  def consumeNotification(tag: Long): Unit
-
-  /**
-   * method that received a message and stop loading icon
-   * @param message key of the message that save in Properties
-   */
-  def result(message:String):Unit
-}
-
-object ManagerView {
+object ManagerViewFX {
 
   def apply(stage: Stage,userName: String, userId:String): ManagerView = new ManagerViewFX(stage,userName,userId)
 
@@ -275,7 +147,7 @@ object ManagerView {
 
     override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() =>
       managerHome.drawResultTerminal(terminal)
-     )
+    )
 
     override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = {
       managerHome.loadingResult()
@@ -331,17 +203,17 @@ object ManagerView {
     }
 
     override def getInfoToShow(idp: Int, data: DataForParamasModel): Unit =
-      myController.getInfoParamToShow(idp, data)
+      myController.infoParamToShow(idp, data)
 
     override def saveParam(param: InfoAlgorithm): Unit =
       myController.saveParam(param)
-      override def openZonaModal(zona: Zona): Unit = {
-        Platform.runLater(() => {
-//          homeView()
-          modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
-          modalResource.show()
-        })
-      }
+    override def openZonaModal(zona: Zona): Unit = {
+      Platform.runLater(() => {
+        //          homeView()
+        modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
+        modalResource.show()
+      })
+    }
 
     /////////////////////////////////////////////////////////   zona
     override def newZona(zona: Zona): Unit =
@@ -398,6 +270,7 @@ object ManagerView {
       super.showMessageFromKey(message)
 
     })
+
   }
 
 }

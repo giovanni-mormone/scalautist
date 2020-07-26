@@ -48,6 +48,8 @@ object ParamsModal {
     @FXML
     var dayColumn3: Label = _
     @FXML
+    var dayColumn4: Label = _
+    @FXML
     var sabato: CheckBox = _
     @FXML
     var terminalsHeader: HBox = _
@@ -72,7 +74,7 @@ object ParamsModal {
       initDays()
       val INIT_DAY: String = resources.getResource(key = "daystxtA") + "\n"
       val INIT_TERMINAL: String = resources.getResource(key = "terminaltxtA") + "\n"
-      val NONE: String = "NONE"
+      val NONE: String = resources.getResource(key = "none")
 
       terminals.getChildren.clear()
       terminalColumn1.setText(resources.getResource("terminal-label-id"))
@@ -89,6 +91,7 @@ object ParamsModal {
       dayColumn1.setText(resources.getResource("day-label"))
       dayColumn2.setText(resources.getResource("shift-label"))
       dayColumn3.setText(resources.getResource("variation-label"))
+      dayColumn4.setText(resources.getResource("rules-label"))
       days.getChildren.addAll(daysHeader)
 
       info.giornoInSettimana

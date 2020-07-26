@@ -100,6 +100,7 @@ object RecruitBox {
       resources.getResource("wednesday"),
       resources.getResource("thursday"),
       resources.getResource("friday"))
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       initializeComboBox()
@@ -321,13 +322,13 @@ object RecruitBox {
         contractList.find(contr => {
           contract.contains(contr.tipoContratto) && contr.turnoFisso == fixedShift
         }) match {
-          case contratto => getIdContratto(contratto)
+          case Some(contratto) => getIdContratto(Some(contratto))
           case None =>DEFAULT_ID_INT
         }
       }
       else
         contractList.find(contr => contr.ruolo == getIdRuolo) match {
-          case contratto => getIdContratto(contratto)
+          case Some(contratto) => getIdContratto(Some(contratto))
           case None =>DEFAULT_ID_INT
         }
     }

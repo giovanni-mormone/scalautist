@@ -31,6 +31,7 @@
                         <Label fx:id="dayColumn1"/>
                         <Label fx:id="dayColumn2"/>
                         <Label fx:id="dayColumn3"/>
+                        <Label fx:id="dayColumn4"/>
                      </HBox>
                   </VBox>
                </VBox>

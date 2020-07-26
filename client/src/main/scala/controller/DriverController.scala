@@ -1,13 +1,10 @@
 package controller
 
-import caseclass.CaseClassDB.{Disponibilita, Turno}
-import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, Response, ShiftDay}
+import caseclass.CaseClassHttpMessage.Response
 import messagecodes.StatusCodes
 import model.entity.DriverModel
-import controller.ManagerController.model
-import view.fxview.mainview.DriverView
+import view.mainview.DriverView
 
-import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 trait DriverController  extends AbstractController[DriverView] {

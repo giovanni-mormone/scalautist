@@ -101,7 +101,7 @@ object GroupParamsBox {
         return false
       group._2.regola.equals(toFind.rule.get()) &&
         toFind.date.get().equals(group._2.date.map(_.toLocalDate)
-          .map(date => date.getDayOfMonth + "/" + date.getMonth + "/" + date.getYear).reduce((dl, d) => dl + "; " + d))
+          .map(date => date.getDayOfMonth.toString + "/" + date.getMonth.toString + "/" + date.getYear.toString).reduce((dl, d) => dl + "; " + d))
     }
 
     private def initTable(): Unit = {
