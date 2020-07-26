@@ -65,9 +65,9 @@ object FireBox {
 
       searchBox.textProperty().addListener((_, _, word) => {
         CreateTable.fillTable[PersonaTableWithSelection](
-          employeeTable, employees.filter(person => person.cognome.toLowerCase.contains(word.toLowerCase) ||
+          employeeTable,  employees.filter(person => person.cognome.toLowerCase.contains(word.toLowerCase) ||
                                               person.nome.toLowerCase.contains(word.toLowerCase) ||
-                                              person.matricola.head.toString.contains(word)))
+                                              person.matricola.exists(id=>id.toString.contains(word))))
       })
     }
 

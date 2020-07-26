@@ -141,6 +141,12 @@ trait ManagerView extends DialogView {
   def refreshZonaPanel(messageKey: String): Unit
 
   def consumeNotification(tag: Long): Unit
+
+  /**
+   * method that received a message and stop loading icon
+   * @param message key of the message that save in Properties
+   */
+  def result(message:String):Unit
 }
 
 object ManagerView {
@@ -386,6 +392,12 @@ object ManagerView {
           function()
       }
     }
+
+    override def result(message: String): Unit = Platform.runLater(()=>{
+      managerHome.endLoading()
+      super.showMessageFromKey(message)
+
+    })
   }
 
 }

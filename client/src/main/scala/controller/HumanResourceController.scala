@@ -191,11 +191,12 @@ object HumanResourceController {
 
     override def fires(ids: Set[Int]): Unit = {
       if(ids.nonEmpty) {
-        val future: Future[Response[Int]] =
-          if (ids.size > 1)
-            model.firesAll(ids)
-          else
-            model.fires(ids.head)
+        val future: Future[Response[Int]]= ids match {
+          case id if id.size>1=> model.firesAll(ids)
+          case id => id.headOption match {
+            case Some(ids) =>  model.fires(ids)
+          }
+        }
 
         future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
       }
@@ -276,13 +277,16 @@ object HumanResourceController {
     }
 
     override def selectTerminals(zona: Zona): Unit =
-      model.getTerminalByZone(zona.idZone.head).onComplete(terminals =>
-        responseValutation[List[Terminale]](terminals,
-          terminal => myView.drawTerminal(terminal),
-          _ => None,
-          EmployeeView.terminal,
-          showSuccess = false)
+      zona.idZone.foreach(id=>
+        model.getTerminalByZone(id).onComplete(terminals =>
+          responseValutation[List[Terminale]](terminals,
+            terminal => myView.drawTerminal(terminal),
+            _ => None,
+            EmployeeView.terminal,
+            showSuccess = false)
+        )
       )
+
 
 
 

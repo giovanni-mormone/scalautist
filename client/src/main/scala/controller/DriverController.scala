@@ -56,26 +56,35 @@ object DriverController{
     }
 
     override def drawHomePanel(): Unit =
-      model.getTurniInDay(Utils.userId.head).onComplete {
-        case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
-        case t => generalSuccessAndError(t)
-      }
+      Utils.userId.foreach(id=>
+        model.getTurniInDay(id).onComplete {
+          case Success(value) => value.payload.foreach(result=> myView.drawHomeView(result))
+          case t => generalSuccessAndError(t)
+        }
+      )
+
 
     override def drawShiftPanel(): Unit =
-      model.getTurniSettimanali(Utils.userId.head).onComplete {
-        case Success(value) =>value.payload.foreach(result=> myView.drawShiftView(result))
-        case t => generalSuccessAndError(t)
-      }
+      Utils.userId.foreach(id=>
+        model.getTurniSettimanali(id).onComplete {
+          case Success(value) =>value.payload.foreach(result=> myView.drawShiftView(result))
+          case t => generalSuccessAndError(t)
+        }
+      )
+
     private def generalSuccessAndError[A](response:Try[A]): Unit = response match {
       case Failure(_)  => myView.showMessageError("general-error")
       case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessageError("bad-request-error")
     }
     override def drawSalaryPanel(): Unit =
-      model.getSalary(Utils.userId.head) onComplete {
-        case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
-        case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
-        case t => generalSuccessAndError(t)
-      }
+      Utils.userId.foreach(id=>
+        model.getSalary(id) onComplete {
+          case Success(Response(StatusCodes.SUCCES_CODE, payload)) =>payload.foreach(result=>myView.drawSalaryView(result))
+          case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")
+          case t => generalSuccessAndError(t)
+        }
+      )
+
     override def drawInfoSalary(idSalary: Int): Unit =
       model.getInfoForSalary(idSalary).onComplete {
         case Success(Response(StatusCodes.NOT_FOUND,_))=>myView.showMessageError("not-found-error")

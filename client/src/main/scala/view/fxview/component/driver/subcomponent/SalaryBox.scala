@@ -77,7 +77,7 @@ object SalaryBox{
 
       val myCalendar = information.turni.map(value=>Option(value,CreateDatePicker.sqlDateToCalendar(value.data)))
       val (datePickerSkin,finishDate) = myCalendar match {
-        case ::(head, _) => head match {
+        case ::(first, _) => first match {
           case Some(value) => CreateDatePicker.createDatePickerSkin(value._2)
           case None => CreateDatePicker.createDatePickerSkin(LocalDate.now)
         }

@@ -11,10 +11,18 @@ import scala.util.Try
  * Generic definition of model
  */
 trait Model {
+  /**
+   * method that encapsulate url for the request
+   * @param request endPoint of url
+   * @return url where the call will be made
+   */
   def getURI(request: String):String
   def shutdownActorSystem():Future[Terminated]
+
+  /**
+   * method that encapsulate HttRequest for request to server
+   * @param request HttRequest that contains info for the call that will be made
+   * @return Future of HttResponse with response of the server
+   */
   def doHttp(request:HttpRequest):Future[HttpResponse]
-  def success[A,B](function:Try[Option[A]],promise:Promise[Option[A]]): Unit
-  def failure[A](function:Try[Throwable],promise:Promise[Option[A]]): Unit
-  //protected def composePostRequest(request: String)
 }

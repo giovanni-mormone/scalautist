@@ -1,6 +1,8 @@
 package dbfactory.setting
 import dbfactory.implicitOperation.Crud
 import slick.jdbc.SQLServerProfile.api._
+import slick.lifted.CompiledFunction
+
 import scala.concurrent.Future
 import scala.reflect.runtime.{universe => runtime}
 
@@ -14,7 +16,7 @@ sealed trait GenericCRUD[C,T <: GenericTable[C]] extends GenericTableQuery[C,T] 
   /**
    *  A possibly parameterized query that will be cached for repeated efficient execution without having to recompile it every time
    */
-  protected val queryById = Compiled((id: Rep[Int]) => tableDB().filter(_.id === id))
+  protected val queryById: CompiledFunction[Rep[Int] => Query[T, C, Seq], Rep[Int], Int, Query[T, C, Seq], Seq[C]] = Compiled((id: Rep[Int]) => tableDB().filter(_.id === id))
   /**
    *  Query per make filter using clause ''in'' of SQL
    */

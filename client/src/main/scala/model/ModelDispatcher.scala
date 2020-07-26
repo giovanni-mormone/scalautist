@@ -33,9 +33,9 @@ trait ModelDispatcher {
  */
 object ModelDispatcher {
 
-  private val istance: ModelDispatcher = new ModelDispatcherAkka
+  private val instance: ModelDispatcher = new ModelDispatcherAkka
 
-  def apply(): ModelDispatcher = istance
+  def apply(): ModelDispatcher = instance
 
   private class ModelDispatcherAkka extends ModelDispatcher{
 
