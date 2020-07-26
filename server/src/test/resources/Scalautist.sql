@@ -784,3 +784,4 @@ CREATE INDEX [IX_FK_ParametriSetZonaTerminaleSet]
 -- --------------------------------------------------
 -- Script has ended
 -- --------------------------------------------------
+

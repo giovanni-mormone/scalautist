@@ -10,18 +10,24 @@ import caseclass.CaseClassHttpMessage._
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, Label}
-import javafx.scene.layout.{Pane, VBox}
+import javafx.scene.layout.VBox
 import org.controlsfx.control.CheckComboBox
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
-import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftUtil, ShiftTable}
+import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable, ShiftUtil}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * This trait allows to manage the view for change theoretical week request and make special week
+ */
 trait ChangeSettimanaRichiesta extends Component[ChangeSettimanaRichiestaParent] {
 
 }
 
-object ChangeSettimanaRichiesta{
+/**
+ * Companion object for [[ChangeSettimanaRichiesta]]
+ */
+object ChangeSettimanaRichiesta {
 
   def apply(params: ParamsForAlgoritm, rules: List[Regola]): ChangeSettimanaRichiesta =
     new ChangeSettimanaRichiestaFX(params, rules)

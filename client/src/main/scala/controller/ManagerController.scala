@@ -44,7 +44,7 @@ trait ManagerController extends AbstractController[ManagerView]{
   def consumeNotification(tag: Long): Unit
 
   /**
-   * method that return result of the algorithm for a terminal and time frame
+   * Method that return result of the algorithm for a terminal and time frame
    * @param value id of terminal for we want select result
    * @param date init date for select result
    * @param date1 end date for select result
@@ -53,7 +53,18 @@ trait ManagerController extends AbstractController[ManagerView]{
 
   def dataToResultPanel(): Unit
 
+  /**
+   * runAlgorithm checks if you can run algorithm without any problem before running it. If there are problems, it asks
+   * the user whether to proceed
+   * @param algorithmExecute information that allows the algorithm to work
+   */
   def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit
+
+  /**
+   * It makes algorithm run without check if it overwrites something
+   * @param algorithmExecute information that allows the algorithm to work
+   */
+  def executeAlgorithm(algorithmExecute: AlgorithmExecute)
 
   /**
    * save a new zone into db
@@ -256,7 +267,7 @@ object ManagerController {
     def statusAlgorithm(message:String):Unit=
       myView.showMessage(message)
 
-    override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
+    override def executeAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
       model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
           Platform.runLater(() => myView.showMessageFromKey(key= "start-algorithm"))
@@ -275,6 +286,20 @@ object ManagerController {
         case Success(Response(StatusCodes.ERROR_CODE9,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver-contract"))
         case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
+
+    override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
+      model.verifyOldResult(CheckResultRequest(algorithmExecute.idTerminal, algorithmExecute.dateI, algorithmExecute.dateF))
+        .onComplete {
+          case Success(Response(StatusCodes.SUCCES_CODE, Some(list))) =>
+            Option(list.collect{
+              case Some(StatusCodes.INFO_CODE2) =>
+                "info-run-other"
+              case Some(StatusCodes.INFO_CODE4) =>
+                "info-run-overwrite"
+            }).filter(_.nonEmpty)
+              .fold(executeAlgorithm(algorithmExecute))(list => myView.confirmRun(list, algorithmExecute))
+          case _ => myView.showMessageFromKey("general-error")
+        }
 
     override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] =
       model.verifyOldResult(dataToCheck)

@@ -65,7 +65,7 @@ object ParamsModal {
       initButton()
       initTable()
       initCheckBox()
-      data.info.fold()(info => {
+      data.info.foreach(info => {
         printParamsInfo(info)
       })
     }
@@ -83,7 +83,7 @@ object ParamsModal {
 
       info.zonaTerminale.map(_.terminaleId)
         .foreach(idTer => data.terminals.find(_.idTerminale.contains(idTer))
-          .fold()(terminal =>
+          .foreach(terminal =>
             terminals.getChildren.add(TerminalModalLabels(idTer.toString, terminal.nomeTerminale).setParent(parent).pane)
           ))
 
@@ -95,7 +95,7 @@ object ParamsModal {
       days.getChildren.addAll(daysHeader)
 
       info.giornoInSettimana
-        .fold()(_.foreach(day => {
+        .foreach(_.foreach(day => {
           days.getChildren.add(DayInWeekModalLabels(daysStringMap.getOrElse(day.giornoId, NONE),
             ShiftUtil.getShiftName(day.turnoId),
             day.quantita.toString,
@@ -121,10 +121,9 @@ object ParamsModal {
       CreateTable.createColumns[ParamsTable](params, fieldsList)
       CreateTable.fillTable[ParamsTable](params, data.oldsParam)
 
-      data.info.fold()(_.parametro.idParametri.fold()(id => {
-        val n: Int = CreateTable.getElements(params).toList.map(_.id.get().toInt).sorted.indexWhere(_ == id)
-        if(n >= 0)
-          params.getSelectionModel.select(n)
+      data.info.foreach(_.parametro.idParametri.foreach(id => {
+        Option(CreateTable.getElements(params).toList.map(_.id.get().toInt).sorted.indexWhere(_ == id))
+          .filter(_ >= 0).foreach(params.getSelectionModel.select)
       }))
 
       params.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {

@@ -3,7 +3,7 @@ package view.mainview
 import java.sql.Date
 
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.InfoRichiesta
 import view.DialogView
@@ -12,6 +12,14 @@ import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 
 
 trait ManagerView extends DialogView {
+  /**
+   * method that draw a modal to choose whether to continue with the algorithm and overwrite old data or not
+   *
+   * @param message Type of error that occur
+   * @param algorithmExecute information that allows the algorithm to work
+   */
+  def confirmRun(message: List[String], algorithmExecute: AlgorithmExecute): Unit
+
   def drawNotification(str: String, tag: Long): Unit
 
   /**
@@ -97,13 +105,6 @@ trait ManagerView extends DialogView {
   def drawRunAlgorithm(terminals: List[Terminale]): Unit
 
   /**
-   * The method draws the list of [[caseclass.CaseClassDB.Parametro]] and it allows to choose params
-   *
-   *
-   */
-  //def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit
-
-  /**
    * Allows to modify daily request and define special week with special rules and requests
    *
    * @param params parameter chosen in precedent panel
@@ -127,9 +128,26 @@ trait ManagerView extends DialogView {
 
   def result(message: String): Unit
 
+  /**
+   *
+   * @param olds
+   * @param terminals
+   * @param rules
+   */
   def modalOldParamDraw(olds: List[CaseClassDB.Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
 
+  /**
+   *
+   * @param info
+   * @param name
+   * @param terminals
+   * @param rules
+   */
   def drawShowParams(info: CaseClassHttpMessage.AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
+  /**
+   *
+   * @param data
+   */
   def showInfoParam(data: ParamsModal.DataForParamasModel): Unit
 }

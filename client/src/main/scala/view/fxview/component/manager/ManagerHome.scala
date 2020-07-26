@@ -11,6 +11,7 @@ import javafx.scene.control.{Accordion, Button, Label}
 import javafx.scene.layout.BorderPane
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm}
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
@@ -31,11 +32,11 @@ import view.fxview.{FXHelperFactory, NotificationHelper}
 trait ManagerHome extends Component[ManagerHomeParent]{
 
   /**
-   *
-   * @param info
-   * @param name
-   * @param terminals
-   * @param rules
+   * Method that draw the panel that allow to show chosen params and go on
+   * @param info instance of [[AlgorithmExecute]], it contains information that allows the algorithm to work
+   * @param name optional of name used to save params
+   * @param terminals list of [[Terminale]] that contains all terminals information
+   * @param rules list of [[Regola]] that contains all rules information
    */
   def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
@@ -94,6 +95,8 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   /**
    *
+   * @param params
+   * @param rules
    */
   def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit
 
@@ -105,6 +108,8 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   /**
    *
+   * @param params
+   * @param rule
    */
   def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
 
@@ -318,6 +323,7 @@ object ManagerHome{
       terminalView.setParent(parent)
       terminalView.pane
     }
+
   }
 
 

@@ -268,9 +268,24 @@ object ManagerViewFX {
     override def result(message: String): Unit = Platform.runLater(()=>{
       managerHome.endLoading()
       super.showMessageFromKey(message)
-
     })
 
+    override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
+      println(messages)
+      Platform.runLater(() =>{
+        modalResource = Modal[ModalRunParent, Component[ModalRunParent], ModalRunParent](myStage, this,
+          RunModal(messages, algorithmExecute))
+        modalResource.show()
+      })
+    }
+
+    override def executeAlgorthm(info: AlgorithmExecute): Unit = {
+      Platform.runLater(() => modalResource.close())
+      myController.executeAlgorithm(info)
+    }
+
+    override def cancel(): Unit =
+      Platform.runLater(() => modalResource.close())
   }
 
 }
