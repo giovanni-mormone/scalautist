@@ -2,9 +2,9 @@ package view.launchview
 
 import javafx.application.Application
 import javafx.stage.Stage
-import view.fxview.mainview.HumanResourceView
+import view.fxview.mainview.HumanResourceViewFX
 
 class HumanResourceLaunch  extends Application{
   override def start(primaryStage: Stage): Unit =
-    HumanResourceView(primaryStage,"aa","0")
+    HumanResourceViewFX(primaryStage,"aa","0")
 }

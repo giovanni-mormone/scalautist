@@ -3,18 +3,18 @@ package controller
 import caseclass.CaseClassDB.Persona
 import caseclass.CaseClassHttpMessage.Response
 import model.entity.PersonaModel
-import view.fxview.mainview.LoginView
+import view.mainview.LoginView
 
 import scala.util.{Failure, Success}
 
 /**
  * @author Giovanni Mormone.
  *
- * A login controller for a view of type [[view.fxview.mainview.LoginView]]
+ * A login controller for a view of type [[view.mainview.LoginView]]
  */
 trait LoginController extends AbstractController[LoginView]{
   /**
-   * Tries to login a user in the system. Gets the params submitted by a [[view.fxview.mainview.LoginView]]
+   * Tries to login a user in the system. Gets the params submitted by a [[view.mainview.LoginView]]
    * and tells to the view to change accordingly.
    * @param username
    *                 The username of the user to login.

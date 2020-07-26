@@ -99,7 +99,7 @@ object SalaryBox{
       val extraValue = LabelAndValueBox("extra-value",fExtra.toString).setParent(parent).pane
       val shiftTotalValue = LabelAndValueBox("shift-total-value",informations.infoValore.valoreTotaleTurni.toString).setParent(parent).pane
       val extraTotalValue = LabelAndValueBox("extra-total-value",informations.infoValore.valoreTotaleStraordinari.toString).setParent(parent).pane
-      val totalValue = LabelAndValueBox("total",informations.infoValore.valoreTotaleStraordinari+informations.infoValore.valoreTotaleTurni.toString).setParent(parent).pane
+      val totalValue = LabelAndValueBox("total",(informations.infoValore.valoreTotaleStraordinari+informations.infoValore.valoreTotaleTurni).toString).setParent(parent).pane
       val illNess = LabelAndValueBox("illness-day",informations.infoAssenza.assenzePerMalattia.toString).setParent(parent).pane
       val holiday = LabelAndValueBox("holiday",informations.infoAssenza.assenzePerFerie.toString).setParent(parent).pane
       internalVBox.getChildren.addAll(title,dayM,normalDay,shiftValue,extraValue,shiftTotalValue,extraTotalValue,totalValue,illNess,holiday)

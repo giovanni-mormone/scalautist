@@ -3,16 +3,13 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
-import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage._
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
-import controller.HumanResourceController.model
 import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.mainview.ManagerView
+import view.mainview.ManagerView
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -293,9 +290,10 @@ object ManagerController {
     override def resultForTerminal(idTerminal: Option[Int], date: Date, date1: Date): Unit =
       idTerminal.foreach(idTerminal=>
         model.getResultAlgorithm(idTerminal,date,date1).onComplete {
-          case Failure(exception) => println(exception)
           case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) =>myView.drawResult(value._1,value._2)
           case Success(Response(StatusCodes.NOT_FOUND, None)) => myView.showMessageFromKey("result-not-found")
+          case _ => myView.showMessageFromKey("general-error")
+
         }
       )
 

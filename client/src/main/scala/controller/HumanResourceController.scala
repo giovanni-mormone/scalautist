@@ -6,7 +6,7 @@ import caseclass.CaseClassHttpMessage.{Assumi, Ferie, Response}
 import messagecodes.StatusCodes
 import model.entity.HumanResourceModel
 import view.fxview.component.HumanResources.subcomponent.util.{EmployeeView, ErrorName}
-import view.fxview.mainview.HumanResourceView
+import view.mainview.HumanResourceView
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 /**
  * @author Francesco Cassano
  *
- * A HumanResource controller for a view of type [[view.fxview.mainview.HumanResourceView]]
+ * A HumanResource controller for a view of type [[view.mainview.HumanResourceView]]
  */
 trait HumanResourceController extends AbstractController[HumanResourceView] {
 
