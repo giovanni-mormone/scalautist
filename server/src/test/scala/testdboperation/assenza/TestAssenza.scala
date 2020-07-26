@@ -4,7 +4,8 @@ import caseclass.CaseClassDB.Assenza
 import caseclass.CaseClassHttpMessage.Ferie
 import dbfactory.operation.AssenzaOperation
 import messagecodes.StatusCodes
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import testdboperation.persona.AssenzaOperationTestValues
 import utils.StartServer
 

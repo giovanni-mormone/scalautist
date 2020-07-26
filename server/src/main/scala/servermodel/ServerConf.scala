@@ -8,7 +8,7 @@ import akka.actor.typed.scaladsl.adapter._
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
-import dbfactory.operation.{DisponibilitaOperation, PresenzaOperation, StipendioOperation}
+import dbfactory.operation.{DisponibilitaOperation, StipendioOperation}
 import messagecodes.StatusCodes
 import servermodel.routes.RouteServer._
 
@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
  * @author Francesco Cassano
  * Object to configure and start Http server
  */
-object ServerConf {
+private object ServerConf {
   final case class StartServer()
   private val interface = "0.0.0.0"
   private val port = 8080
@@ -31,7 +31,7 @@ object ServerConf {
         Behaviors.empty
     }
 
-  private def startHttpServer(routes: Route, system: ActorSystem[_]): Unit = {
+  def startHttpServer(routes: Route, system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
     implicit val classicSystem: akka.actor.ActorSystem = system.toClassic
     import system.executionContext
@@ -45,7 +45,7 @@ object ServerConf {
         system.terminate()
     }
   }
-  private def verifyDayInWeek(): Unit ={
+  def verifyDayInWeek(): Unit ={
     import scala.concurrent.ExecutionContext.Implicits.global
     def _verifyDayInWeek(count:Int=0):Unit={
       import utils.DateConverter._

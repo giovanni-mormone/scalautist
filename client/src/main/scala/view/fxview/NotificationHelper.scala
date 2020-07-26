@@ -19,6 +19,6 @@ object NotificationHelper {
     firstTitled.setOnMouseClicked(_=>parameters.consumeNotification(tag))
     parameters.accordion.getPanes.add(firstTitled)
     parameters.popover.getRoot.getChildren.removeIf(_=>parameters.popover.getRoot.getChildren.contains(parameters.accordion))
-    parameters.popover.getRoot.getChildren.add(parameters.accordion)
+    parameters.popover.setContentNode(parameters.accordion)
   }
 }

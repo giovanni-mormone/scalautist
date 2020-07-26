@@ -10,7 +10,13 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.masterroute.MasterRouteRichiestaTeorica.{concat, path}
 import servermodel.routes.subroute.RegolaRoute._
-object MasterRouteRegola {
+
+
+/**
+ * @author Fabian Aspée Encina
+ *         This object manage routes that act on the regola entity and its related entities
+ */
+trait MasterRouteRegola {
 
   @Path("/regolagroup")
   @POST
@@ -21,12 +27,9 @@ object MasterRouteRegola {
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found Rule"),
       new ApiResponse(responseCode = "404", description = "Not Found"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"))
+      new ApiResponse(responseCode = "400", description = "Bad Request"))
   )
-  def ruleForGroup(): Route =
-    path("regolagroup") {
-      getRuleForGroup
-    }
+  def ruleForGroup(): Route
 
   @Path("/regolaweek")
   @POST
@@ -37,9 +40,20 @@ object MasterRouteRegola {
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found Rule For Week"),
       new ApiResponse(responseCode = "404", description = "Not Found"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"))
+      new ApiResponse(responseCode = "400", description = "Bad Request"))
   )
-  def ruleForWeek(): Route =
+  def ruleForWeek(): Route
+}
+
+
+object MasterRouteRegola extends MasterRouteRegola {
+
+  override def ruleForGroup(): Route =
+    path("regolagroup") {
+      getRuleForGroup
+    }
+
+  override def ruleForWeek(): Route =
     path("regolaweek") {
       getRuleForWeek
     }

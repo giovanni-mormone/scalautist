@@ -11,65 +11,13 @@ import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.RisultatoRoute._
 import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import scala.concurrent.duration._
+
+
 /**
  * @author Francesco Cassano, Fabian Aspee Encina
- * This object manage routes that act on the Risultato entity and its related entities
+ *         This object manage routes that act on the Risultato entity and its related entities
  */
-object MasterRouteRisultato extends Directives {
-
-  @Path("/replaceshift")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Replace shift", description = "Reassign a shift to another employee",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int)])))),
-    responses = Array(
-      new ApiResponse(responseCode = "200", description = "replace success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def replaceShift(): Route =
-    path("replaceshift") {
-      updateShift()
-    }
-
-  @Path("/executealgorithm")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Run Algorithm", description = "Run algorithm for obtained free day and shift",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AlgorithmExecute])))),
-    responses = Array(
-      new ApiResponse(responseCode = "200", description = "run success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def executeAlgorithm(): Route =
-    path("executealgorithm") {
-      runAlgorithm()
-    }
-
-  @Path("/getresultalgorithm")
-  @POST
-  @Consumes(Array(MediaType.APPLICATION_JSON))
-  @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Result Algorithm", description = "Return result of algorithm from dateI to dateF",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int,Dates,Dates)])))),
-    responses = Array(
-      new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
-      new ApiResponse(responseCode = "500", description = "Internal server error"))
-  )
-  def resultAlgorithm(): Route =
-    path("getresultalgorithm") {
-      withRequestTimeout(10 minute) {
-        withRequestTimeoutResponse(request => timeoutResponse) {
-          getResultAlgorithm
-        }
-
-      }
-    }
-
+trait MasterRouteRisultato {
 
   @Path("/checkresult")
   @POST
@@ -79,10 +27,74 @@ object MasterRouteRisultato extends Directives {
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[CheckResultRequest])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "run success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def checkResult(): Route =
+  def checkResult(): Route
+
+  @Path("/getresultalgorithm")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Get Result Algorithm", description = "Return result of algorithm from dateI to dateF",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Dates, Dates)])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "get success"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def resultAlgorithm(): Route
+
+  @Path("/executealgorithm")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Run Algorithm", description = "Run algorithm for obtained free day and shift",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AlgorithmExecute])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "run success"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def executeAlgorithm(): Route
+
+  @Path("/replaceshift")
+  @POST
+  @Consumes(Array(MediaType.APPLICATION_JSON))
+  @Produces(Array(MediaType.APPLICATION_JSON))
+  @Operation(summary = "Replace shift", description = "Reassign a shift to another employee",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int)])))),
+    responses = Array(
+      new ApiResponse(responseCode = "200", description = "replace success"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "500", description = "Internal server error"))
+  )
+  def replaceShift(): Route
+}
+
+object MasterRouteRisultato extends Directives with MasterRouteRisultato {
+
+  override def replaceShift(): Route =
+    path("replaceshift") {
+      updateShift()
+    }
+
+  override def executeAlgorithm(): Route =
+    path("executealgorithm") {
+      runAlgorithm()
+    }
+
+  override def resultAlgorithm(): Route =
+    path("getresultalgorithm") {
+      withRequestTimeout(10 minute) {
+        withRequestTimeoutResponse(request => timeoutResponse) {
+          getResultAlgorithm
+        }
+
+      }
+    }
+
+  override def checkResult(): Route =
     path("checkresultprealgorithm") {
       checkOldResult()
     }
