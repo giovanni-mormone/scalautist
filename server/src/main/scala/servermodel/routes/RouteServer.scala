@@ -20,7 +20,7 @@ import swagger.SwaggerDocService
 /**
  * Object to manage routes
  */
-object RouteServer{
+private[servermodel] object RouteServer{
   val route: Route = cors() (concat(routePersona, routeTurno, routeZona,routeTerminale,routeContratto,
     routeAssenza,routeStipendio,routeRisultato,routeDisponibilita,routeRichiestaTeorica,routeParametro,routeRegola,SwaggerDocService.routes))
 }

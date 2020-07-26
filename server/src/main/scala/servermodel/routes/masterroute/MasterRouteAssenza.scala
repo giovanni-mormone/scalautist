@@ -11,7 +11,11 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.AssenzaRoute._
 
-object MasterRouteAssenza extends Directives{
+/**
+ * @author Fabian Aspée Encina
+ * This object manage routes that act on the assenza entity and its related entities
+ */
+trait MasterRouteAssenza {
 
   @Path("/getholidaybyperson")
   @POST
@@ -23,10 +27,7 @@ object MasterRouteAssenza extends Directives{
       new ApiResponse(responseCode = "201", description = "Get All holiday by person correctly from database"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def getHolidayByPerson: Route =
-    path("getholidaybyperson") {
-      holidayByPerson()
-    }
+  def getHolidayByPerson: Route
 
   @Path("/addabsence")
   @POST
@@ -38,10 +39,7 @@ object MasterRouteAssenza extends Directives{
       new ApiResponse(responseCode = "201", description = "Insert Absence correctly into database"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def addAbsencePersona(): Route =
-    path("addabsence") {
-      addAbsence()
-    }
+  def addAbsencePersona(): Route
 
   @Path("/getabsenceinyearforperson")
   @POST
@@ -53,10 +51,7 @@ object MasterRouteAssenza extends Directives{
       new ApiResponse(responseCode = "201", description = "Get all holiday and illness from database by person"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def getAbsenceInYearForPerson: Route =
-    path("getAbsenceInYearForPerson") {
-      absenceInYearForPerson()
-    }
+  def getAbsenceInYearForPerson: Route
 
   @Path("/allabsences")
   @POST
@@ -68,7 +63,27 @@ object MasterRouteAssenza extends Directives{
       new ApiResponse(responseCode = "201", description = "Get all absent people in chosen date"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def absenceOnDay(): Route =
+  def absenceOnDay(): Route
+}
+
+object MasterRouteAssenza extends Directives with MasterRouteAssenza {
+
+  override def getHolidayByPerson: Route =
+    path("getholidaybyperson") {
+      holidayByPerson()
+    }
+
+  override def addAbsencePersona(): Route =
+    path("addabsence") {
+      addAbsence()
+    }
+
+  override def getAbsenceInYearForPerson: Route =
+    path("getAbsenceInYearForPerson") {
+      absenceInYearForPerson()
+    }
+
+  override def absenceOnDay(): Route =
     path("allabsences") {
       absencesOnDay()
     }

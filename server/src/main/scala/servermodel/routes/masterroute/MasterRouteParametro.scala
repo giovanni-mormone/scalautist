@@ -10,7 +10,11 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.ParametroRoute._
 
-object MasterRouteParametro  extends Directives{
+/**
+ * @author Fabian Aspée Encina
+ * This object manage routes that act on the parametro entity and its related entities
+ */
+trait MasterRouteParametro {
 
   @Path("/getalloldparameters")
   @POST
@@ -19,14 +23,10 @@ object MasterRouteParametro  extends Directives{
   @Operation(summary = "Get All Parameters", description = "Return all parameters existing in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def oldParameters(): Route =
-    path("getalloldparameters") {
-      getAllOldParameters
-    }
-
+  def oldParameters(): Route
 
   @Path("/getoldparametersbyid")
   @POST
@@ -36,13 +36,10 @@ object MasterRouteParametro  extends Directives{
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Int])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def oldParametersById(): Route =
-    path("getoldparametersbyid") {
-      getParametersById
-    }
+  def oldParametersById(): Route
 
   @Path("/saveparameter")
   @POST
@@ -52,16 +49,30 @@ object MasterRouteParametro  extends Directives{
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[InfoAlgorithm])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def saveParameter(): Route =
+  def saveParameter(): Route
+}
+object MasterRouteParametro  extends Directives with MasterRouteParametro {
+
+  override def oldParameters(): Route =
+    path("getalloldparameters") {
+      getAllOldParameters
+    }
+
+  override def oldParametersById(): Route =
+    path("getoldparametersbyid") {
+      getParametersById
+    }
+
+  override def saveParameter(): Route =
     path("saveparameter") {
       saveParameters
     }
 
   val routeParametro: Route =
     concat(
-       oldParameters(),oldParametersById(),saveParameter()
+      oldParameters(),oldParametersById(),saveParameter()
     )
 }
