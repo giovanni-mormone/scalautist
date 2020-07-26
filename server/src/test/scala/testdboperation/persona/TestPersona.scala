@@ -1,11 +1,11 @@
 package testdboperation.persona
 
 import caseclass.CaseClassDB._
-import dbfactory.operation.{PersonaOperation, StipendioOperation}
+import dbfactory.operation.PersonaOperation
 import messagecodes.StatusCodes
 import org.scalatest._
 import utils.StartServer
-
+import org.scalatest.flatspec.AsyncFlatSpec
 import scala.concurrent.Future
 
 class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServer{

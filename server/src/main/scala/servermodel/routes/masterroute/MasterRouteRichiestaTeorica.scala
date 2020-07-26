@@ -11,11 +11,12 @@ import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import servermodel.routes.subroute.RichiestaTeoricaRoute._
 import scala.concurrent.duration._
+
 /**
-* @author Francesco Cassano
-* This object manage routes that act on the RichiestaTeorica entity and its related entities
-*/
-object MasterRouteRichiestaTeorica extends Directives {
+ * @author Francesco Cassano
+ *         This object manage routes that act on the RichiestaTeorica entity and its related entities
+ */
+trait MasterRouteRichiestaTeorica {
 
   @Path("/definedailyrequest")
   @POST
@@ -25,16 +26,21 @@ object MasterRouteRichiestaTeorica extends Directives {
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AssignRichiestaTeorica])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "replace success"),
-      new ApiResponse (responseCode = "400", description = "Bad Request"),
+      new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def saveRequest(): Route =
+  def saveRequest(): Route
+}
+
+
+object MasterRouteRichiestaTeorica extends Directives with MasterRouteRichiestaTeorica {
+
+  override def saveRequest(): Route =
     path("definedailyrequest") {
       withRequestTimeout(10 minute) {
         withRequestTimeoutResponse(request => timeoutResponse) {
           saveRichiestaTeorica()
         }
-
       }
     }
 

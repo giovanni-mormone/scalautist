@@ -20,7 +20,7 @@ object GroupSelectionTable {
 
   implicit def groupToGroupTable(group: GroupToTable): GroupSelectionTable = {
     val date: String = group.date.map(_.toLocalDate)
-      .map(date => date.getDayOfMonth + "/" + date.getMonth + "/" + date.getYear)
+      .map(date => date.getDayOfMonth.toString + "/" + date.getMonth.toString + "/" + date.getYear.toString)
       .reduce((dl, d) => dl + "; " + d)
     new GroupSelectionTable( group.regola, date)
   }

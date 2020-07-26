@@ -1,6 +1,7 @@
-import caseclass.CaseClassDB.{Contratto, Terminale}
-import dbfactory.operation.{ContrattoOperation, TerminaleOperation}
+import caseclass.CaseClassDB.Terminale
+import dbfactory.operation.TerminaleOperation
 import org.scalatest._
+import org.scalatest.flatspec.AsyncFlatSpec
 import utils.StartServer
 
 import scala.concurrent.Future

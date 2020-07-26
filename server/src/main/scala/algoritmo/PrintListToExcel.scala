@@ -104,10 +104,11 @@ object PrintListToExcel {
           case InfoDay(_, Some(shift), None, None, false, false)=>shift.toString
           case InfoDay(_, None, None, None, true, false)=> "L"
           case InfoDay(_, None, None, None, false, true)=>"A"
+          case _ => ""
         }
         case None =>""
       }))
-      case ::(head, next)=>_iteraDate(next,result:+"")
+      case ::(_, next)=>_iteraDate(next,result:+"")
       case Nil =>result
     }
     _iteraDate(date)
@@ -131,6 +132,8 @@ object PrintListToExcel {
          cell.setCellValue(obj)
          cellAux=cellAux+1
        }
+       case _=>
      }
+
    }
 }

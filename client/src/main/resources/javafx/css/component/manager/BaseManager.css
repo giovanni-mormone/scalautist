@@ -1,10 +1,16 @@
 #baseManager,#baseHR{
     -fx-alignment: center;
-    -fx-min-height: 700;
     -fx-fill-width: true;
-    -fx-min-width: 800;
     -fx-spacing: 10;
     -fx-padding: 10;
+}
+
+.popover {
+    -fx-background-color: rgba(255,0,0, 0.1); /* semi-transparent red */
+}
+.popover > .content {
+    -fx-padding: 10;
+    -fx-background-color: transparent;
 }
 
 #notificationBox{

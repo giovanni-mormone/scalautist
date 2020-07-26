@@ -1,7 +1,6 @@
 package view.mainviewoperations
 
 import view.baseconfiguration.BaseTest
-import view.fxview.mainview.HumanResourceView
 
 trait HumanResourceOperations {
   //home operations

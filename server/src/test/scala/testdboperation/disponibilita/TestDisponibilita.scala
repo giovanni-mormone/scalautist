@@ -2,7 +2,8 @@ package testdboperation.disponibilita
 
 import dbfactory.operation.DisponibilitaOperation
 import messagecodes.StatusCodes
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import utils.StartServer3
 
 import scala.concurrent.Future
