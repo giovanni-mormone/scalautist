@@ -111,6 +111,6 @@ trait ManagerView extends DialogView {
 
   def refreshTerminalPanel(messageKey: String): Unit
   def refreshZonaPanel(messageKey: String): Unit
-
   def consumeNotification(tag: Long): Unit
+  def result(message: String): Unit
 }
