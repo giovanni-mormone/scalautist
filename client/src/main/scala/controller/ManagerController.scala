@@ -260,6 +260,15 @@ object ManagerController {
           Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
           startListenNotification()
         }
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE3,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE4,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE5,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE6,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE7,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE8,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
+        case Success(Response(StatusCodes.ERROR_CODE9,_)) => Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
         case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
 
@@ -439,11 +448,11 @@ object ManagerController {
     override def saveParam(param: InfoAlgorithm): Unit =
       model.saveParameters(param).onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE, _)) => Platform.runLater(() => myView.showMessageFromKey("GeneralError-Success"))
-        case Success(Response(StatusCodes.ERROR_CODE1, _)) => Platform.runLater(() => myView.showMessage("Exist error while insert Parametro"))
-        case Success(Response(StatusCodes.ERROR_CODE2, _)) => Platform.runLater(() => myView.showMessage("Exist error while insert GiornoInSettimana"))
-        case Success(Response(StatusCodes.ERROR_CODE3, _)) => Platform.runLater(() => myView.showMessage("ZonaTerminal is empty or name parameter is empty"))
-        case Success(Response(StatusCodes.ERROR_CODE4, _)) => Platform.runLater(() => myView.showMessage("Regola not exist"))
-        case Success(Response(StatusCodes.ERROR_CODE5, _)) => Platform.runLater(() => myView.showMessage("GiornoInSettimana contains quantity less that zero"))
+        case Success(Response(StatusCodes.ERROR_CODE1, _)) => Platform.runLater(() => myView.showMessage("no-save-par"))
+        case Success(Response(StatusCodes.ERROR_CODE2, _)) => Platform.runLater(() => myView.showMessage("no-save-day"))
+        case Success(Response(StatusCodes.ERROR_CODE3, _)) => Platform.runLater(() => myView.showMessage("no-zona-terminal-valid"))
+        case Success(Response(StatusCodes.ERROR_CODE4, _)) => Platform.runLater(() => myView.showMessage("no-rules"))
+        case Success(Response(StatusCodes.ERROR_CODE5, _)) => Platform.runLater(() => myView.showMessage("no-val-day"))
         case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
   }
