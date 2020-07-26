@@ -5,12 +5,14 @@ import caseclass.CaseClassHttpMessage.{InfoAlgorithm, RequestGiorno}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiornoInSettimana, InstanceRegola, InstanceZonaTerminal}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.operation.RichiestaTeoricaOperation._
+import dbfactory.setting.Table.{GiornoInSettimanaTableQuery, GiornoTableQuery}
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter.nameOfDayFromId
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /** @author Fabian Aspee Encina
  *  Trait which allows to perform operations on the parametro table.
@@ -56,32 +58,31 @@ object ParametroOperation extends ParametroOperation {
     }yield result
   }
 
-  private def selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana],parametroId:Option[Int]): Future[List[GiornoInSettimana]]= {
-      def _selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana],newGiornoInSettimana:List[GiornoInSettimana]=List.empty):Future[List[GiornoInSettimana]]=giornoInSettimana match {
-        case  List(giorno) =>  selectIdGiornoAndInsertGiornoInSettimana(giorno,parametroId).collect(x=>newGiornoInSettimana:+x)
+  private def selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana],parametroId:Option[Int]): Future[Option[Int]]= {
+      def _selectedIdGiorno(giornoInSettimana: List[GiornoInSettimana]):Future[Option[Int]]=giornoInSettimana match {
+        case  List(giorno) =>  selectIdGiornoAndInsertGiornoInSettimana(giorno,parametroId)
         case ::(giorno, next) => selectIdGiornoAndInsertGiornoInSettimana(giorno,parametroId).flatMap(x =>
-          _selectedIdGiorno(next,newGiornoInSettimana:+x)
+          _selectedIdGiorno(next)
         )
       }
     _selectedIdGiorno(giornoInSettimana)
   }
-  private def selectIdGiornoAndInsertGiornoInSettimana(giorno:GiornoInSettimana,parametroId:Option[Int]):Future[GiornoInSettimana]={
+  private def selectIdGiornoAndInsertGiornoInSettimana(giorno:GiornoInSettimana,parametroId:Option[Int]):Future[Option[Int]]={
     selectGiornoId(RequestGiorno(Giorno(giorno.quantita, nameOfDayFromId(giorno.giornoId), giorno.giornoId), DEFAULT_SHIFT))
-      .collect{
+      .flatMap{
         case Some(id) =>
           val newGiorno = giorno.copy(giornoId = id, parametriId = parametroId)
           GiornoInSettimanaOperation.insert(newGiorno)
-          newGiorno
       }
   }
   private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
     (idParametri,infoAlgorithm.giornoInSettimana) match {
-      case (Some(_),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
+      case (Some(id),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{
         case Some(StatusCodes.SUCCES_CODE) =>selectedIdGiorno(giornoInSettimana,idParametri)
-          .flatMap(giorno=> GiornoInSettimanaOperation.insertAll(giorno).flatMap {
+          .flatMap{
           case Some(_) => insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
           case None =>deleteParametri(idParametri)
-        })
+        }
         case Some(StatusCodes.ERROR_CODE4) =>deleteParametri(idParametri).collect(_=>Some(StatusCodes.ERROR_CODE4))
       }
       case (Some(_),None)=>insertZonaTerminal(infoAlgorithm.zonaTerminale,idParametri)
@@ -107,16 +108,70 @@ object ParametroOperation extends ParametroOperation {
       case None =>None
     }
   }
-
+  private def selectGiornoInSettimana(parameterId:Int): Future[Option[List[GiornoInSettimana]]] ={
+    val join = for{
+      giorno<-GiornoTableQuery.tableQuery()
+      giornoSettimana<-GiornoInSettimanaTableQuery.tableQuery()
+      if giorno.id===giornoSettimana.giornoId && giornoSettimana.parametriId===parameterId
+    }yield(giornoSettimana,giorno.idGiornoSettimana)
+    InstanceGiornoInSettimana.operation().execJoin(join).collect {
+      case Some(info) => Option(info.map(giorno=>giorno._1.copy(giornoId=giorno._2)))
+      case None => None
+    }
+  }
   override def getParameter(idParameter: Int): Future[Option[InfoAlgorithm]] =
     for{
       parameter<-select(idParameter)
       zonaTerminal<-InstanceZonaTerminal.operation()
         .selectFilter(_.parametriId===idParameter)
-      giornoInSettimana<-InstanceGiornoInSettimana.operation()
-        .selectFilter(_.parametriId===idParameter)
+      giornoInSettimana<-selectGiornoInSettimana(idParameter)
     }yield (parameter,zonaTerminal) match {
       case (Some(value),Some(zonaTerminal)) => Some(InfoAlgorithm(value,zonaTerminal, giornoInSettimana))
       case _ => None
     }
 }
+object e extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val es = InfoAlgorithm(Parametro(false,"HOLA2",None),List(ZonaTerminale(1,2,None,None)),
+    Some(List(GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
+      GiornoInSettimana(4,2,4,2,None,None), GiornoInSettimana(5,1,4,1,None,None),
+      GiornoInSettimana(6,3,4,3,None,None), GiornoInSettimana(4,2,4,2,None,None),
+      GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
+      GiornoInSettimana(4,2,4,2,None,None), GiornoInSettimana(5,1,4,1,None,None),
+      GiornoInSettimana(6,3,4,3,None,None), GiornoInSettimana(4,2,4,2,None,None),
+      GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
+      GiornoInSettimana(4,2,4,2,None,None))))
+  val es2 = InfoAlgorithm(Parametro(false,"HOLA2",Some(12)),List(ZonaTerminale(1,2,Some(12),Some(14))),
+    Some(List(GiornoInSettimana(5,1,4,1,Some(12),Some(79)), GiornoInSettimana(6,3,4,3,Some(12),Some(80)),
+      GiornoInSettimana(4,2,4,2,Some(12),Some(81)), GiornoInSettimana(5,1,4,1,Some(12),Some(82)),
+      GiornoInSettimana(6,3,4,3,Some(12),Some(83)), GiornoInSettimana(4,2,4,2,Some(12),Some(84)),
+      GiornoInSettimana(5,1,4,1,Some(12),Some(85)), GiornoInSettimana(6,3,4,3,Some(12),Some(86)),
+      GiornoInSettimana(4,2,4,2,Some(12),Some(87)), GiornoInSettimana(5,1,4,1,Some(12),Some(88)),
+      GiornoInSettimana(6,3,4,3,Some(12),Some(89)), GiornoInSettimana(4,2,4,2,Some(12),Some(90)),
+      GiornoInSettimana(5,1,4,1,Some(12),Some(91)), GiornoInSettimana(6,3,4,3,Some(12),Some(92)),
+      GiornoInSettimana(4,2,4,2,Some(12),Some(93)))))
+  ParametroOperation.saveInfoAlgorithm(es).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>println(value)
+  }
+  while(true){}
+}
+
+object e2 extends App{
+  import scala.concurrent.ExecutionContext.Implicits.global
+
+  ParametroOperation.getParameter(12).onComplete {
+    case Failure(exception) => println(exception)
+    case Success(value) =>println(value)
+  }
+  while(true){}
+}
+//
+//
+//
+//
+//
+//
+//
+//
+//
