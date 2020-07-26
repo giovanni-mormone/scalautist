@@ -254,7 +254,7 @@ object ManagerController {
     }
 
     def statusAlgorithm(message:String):Unit=
-      println(s"$message")
+      myView.showMessage(message)
 
     override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
       model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {
@@ -264,15 +264,15 @@ object ManagerController {
         case Success(Response(StatusCodes.ERROR_CODE10,_)) =>
           Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
           startListenNotification()
-        case Success(Response(StatusCodes.ERROR_CODE1,_)) => Platform.runLater(() => myView.showMessage("no-driver-ter"))
-        case Success(Response(StatusCodes.ERROR_CODE2,_)) => Platform.runLater(() => myView.showMessage("error-date"))
-        case Success(Response(StatusCodes.ERROR_CODE3,_)) => Platform.runLater(() => myView.showMessage("error-terminal"))
-        case Success(Response(StatusCodes.ERROR_CODE4,_)) => Platform.runLater(() => myView.showMessage("error-group"))
-        case Success(Response(StatusCodes.ERROR_CODE5,_)) => Platform.runLater(() => myView.showMessage("error-special-week"))
-        case Success(Response(StatusCodes.ERROR_CODE6,_)) => Platform.runLater(() => myView.showMessage("no-request"))
-        case Success(Response(StatusCodes.ERROR_CODE7,_)) => Platform.runLater(() => myView.showMessage("no-driver"))
-        case Success(Response(StatusCodes.ERROR_CODE8,_)) => Platform.runLater(() => myView.showMessage("no-shift"))
-        case Success(Response(StatusCodes.ERROR_CODE9,_)) => Platform.runLater(() => myView.showMessage("no-driver-contract"))
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver-ter"))
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) => Platform.runLater(() => myView.showMessageFromKey("error-date"))
+        case Success(Response(StatusCodes.ERROR_CODE3,_)) => Platform.runLater(() => myView.showMessageFromKey("error-terminal"))
+        case Success(Response(StatusCodes.ERROR_CODE4,_)) => Platform.runLater(() => myView.showMessageFromKey("error-group"))
+        case Success(Response(StatusCodes.ERROR_CODE5,_)) => Platform.runLater(() => myView.showMessageFromKey("error-special-week"))
+        case Success(Response(StatusCodes.ERROR_CODE6,_)) => Platform.runLater(() => myView.showMessageFromKey("no-request"))
+        case Success(Response(StatusCodes.ERROR_CODE7,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver"))
+        case Success(Response(StatusCodes.ERROR_CODE8,_)) => Platform.runLater(() => myView.showMessageFromKey("no-shift"))
+        case Success(Response(StatusCodes.ERROR_CODE9,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver-contract"))
         case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
       }
 

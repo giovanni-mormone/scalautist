@@ -105,7 +105,6 @@ object ShowParamAlgorithmBox {
         })
         println(info)
         parent.run(info)
-        parent.resetParams()
       })
     }
 
