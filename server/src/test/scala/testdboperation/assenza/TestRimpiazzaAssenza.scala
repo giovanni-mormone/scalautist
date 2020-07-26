@@ -2,7 +2,8 @@ package testdboperation.assenza
 
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoReplacement}
 import dbfactory.operation.{AssenzaOperation, DisponibilitaOperation, RisultatoOperation}
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import utils.StartServer4
 
 import scala.concurrent.Future

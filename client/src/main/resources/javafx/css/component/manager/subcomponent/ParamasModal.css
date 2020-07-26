@@ -16,8 +16,8 @@
 }
 
 #scrollbox{
-    -fx-min-width: 370;
-    -fx-max-width: 370;
+    -fx-min-width: 500;
+    -fx-max-width: 500;
     -fx-alignment: top-center;
     -fx-background-color: transparent;
     -fx-border-radius: 10px;
@@ -50,8 +50,8 @@
     -fx-spacing: 10;
     -fx-alignment: top-center;
     -fx-fill-width: false;
-    -fx-max-width: 350;
-    -fx-min-width: 350;
+    -fx-max-width: 470;
+    -fx-min-width: 470;
     -fx-fill-height: false;
     -fx-padding: 10;
     -fx-background-color: white;

@@ -102,7 +102,7 @@ object AssenzaOperation extends AssenzaOperation{
       result
     }
   }
-  private def sendMessage(element:Assenza)={
+  private def sendMessage(element:Assenza): Unit ={
     if(element.malattia)
       notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "ha una nuova malattia dal" + element.dataInizio + " al" +
         element.dataFine,"malattie")

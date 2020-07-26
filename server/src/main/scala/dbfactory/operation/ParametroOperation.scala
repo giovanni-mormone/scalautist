@@ -156,22 +156,3 @@ object e extends App{
   }
   while(true){}
 }
-
-object e2 extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
-
-  ParametroOperation.getParameter(12).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>println(value)
-  }
-  while(true){}
-}
-//
-//
-//
-//
-//
-//
-//
-//
-//

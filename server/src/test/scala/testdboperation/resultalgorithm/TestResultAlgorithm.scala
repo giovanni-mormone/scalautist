@@ -5,7 +5,8 @@ import java.time.LocalDate
 
 import caseclass.CaseClassHttpMessage.ResultAlgorithm
 import dbfactory.operation.RisultatoOperation
-import org.scalatest.{AsyncFlatSpec, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AsyncFlatSpec
 import utils.StartServer5
 
 import scala.concurrent.Future
