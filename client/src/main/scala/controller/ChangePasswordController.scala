@@ -3,19 +3,19 @@ package controller
 import messagecodes.StatusCodes
 import model.entity.PersonaModel
 import regularexpressionutilities.PasswordHelper
-import view.fxview.mainview.ChangePasswordView
+import view.mainview.ChangePasswordView
 
 import scala.util.Success
 
 /**
  * @author Giovanni Mormone.
  *
- * A change password controller for a view of type [[view.fxview.mainview.ChangePasswordView]]
+ * A change password controller for a view of type [[view.mainview.ChangePasswordView]]
  *
  */
 trait ChangePasswordController extends AbstractController[ChangePasswordView]{
   /**
-   * Tries to change the password of a user in the system. Gets the params submitted by a [[view.fxview.mainview.ChangePasswordView]]
+   * Tries to change the password of a user in the system. Gets the params submitted by a [[view.mainview.ChangePasswordView]]
    * * and tells to the view to change accordingly.
    *
    * @param oldPassword
