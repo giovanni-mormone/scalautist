@@ -6,4 +6,5 @@
     <Label fx:id="field1" />
     <Label fx:id="field2" />
     <Label fx:id="field3" />
+    <Label fx:id="field4" />
 </HBox>

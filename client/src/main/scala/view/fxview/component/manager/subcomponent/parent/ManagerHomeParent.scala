@@ -1,8 +1,12 @@
 package view.fxview.component.manager.subcomponent.parent
 
 trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent with ChooseParamsParent with ModalParamParent
-  with ChangeSettimanaRichiestaParent with GroupParamsParent with SelectResultParent with ModalGruopParent with ZonaParent
-  with TerminalParent {
+  with ChangeSettimanaRichiestaParent with GroupParamsParent with SelectResultParent
+  with ModalGruopParent with ShowParamAlgorithmBoxParent with ZonaParent with TerminalParent{
+
+  /**
+   *
+   */
   def drawResultPanel(): Unit
 
   /**

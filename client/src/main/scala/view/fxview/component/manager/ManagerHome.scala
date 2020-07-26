@@ -4,6 +4,11 @@ import java.net.URL
 import java.sql.Date
 import java.util.ResourceBundle
 
+import caseclass.CaseClassDB.{Regola, Terminale, Turno}
+import caseclass.CaseClassHttpMessage._
+import javafx.fxml.FXML
+import javafx.scene.control.{Accordion, Button, Label}
+import javafx.scene.layout.BorderPane
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm}
 import javafx.fxml.FXML
@@ -23,8 +28,18 @@ import view.fxview.{FXHelperFactory, NotificationHelper}
  * @author Fabian Aspee Encina, Giovanni Mormone, Francesco Cassano
  *         trait of methods that allow user to do desired operations.
  */
-trait ManagerHome extends Component[ManagerHomeParent] {
-  def drawNotifica(str: String, tag: Long): Unit
+trait ManagerHome extends Component[ManagerHomeParent]{
+
+  /**
+   *
+   * @param info
+   * @param name
+   * @param terminals
+   * @param rules
+   */
+  def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
+
+  def drawNotifica(str: String,tag:Long): Unit
 
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
 
@@ -100,7 +115,13 @@ trait ManagerHome extends Component[ManagerHomeParent] {
   def updateGroup(group: Group): Unit
 
   /**
-   * Initialize zona Manager view before show
+   *
+   * @param info
+   * @param name
+   */
+  def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
+
+  /** Initialize zona Manager view before show
    *
    * @param zones
    * List of [[caseclass.CaseClassDB.Zona]]
@@ -168,6 +189,7 @@ object ManagerHome{
 
 
     var gruopParamBox: GroupParamsBox = _
+    var showParam: ShowParamAlgorithmBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       nameLabel.setText(resources.getResource("username-label"))
@@ -269,6 +291,15 @@ object ManagerHome{
 
     override def updateGroup(group: Group): Unit =
       gruopParamBox.updateGroup(group)
+
+    override def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit = {
+
+    }
+
+    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit = {
+      showParam = ShowParamAlgorithmBox(info, name, rules, terminals)
+      baseManager.setCenter(showParam.setParent(parent).pane)
+    }
 
     override def drawZona(zones: List[Zona]): Unit =
       baseManager.setCenter(zonaBox(zones))

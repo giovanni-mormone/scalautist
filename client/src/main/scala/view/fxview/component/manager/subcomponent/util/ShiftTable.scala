@@ -46,6 +46,16 @@ class ShiftTable(shiftVal: String, mondayVal: String, tuesdayVal: String, wednes
   def setSaturday(value: String): Unit = saturday.set(value)
   def setCombo(value: ComboBox[String]): Unit = comboBox = value
 
+  def get(indexDay: Int): String = indexDay match {
+    case 1 => getMonday
+    case 2 => getTuesday
+    case 3 => getWednesday
+    case 4 => getThursday
+    case 5 => getFriday
+    case 6 => getSaturday
+    case _ => getShift
+  }
+
   def getSelected: Option[String] = Option(comboBox.getSelectionModel.getSelectedItem)
 }
 

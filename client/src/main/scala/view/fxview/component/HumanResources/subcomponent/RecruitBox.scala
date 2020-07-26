@@ -100,6 +100,7 @@ object RecruitBox {
       resources.getResource("wednesday"),
       resources.getResource("thursday"),
       resources.getResource("friday"))
+
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       initializeComboBox()

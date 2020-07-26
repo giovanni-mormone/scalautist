@@ -10,6 +10,7 @@ trait ManagerOperations {
   def openManageZone(): Unit
   def openManageTerminal(): Unit
   def openManageTeoricRequest(): Unit
+  def openRunAlgorithm():Unit
 }
 
 object ManagerOperations{
@@ -37,5 +38,8 @@ object ManagerOperations{
 
     override def openManageTeoricRequest(): Unit =
       toTest.clickOn("#richiestaButton")
+
+    override def openRunAlgorithm(): Unit =
+      toTest.clickOn("#generateTurnsButton")
   }
 }

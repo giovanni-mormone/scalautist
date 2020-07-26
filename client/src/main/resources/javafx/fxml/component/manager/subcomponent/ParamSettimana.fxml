@@ -16,6 +16,9 @@
          <Label fx:id="error" styleClass="error"/>
       </HBox>
       <VBox fx:id="dayShiftN"/>
+      <HBox fx:id="lableAlert">
+         <Label fx:id="alert" />
+      </HBox>
       <HBox fx:id="labelAndCheckbox">
          <Label fx:id="titleS"/>
          <CheckComboBox fx:id="weekS"/>

@@ -5,7 +5,7 @@ import java.sql.Date
 import java.time.LocalDate
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
 import javafx.application.Platform
@@ -14,9 +14,10 @@ import utils.TransferObject.InfoRichiesta
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.parent._
+import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
+import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent, _}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.component.manager.subcomponent.{GroupModal, GroupParamsBox, ModalTerminal, ModalZone, ParamsModal}
+import view.fxview.component.manager.subcomponent._
 import view.fxview.component.modal.Modal
 import view.mainview.ManagerView
 
@@ -101,10 +102,10 @@ object ManagerViewFX {
     override def modalOldParam(terminals: List[Terminale]): Unit =
       myController.modalOldParams(terminals)
 
-    override def modalOldParamDraw(olds: List[InfoAlgorithm], terminals: List[Terminale], rules: List[Regola]): Unit =
+    override def modalOldParamDraw(olds: List[Parametro], terminals: List[Terminale], rules: List[Regola]): Unit =
       Platform.runLater(() =>{
         modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
-          ParamsModal(olds, terminals, rules))
+          ParamsModal(DataForParamasModel(olds, terminals, rules)))
         modalResource.show()
       })
 
@@ -146,7 +147,7 @@ object ManagerViewFX {
 
     override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() =>
       managerHome.drawResultTerminal(terminal)
-     )
+    )
 
     override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = {
       managerHome.loadingResult()
@@ -167,8 +168,26 @@ object ManagerViewFX {
       managerHome.updateGroup(group)
     }
 
-    override def startAlgorithm(info: AlgorithmExecute): Unit =
+    override def showParams(info: AlgorithmExecute, name: Option[String]): Unit =
+      myController.showParamAlgorithm(info, name)
+
+    override def run(info: AlgorithmExecute): Unit =
       myController.runAlgorithm(info)
+
+    override def resetParams(): Unit =
+      drawParamsPanel()
+
+    override def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit =
+      Platform.runLater(() => managerHome.drawShowParams(info, name, terminals, rules))
+
+    override def showInfoParam(data: DataForParamasModel): Unit = {
+      Platform.runLater(() => modalResource.close())
+      Platform.runLater(() => {
+        modalResource = Modal[ModalParamParent, Component[ModalParamParent], ModalParamParent](myStage, caller = this,
+          ParamsModal(data))
+        modalResource.show()
+      })
+    }
 
     override def drawZonaView(zones: List[Zona]): Unit =
       Platform.runLater(() => managerHome.drawZona(zones))
@@ -178,19 +197,23 @@ object ManagerViewFX {
 
     override def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
       Platform.runLater(() => {
-//        homeView()
         modalResource = Modal[ModalTerminalParent, Component[ModalTerminalParent], ManagerHomeModalParent](myStage, this, ModalTerminal(zoneList, terminal))
         modalResource.show()
       })
     }
 
-      override def openZonaModal(zona: Zona): Unit = {
-        Platform.runLater(() => {
-//          homeView()
-          modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
-          modalResource.show()
-        })
-      }
+    override def getInfoToShow(idp: Int, data: DataForParamasModel): Unit =
+      myController.infoParamToShow(idp, data)
+
+    override def saveParam(param: InfoAlgorithm): Unit =
+      myController.saveParam(param)
+    override def openZonaModal(zona: Zona): Unit = {
+      Platform.runLater(() => {
+        //          homeView()
+        modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
+        modalResource.show()
+      })
+    }
 
     /////////////////////////////////////////////////////////   zona
     override def newZona(zona: Zona): Unit =
@@ -247,6 +270,7 @@ object ManagerViewFX {
       super.showMessageFromKey(message)
 
     })
+
   }
 
 }
