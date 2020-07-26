@@ -13,7 +13,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/ParamasModal.css"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <VBox fx:id="internalvbox">
       <HBox fx:id="internalhbox">
          <TableView fx:id="params" />

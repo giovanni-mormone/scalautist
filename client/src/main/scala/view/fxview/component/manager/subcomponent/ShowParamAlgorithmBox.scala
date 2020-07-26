@@ -102,16 +102,8 @@ object ShowParamAlgorithmBox {
               },
               getGiorniInSettimana
           ))
-          println(InfoAlgorithm(
-            Parametro(info.regolaTreSabato, name),
-            info.idTerminal.collect{
-              case id if terminal.exists(_.idTerminale.contains(id)) =>
-                terminal.find(_.idTerminale.contains(id))
-                  .fold(ZonaTerminale(0,0))(term => ZonaTerminale(term.idZona, term.idTerminale.getOrElse(0)))
-            },
-            getGiorniInSettimana
-          ))
         })
+        println(info)
         parent.run(info)
         parent.resetParams()
       })
