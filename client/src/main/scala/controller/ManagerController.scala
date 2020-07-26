@@ -3,16 +3,13 @@ package controller
 import java.sql.Date
 import java.time.LocalDate
 
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, Zona, ZonaTerminale}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, Response, SettimanaN, SettimanaS}
-import com.typesafe.sslconfig.ssl.FakeChainedKeyStore.User
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage._
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
-import controller.HumanResourceController.model
 import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
-import view.fxview.mainview.ManagerView
+import view.mainview.ManagerView
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}

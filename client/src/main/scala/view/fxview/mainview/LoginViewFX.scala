@@ -2,6 +2,7 @@ package view.fxview.mainview
 
 import java.net.URL
 import java.util.ResourceBundle
+
 import view.fxview.util.ResourceBundleUtil._
 import controller.LoginController
 import javafx.application.Platform
@@ -10,64 +11,15 @@ import view.BaseView
 import view.fxview.component.login.LoginParent
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.login.LoginBox
+import view.mainview.LoginView
 
 /**
  * @author Giovanni Mormone.
  *
- * A view to manage login functionalities.
- * It extends [[view.BaseView]]
+ * Companion object of [[view.fxview.mainview.LoginViewFX]]
  *
  */
-trait LoginView extends BaseView{
-  /**
-   * show a message in the modal like a pop-up
-   *
-   * @param message
-   *                String of message to show
-   */
-  def result(message: String): Unit
-
-  /**
-   * Method that shows a message of error in case of a bad login(e.g. wrong username or password)
-   */
-  def badLogin():Unit
-
-  /**
-   * Method called to notify a login by a user not validated. it opens a
-   * [[view.fxview.mainview.ChangePasswordView]].
-   *
-   */
-  def firstUserAccess(): Unit
-
-  /**
-   * Method called to notify a login by a conducente user; it opens a
-   * [[view.fxview.mainview.DriverView]].
-   *
-   */
-  def driverAccess(): Unit
-  /**
-   * Method called to notify a login by a human resource user; it opens a
-   * [[view.fxview.mainview.HumanResourceView]].
-   *
-   */
-  def humanResourcesAccess(userName: String, userId:String): Unit
-  /**
-   * Method called to notify a login by a manager user; it opens a
-   * [[view.fxview.mainview.ManagerView]].
-   *
-   */
-  def managerAccess(userName: String, userId:String): Unit
-
-
-}
-
-/**
- * @author Giovanni Mormone.
- *
- * Companion object of [[view.fxview.mainview.LoginView]]
- *
- */
-object LoginView{
+object LoginViewFX{
 
   private class LoginViewFX(stage:Stage) extends AbstractFXDialogView(stage) with LoginView with LoginParent {
     private val PREDEF_WIDTH_SIZE: Double = 800
@@ -107,7 +59,7 @@ object LoginView{
         showMessage(generalResources.getResource("first-login"))
         stopLoading()
         loginBox.resetViewFields()
-        ChangePasswordView(myStage,Some(myStage.getScene))
+        ChangePasswordViewFX(myStage,Some(myStage.getScene))
       })
     }
 
@@ -121,7 +73,7 @@ object LoginView{
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
-        DriverView(myStage)
+        DriverViewFX(myStage)
       })
 
     override def humanResourcesAccess(userName: String, userId:String): Unit =
@@ -129,7 +81,7 @@ object LoginView{
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
-        HumanResourceView(myStage,userName,userId)
+        HumanResourceViewFX(myStage,userName,userId)
       })
 
     private def stopLoading():Unit = {
@@ -142,7 +94,7 @@ object LoginView{
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
-        ManagerView(myStage,userName,userId)
+        ManagerViewFX(myStage,userName,userId)
       })
     }
 
