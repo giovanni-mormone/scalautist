@@ -28,9 +28,3 @@ object ConfigReceiver {
     }
   }
 }
-object ssa extends App{
-  def g(s:String):Unit = println(s)
-  val e = ConfigReceiver("info_algorithm")
-  e.start()
-  e.receiveMessage(g)
-}

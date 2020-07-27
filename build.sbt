@@ -54,6 +54,7 @@ enablePlugins(DockerPlugin).settings(
     libraries.modelSwagger,
     libraries.jaxrs2Swagger,
     libraries.megard,
+    libraries.bcryp,
     libraries.apachePoi,
     libraries.apachePoi2,
     librariesTest.scalatest,
@@ -116,6 +117,7 @@ lazy val libraries = new {
   val iteratorVersion = "1.7.1"
   val megarVersion    = "0.4.3"
   val controlsfxVersion= "8.40.14"
+  val bcrypVersion    ="0.3m"
   val akkaHttp       = "com.typesafe.akka"        %% "akka-http"                % akkaHttpVersion
   val akkaActor      ="com.typesafe.akka"         %% "akka-actor-typed"         % akkaVersion
   val akkaStream     = "com.typesafe.akka"        %% "akka-stream"              % akkaVersion
@@ -139,6 +141,7 @@ lazy val libraries = new {
   val jaxrs2Swagger  ="io.swagger.core.v3" % "swagger-jaxrs2"                   % swaggerVersion
   val megard         = "ch.megard"                %% "akka-http-cors"           % megarVersion
   val controlsfx     = "org.controlsfx"             % "controlsfx"              % controlsfxVersion
+  val bcryp          ="org.mindrot"               %  "jbcrypt"                  % bcrypVersion
 
   val apachePoi ="org.apache.poi" % "poi" % "3.17"
   val apachePoi2="org.apache.poi" % "poi-ooxml" % "3.17"

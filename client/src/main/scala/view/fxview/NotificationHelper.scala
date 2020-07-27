@@ -14,11 +14,14 @@ object NotificationHelper {
     firstTitled.setId(tag.toString)
     val content = new VBox
     val label = new Label("Orario")
+    parameters.popover.setHideOnEscape(true);
+    parameters.popover.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+    parameters.popover.setAutoFix(true);
     content.getChildren.add(label)
     firstTitled.setContent(content)
     firstTitled.setOnMouseClicked(_=>parameters.consumeNotification(tag))
     parameters.accordion.getPanes.add(firstTitled)
     parameters.popover.getRoot.getChildren.removeIf(_=>parameters.popover.getRoot.getChildren.contains(parameters.accordion))
-    parameters.popover.setContentNode(parameters.accordion)
+    parameters.popover.getScene.setRoot(parameters.accordion)
   }
 }

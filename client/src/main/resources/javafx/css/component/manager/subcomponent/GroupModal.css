@@ -2,13 +2,51 @@
     -fx-padding: 10;
     -fx-spacing: 10;
     -fx-alignment: center;
+    -fx-fill-height: true;
 }
 
 #buttonbox,#hbox{
     -fx-spacing: 10;
     -fx-alignment: center;
 }
+#ancorPane{
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-min-height: 200;
+    -fx-alignment: top-center;
+    -fx-background-color: white;
+}
+#scrollPane{
+    -fx-border-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 10px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
 
-.text-area{
-    -fx-max-width: 200;
+#chosen{
+    -fx-min-height: 197;
+    -fx-min-width: 303;
+    -fx-max-width: 303;
+    -fx-background-color: white;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: top-center;
+}
+#dateSelected{
+    -fx-font-weight: bold;
+    -fx-font-size:18;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: top-center;
+    -fx-text-alignment: center;
+}
+#oneLabel{
+    -fx-padding: 5;
+    -fx-alignment: top-left;
+    -fx-text-alignment: left;
+}
+#terminal{
+    -fx-font-size:16;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: center;
+    -fx-text-alignment: left;
 }

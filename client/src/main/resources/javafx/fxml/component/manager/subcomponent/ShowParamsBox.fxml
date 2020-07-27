@@ -1,22 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.control.Button?>
-<HBox fx:id="prams" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-
-   <Pane prefHeight="600.0" prefWidth="600.0">
-      <Label fx:id="sabato" layoutX="32.0" layoutY="49.0" prefHeight="17.0" prefWidth="36.0" />
-      <Label fx:id="nome" layoutX="26.0" layoutY="83.0" prefHeight="17.0" prefWidth="49.0" />
-      <TextArea fx:id="terminals" layoutX="230.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" />
-      <TextArea fx:id="group" layoutX="230.0" layoutY="160.0" prefHeight="140.0" prefWidth="200.0" />
-      <TextArea fx:id="weekN" layoutX="230.0" layoutY="310.0" prefHeight="140.0" prefWidth="200.0" />
-      <TextArea fx:id="weekS" layoutX="230.0" layoutY="460.0" prefHeight="140.0" prefWidth="200.0" />
-      <Button fx:id="run" layoutX="26.0" layoutY="133.0" prefHeight="17.0" prefWidth="49.0" />
-      <Button fx:id="reset" layoutX="26.0" layoutY="83.0" prefHeight="17.0" prefWidth="49.0" />
-   </Pane>
-
-</HBox>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<VBox fx:id="prams" stylesheets="@../../../../css/component/manager/subcomponent/ShowParamsBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+  <BorderPane.margin>
+   <Insets left="30.0" right="30" bottom="30"/>
+  </BorderPane.margin>
+    <Label fx:id="title"/>
+    <AnchorPane fx:id="ancorPane">
+    <ScrollPane fx:id="scrollpane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
+        <VBox fx:id="internalVBox">
+            <Label fx:id="titleInitial"/>
+            <VBox>
+                <HBox fx:id="firstHBox">
+                    <Label fx:id="nomeTitle"/>
+                    <Label fx:id="nome" />
+                </HBox>
+                <HBox fx:id="secondHBox">
+                    <Label fx:id="sabatoTitle"/>
+                    <Label fx:id="sabato" />
+                </HBox>
+            </VBox>
+        <VBox fx:id="terminal">
+            <Label fx:id="initTitleTerminal"/>
+            <Label fx:id="titleTerminal"/>
+        </VBox>
+            <VBox fx:id="gruppi">
+            <Label fx:id="titleGruppi"/>
+            <HBox fx:id="thirdHBox">
+                <Label fx:id="idGruppo"/>
+                <Label fx:id="data"/>
+            </HBox>
+            </VBox>
+            <VBox fx:id="normalWeek">
+            <Label fx:id="titleWeek"/>
+            <HBox fx:id="fourthHBox">
+                <Label fx:id="day"/>
+                <Label fx:id="shift"/>
+                <Label fx:id="quantity"/>
+                <Label fx:id="ruleW"/>
+            </HBox>
+            </VBox>
+            <VBox fx:id="specialWeek">
+            <Label fx:id="titleWeekS"/>
+            <HBox fx:id="fifthHBox">
+                <Label fx:id="dayS"/>
+                <Label fx:id="shiftS"/>
+                <Label fx:id="quantityS"/>
+                <Label fx:id="ruleWS"/>
+            </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+    </AnchorPane>
+   <HBox fx:id="buttons">
+      <Button fx:id="reset"/>
+       <Button fx:id="run" />
+   </HBox>
+    <Label fx:id="senzaInfo1"/>
+    <Label fx:id="senzaInfo2"/>
+    <Label fx:id="senzaInfo3"/>
+    <Label fx:id="senzaInfo4"/>
+</VBox>

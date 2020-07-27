@@ -1,7 +1,7 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
 import java.sql.{Date => dateSql}
-import java.time.{Instant, LocalDate, ZoneId}
+import java.time.{DayOfWeek, Instant, LocalDate, ZoneId}
 import java.util.{Calendar, Date => dateUtil}
 
 import caseclass.CaseClassHttpMessage.InfoPresenza
@@ -20,7 +20,7 @@ case object CreateDatePicker{
 
   val MIN_MONTH_BEFORE_START_ALGORITHM: Int = 1
   val MAX_MONTH_TO_SHOW: Int = 5
-  val LAST_DAY_OF_MONTH_TO_START: Int = 15
+  val LAST_DAY_OF_MONTH_TO_START: Int = 31
   val MAX_MONTH_FOR_SHIFT_ELABORATION: Int = 6
   val ONE_DAY:Int= 1
 
@@ -134,7 +134,7 @@ case object CreateDatePicker{
     dataPicker.setDayCellFactory(_ => new DateCell(){
       override def updateItem(date:LocalDate, empty:Boolean): Unit = {
         super.updateItem(date, empty)
-        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF))
+        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF) ||  date.getDayOfWeek==DayOfWeek.SUNDAY)
       }
     })
     dataPicker

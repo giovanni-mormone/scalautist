@@ -11,7 +11,19 @@
    </BorderPane.margin>
    <HBox fx:id="grouphbox">
       <VBox fx:id="groupvbox">
-         <TableView fx:id="groupstab"/>
+         <AnchorPane fx:id="ancorPane">
+         <ScrollPane fx:id="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="tableInfo">
+               <HBox fx:id="internalHBox">
+                  <Label fx:id="rules"/>
+                  <Label fx:id="date"/>
+                  <Label fx:id="selected"/>
+               </HBox>
+            </VBox>
+         </ScrollPane>
+         </AnchorPane>
+         <!--<TableView fx:id="groupstab"/>-->
          <HBox fx:id="buttonbox">
             <Button fx:id="sub" mnemonicParsing="false"/>
             <Button fx:id="add" mnemonicParsing="false"/>

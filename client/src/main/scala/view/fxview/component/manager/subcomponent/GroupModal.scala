@@ -6,7 +6,8 @@ import java.util.ResourceBundle
 
 import caseclass.CaseClassDB.Regola
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, ComboBox, DatePicker, TextArea}
+import javafx.scene.control.{Button, ComboBox, DatePicker, Label, TextArea}
+import javafx.scene.layout.VBox
 import view.fxview.component.AbstractComponent
 import view.fxview.component.HumanResources.subcomponent.util.CreateDatePicker
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
@@ -29,7 +30,9 @@ object GroupModal {
     @FXML
     var days: DatePicker = _
     @FXML
-    var chosen: TextArea = _
+    var chosen: VBox = _
+    @FXML
+    var dateSelected: Label = _
     @FXML
     var add: Button = _
     @FXML
@@ -82,12 +85,13 @@ object GroupModal {
     }
 
     private def initTextArea(): Unit = {
-      writeOnTextArea(resources.getResource("datetit"))
-      chosen.setEditable(false)
+      dateSelected.setText(resources.getResource("datetit"))
     }
 
-    private def writeOnTextArea(str: String): Unit =
-      chosen.setText(chosen.getText + str + "\n")
+    private def writeOnTextArea(str: String): Unit = {
+      val label = LabelDateBox(str)
+      chosen.getChildren.add(label.setParent(parent).pane)
+    }
 
     private def getRule: String =
       rules.selectionModelProperty().getValue.getSelectedItem

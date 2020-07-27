@@ -270,7 +270,9 @@ object ManagerViewFX {
       super.showMessageFromKey(message)
 
     })
-
+    override def showInfoAlgorithm(message:String):Unit={
+      println(s"message = ${message}")
+    }
   }
 
 }

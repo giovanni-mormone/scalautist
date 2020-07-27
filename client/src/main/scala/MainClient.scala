@@ -1,6 +1,6 @@
 import javafx.application.Application
 import javafx.stage.Stage
-import view.fxview.mainview.LoginViewFX
+import view.fxview.mainview.{HumanResourceViewFX, LoginViewFX}
 
 object MainClient{
   def main(args: Array[String]): Unit = {
@@ -12,6 +12,6 @@ private class Main extends Application{
   override def start(primaryStage: Stage): Unit = {
    // ModelDispatcher()
     //ManagerView(primaryStage,"Juan","123").show()
-    LoginViewFX(primaryStage).show()
+    HumanResourceViewFX(primaryStage,"Juan","123").show()
   }
 }
