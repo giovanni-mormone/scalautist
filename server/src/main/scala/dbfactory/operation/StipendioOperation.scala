@@ -37,6 +37,7 @@ trait StipendioOperation extends OperationCrud[Stipendio]{
    * @param idPersona
    *                  The persona to find.
    * @return
+   *         The List of Stipendi for the persona or None if there is nothing
    */
   def getstipendiForPersona(idPersona: Int): Future[Option[List[Stipendio]]]
 

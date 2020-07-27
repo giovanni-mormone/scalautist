@@ -44,12 +44,11 @@ object ChangePasswordController{
       case x if PasswordHelper.passwordRegex().matches(x) =>
         myModel.changePassword(Utils.userId.getOrElse(0),oldPassword,newPassword).onComplete{
           case Success(value) if value.statusCode == StatusCodes.NOT_FOUND =>
-            println(value)
             myView.errorChange()
           case Success(_) => myView.okChange()
           case _ => myView.errorChange()
         }
-      case _ => println("ERROR")
+      case _ =>  myView.errorChange()
     }
   }
 }

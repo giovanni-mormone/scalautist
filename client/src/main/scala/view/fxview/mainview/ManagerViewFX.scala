@@ -78,8 +78,10 @@ object ManagerViewFX {
           managerHome.stopLoadingReplacements()
         })
       case _ =>
-        managerHome.endLoading()
-        super.showMessageFromKey(message)
+        Platform.runLater(() => {
+          managerHome.endLoading()
+          super.showMessageFromKey(message)
+        })
     }
 
     override def drawRichiestaPanel(): Unit = {
