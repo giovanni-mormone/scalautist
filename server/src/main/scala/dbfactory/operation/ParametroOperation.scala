@@ -130,29 +130,3 @@ object ParametroOperation extends ParametroOperation {
       case _ => None
     }
 }
-object e extends App{
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val es = InfoAlgorithm(Parametro(false,"HOLA2",None),List(ZonaTerminale(1,2,None,None)),
-    Some(List(GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
-      GiornoInSettimana(4,2,4,2,None,None), GiornoInSettimana(5,1,4,1,None,None),
-      GiornoInSettimana(6,3,4,3,None,None), GiornoInSettimana(4,2,4,2,None,None),
-      GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
-      GiornoInSettimana(4,2,4,2,None,None), GiornoInSettimana(5,1,4,1,None,None),
-      GiornoInSettimana(6,3,4,3,None,None), GiornoInSettimana(4,2,4,2,None,None),
-      GiornoInSettimana(5,1,4,1,None,None), GiornoInSettimana(6,3,4,3,None,None),
-      GiornoInSettimana(4,2,4,2,None,None))))
-  val es2 = InfoAlgorithm(Parametro(false,"HOLA2",Some(12)),List(ZonaTerminale(1,2,Some(12),Some(14))),
-    Some(List(GiornoInSettimana(5,1,4,1,Some(12),Some(79)), GiornoInSettimana(6,3,4,3,Some(12),Some(80)),
-      GiornoInSettimana(4,2,4,2,Some(12),Some(81)), GiornoInSettimana(5,1,4,1,Some(12),Some(82)),
-      GiornoInSettimana(6,3,4,3,Some(12),Some(83)), GiornoInSettimana(4,2,4,2,Some(12),Some(84)),
-      GiornoInSettimana(5,1,4,1,Some(12),Some(85)), GiornoInSettimana(6,3,4,3,Some(12),Some(86)),
-      GiornoInSettimana(4,2,4,2,Some(12),Some(87)), GiornoInSettimana(5,1,4,1,Some(12),Some(88)),
-      GiornoInSettimana(6,3,4,3,Some(12),Some(89)), GiornoInSettimana(4,2,4,2,Some(12),Some(90)),
-      GiornoInSettimana(5,1,4,1,Some(12),Some(91)), GiornoInSettimana(6,3,4,3,Some(12),Some(92)),
-      GiornoInSettimana(4,2,4,2,Some(12),Some(93)))))
-  ParametroOperation.saveInfoAlgorithm(es).onComplete {
-    case Failure(exception) => println(exception)
-    case Success(value) =>println(value)
-  }
-  while(true){}
-}

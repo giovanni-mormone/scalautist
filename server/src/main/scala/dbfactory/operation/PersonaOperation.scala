@@ -4,6 +4,7 @@ import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstancePersona}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.PersonaTable.PersonaTableRep
+import dbfactory.util.{CheckPassword, HashPassword}
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
@@ -89,19 +90,27 @@ object PersonaOperation extends PersonaOperation {
 
   override def login(login: Login): Future[Option[Persona]] =
     InstancePersona.operation().
-        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === login.password)
+        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === HashPassword(Option(login.password)).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual))
       .collect{
         case None => None
         case Some(value)  => value.map(x=>convertTupleToPerson(Some(x))).head
 
       }
 
-  override def changePassword(changePassword: ChangePassword):Future[Option[Int]]=
-    InstancePersona.operation().
-        execQueryUpdate(f =>(f.password,f.isNew), x => x.id===changePassword.id && x.password===changePassword.oldPassword,(changePassword.newPassword,false))
+  override def changePassword(changePassword: ChangePassword):Future[Option[Int]]= {
+    InstancePersona.operation().selectFilter(user=>user.id===changePassword.id).flatMap {
+      case Some(List(value)) if CheckPassword(changePassword.oldPassword,value.password.toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)) =>
+        this.update(value.copy(password = HashPassword(Option(changePassword.newPassword)),isNew=true)).collect {
+          case None =>Some(StatusCodes.SUCCES_CODE)
+          case _ => None
+        }
+      case None => Future.successful(None)
+    }
+
+  }
 
   override def recoveryPassword(idUser: Int): Future[Option[Login]] ={
-    val newPass = createString.head
+    val newPass = HashPassword(createString).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)
     for{
       _ <-InstancePersona.operation().execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (newPass, true))
       credentials <- select(idUser).map(_.map(user => Login(user.userName,newPass)))
@@ -174,5 +183,5 @@ object PersonaOperation extends PersonaOperation {
 
   private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
     Persona(origin.nome,origin.cognome,origin.numTelefono,
-      createString,origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
+      HashPassword(createString),origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
 }

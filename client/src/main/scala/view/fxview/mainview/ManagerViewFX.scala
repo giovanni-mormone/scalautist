@@ -269,6 +269,9 @@ object ManagerViewFX {
       managerHome.endLoading()
       super.showMessageFromKey(message)
     })
+    override def showInfoAlgorithm(message:String):Unit={
+      println(s"message = ${message}")
+    }
 
     override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
       println(messages)

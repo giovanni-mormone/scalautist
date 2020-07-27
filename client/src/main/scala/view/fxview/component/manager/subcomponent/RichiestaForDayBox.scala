@@ -74,7 +74,7 @@ object RichiestaForDayBox{
       })
     }
 
-    private def addChildrenLabelTextField(shift:Turno)={
+    private def addChildrenLabelTextField(shift:Turno): LabelTextFieldBox ={
       val son=LabelTextFieldBox(shift)
       pane.getChildren.add(POSITION_SON,son.setParent(this).pane)
       shift.id.foreach(value=> pane.getChildren.get(POSITION_SON).setId(value.toString))

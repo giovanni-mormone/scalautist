@@ -5,14 +5,6 @@
     -fx-padding: 10;
 }
 
-.popover {
-    -fx-background-color: rgba(255,0,0, 0.1); /* semi-transparent red */
-}
-.popover > .content {
-    -fx-padding: 10;
-    -fx-background-color: transparent;
-}
-
 #notificationBox{
     -fx-alignment: TOP_RIGHT;
     -fx-pref-height:50;
@@ -37,8 +29,8 @@
 }
 
 #optionsBox > .button{
-    -fx-max-width: 180;
-    -fx-min-width: 180;
+    -fx-max-width: 185;
+    -fx-min-width: 185;
     -fx-wrap-text: true;
     -fx-text-alignment: center;
 }

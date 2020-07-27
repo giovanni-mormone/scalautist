@@ -149,9 +149,11 @@ trait ManagerView extends DialogView {
    */
   def drawShowParams(info: CaseClassHttpMessage.AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
+  def showInfoParam(data: ParamsModal.DataForParamasModel): Unit
+
   /**
-   * Update the modal that allows you to choose old parameters, showing all the information
-   * @param data instance of [[DataForParamasModel]] that contains all info about the param chosen
+   * method that show information of the algorithm in real-time
+   * @param message information of the algorithm
    */
-  def showInfoParam(data: DataForParamasModel): Unit
+  def showInfoAlgorithm(message:String):Unit
 }

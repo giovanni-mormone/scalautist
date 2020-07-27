@@ -6,6 +6,7 @@
 #title{
     -fx-font-size: 30px;
     -fx-alignment: center;
+    -fx-font-weight: bold;
 }
 #datepickerBox{
     -fx-alignment: center;
