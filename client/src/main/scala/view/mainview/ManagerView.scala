@@ -7,6 +7,7 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoR
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.InfoRichiesta
 import view.DialogView
+import view.fxview.component.manager.subcomponent.ParamsModal
 import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 
