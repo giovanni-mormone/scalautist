@@ -1,19 +1,16 @@
 package dbfactory.operation
-import java.sql.Date
-
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstancePersona}
 import dbfactory.implicitOperation.OperationCrud
 import dbfactory.table.PersonaTable.PersonaTableRep
-import dbfactory.util.{CheckPassword, HashPassword}
 import dbfactory.util.Helper._
+import dbfactory.util.{CheckPassword, HashPassword}
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
