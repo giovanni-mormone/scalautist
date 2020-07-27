@@ -5,12 +5,12 @@ trait ManagerHomeParent extends FillHolesParent with ManagerRichiestaParent with
   with ModalGruopParent with ShowParamAlgorithmBoxParent with ZonaParent with TerminalParent{
 
   /**
-   *
+   * method that allow draw principal view [[view.fxview.component.manager.subcomponent.ResultBox]]
    */
   def drawResultPanel(): Unit
 
   /**
-   *
+   * call view for draw view [[view.fxview.component.manager.subcomponent.DateAndTerminalBox]]
    */
   def drawRichiestaPanel(): Unit
 

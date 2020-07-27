@@ -285,7 +285,7 @@ object ManagerController {
       model.runAlgorithm(algorithmExecute,statusAlgorithm)
 
     private def statusAlgorithm(message:String):Unit=
-      myView.showInfoAlgorithm(message)
+        myView.showInfoAlgorithm(message)
 
     override def executeAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
       model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {

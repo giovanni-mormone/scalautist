@@ -6,8 +6,8 @@ import view.fxview.component.modal.ModalParent
 trait ModalGruopParent extends ModalParent {
 
   /**
-   *
-   * @param group
+   * method that allow update group when user create a new group
+   * @param group case class that contains information for a determinate group
    */
   def updateGroups(group: Group): Unit
 }
