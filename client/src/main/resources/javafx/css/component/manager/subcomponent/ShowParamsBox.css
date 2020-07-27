@@ -51,7 +51,7 @@
     -fx-alignment: center;
     -fx-spacing: 10;
 }
-#gruppi,#normalWeek,#specialWeek{
+#gruppi,#normalWeek,#specialWeek, #terminal{
     -fx-alignment: center;
     -fx-spacing: 10;
     -fx-padding: 10;
@@ -137,4 +137,26 @@
     -fx-alignment: center;
     -fx-text-alignment: center;
     -fx-wrap-text: true;
+}
+
+#terminal{
+    -fx-alignment: center;
+}
+
+#terminal >.label{
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+#oneLabel{
+    -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+}
+
+.button:hover {
+    -fx-background-color: #0074E1;
+    -fx-border-color: #0074E1;
 }
