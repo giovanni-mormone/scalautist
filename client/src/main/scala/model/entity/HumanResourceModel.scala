@@ -50,6 +50,8 @@ trait HumanResourceModel{
    * Set of Persona ids
    * @return
    * Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees found
    */
   def firesAll(ids: Set[Int]): Future[Response[Int]]
 
@@ -100,6 +102,8 @@ trait HumanResourceModel{
    * method that return a Response of list of terminal, this can be empty if zone not contains a terminal
    * @param id identifies a zone into database, then select all terminale associate to id
    * @return Response of list of terminal that can be empty
+   * Possible error code:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if not found any zones
    */
   def getTerminalByZone(id:Int): Future[Response[List[Terminale]]]
 
@@ -107,6 +111,7 @@ trait HumanResourceModel{
    * method that return a Response of terminal, this can be empty if terminal not exist
    * @param id identifies a terminal into database, then select this
    * @return Response of terminal that can be empty
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if not found any terminals
    */
   def getTerminale(id:Int): Future[Response[Terminale]]
 
@@ -150,6 +155,7 @@ trait HumanResourceModel{
   /**
    * Method that obtains all day of holiday of a persona
    * @return Option of List with all day of holiday of a persona
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees found
    */
   def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 
