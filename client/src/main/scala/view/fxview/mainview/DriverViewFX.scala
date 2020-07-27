@@ -3,19 +3,18 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import view.fxview.util.ResourceBundleUtil._
-import caseclass.CaseClassDB.{Stipendio, Turno}
+import caseclass.CaseClassDB.Stipendio
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformations}
 import controller.DriverController
 import javafx.application.Platform
 import javafx.stage.Stage
-import view.DialogView
+import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
-import view.fxview.{AbstractFXDialogView, FXHelperFactory}
 import view.fxview.component.driver.DriverHome
 import view.fxview.component.driver.subcomponent.ModalDisponibilita
 import view.fxview.component.driver.subcomponent.parent.{DriverHomeParent, DriverModalBoxParent, ModalDisponibilitaParent}
 import view.fxview.component.modal.Modal
+import view.fxview.util.ResourceBundleUtil._
 import view.mainview.DriverView
 
 object DriverViewFX {
@@ -51,38 +50,27 @@ object DriverViewFX {
 
     }
 
-    ///////////////////////////////////////////////////////////////// Da VIEW A CONTROLLER impl DriverView
     override def drawHomePanel(): Unit = myController.drawHomePanel()
 
     override def drawShiftPanel(): Unit = myController.drawShiftPanel()
 
-
     override def drawSalaryPanel(): Unit = myController.drawSalaryPanel()
 
-    ///////////////////////////////////////////////////////////////// Fine VIEW A CONTROLLER impl DriverView
-
-    ///////////////////////////////////////////////////////////////// Da VIEW STIPENDIO A CONTROLLER impl DriverView
     override def infoSalary(idSalary: Int): Unit = myController.drawInfoSalary(idSalary)
 
-    ///////////////////////////////////////////////////////////////// Fine VIEW STIPENDIO A CONTROLLER impl DriverView
-
-    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
     override def drawHomeView(infoHome: InfoHome): Unit = Platform.runLater(() => driverHome.drawHome(infoHome))
 
     override def drawShiftView(shift: InfoShift): Unit = Platform.runLater(() => driverHome.drawShift(shift))
 
     override def drawSalaryView(list: List[Stipendio]): Unit = Platform.runLater(() => driverHome.drawSalary(list))
 
-    override def informationSalary(information: StipendioInformations): Unit =
-      Platform.runLater(() => driverHome.informationSalary(information))
+    override def informationSalary(information: StipendioInformations): Unit = Platform.runLater(() => driverHome.informationSalary(information))
 
-    ///////////////////////////////////////////////////////////////// Da CONTROLLER A VIEW impl DriverView
-    override def showMessageError(message: String): Unit = {
+    override def showMessageError(message: String): Unit =
       Platform.runLater(() => {
         super.showMessageFromKey(message)
         driverHome.stopLoading()
       })
-    }
 
     override def drawDisponibilitaPanel(days: List[String]): Unit =
       Platform.runLater(() => {
@@ -113,8 +101,6 @@ object DriverViewFX {
     }
 
     override def drawNotification(str: String,tag:Long): Unit = Platform.runLater(()=>driverHome.drawNotifica(str,tag))
-
-    //override def consumeNotification(tag:Long):Unit=myController.consumeNotification(tag)
 
   }
 }

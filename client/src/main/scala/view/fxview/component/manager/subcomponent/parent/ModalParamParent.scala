@@ -1,7 +1,7 @@
 package view.fxview.component.manager.subcomponent.parent
 
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
-import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
+import utils.TransferObject.DataForParamasModel
 import view.fxview.component.modal.ModalParent
 
 /**

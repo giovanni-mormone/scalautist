@@ -20,9 +20,8 @@ trait HumanResourceView extends DialogView {
    */
   def resultAbsence(keyMessage: String, isMalattia: Boolean): Unit
 
-
   /**
-   * Show child's recruit view
+   * Shows recruit view
    *
    * @param zones
    *              list of [[caseclass.CaseClassDB.Zona]] to show
@@ -34,7 +33,7 @@ trait HumanResourceView extends DialogView {
   def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit
 
   /**
-   * Show terminals into child's recruit view
+   * Show terminals into recruit view
    *
    * @param terminals
    *                  list of [[caseclass.CaseClassDB.Terminale]] to show
@@ -66,14 +65,6 @@ trait HumanResourceView extends DialogView {
    *                String of message to show
    */
   def result(message:String):Unit
-
-  /**
-   * show a message in the view
-   *
-   * @param message
-   *                String of message to show
-   */
-  def message(message: String): Unit
 
   /**
    * method that send list of assenza for a person within a year

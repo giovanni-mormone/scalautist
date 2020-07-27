@@ -3,11 +3,12 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Parametro, Regola, Terminale}
+import caseclass.CaseClassDB.Parametro
 import caseclass.CaseClassHttpMessage.InfoAlgorithm
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, CheckBox, Label, TableView, TextArea, TextField}
+import javafx.scene.control.{Button, CheckBox, Label, TableView}
 import javafx.scene.layout.{HBox, VBox}
+import utils.TransferObject.DataForParamasModel
 import view.fxview.component.AbstractComponent
 import view.fxview.component.HumanResources.subcomponent.util.CreateTable
 import view.fxview.component.manager.subcomponent.parent.ModalParamParent
@@ -27,9 +28,6 @@ trait ParamsModal extends AbstractComponent[ModalParamParent] {
  * Companion object of [[ParamsModal]]. The Object allows to choose old params to load
  */
 object ParamsModal {
-
-  case class DataForParamasModel(oldsParam: List[Parametro], terminals: List[Terminale],
-                                 rules: List[Regola], info: Option[InfoAlgorithm] = None)
 
   def apply(data: DataForParamasModel): ParamsModal = new ParamsModalFX(data)
 

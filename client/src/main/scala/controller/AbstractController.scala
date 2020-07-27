@@ -5,6 +5,16 @@ import view.BaseView
 
 import scala.concurrent.ExecutionContextExecutor
 
+
+/**
+ * @author Giovanni Mormone.
+ *
+ * Template class of the controller.
+ * @tparam A
+ *           The type of view class that i control. Should be subtype of
+ *           [[view.BaseView]]
+ *
+ */
 abstract class AbstractController[A<:BaseView] extends Controller[A]{
 
   /**

@@ -16,6 +16,7 @@ import view.fxview.util.ResourceBundleUtil._
 case class ModalInfo(stage:Stage) extends AbstractFXModalView(stage){
   private var modal:ModalInfoA = _
   def start():Unit = {
+    pane.setStyle("-fx-fill-height: true;")
     modal = ModalInfo()
     pane.getChildren.add(modal.pane)
     show()

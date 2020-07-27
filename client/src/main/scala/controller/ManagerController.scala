@@ -8,13 +8,12 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Gru
 import javafx.application.Platform
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
-import utils.TransferObject.InfoRichiesta
-import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
+import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.mainview.ManagerView
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 trait ManagerController extends AbstractController[ManagerView]{
 
@@ -52,6 +51,9 @@ trait ManagerController extends AbstractController[ManagerView]{
    */
   def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit
 
+  /**
+   * method called when is requested to draw the first result panel.
+   */
   def dataToResultPanel(): Unit
 
   /**
@@ -65,7 +67,7 @@ trait ManagerController extends AbstractController[ManagerView]{
    * It makes algorithm run without check if it overwrites something
    * @param algorithmExecute information that allows the algorithm to work
    */
-  def executeAlgorithm(algorithmExecute: AlgorithmExecute)
+  def executeAlgorithm(algorithmExecute: AlgorithmExecute):Unit
 
   /**
    * save a new zone into db
@@ -146,8 +148,22 @@ trait ManagerController extends AbstractController[ManagerView]{
    */
   def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit
 
+  /**
+   * Method called when the user has selected a replacement for an absence.
+   * @param idRisultato
+   *                    The result that is being replaced
+   * @param idPersona
+   *                  The replacement selected for the result
+   */
   def replacementSelected(idRisultato: Int, idPersona: Int):Unit
 
+  /**
+   * Called before running the turns algorithm to check if there is some old result for
+   * the period and terminals seleted
+   * @param dataToCheck
+   *                    The period and terminals to check
+   * @return
+   */
   def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
 
   /**
@@ -189,6 +205,7 @@ trait ManagerController extends AbstractController[ManagerView]{
    *                   terminal id to manage
    */
   def terminalModalData(terminalId: Int): Unit
+
   def startListenNotification():Unit
 }
 
@@ -211,9 +228,9 @@ object ManagerController {
 
       model.allAbsences().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, payload)) => payload.foreach(result => myView.drawAbsence(result))
-        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.result("no-absences-day")
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.result("bad-request-error")
-        case _ => myView.result("general-error")
+        case Success(Response(StatusCodes.NOT_FOUND, _)) => myView.showMessageFromKey("no-absences-day")
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
+        case _ => myView.showMessageFromKey("general-error")
       }
     }
 

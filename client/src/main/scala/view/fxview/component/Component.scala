@@ -43,8 +43,14 @@ trait Component[A] {
    */
   def enable(): Unit
 
+  /**
+   * Starts the loading of a component
+   */
   def startLoading(): Unit
 
+  /**
+   * Ends the loading of a component
+   */
   def endLoading(): Unit
 }
 
