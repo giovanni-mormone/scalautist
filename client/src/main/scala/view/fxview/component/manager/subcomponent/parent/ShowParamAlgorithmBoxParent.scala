@@ -2,6 +2,11 @@ package view.fxview.component.manager.subcomponent.parent
 
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAlgorithm}
 
+/**
+ * @author Francesco Cassano
+ *
+ * It is the interface of the methods used by terminal modal to make requests to controller
+ */
 trait ShowParamAlgorithmBoxParent {
 
   /**
