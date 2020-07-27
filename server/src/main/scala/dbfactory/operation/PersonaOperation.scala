@@ -1,4 +1,6 @@
 package dbfactory.operation
+import java.sql.Date
+
 import caseclass.CaseClassDB.{Disponibilita, Login, Persona, StoricoContratto}
 import caseclass.CaseClassHttpMessage.{Assumi, ChangePassword}
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceDisponibilita, InstancePersona}
@@ -11,6 +13,7 @@ import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /** @author Fabian Aspée Encina, Giovanni Mormone
  *  Trait which allows to perform operations on the person table,
@@ -22,6 +25,7 @@ trait PersonaOperation extends OperationCrud[Persona]{
    * @param name name of a persona
    * @return Option of List of Persona with all fields full, only password is empty
    */
+
   def filterByName(name:String):Future[Option[List[Persona]]]
 
   /**
@@ -88,7 +92,7 @@ object PersonaOperation extends PersonaOperation {
   override def filterBySurname(surname: String): Future[Option[List[Persona]]] =
     selectPersone(x => x.cognome === surname)
 
-  override def login(login: Login): Future[Option[Persona]] =
+  override def login(login: Login): Future[Option[Persona]] = {
     InstancePersona.operation().
         execQueryFilter(personaSelect, x => x.userName === login.user && x.password === HashPassword(Option(login.password)).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual))
       .collect{
@@ -96,11 +100,12 @@ object PersonaOperation extends PersonaOperation {
         case Some(value)  => value.map(x=>convertTupleToPerson(Some(x))).head
 
       }
+  }
 
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]= {
     InstancePersona.operation().selectFilter(user=>user.id===changePassword.id).flatMap {
       case Some(List(value)) if CheckPassword(changePassword.oldPassword,value.password.toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)) =>
-        this.update(value.copy(password = HashPassword(Option(changePassword.newPassword)),isNew=true)).collect {
+        this.update(value.copy(password = HashPassword(Option(changePassword.newPassword)),isNew=false)).collect {
           case None =>Some(StatusCodes.SUCCES_CODE)
           case _ => None
         }
@@ -110,10 +115,11 @@ object PersonaOperation extends PersonaOperation {
   }
 
   override def recoveryPassword(idUser: Int): Future[Option[Login]] ={
-    val newPass = HashPassword(createString).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)
+    val generatedPass = createString
+    val newPass = HashPassword(generatedPass).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)
     for{
       _ <-InstancePersona.operation().execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (newPass, true))
-      credentials <- select(idUser).map(_.map(user => Login(user.userName,newPass)))
+      credentials <- select(idUser).map(_.map(user => Login(user.userName,generatedPass.head)))
     }yield credentials
   }
 
@@ -125,19 +131,23 @@ object PersonaOperation extends PersonaOperation {
       case Some(List(value)) => value.idDisponibilita
       case None => None
     }
-    ContrattoOperation.select(newContratto.contrattoId).flatMap{
-      case None => completeCall(StatusCodes.ERROR_CODE1)
-      case Some(_) if disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE => completeCall(StatusCodes.ERROR_CODE2)
-      case Some(contratto) if disponibilita.isDefined && !contratto.turnoFisso =>completeCall(StatusCodes.ERROR_CODE3)
-      case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
-      case Some(contratto) if contratto.turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
-      case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None),newContratto)
-      case Some(_) => disponibilita.map(disp => InstanceDisponibilita.operation()
-        .selectFilter(filter => filter.settimana === disp.settimana &&
-          (filter.giorno1 === disp.giorno1 && filter.giorno2 === disp.giorno2 ||
-            filter.giorno1 === disp.giorno2 && filter.giorno2 === disp.giorno1)).
-              flatMap(dispId => insertPersona(constructPersona(persona, dispListToDispId(dispId)), newContratto))).convert()
-    }
+    InstancePersona.operation().selectFilter(filter => filter.nome === persona.nome && filter.cognome === persona.cognome).flatMap(result =>{
+      val nPersone = result.toList.flatten.length
+      ContrattoOperation.select(newContratto.contrattoId).flatMap{
+        case None => completeCall(StatusCodes.ERROR_CODE1)
+        case Some(_) if disponibilita.isDefined && persona.ruolo != CODICE_CONDUCENTE => completeCall(StatusCodes.ERROR_CODE2)
+        case Some(contratto) if disponibilita.isDefined && !contratto.turnoFisso =>completeCall(StatusCodes.ERROR_CODE3)
+        case Some(contratto) if disponibilita.isEmpty && contratto.turnoFisso => completeCall(StatusCodes.ERROR_CODE4)
+        case Some(contratto) if contratto.turnoFisso && wrongTurni(contratto.partTime,newContratto.turnoId,newContratto.turnoId1) =>completeCall(StatusCodes.ERROR_CODE5)
+        case Some(_) if persona.ruolo != CODICE_CONDUCENTE || disponibilita.isEmpty => insertPersona(constructPersona(persona,None,nPersone),newContratto)
+        case Some(_) => disponibilita.map(disp => InstanceDisponibilita.operation()
+          .selectFilter(filter => filter.settimana === disp.settimana &&
+            (filter.giorno1 === disp.giorno1 && filter.giorno2 === disp.giorno2 ||
+              filter.giorno1 === disp.giorno2 && filter.giorno2 === disp.giorno1)).
+          flatMap(dispId => insertPersona(constructPersona(persona, dispListToDispId(dispId),nPersone), newContratto))).convert()
+      }
+    })
+
   }
 
   override def delete(element: Int): Future[Option[Int]] = {
@@ -181,7 +191,10 @@ object PersonaOperation extends PersonaOperation {
     StoricoContratto(contratto.dataInizio,None,personaId,contratto.contrattoId,contratto.turnoId,contratto.turnoId1)
   }
 
-  private def constructPersona(origin: Persona, disponibilita: Option[Int]): Persona =
+  private def constructPersona(origin: Persona, disponibilita: Option[Int], numeroPersona: Int): Persona =
     Persona(origin.nome,origin.cognome,origin.numTelefono,
-      HashPassword(createString),origin.ruolo,origin.isNew,createString.head,origin.idTerminale,disponibilita)
+      HashPassword(createString),origin.ruolo,origin.isNew,createUserName(origin.nome,origin.cognome,numeroPersona),origin.idTerminale,disponibilita)
+
+  private val createUserName:(String,String,Int) => String = (name,surname,numero) =>
+    if(numero == 0) name + surname else name + surname + numero
 }
