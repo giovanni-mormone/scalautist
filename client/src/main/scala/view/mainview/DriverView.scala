@@ -34,11 +34,14 @@ trait DriverView extends DialogView{
   def informationSalary(information:StipendioInformations):Unit
 
   /**
-   *
+   * Called when a rotatory driver needs to insert the disponibilità for a new week
    * @param days list with day and availability for driver
    */
   def drawDisponibilitaPanel(days: List[String]): Unit
 
+  /**
+   * Called when a disponibilità was correctly inserted at the start of the week
+   */
   def disponibilityInserted(): Unit
 
   def showMessageError(message: String): Unit

@@ -10,11 +10,10 @@ import caseclass.CaseClassHttpMessage._
 import controller.ManagerController
 import javafx.application.Platform
 import javafx.stage.Stage
-import utils.TransferObject.InfoRichiesta
+import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
 import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
-import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent, _}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.fxview.component.manager.subcomponent._
@@ -43,14 +42,11 @@ object ManagerViewFX {
       myController.startListenNotification()
     }
 
-    /////////CALLS FROM CHILDREN TO DRAW -> SEND TO CONTROLLER/////////////
     override def drawAbsencePanel(): Unit = {
       managerHome.startLoading()
       myController.dataToAbsencePanel()
     }
 
-
-    ////////CALLS FROM CHILDREN TO MAKE THINGS -> ASK TO CONTROLLER
     override def absenceSelected(idRisultato: Int, idTerminale: Int, idTurno: Int): Unit = {
       managerHome.loadingReplacements()
       myController.absenceSelected(idRisultato, idTerminale, idTurno)
@@ -59,8 +55,6 @@ object ManagerViewFX {
     override def replacementSelected(idRisultato: Int, idPersona: Int): Unit =
       myController.replacementSelected(idRisultato, idPersona)
 
-
-    //////CALLS FROM CONTROLLER////////////
     override def drawAbsence(absences: List[InfoAbsenceOnDay]): Unit =
       Platform.runLater(() =>{
         managerHome.endLoading()
@@ -76,7 +70,9 @@ object ManagerViewFX {
           super.showMessageFromKey(message)
           managerHome.stopLoadingReplacements()
         })
-      case _ => super.showMessageFromKey(message)
+      case _ =>
+        managerHome.endLoading()
+        super.showMessageFromKey(message)
     }
 
     override def drawRichiestaPanel(): Unit = myController.datatoRichiestaPanel()
@@ -215,7 +211,6 @@ object ManagerViewFX {
       })
     }
 
-    /////////////////////////////////////////////////////////   zona
     override def newZona(zona: Zona): Unit =
       myController.saveZona(zona)
 
@@ -225,7 +220,6 @@ object ManagerViewFX {
     override def updateZona(zona: Zona): Unit =
       myController.updateZona(zona)
 
-    /////////////////////////////////////////////////////////   terminale
     override def newTerminale(terminal: Terminale): Unit =
       myController.saveTerminal(terminal)
 
@@ -265,10 +259,6 @@ object ManagerViewFX {
       }
     }
 
-    override def result(message: String): Unit = Platform.runLater(()=>{
-      managerHome.endLoading()
-      super.showMessageFromKey(message)
-    })
     override def showInfoAlgorithm(message:String):Unit={
       println(s"message = ${message}")
     }

@@ -5,10 +5,9 @@ import java.sql.Date
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
-import utils.TransferObject.InfoRichiesta
+import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
 import view.DialogView
 import view.fxview.component.manager.subcomponent.ParamsModal
-import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 
 
@@ -121,15 +120,28 @@ trait ManagerView extends DialogView {
    */
   def drawGroupParam(params: ParamsForAlgorithm, rule: List[Regola]): Unit
 
+  /**
+   * Tell the view to draw the result selection view
+   * @param terminal
+   */
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
+  /**
+   * Tells the view to refresh the terminal panel after an update of the data on the server
+   * @param messageKey
+   *                   A message to show to the user before refreshing the view
+   */
   def refreshTerminalPanel(messageKey: String): Unit
 
+  /**
+   * * Tells the view to refresh the zone panel after an update of the data on the server
+   *
+   * @param messageKey
+   *                   A message to show to the user before refreshing the view
+   */
   def refreshZonaPanel(messageKey: String): Unit
 
   def consumeNotification(tag: Long): Unit
-
-  def result(message: String): Unit
 
   /**
    * Draw the modal that show all old params and it allows to choose one
@@ -150,7 +162,11 @@ trait ManagerView extends DialogView {
    */
   def drawShowParams(info: CaseClassHttpMessage.AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
-  def showInfoParam(data: ParamsModal.DataForParamasModel): Unit
+  /**
+   *  Shows a summary of all the params selected.
+   * @param data
+   */
+  def showInfoParam(data: DataForParamasModel): Unit
 
   /**
    * method that show information of the algorithm in real-time

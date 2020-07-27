@@ -1,6 +1,6 @@
 package view.mainview
 
-import view.BaseView
+import view.{DialogView}
 
 
 /**
@@ -10,15 +10,8 @@ import view.BaseView
  * It extends [[view.BaseView]]
  *
  */
-trait LoginView extends BaseView{
-  /**
-   * show a message in the modal like a pop-up
-   *
-   * @param message
-   *                String of message to show
-   */
-  def result(message: String): Unit
-
+trait LoginView extends DialogView{
+  
   /**
    * Method that shows a message of error in case of a bad login(e.g. wrong username or password)
    */
@@ -26,7 +19,7 @@ trait LoginView extends BaseView{
 
   /**
    * Method called to notify a login by a user not validated. it opens a
-   * [[view.fxview.mainview.ChangePasswordView]].
+   * [[view.mainview.ChangePasswordView]].
    *
    */
   def firstUserAccess(): Unit
@@ -49,6 +42,5 @@ trait LoginView extends BaseView{
    *
    */
   def managerAccess(userName: String, userId:String): Unit
-
 
 }
