@@ -12,7 +12,7 @@ import org.controlsfx.control.CheckComboBox
 import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, TextFieldControl}
 import view.fxview.component.manager.subcomponent.parent.ChooseParamsParent
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -24,8 +24,8 @@ import view.fxview.util.ResourceBundleUtil._
 trait ChooseParamsBox extends Component[ChooseParamsParent] {
 
   /**
-   *
-   * @param param
+   * Load params chosen in modal and save information to use in the rest of session
+   * @param param instance of [[InfoAlgorithm]] that contains information chosen
    */
   def loadParam(param: InfoAlgorithm): Unit
 }
@@ -193,8 +193,8 @@ object ChooseParamsBox {
       }
     }
 
-    private def getParams: ParamsForAlgoritm =
-      ParamsForAlgoritm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days)
+    private def getParams: ParamsForAlgorithm =
+      ParamsForAlgorithm(initDate.getValue, endDate.getValue, getTerminals, sabato.isSelected, getName, days)
   }
 
 }

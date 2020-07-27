@@ -6,7 +6,7 @@ import java.time.LocalDate
 import akka.http.scaladsl.client.RequestBuilding.Post
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import caseclass.CaseClassDB.{Giorno, Parametro, Regola, RichiestaTeorica, Terminale, Zona}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
@@ -18,7 +18,6 @@ import utils.TransferObject.InfoRichiesta
 import scala.collection.immutable.HashMap
 import scala.collection.mutable
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 /**
  * @author Francesco Cassano

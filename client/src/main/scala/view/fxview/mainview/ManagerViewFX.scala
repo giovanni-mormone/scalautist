@@ -16,7 +16,7 @@ import view.fxview.component.Component
 import view.fxview.component.manager.ManagerHome
 import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent, _}
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.fxview.component.manager.subcomponent._
 import view.fxview.component.modal.Modal
 import view.mainview.ManagerView
@@ -117,7 +117,7 @@ object ManagerViewFX {
       })
     }
 
-    override def weekParams(params: ParamsForAlgoritm): Unit =
+    override def weekParams(params: ParamsForAlgorithm): Unit =
       myController.weekParam(params)
 
     override def loadParam(param: InfoAlgorithm): Unit =
@@ -126,16 +126,16 @@ object ManagerViewFX {
         managerHome.drawLoadedParam(param)
       })
 
-    override def groupParam(params: ParamsForAlgoritm): Unit =
+    override def groupParam(params: ParamsForAlgorithm): Unit =
       myController.groupParam(params)
 
     override def resetWeekParams(): Unit =
       drawParamsPanel()
 
-    override def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]): Unit =
+    override def drawWeekParam(params: ParamsForAlgorithm, rules: List[Regola]): Unit =
       Platform.runLater(() => managerHome.drawWeekParams(params, rules))
 
-    override def drawGroupParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit =
+    override def drawGroupParam(params: ParamsForAlgorithm, rule: List[Regola]): Unit =
       Platform.runLater(() => managerHome.drawGroupsParam(params, rule))
 
     override def resetGroupsParams(): Unit =
@@ -268,9 +268,24 @@ object ManagerViewFX {
     override def result(message: String): Unit = Platform.runLater(()=>{
       managerHome.endLoading()
       super.showMessageFromKey(message)
-
     })
 
+    override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
+      println(messages)
+      Platform.runLater(() =>{
+        modalResource = Modal[ModalRunParent, Component[ModalRunParent], ModalRunParent](myStage, this,
+          RunModal(messages, algorithmExecute))
+        modalResource.show()
+      })
+    }
+
+    override def executeAlgorthm(info: AlgorithmExecute): Unit = {
+      Platform.runLater(() => modalResource.close())
+      myController.executeAlgorithm(info)
+    }
+
+    override def cancel(): Unit =
+      Platform.runLater(() => modalResource.close())
   }
 
 }

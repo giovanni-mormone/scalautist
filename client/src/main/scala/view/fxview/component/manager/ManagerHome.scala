@@ -4,22 +4,17 @@ import java.net.URL
 import java.sql.Date
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB.{Regola, Terminale, Turno}
-import caseclass.CaseClassHttpMessage._
-import javafx.fxml.FXML
-import javafx.scene.control.{Accordion, Button, Label}
-import javafx.scene.layout.BorderPane
 import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
-import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm}
+import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm, _}
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Button, Label}
 import javafx.scene.layout.{BorderPane, Pane}
 import org.controlsfx.control.PopOver
 import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
-import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
 import view.fxview.component.manager.subcomponent._
+import view.fxview.component.manager.subcomponent.parent.ManagerHomeParent
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 import view.fxview.{FXHelperFactory, NotificationHelper}
@@ -31,11 +26,11 @@ import view.fxview.{FXHelperFactory, NotificationHelper}
 trait ManagerHome extends Component[ManagerHomeParent]{
 
   /**
-   *
-   * @param info
-   * @param name
-   * @param terminals
-   * @param rules
+   * Method that draw the panel that allow to show chosen params and go on
+   * @param info instance of [[AlgorithmExecute]], it contains information that allows the algorithm to work
+   * @param name optional of name used to save params
+   * @param terminals list of [[Terminale]] that contains all terminals information
+   * @param rules list of [[Regola]] that contains all rules information
    */
   def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
@@ -93,31 +88,36 @@ trait ManagerHome extends Component[ManagerHomeParent]{
   def stopLoadingReplacements(): Unit
 
   /**
+   * method that draw the view for choosing the parameters of the week
    *
+   * @param params insatance of [[ParamsForAlgorithm]] contains info to show (if a parameter has been loaded)
+   * @param rules list of rules to show
    */
-  def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit
+  def drawWeekParams(params: ParamsForAlgorithm, rules: List[Regola]): Unit
 
   /**
-   *
-   * @param param
+   * Load params chosen in modal and save information to use in the rest of session
+   * @param param instance of [[InfoAlgorithm]] that contains information chosen until that view
    */
   def drawLoadedParam(param: InfoAlgorithm): Unit
 
   /**
-   *
+   * Draws the view for choosing of group
+   * @param params instance of [[ParamsForAlgorithm]] that contains information chosen until that view
+   * @param rule list of [[Regola]] to show
    */
-  def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
+  def drawGroupsParam(params: ParamsForAlgorithm, rule: List[Regola]): Unit
 
   /**
-   *
-   * @param group
+   * Notify the new group to the view that manages the groups
+   * @param group instance of new [[Group]]
    */
   def updateGroup(group: Group): Unit
 
   /**
-   *
-   * @param info
-   * @param name
+   * draw the panel that recap chosen parameters
+   * @param info instance of [[AlgorithmExecute]] that contains all information chosen
+   * @param name optional of name of parameter
    */
   def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
 
@@ -262,7 +262,7 @@ object ManagerHome{
       baseManager.setCenter(chooseParamsBox.setParent(parent).pane)
     }
 
-    override def drawWeekParams(params: ParamsForAlgoritm, rules: List[Regola]): Unit = {
+    override def drawWeekParams(params: ParamsForAlgorithm, rules: List[Regola]): Unit = {
       val box = ChangeSettimanaRichiesta(params, rules)
       baseManager.setCenter(box.setParent(parent).pane)
     }
@@ -270,7 +270,7 @@ object ManagerHome{
     override def drawLoadedParam(param: InfoAlgorithm): Unit =
       chooseParamsBox.loadParam(param)
 
-    override def drawGroupsParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit = {
+    override def drawGroupsParam(params: ParamsForAlgorithm, rule: List[Regola]): Unit = {
       gruopParamBox = GroupParamsBox(params, rule)
       baseManager.setCenter(gruopParamBox.setParent(parent).pane)
     }
@@ -318,6 +318,7 @@ object ManagerHome{
       terminalView.setParent(parent)
       terminalView.pane
     }
+
   }
 
 
