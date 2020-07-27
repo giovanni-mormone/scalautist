@@ -10,6 +10,7 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
+import messagecodes.StatusCodes.{ERROR_CODE4, ERROR_CODE5, ERROR_CODE6}
 import model.AbstractModel
 import persistence.ConfigReceiverPersistence
 import receiver.ConfigReceiver
@@ -25,19 +26,26 @@ import scala.concurrent.Future
  *         Interface for System Manager's operation on data
  */
 trait ManagerModel {
+
   /**
    * Method that return all rule that contains a group for the algorithm
    *
-   * @return Future of Option of List of Regola that contains all Rule for group for the algorithm
+   * @return Future of Response of List of Regola that contains all Rule for group for the algorithm
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
    */
   def groupRule():Future[Response[List[Regola]]]
+
   /**
    * Method that return all rule that contains a normal week and special week for the algorithm
    *
-   * @return Future of Option of List of Regola that contains all Rule for a normal
+   * @return Future of Response of List of Regola that contains all Rule for a normal
    *         week and special week for the algorithm
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
    */
-
   def weekRule():Future[Response[List[Regola]]]
 
   def consumeNotification(tag: Long,userId: Option[Int]): Unit
@@ -50,6 +58,7 @@ trait ManagerModel {
    *
    * @return
    * Future of List of absent [[caseclass.CaseClassHttpMessage.InfoAbsenceOnDay]]
+   *
    */
   def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]]
 
@@ -64,6 +73,12 @@ trait ManagerModel {
    * Id of work shift information to search for available employee
    * @return
    * Future of list of [[caseclass.CaseClassHttpMessage.InfoReplacement]]
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if idResult not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE2]]  if idTerminal not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if idTurno not exist in database
    */
   def extraAvailability(idTerminale: Int, idTurno: Int, idRisultato: Int): Future[Response[List[InfoReplacement]]]
 
@@ -76,6 +91,10 @@ trait ManagerModel {
    * Id of new driver to assign to shift
    * @return
    * result of operation
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if idRisultato not exist
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
    */
   def replaceShift(idRisultato: Int, idNewDriver: Int): Future[Response[Int]]
 
@@ -86,6 +105,20 @@ trait ManagerModel {
    * information to build request body like an instance of [[InfoRichiesta]]
    * @return
    * result of operation
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the conditions on the dates are not respected
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the RichiesteTeoriche to insert are None
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if it fails the insert of [[caseclass.CaseClassDB.Richiesta]]
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the id of richiesta teorica are None
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days to insert are None
+   * [[messagecodes.StatusCodes.ERROR_CODE6]] if it's been asked to update some RichiestaTeorica but it not finds the old RichiestaTeorica in the db
+   * [[messagecodes.StatusCodes.ERROR_CODE7]] if it's been asked to update some RichiestaTeorica but it not finds the Richiesta associated to it
+   * [[messagecodes.StatusCodes.ERROR_CODE8]] if it's been asked to update some RichiestaTeorica but it not finds the Giorno to associate to it
+   * [[messagecodes.StatusCodes.ERROR_CODE9]] if there is some terminaleID duplicated in the insert request
+   * [[messagecodes.StatusCodes.ERROR_CODE10]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
+   * [[messagecodes.StatusCodes.ERROR_CODE11]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
+   * [[messagecodes.StatusCodes.ERROR_CODE12]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some shifts in the set don't exist
    */
   def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]]
 
@@ -95,6 +128,26 @@ trait ManagerModel {
    * @param info case class that contains all info for algorithm and yours execution
    * @return Future Response Int that represent status operation
    *         [[messagecodes.StatusCodes.SUCCES_CODE]] if algorithm init without problem
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if time frame have a problem, this can be:
+   *                                          time frame less that 28 days, dates to the contrary
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if list with terminal contains some terminal that not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if group contains some error, this can be:
+   *                                          group with one date, date in group outside time frame, ruler in
+   *                                          group not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if normal week contains some error, this can be:
+   *                                          idDay not correspond to day in week, ruler in week not exist in
+   *                                          database, shift in week not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if special week contains some error, this can be:
+   *                                          idDay not correspond to day in week, ruler in week not exist in
+   *                                          database, shift in week not exist in database or date in week
+   *                                          is outside to time frame
+   * [[messagecodes.StatusCodes.ERROR_CODE6]] if time frame not contains theoretical request
+   * [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers
+   * [[messagecodes.StatusCodes.ERROR_CODE8]] if not exist shift in database
+   * [[messagecodes.StatusCodes.ERROR_CODE9]] if a driver not contains a contract
+   * [[messagecodes.StatusCodes.ERROR_CODE10]] if the algorithm is already running
    */
   def runAlgorithm(info: AlgorithmExecute, method: String => Unit): Future[Response[Int]]
 

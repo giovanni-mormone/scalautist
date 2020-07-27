@@ -51,7 +51,7 @@ trait HumanResourceModel{
    * @return
    * Future of Response of type Int
    * Possible error code:
-   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees found
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees was found
    */
   def firesAll(ids: Set[Int]): Future[Response[Int]]
 
@@ -117,45 +117,45 @@ trait HumanResourceModel{
 
   /**
    * method that return Option of List of Terminale if exist
-   * @return Option of List of Terminale
+   * @return Response of List of Terminale
    */
   def getAllTerminale: Future[Response[List[Terminale]]]
 
   /**
    * method that return Option of List of zone if exists
-   * @return Option of List of zone if exists
+   * @return Response of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
 
   /**
    * method that return all contract in database
-   * @return Option of list with all contract existing into database
+   * @return Response of list with all contract existing into database
    */
   def getAllContract:Future[Response[List[Contratto]]]
 
   /**
    * method that return all shift in database
-   * @return Option of list with all shift existing into database
+   * @return Response of list with all shift existing into database
    */
   def getAllShift:Future[Response[List[Turno]]]
 
   /**
    * Method that calculus salary for all person in the system, this method is call every 30 days
-   * @return Future of Option of List of Stipendio, for details of Stipendio,
+   * @return Future of Response of List of Stipendio, for details of Stipendio,
    *         see [[caseclass.CaseClassDB.Stipendio]]
    */
   def salaryCalculation():Future[Response[List[Stipendio]]]
 
   /**
    * Method that obtains all day of holiday of a persona
-   * @return Option of List with all day of holiday of a persona
+   * @return Response of List with all day of holiday of a persona
    */
   def getHolidayByPerson:Future[Response[List[Ferie]]]
 
   /**
    * Method that obtains all day of holiday of a persona
-   * @return Option of List with all day of holiday of a persona
-   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees found
+   * @return Response of List with all day of holiday of a persona
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees was found
    */
   def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 

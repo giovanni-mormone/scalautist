@@ -27,9 +27,9 @@ trait RichiestaTeoricaOperation extends OperationCrud[RichiestaTeorica] {
    * @param requests List of [[caseclass.CaseClassDB.RichiestaTeorica]]
    * @param days     List of [[caseclass.CaseClassHttpMessage.RequestGiorno]]
    * @return Operation result code:
-   *         [[ERROR_CODE4]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
-   *         [[ERROR_CODE5]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
-   *         [[ERROR_CODE6]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some shifts in the set don't exist
+   *         [[ERROR_CODE10]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
+   *         [[ERROR_CODE11]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
+   *         [[ERROR_CODE12]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some shifts in the set don't exist
    */
   def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]]
 
@@ -77,8 +77,8 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
   private val MAX_IN_WEEK: Int = 7
 
   def controlInfo(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]] = {
-    if(requests.isEmpty) return Future.successful(Some(ERROR_CODE4))
-    if(days.isEmpty) return Future.successful(Some(ERROR_CODE5))
+    if(requests.isEmpty) return Future.successful(Some(ERROR_CODE10))
+    if(days.isEmpty) return Future.successful(Some(ERROR_CODE11))
 
     for {
       daysOk <- verifyDays(days)
@@ -112,9 +112,9 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
 
   private def verify(daysOk: Option[Boolean], requestOk: Option[Boolean], shiftOk: Option[Boolean]): Option[Int] = (daysOk, requestOk, shiftOk) match {
     case (Some(true), Some(true), Some(true)) => Some(SUCCES_CODE)
-    case (Some(false), _, _) => Some(ERROR_CODE5)
-    case (_, Some(false), _) => Some(ERROR_CODE4)
-    case (_, _, Some(false)) => Some(ERROR_CODE6)
+    case (Some(false), _, _) => Some(ERROR_CODE11)
+    case (_, Some(false), _) => Some(ERROR_CODE10)
+    case (_, _, Some(false)) => Some(ERROR_CODE12)
   }
 
   override def saveRichiestaTeorica(requests: List[RichiestaTeorica], days: List[RequestGiorno]): Future[Option[Int]] = {
@@ -233,7 +233,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         case None =>GiornoOperation.insert(day.day)
       }
 
-  /**
+  /*
    * error 3 fallisce inserimento
    * error 4 giorno è none
    * error 5 idrichiseteteoriche sono none
