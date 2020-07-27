@@ -18,6 +18,16 @@ object ManagerOperations{
   def apply(toTest: BaseTest): ManagerOperations = new ManagerOperationsImpl(toTest)
 
   private class ManagerOperationsImpl(toTest: BaseTest) extends ManagerOperations{
+    val user: String = "admin"
+    val password: String = "rootrootN2"
+
+    toTest.clickOn("#usernameField")
+    toTest.write(user)
+    toTest.clickOn("#passwordField")
+    toTest.write(password)
+    toTest.clickOn("#loginButton")
+    toTest.sleep(5000)
+
     override def openGenerateTurns(): Unit =
       toTest.clickOn("#generateTurnsButton")
 
