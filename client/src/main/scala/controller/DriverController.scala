@@ -32,8 +32,19 @@ trait DriverController  extends AbstractController[DriverView] {
    */
   def drawInfoSalary(idSalary:Int):Unit
 
+  /**
+   * Called when a driver logs in the system; used to check if the driver has a disponibilita
+   * for the week.
+   */
   def startupDriverCheck(): Unit
 
+  /**
+   * Sets the disponibilita for the logged driver in the current week
+   * @param day1
+   *             The first day of disponibilita
+   * @param day2
+   *             The second day of disponibilita
+   */
   def sendDisponibility(day1: String, day2: String): Unit
 }
 object DriverController{

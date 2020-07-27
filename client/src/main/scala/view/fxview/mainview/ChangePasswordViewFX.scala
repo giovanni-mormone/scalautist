@@ -7,7 +7,6 @@ import controller.ChangePasswordController
 import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.stage.Stage
-import view.GoBackView
 import view.fxview.component.login.ChangePasswordParent
 import view.fxview.{AbstractFXViewWithBack, FXHelperFactory}
 import view.fxview.component.login.ChangePasswordBox
@@ -17,7 +16,7 @@ import view.mainview.ChangePasswordView
 /**
  * @author Giovanni Mormone.
  *
- * Companion object of [[view.mainview.ChangePasswordView]]
+ * FX implementation of [[view.mainview.ChangePasswordView]]
  *
  */
 object ChangePasswordViewFX{

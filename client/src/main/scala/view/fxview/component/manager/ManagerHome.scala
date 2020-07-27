@@ -212,10 +212,11 @@ object ManagerHome{
       nameLabel.setText(resources.println("username-label",userName))
       idLabel.setText(resources.println("id-label",userId))
     }
-    //rabbit manda la notificacion, pero donde la manda? llega primero que el inizializate?
+
     private def openAccordion(): Unit ={
       popover.show(notificationButton)
     }
+
     override def drawManageAbsence(absences: List[InfoAbsenceOnDay]): Unit = {
       fillHolesView = FillHolesBox()
       baseManager.setCenter(fillHolesView.setParent(parent).pane)

@@ -93,13 +93,11 @@ object PersonaOperation extends PersonaOperation {
     selectPersone(x => x.cognome === surname)
 
   override def login(login: Login): Future[Option[Persona]] = {
-    InstancePersona.operation().
-        execQueryFilter(personaSelect, x => x.userName === login.user && x.password === HashPassword(Option(login.password)).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual))
-      .collect{
-        case None => None
-        case Some(value)  => value.map(x=>convertTupleToPerson(Some(x))).head
-
-      }
+    InstancePersona.operation().selectFilter(user=>user.userName===login.user).collect {
+      case Some(List(value)) if CheckPassword(login.password,value.password.toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)) =>
+        Some(value)
+      case _ => None
+    }
   }
 
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]= {
@@ -119,7 +117,10 @@ object PersonaOperation extends PersonaOperation {
     val newPass = HashPassword(generatedPass).toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)
     for{
       _ <-InstancePersona.operation().execQueryUpdate(f => (f.password, f.isNew), x => x.id === idUser, (newPass, true))
-      credentials <- select(idUser).map(_.map(user => Login(user.userName,generatedPass.head)))
+      credentials <- select(idUser).map(_.map(user => generatedPass match{
+        case Some(x) => Login(user.userName,x)
+        case _ => Login(EMPTY_STRING,EMPTY_STRING)
+      }).filter(!_.user.equalsIgnoreCase(EMPTY_STRING)))
     }yield credentials
   }
 

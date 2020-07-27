@@ -22,13 +22,3 @@ trait Controller[A<:BaseView] {
    */
   def setView(view:A): Unit
 }
-
-/**
- * @author Giovanni Mormone.
- *
- * Template class of the controller.
- * @tparam A
- *           The type of view class that i control. Should be subtype of
- *           [[view.BaseView]]
- *
- */

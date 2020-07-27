@@ -3,20 +3,18 @@ package view.fxview.mainview
 import java.net.URL
 import java.util.ResourceBundle
 
-import view.fxview.util.ResourceBundleUtil._
 import controller.LoginController
 import javafx.application.Platform
 import javafx.stage.Stage
-import view.BaseView
-import view.fxview.component.login.LoginParent
+import view.fxview.component.login.{LoginBox, LoginParent}
+import view.fxview.util.ResourceBundleUtil._
 import view.fxview.{AbstractFXDialogView, FXHelperFactory}
-import view.fxview.component.login.LoginBox
 import view.mainview.LoginView
 
 /**
  * @author Giovanni Mormone.
  *
- * Companion object of [[view.fxview.mainview.LoginViewFX]]
+ * FX implementation of [[view.fxview.mainview.LoginViewFX]]
  *
  */
 object LoginViewFX{
@@ -24,15 +22,15 @@ object LoginViewFX{
   private class LoginViewFX(stage:Stage) extends AbstractFXDialogView(stage) with LoginView with LoginParent {
     private val PREDEF_WIDTH_SIZE: Double = 800
     private val PREDEF_HEIGHT_SIZE: Double = 700
-    private var myController:LoginController = _
-    private var loginBox:LoginBox = _
+    private var myController: LoginController = _
+    private var loginBox: LoginBox = _
 
     override def close(): Unit =
       myStage.close()
 
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      super.initialize(location,resources)
+      super.initialize(location, resources)
       myController = LoginController()
       loginBox = LoginBox()
       myController.setView(this)
@@ -48,7 +46,7 @@ object LoginViewFX{
     }
 
     override def badLogin(): Unit = {
-      Platform.runLater(()=>{
+      Platform.runLater(() => {
         stopLoading()
         loginBox.showErrorMessage()
       })
@@ -59,50 +57,44 @@ object LoginViewFX{
         showMessage(generalResources.getResource("first-login"))
         stopLoading()
         loginBox.resetViewFields()
-        ChangePasswordViewFX(myStage,Some(myStage.getScene))
+        ChangePasswordViewFX(myStage, Some(myStage.getScene))
       })
     }
 
-    private def setStageDimensions():Unit = {
+    private def setStageDimensions(): Unit = {
       stage.setMinWidth(PREDEF_WIDTH_SIZE)
       stage.setMinHeight(PREDEF_HEIGHT_SIZE)
     }
 
     override def driverAccess(): Unit =
-      Platform.runLater(() =>{
+      Platform.runLater(() => {
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
         DriverViewFX(myStage)
       })
 
-    override def humanResourcesAccess(userName: String, userId:String): Unit =
-      Platform.runLater(() =>{
+    override def humanResourcesAccess(userName: String, userId: String): Unit =
+      Platform.runLater(() => {
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
-        HumanResourceViewFX(myStage,userName,userId)
+        HumanResourceViewFX(myStage, userName, userId)
       })
 
-    private def stopLoading():Unit = {
+    private def stopLoading(): Unit = {
       loginBox.enable()
       pane.getChildren.remove(FXHelperFactory.loadingBox)
     }
 
-    override def managerAccess(userName: String, userId:String): Unit = {
-      Platform.runLater(() =>{
+    override def managerAccess(userName: String, userId: String): Unit = {
+      Platform.runLater(() => {
         stopLoading()
         myStage.setResizable(true)
         setStageDimensions()
-        ManagerViewFX(myStage,userName,userId)
+        ManagerViewFX(myStage, userName, userId)
       })
     }
-
-    override def result(message: String): Unit = Platform.runLater(()=>{
-      this.showMessageFromKey(message)
-      stopLoading()
-    })
   }
-
-  def apply(stage:Stage):LoginView = new LoginViewFX(stage)
+    def apply(stage: Stage): LoginView = new LoginViewFX(stage)
 }
