@@ -18,11 +18,11 @@ object TerminalLabelBox {
     with TerminalLabelBox {
 
     @FXML
-    var terminal: Label = _
+    var labelOne: Label = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      terminal.setText(setTerminalName())
+      labelOne.setText(setTerminalName())
     }
     def setTerminalName():String={
       val DEFAULT_VALUE:String =String.valueOf("  ")

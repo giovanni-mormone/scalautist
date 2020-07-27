@@ -3,15 +3,14 @@ package view.fxview.component.manager.subcomponent
 import java.net.URL
 import java.util.ResourceBundle
 
-import caseclass.CaseClassDB
-import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, Regola, Terminale, ZonaTerminale}
+import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAlgorithm}
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, Label, TextArea}
+import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.VBox
-import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.manager.subcomponent.parent.ShowParamAlgorithmBoxParent
 import view.fxview.component.manager.subcomponent.util.ShiftUtil
+import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
 trait ShowParamAlgorithmBox  extends Component[ShowParamAlgorithmBoxParent] {

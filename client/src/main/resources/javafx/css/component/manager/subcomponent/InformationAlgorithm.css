@@ -7,5 +7,8 @@
     -fx-alignment: center;
     -fx-spacing: 25;
     -fx-min-width: 150;
-    -fx-fit-to-height: true;
+    -fx-fit-to-height: inherit;
+}
+.pane{
+    -fx-fill-height: true;
 }
