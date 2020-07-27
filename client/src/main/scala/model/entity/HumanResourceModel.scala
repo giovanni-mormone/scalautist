@@ -25,6 +25,13 @@ trait HumanResourceModel{
    * Instance of Persona to save
    * @return
    * Future of type Response of Login that contains username and password
+   *
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the contratto provided not exits in the db
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the contratto not allows for disponibilita to be defined but the disponibilita is present
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the contratto is not fisso but there is a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the contratto is fisso but there is not a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the turni are not right according to the contratto
    */
   def recruit(persona:Assumi):Future[Response[Login]]
 
@@ -34,6 +41,7 @@ trait HumanResourceModel{
    *  id of the persona
    * @return
    * Future of type Response of Int
+   *
    */
   def fires(ids:Int): Future[Response[Int]]
   /**
@@ -57,6 +65,12 @@ trait HumanResourceModel{
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the days between the given day are > of GIORNI_FERIE_ANNUI
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
    */
   def illnessPeriod(assenza: Assenza): Future[Response[Int]]
 
@@ -64,6 +78,12 @@ trait HumanResourceModel{
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the days between the given day are > of GIORNI_FERIE_ANNUI
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
    */
   def holidays(assenza: Assenza):Future[Response[Int]]
 
