@@ -11,6 +11,9 @@ import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.ExtraInfo
 import view.fxview.component.{AbstractComponent, Component}
 
 trait SummaryBox extends Component[RichiestaForDayBox]{
+  /**
+   * Method that allows to draw the panel that allows to check data of theoretical request entered
+   */
   def designPage():Unit
 }
 object SummaryBox{
