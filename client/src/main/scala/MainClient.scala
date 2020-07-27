@@ -13,5 +13,6 @@ private class Main extends Application{
    // ModelDispatcher()
     ManagerViewFX(primaryStage,"Juan","123").show()
     //HumanResourceViewFX(primaryStage,"Juan","123").show()
+    //LoginViewFX(primaryStage).show()
   }
 }

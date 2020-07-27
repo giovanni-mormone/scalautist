@@ -149,9 +149,8 @@ object ShowParamAlgorithmBox {
     def setTerminalInfo(): Unit ={
       terminalList.filter(id => info.idTerminal.exists(id.idTerminale.contains)) match {
         case terminale if terminale.nonEmpty=>
-          terminale.foreach(term => terminal.getChildren.add(TerminalLabelBox(term.nomeTerminale).pane))
-          //val label = TerminalLabelBox(terminale.map(_.nomeTerminale))
-          //terminal.getChildren.add(label.setParent(parent).pane)
+          val label = TerminalLabelBox(terminale.map(_.nomeTerminale))
+          terminal.getChildren.add(label.setParent(parent).pane)
         case Nil =>senzaInfo4.setText(resources.getResource("unknown"))
           terminal.getChildren.add(senzaInfo4)
       }

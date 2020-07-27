@@ -146,10 +146,14 @@
 #terminal >.label{
     -fx-alignment: center;
     -fx-text-alignment: center;
+    -fx-wrap-text: true;
 }
 
 #oneLabel{
     -fx-alignment: center;
+    -fx-wrap-text: true;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
 }
 
 .button:hover {
