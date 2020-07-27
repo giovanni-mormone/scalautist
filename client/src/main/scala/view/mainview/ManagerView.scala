@@ -7,7 +7,6 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoR
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
 import view.DialogView
-import view.fxview.component.manager.subcomponent.ParamsModal
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 
 
@@ -166,7 +165,7 @@ trait ManagerView extends DialogView {
    *  Shows a summary of all the params selected.
    * @param data
    */
-  def showInfoParam(data: DataForParamasModel): Unit
+def showInfoParam(data: DataForParamasModel): Unit
 
   /**
    * method that show information of the algorithm in real-time
