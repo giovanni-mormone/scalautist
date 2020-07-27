@@ -64,7 +64,7 @@ trait ManagerController extends AbstractController[ManagerView]{
   def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit
 
   /**
-   * runAlgorithm checks if you can run algorithm without any problem before running it. 
+   * runAlgorithm checks if you can run algorithm without any problem before running it.
    * @param algorithmExecute information that allows the algorithm to work
    */
   def runAlgorithm2(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
