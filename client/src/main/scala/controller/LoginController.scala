@@ -43,7 +43,7 @@ object LoginController {
       case _ =>
         myModel.login(username, password).onComplete {
           case Success(Response(_, persona)) => checkLoginResult(persona)
-          case Failure(_) => myView.result("GeneralError-ConnectionFail")
+          case Failure(_) => myView.showMessageFromKey("GeneralError-ConnectionFail")
         }
     }
 

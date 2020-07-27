@@ -65,8 +65,6 @@ trait HRHome extends Component[HRHomeParent]{
   def drawHolidayBox(employees: List[Ferie]): Unit
 }
 
-
-/////////////////////////////////////////////////////////////////// Companion object
 /**
  * @author Francesco Cassano
  *
@@ -107,7 +105,6 @@ object HRHome{
     var holidayBox: HolidayBox = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
-      nameLabel.setText("I am HR king, and I BENEDICO to you!")
 
       recruitButton.setText(resources.getResource("recruit-button"))
       firesButton.setText(resources.getResource("fire-button"))
@@ -125,8 +122,6 @@ object HRHome{
       holidays.setOnAction(_ => parent.drawHoliday())
     }
 
-    /////////////////////////////////////////////////////////////////////////////////// panel drawing method
-
     override def drawRecruit(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Unit =
       baseHR.setCenter(recruitBox(zones, contracts, shifts))
 
@@ -142,9 +137,8 @@ object HRHome{
     override def drawHolidayBox(employees: List[Ferie]): Unit =
       baseHR.setCenter(holidayBox(employees))
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////////// View Initializer
+    override def startLoading(): Unit =
+      baseHR.setCenter(FXHelperFactory.loadingBox)
 
     private def recruitBox(zones: List[Zona], contracts: List[Contratto], shifts: List[Turno]): Pane = {
       recruitView = RecruitBox(contracts, shifts, zones)
@@ -169,7 +163,5 @@ object HRHome{
       holidayBox.setParent(parent)
       holidayBox.pane
     }
-    override def startLoading(): Unit =
-      baseHR.setCenter(FXHelperFactory.loadingBox)
   }
 }

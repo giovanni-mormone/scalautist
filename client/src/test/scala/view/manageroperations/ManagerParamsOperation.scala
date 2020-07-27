@@ -60,7 +60,7 @@ object ManagerParamsOperation {
 
     override def chooseOldParam(): Unit =
       toTest.find[TableView[ParamsTable]]("#params")
-        .getSelectionModel.select(10)
+        .getSelectionModel.select(10) //10
 
     override def isThere(component: String): Boolean =
       Option(toTest.find(component)).isDefined

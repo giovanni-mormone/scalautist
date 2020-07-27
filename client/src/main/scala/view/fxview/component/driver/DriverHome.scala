@@ -108,7 +108,6 @@ object DriverHome{
         openAccordion()
       })
     }
-    private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
 
     override def drawHome(infoHome: InfoHome): Unit = {
       endLoading()
@@ -125,6 +124,16 @@ object DriverHome{
       driverHome.setCenter(salary(list))
     }
 
+    override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
+
+    override def stopLoading(): Unit ={
+      endLoading()
+      driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
+    }
+
+    override def drawNotifica(str: String,tag:Long): Unit = {
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
+    }
 
     private def home(infoHome: InfoHome):Pane = {
       homeBox = HomeBox(infoHome)
@@ -144,12 +153,7 @@ object DriverHome{
       salaryBox.pane
     }
 
-    override def informationSalary(information: StipendioInformations): Unit = salaryBox.paneInfoSalary(information)
-
-    override def stopLoading(): Unit ={
-      endLoading()
-      driverHome.setCenter(FXHelperFactory.defaultErrorPanel)
-    }
+    private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
 
     private def openAccordion(): Unit ={
       popover.show(labelNotifiche)
@@ -157,10 +161,6 @@ object DriverHome{
 
     private def consumeNotification(tag: Long): Unit={
 
-    }
-
-    override def drawNotifica(str: String,tag:Long): Unit = {
-      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
     }
   }
 }

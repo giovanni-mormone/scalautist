@@ -10,9 +10,12 @@ object MainClient{
 
 private class Main extends Application{
   override def start(primaryStage: Stage): Unit = {
+<<<<<<< HEAD
    // ModelDispatcher()
     //ManagerViewFX(primaryStage,"Juan","123").show()
     //HumanResourceViewFX(primaryStage,"Juan","123").show()
+=======
+>>>>>>> b0f8bc69f3f324ebdad297353fd1113ddec42ae3
     LoginViewFX(primaryStage).show()
   }
 }

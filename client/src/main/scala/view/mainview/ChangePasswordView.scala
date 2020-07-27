@@ -11,7 +11,13 @@ import view.GoBackView
  */
 trait ChangePasswordView extends GoBackView{
 
+  /**
+   * Tells to the view that an error as occurred during the attempt to change the password
+   */
   def errorChange():Unit
 
+  /**
+   * Tells to the view that the password was successfully updated
+   */
   def okChange():Unit
 }
