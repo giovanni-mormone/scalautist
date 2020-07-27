@@ -15,23 +15,38 @@ import javafx.scene.layout.AnchorPane
 import view.fxview.component.HumanResources.subcomponent.util.{CreateDatePicker, CreateTable}
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.parent.GroupParamsParent
-import view.fxview.component.manager.subcomponent.util.{GroupSelectionTable, GroupToTable, ParamsForAlgoritm}
+import view.fxview.component.manager.subcomponent.util.{GroupSelectionTable, GroupToTable, ParamsForAlgorithm}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * This trait allows to manage the view
+ */
 trait GroupParamsBox extends Component[GroupParamsParent] {
 
+  /**
+   * add the new group
+   * @param group instance of [[Group]] to add
+   */
   def updateGroup(group: Group): Unit
 }
 
+/**
+ * Companion object of [[GroupParamsBox]]
+ */
 object GroupParamsBox {
 
   case class Group(date: List[LocalDate], rule: Int, ruleName: String)
 
-  def apply(params: ParamsForAlgoritm, rule: List[Regola]): GroupParamsBox =
+  def apply(params: ParamsForAlgorithm, rule: List[Regola]): GroupParamsBox =
     new GroupParamsBoxFX(params, rule)
 
-  private class GroupParamsBoxFX(params: ParamsForAlgoritm, rule: List[Regola])
+  /**
+   * Java FX implementation of [[GroupParamsBox]]
+   * @param params info chosen until this panel
+   * @param rule list of [[Regola]] to show
+   */
+  private class GroupParamsBoxFX(params: ParamsForAlgorithm, rule: List[Regola])
     extends AbstractComponent[GroupParamsParent](path = "manager/subcomponent/ParamGruppo" )
     with GroupParamsBox{
 

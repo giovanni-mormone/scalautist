@@ -1,7 +1,7 @@
 package view.fxview.component.HumanResources.subcomponent.util
 
 import java.sql.{Date => dateSql}
-import java.time.{Instant, LocalDate, ZoneId}
+import java.time.{DayOfWeek, Instant, LocalDate, ZoneId}
 import java.util.{Calendar, Date => dateUtil}
 
 import caseclass.CaseClassHttpMessage.InfoPresenza
@@ -134,7 +134,7 @@ case object CreateDatePicker{
     dataPicker.setDayCellFactory(_ => new DateCell(){
       override def updateItem(date:LocalDate, empty:Boolean): Unit = {
         super.updateItem(date, empty)
-        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF))
+        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF) || date.getDayOfWeek == DayOfWeek.SUNDAY)
       }
     })
     dataPicker

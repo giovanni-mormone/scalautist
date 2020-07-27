@@ -13,7 +13,7 @@ import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.VBox
 import org.controlsfx.control.CheckComboBox
 import view.fxview.component.manager.subcomponent.parent.ChangeSettimanaRichiestaParent
-import view.fxview.component.manager.subcomponent.util.{ParamsForAlgoritm, ShiftTable, ShiftUtil}
+import view.fxview.component.manager.subcomponent.util.{ParamsForAlgorithm, ShiftTable, ShiftUtil}
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
@@ -29,10 +29,10 @@ trait ChangeSettimanaRichiesta extends Component[ChangeSettimanaRichiestaParent]
  */
 object ChangeSettimanaRichiesta {
 
-  def apply(params: ParamsForAlgoritm, rules: List[Regola]): ChangeSettimanaRichiesta =
+  def apply(params: ParamsForAlgorithm, rules: List[Regola]): ChangeSettimanaRichiesta =
     new ChangeSettimanaRichiestaFX(params, rules)
 
-  private class ChangeSettimanaRichiestaFX(params: ParamsForAlgoritm, rules: List[Regola])
+  private class ChangeSettimanaRichiestaFX(params: ParamsForAlgorithm, rules: List[Regola])
   extends AbstractComponent[ChangeSettimanaRichiestaParent](path = "manager/subcomponent/ParamSettimana")
   with ChangeSettimanaRichiesta{
 
@@ -156,7 +156,7 @@ object ChangeSettimanaRichiesta {
       (FIRST_WEEK_DAY_SHIFT to LAST_WEEK_DAY).map(day => infoDays.find(info => info.day == day && info.shift == shift)
         .fold("0")(_.quantity.toString)).toList
 
-    private def remakeParams(): ParamsForAlgoritm = {
+    private def remakeParams(): ParamsForAlgorithm = {
 
       val daysReqN = getReqFromTable(normalWeek)
       val daysReqS = getSpecialReqFromTable

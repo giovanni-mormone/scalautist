@@ -14,10 +14,18 @@ import view.fxview.component.manager.subcomponent.parent.ModalParamParent
 import view.fxview.component.manager.subcomponent.util.{ParamsTable, ShiftUtil}
 import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * @author Francesco Cassano
+ *
+ * trait that allow to perform operation on the view. Extends [[view.fxview.component.Component]]
+ */
 trait ParamsModal extends AbstractComponent[ModalParamParent] {
 
 }
 
+/**
+ * Companion object of [[ParamsModal]]. The Object allows to choose old params to load
+ */
 object ParamsModal {
 
   case class DataForParamasModel(oldsParam: List[Parametro], terminals: List[Terminale],
@@ -25,6 +33,10 @@ object ParamsModal {
 
   def apply(data: DataForParamasModel): ParamsModal = new ParamsModalFX(data)
 
+  /**
+   * Java FX implementation for [[ParamsModal]]
+   * @param data all info that allow to draw the view
+   */
   private class ParamsModalFX(data: DataForParamasModel)
     extends AbstractComponent[ModalParamParent]("manager/subcomponent/ParamsModal")
     with ParamsModal {

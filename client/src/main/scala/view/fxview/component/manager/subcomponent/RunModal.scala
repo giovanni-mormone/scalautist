@@ -11,14 +11,26 @@ import view.fxview.component.AbstractComponent
 import view.fxview.component.manager.subcomponent.parent.ModalRunParent
 import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * @author Francesco Cassano
+ * This trait allows to manage the modal to confirm esecution of algorithm
+ */
 trait RunModal extends AbstractComponent[ModalRunParent] {
 
 }
 
+/**
+ * Companion object of [[RunModal]]
+ */
 object RunModal {
 
   def apply(message: List[String], algorithmExecute: AlgorithmExecute): RunModal = new RunModalFX(message, algorithmExecute)
 
+  /**
+   * Java FX implementation for [[RunModal]]
+   * @param error list of error's code
+   * @param algorithmExecute data to execute algorithm
+   */
   private class RunModalFX(error: List[String], algorithmExecute: AlgorithmExecute)
   extends AbstractComponent[ModalRunParent]("manager/subcomponent/RunModal")
   with RunModal {

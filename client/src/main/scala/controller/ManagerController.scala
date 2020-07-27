@@ -9,7 +9,7 @@ import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
 import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.mainview.ManagerView
 
 import scala.concurrent.Future
@@ -162,12 +162,12 @@ trait ManagerController extends AbstractController[ManagerView]{
   /**
    *
    */
-  def weekParam(params: ParamsForAlgoritm): Unit
+  def weekParam(params: ParamsForAlgorithm): Unit
 
   /**
    *
    */
-  def groupParam(params: ParamsForAlgoritm): Unit
+  def groupParam(params: ParamsForAlgorithm): Unit
 
   /**
    * getZonaData method retrieves all data needed to draw zona view
@@ -329,7 +329,7 @@ object ManagerController {
 
     }
 
-    override def weekParam(params: ParamsForAlgoritm): Unit = {
+    override def weekParam(params: ParamsForAlgorithm): Unit = {
       model.weekRule().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawWeekParam(params, value)
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
@@ -337,7 +337,7 @@ object ManagerController {
       }
     }
 
-    override def groupParam(params: ParamsForAlgoritm): Unit = {
+    override def groupParam(params: ParamsForAlgorithm): Unit = {
       model.groupRule().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawGroupParam(params, value)
         case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")

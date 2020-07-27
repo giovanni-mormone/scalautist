@@ -7,8 +7,8 @@ import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoR
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.InfoRichiesta
 import view.DialogView
-import view.fxview.component.manager.subcomponent.ParamsModal
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.ParamsModal.DataForParamasModel
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 
 
 trait ManagerView extends DialogView {
@@ -110,13 +110,15 @@ trait ManagerView extends DialogView {
    * @param params parameter chosen in precedent panel
    * @param rules  rules that the user can choose
    */
-  def drawWeekParam(params: ParamsForAlgoritm, rules: List[Regola]): Unit
+  def drawWeekParam(params: ParamsForAlgorithm, rules: List[Regola]): Unit
 
   /**
+   * Draw the panel that allows to specify particular group of days in period
    *
-   * @param params
+   * @param params instance of [[ParamsForAlgorithm]] that contains the information collect until this panel
+   * @param rule   list of [[Regola]] that contains all rules that user can choose
    */
-  def drawGroupParam(params: ParamsForAlgoritm, rule: List[Regola]): Unit
+  def drawGroupParam(params: ParamsForAlgorithm, rule: List[Regola]): Unit
 
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
@@ -129,25 +131,27 @@ trait ManagerView extends DialogView {
   def result(message: String): Unit
 
   /**
+   * Draw the modal that show all old params and it allows to choose one
    *
-   * @param olds
-   * @param terminals
-   * @param rules
+   * @param olds list of [[caseclass.CaseClassDB.Parametro]] that are shown
+   * @param terminals list of [[Terminale]] that are shown
+   * @param rules list of [[Regola]] that are shown
    */
   def modalOldParamDraw(olds: List[CaseClassDB.Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
 
   /**
+   * Draw the panel that recap information chosen before running the algorithm
    *
-   * @param info
-   * @param name
-   * @param terminals
-   * @param rules
+   * @param info instance of [[AlgorithmExecute]] that contains information to run the algorithm
+   * @param name optional string if you want to save params
+   * @param terminals list of [[Terminale]] to show
+   * @param rules list of [[Regola]] to show
    */
   def drawShowParams(info: CaseClassHttpMessage.AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
 
   /**
-   *
-   * @param data
+   * Update the modal that allows you to choose old parameters, showing all the information
+   * @param data instance of [[DataForParamasModel]] that contains all info about the param chosen
    */
-  def showInfoParam(data: ParamsModal.DataForParamasModel): Unit
+  def showInfoParam(data: DataForParamasModel): Unit
 }
