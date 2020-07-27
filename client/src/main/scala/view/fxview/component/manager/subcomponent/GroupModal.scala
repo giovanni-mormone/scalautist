@@ -14,15 +14,30 @@ import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
 import view.fxview.component.manager.subcomponent.parent.ModalGruopParent
 import view.fxview.util.ResourceBundleUtil._
 
+/**
+ * @author Francesco Cassano
+ *
+ * trait that allow to perform operation on the view. Extends [[view.fxview.component.Component]].
+ */
 trait GroupModal extends AbstractComponent[ModalGruopParent] {
 
 }
 
+/**
+ * Companion object for trait [[GroupModal]]. The object allows to choose group of special days
+ */
 object GroupModal {
 
   def apply(dataI: LocalDate, dataF: LocalDate, dateNo: List[LocalDate], rules: List[Regola]): GroupModal =
     new GroupModalFX(dataI, dataF, dateNo, rules)
 
+  /**
+   * Java FX implementation for GroupModal
+   * @param dataI date of start
+   * @param dataF date of end
+   * @param dateNo date to not show
+   * @param ruleL rules of group to choose
+   */
   private class GroupModalFX(dataI: LocalDate, dataF: LocalDate, dateNo: List[LocalDate], ruleL: List[Regola])
   extends AbstractComponent[ModalGruopParent]("manager/subcomponent/GroupModal")
   with GroupModal{

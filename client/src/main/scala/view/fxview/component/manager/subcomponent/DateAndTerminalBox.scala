@@ -12,6 +12,7 @@ import javafx.scene.control._
 import org.controlsfx.control.CheckComboBox
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+
 trait DateAndTerminalBox extends Component[ManagerRichiestaBox]{
 
 }

@@ -10,6 +10,7 @@ import utils.TransferObject.InfoRichiesta
 import view.fxview.component.manager.subcomponent.ManagerRichiestaBox.ExtraInfo
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
+
 trait RichiestaForDayBox extends Component[ManagerRichiestaBox]{
 
 }

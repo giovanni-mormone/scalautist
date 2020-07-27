@@ -134,7 +134,7 @@ case object CreateDatePicker{
     dataPicker.setDayCellFactory(_ => new DateCell(){
       override def updateItem(date:LocalDate, empty:Boolean): Unit = {
         super.updateItem(date, empty)
-        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF) ||  date.getDayOfWeek==DayOfWeek.SUNDAY)
+        setDisable(dateNo.contains(date) || date.isBefore(dateI) || date.isAfter(dateF) ||  date.getDayOfWeek==DayOfWeek.SUNDAY) 
       }
     })
     dataPicker

@@ -5,6 +5,13 @@
     -fx-fill-height: true;
 }
 
+#scrollpane{
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10;
+    -fx-fit-to-width: false;
+}
+
 #buttonbox,#hbox{
     -fx-spacing: 10;
     -fx-alignment: center;

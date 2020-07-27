@@ -1,11 +1,11 @@
 package view.fxview.component.manager.subcomponent.parent
 
 import caseclass.CaseClassDB.Terminale
-import view.fxview.component.manager.subcomponent.util.ParamsForAlgoritm
+import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 
 /**
  * @author Francesco Cassano
- * This trait allow to send request to main view
+ * This trait allow to send request to main view from [[ChooseParams]]
  */
 trait ChooseParamsParent {
 
@@ -18,6 +18,6 @@ trait ChooseParamsParent {
   /**
    * Method that allows to draw the panel to set weeks params
    */
-  def weekParams(param: ParamsForAlgoritm): Unit
+  def weekParams(param: ParamsForAlgorithm): Unit
 
 }
