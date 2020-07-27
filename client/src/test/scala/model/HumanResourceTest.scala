@@ -35,7 +35,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   behavior of "contract"
   it should "return login with credential of a person" in {
     val futureRecruit:Future[Response[Login]]=terminale.recruit(insertPersona)
-    futureRecruit map { recruit =>print(recruit); assert(recruit.payload.isDefined)}
+    futureRecruit map { recruit => assert(recruit.payload.isDefined)}
   }
 
   it should "return  a person" in {

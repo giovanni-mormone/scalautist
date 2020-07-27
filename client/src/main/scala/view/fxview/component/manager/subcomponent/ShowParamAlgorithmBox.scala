@@ -208,7 +208,6 @@ object ShowParamAlgorithmBox {
             getGiorniInSettimana
           ))
         })
-        println(info)
         parent.run(info)
       })
     }

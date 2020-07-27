@@ -36,10 +36,10 @@ class TestStipendi extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
   behavior of "GetStipendioInformation"
   it should "return the good InformazioniStipendio when when getting the info for the stipendio" in {
     val stipendiReq: Future[Option[StipendioInformations]] = StipendioOperation.getStipendioInformations(3)
-    stipendiReq map {list => println("INFO "+ list);assert(list.head.equals(stipendiInfoStip3))}
+    stipendiReq map {list => assert(list.head.equals(stipendiInfoStip3))}
   }
   it should "return None when searching for informations of a stipendio not present in the db" in {
     val stipendiReq: Future[Option[StipendioInformations]] = StipendioOperation.getStipendioInformations(65)
-    stipendiReq map {list => println("INFO "+ list);assert(list.isEmpty)}
+    stipendiReq map {list => assert(list.isEmpty)}
   }
 }

@@ -303,7 +303,6 @@ object ManagerModel {
         info.info.flatMap(giorno => giorno._2.map(needed =>
           RequestGiorno(Giorno(needed._2, WEEK.getOrElse(giorno._1, "Vacanza"), giorno._1), needed._1)))
       val requestBody: AssignRichiestaTeorica = AssignRichiestaTeorica(theoreticalRequest, dailyRequest)
-      println(requestBody)
       val request = Post(getURI("definedailyrequest"), transform(requestBody))
       callHttp(request).flatMap(unMarshall)
     }
@@ -325,7 +324,6 @@ object ManagerModel {
     def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[(List[ResultAlgorithm],List[Date])]] = {
       val request = Post(getURI("getresultalgorithm"), transform((ids, dateI,dateF)))
       callHttp(request).flatMap(response => {
-        println(response)
         Unmarshal(response).to[Response[(List[ResultAlgorithm],List[Date])]]
       }
       )
