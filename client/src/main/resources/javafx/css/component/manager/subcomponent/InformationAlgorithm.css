@@ -1,0 +1,11 @@
+#terminal{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 17;
+}
+#externalVBox{
+    -fx-padding: 20;
+    -fx-alignment: center;
+    -fx-spacing: 25;
+    -fx-min-width: 150;
+    -fx-fit-to-height: true;
+}

@@ -12,10 +12,6 @@ private class Main extends Application{
   override def start(primaryStage: Stage): Unit = {
    // ModelDispatcher()
     //ManagerView(primaryStage,"Juan","123").show()
-<<<<<<< HEAD
-=======
-    //HumanResourceViewFX(primaryStage,"Juan","123").show()
->>>>>>> 28ae9644112d5cea0b2bd947812e39d14276c56d
     LoginViewFX(primaryStage).show()
   }
 }

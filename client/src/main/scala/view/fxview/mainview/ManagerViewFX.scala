@@ -29,6 +29,7 @@ object ManagerViewFX {
     with ManagerView with ManagerHomeParent with ManagerHomeModalParent{
 
     private var modalResource: Modal = _
+    private var modalInfo :ModalInfo = _
     private var myController: ManagerController = _
     private var managerHome: ManagerHome = _
     private val REPLACEMENT_WITHOUT_ERROR = "no-replacement-error"
@@ -41,6 +42,12 @@ object ManagerViewFX {
       managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
       myController.startListenNotification()
+      Option(modalInfo) match {
+        case Some(modalInfo) if modalInfo.isShow => modalInfo.message("HOLA")
+        case None => modalInfo =  ModalInfo(stage)
+          modalInfo.start()
+          modalInfo.message("HOLA")
+      }
     }
 
     /////////CALLS FROM CHILDREN TO DRAW -> SEND TO CONTROLLER/////////////
@@ -79,7 +86,9 @@ object ManagerViewFX {
       case _ => super.showMessageFromKey(message)
     }
 
-    override def drawRichiestaPanel(): Unit = myController.datatoRichiestaPanel()
+    override def drawRichiestaPanel(): Unit = {
+      myController.datatoRichiestaPanel()
+    }
 
     override def drawRichiesta(terminal: List[Terminale]): Unit = Platform.runLater(() => managerHome.drawRichiesta(terminal))
 
@@ -269,8 +278,15 @@ object ManagerViewFX {
       managerHome.endLoading()
       super.showMessageFromKey(message)
     })
+
     override def showInfoAlgorithm(message:String):Unit={
-      println(s"message = ${message}")
+      Platform.runLater(() =>{
+        Option(modalInfo) match {
+          case Some(modalInfo) if modalInfo.isShow => modalInfo.message(message)
+          case None => modalInfo =  ModalInfo(stage)
+            modalInfo.start()
+        }
+      })
     }
 
     override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
