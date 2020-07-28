@@ -33,7 +33,11 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param rules list of [[Regola]] that contains all rules information
    */
   def drawShowParams(info: AlgorithmExecute, name: Option[String], terminals: List[Terminale], rules: List[Regola]): Unit
-
+  /**
+   * method that draw notification in view manager
+   * @param str message of the notification
+   * @param tag tag of message
+   */
   def drawNotifica(str: String,tag:Long): Unit
 
   /**

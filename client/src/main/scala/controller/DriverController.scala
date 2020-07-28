@@ -8,6 +8,10 @@ import view.mainview.DriverView
 import scala.util.{Failure, Success, Try}
 
 trait DriverController  extends AbstractController[DriverView] {
+
+  /**
+   * method that verify if exist queue for notification
+   */
   def startListenNotification(): Unit
 
   /**

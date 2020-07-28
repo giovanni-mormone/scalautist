@@ -11,6 +11,10 @@ import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
 trait ModalDisponibilita extends Component[ModalDisponibilitaParent]{
+  /**
+   * method that call your parent allow that show availability in the week
+   * @param day day of week
+   */
   def daySelected(day: String):Unit
 }
 

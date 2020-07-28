@@ -15,9 +15,14 @@ import view.fxview.util.ResourceBundleUtil._
  * Interface to create modal. It Implements [[view.DialogView]]
  */
 trait Modal extends DialogView {
-
+  /**
+   * method that allow show loading icon when operation is called
+   */
   def startLoading(): Unit
 
+  /**
+   * method that remove loading icon when operation is finish
+   */
   def endLoading(): Unit
 }
 
