@@ -282,7 +282,6 @@ object ManagerViewFX {
     }
 
     override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
-      println(messages)
       Platform.runLater(() =>{
         modalResource = Modal[ModalRunParent, Component[ModalRunParent], ModalRunParent](myStage, this,
           RunModal(messages, algorithmExecute))

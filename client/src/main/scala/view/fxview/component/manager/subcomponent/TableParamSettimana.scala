@@ -17,6 +17,10 @@ import scala.jdk.CollectionConverters
 
 trait TableParamSettimana extends Component[ChangeSettimanaRichiestaParent] {
 
+  /**
+   * Method that return to the parent the data that are in table
+   * @return Set of [[ShiftTable]] that are the tablwe rows
+   */
   def getElements(): Set[ShiftTable]
 }
 

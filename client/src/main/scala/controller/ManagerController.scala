@@ -62,6 +62,11 @@ trait ManagerController extends AbstractController[ManagerView]{
    * @param algorithmExecute information that allows the algorithm to work
    */
   def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit
+
+  /**
+   * runAlgorithm checks if you can run algorithm without any problem before running it.
+   * @param algorithmExecute information that allows the algorithm to work
+   */
   def runAlgorithm2(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
   /**
    * It makes algorithm run without check if it overwrites something
@@ -168,12 +173,14 @@ trait ManagerController extends AbstractController[ManagerView]{
   def modalOldParams(terminals: List[Terminale]): Unit
 
   /**
-   *
+   * Method asks to draw the the panel to define weekly variations
+   * @param params instance of [[ParamsForAlgorithm]] that contains information to draw
    */
   def weekParam(params: ParamsForAlgorithm): Unit
 
   /**
-   *
+   * Method asks to draw the the panel to define groups variations
+   * @param params instance of [[ParamsForAlgorithm]] that contains information to draw
    */
   def groupParam(params: ParamsForAlgorithm): Unit
 

@@ -202,8 +202,6 @@ object ManagerHome{
     var selectResultBox:SelectResultBox = _
     var terminalView: TerminalBox = _
     var zonaView: ZonaBox = _
-
-
     var gruopParamBox: GroupParamsBox = _
     var showParam: ShowParamAlgorithmBox = _
 

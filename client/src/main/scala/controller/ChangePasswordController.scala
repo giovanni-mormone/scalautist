@@ -43,8 +43,7 @@ object ChangePasswordController{
     override def changePassword(oldPassword: String, newPassword: String): Unit = newPassword match{
       case x if PasswordHelper.passwordRegex().matches(x) =>
         myModel.changePassword(Utils.userId.getOrElse(0),oldPassword,newPassword).onComplete{
-          case Success(value) if value.statusCode == StatusCodes.NOT_FOUND =>
-            myView.errorChange()
+          case Success(value) if value.statusCode == StatusCodes.NOT_FOUND => myView.errorChange()
           case Success(_) => myView.okChange()
           case _ => myView.errorChange()
         }
