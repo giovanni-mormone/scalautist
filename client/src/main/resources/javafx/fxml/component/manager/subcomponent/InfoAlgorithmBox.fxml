@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="externalVBox" stylesheets="@../../../../css/component/manager/subcomponent/InformationAlgorithm.css" xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"  >
-        <AnchorPane fx:id="ancorPane">
-            <ScrollPane fx:id="scrollpane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+<VBox fx:id="externalVBox" stylesheets="@../../../../css/component/manager/subcomponent/InformationAlgorithm.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+            <ScrollPane fx:id="scrollpane" VBox.vgrow="ALWAYS">
                 <VBox fx:id="messagesHeader">
                 </VBox>
-            </ScrollPane>
-        </AnchorPane>
-        <HBox fx:id="buttonbox">
-            <Button fx:id="close" mnemonicParsing="false"/>
+            </ScrollPane> 
+        <HBox fx:id="closeButton">
+            <Button fx:id="close" mnemonicParsing="false" />
         </HBox>
 </VBox>

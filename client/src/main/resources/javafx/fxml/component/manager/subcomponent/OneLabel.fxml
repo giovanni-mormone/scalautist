@@ -2,8 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<VBox fx:id="oneLabel" xmlns="http://javafx.com/javafx"
+<HBox fx:id="oneLabel" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml">
     <Label fx:id="labelOne" />
-</VBox>
+</HBox>

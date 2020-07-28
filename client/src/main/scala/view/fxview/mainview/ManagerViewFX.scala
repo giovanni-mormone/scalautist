@@ -41,12 +41,7 @@ object ManagerViewFX {
       managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
       myController.startListenNotification()
-      Option(modalInfo) match {
-        case Some(modalInfo) if modalInfo.isShow => modalInfo.message("HOLA")
-        case None => modalInfo =  ModalInfo(stage)
-          modalInfo.start()
-          modalInfo.message("HOLA")
-      }
+
     }
 
     override def drawAbsencePanel(): Unit = {
@@ -275,8 +270,9 @@ object ManagerViewFX {
       Platform.runLater(() =>{
         Option(modalInfo) match {
           case Some(modalInfo) if modalInfo.isShow => modalInfo.message(message)
-          case None => modalInfo =  ModalInfo(stage)
+          case _ => modalInfo =  ModalInfo(stage,this)
             modalInfo.start()
+            modalInfo.message(message)
         }
       })
     }
@@ -296,6 +292,12 @@ object ManagerViewFX {
 
     override def cancel(): Unit =
       Platform.runLater(() => modalResource.close())
+
+    /**
+     * method that close modal that contains information in real-time of status algorithm
+     */
+    override def closeModal(): Unit =
+      modalInfo.close()
   }
 
 }

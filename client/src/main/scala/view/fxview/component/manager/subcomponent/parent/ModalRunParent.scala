@@ -9,6 +9,11 @@ import view.fxview.component.modal.ModalParent
  * It is the interface of the methods used by terminal modal to make requests to controller
  */
 trait ModalRunParent extends ModalParent {
+  /**
+   * method that close modal that contains information in real-time of status algorithm
+   */
+  def closeModal(): Unit
+
 
   /**
    * Method that reset information

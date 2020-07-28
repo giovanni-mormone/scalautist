@@ -21,9 +21,10 @@ object ConfigReceiver {
       val deliverCallback:DeliverCallback = (consumerTag, delivery) => {
           val message = new String(delivery.getBody, "UTF-8")
           method(message)
+          channel.basicAck(delivery.getEnvelope.getDeliveryTag,false)
       }
       val cancel: CancelCallback = _ => {}
-      val autoAck = true
+      val autoAck = false
       channel.basicConsume(queueName, autoAck, deliverCallback, cancel)
     }
   }

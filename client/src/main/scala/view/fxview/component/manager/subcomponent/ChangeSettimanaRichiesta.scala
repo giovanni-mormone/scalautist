@@ -191,7 +191,7 @@ object ChangeSettimanaRichiesta {
 
       for(i <- FIRST_WEEK_DAY_SHIFT until LAST_WEEK_DAY)
         days = days :+ first.plusDays(i)
-      days
+      days.filter(date=>date.isBefore(params.dateF) || date.isAfter(params.dateI) || date.equals(params.dateI) || date.equals(params.dateF))
     }
 
     private def getReqFromTable(table: TableParamSettimana): List[GiornoInSettimana] = {

@@ -1,6 +1,7 @@
-#terminal{
+#labelOne{
     -fx-text-fill: #7c8a96;
     -fx-font-size: 17;
+
 }
 #externalVBox{
     -fx-padding: 20;
@@ -8,4 +9,30 @@
     -fx-spacing: 25;
     -fx-min-width: 150;
     -fx-fit-to-height: inherit;
+    -fx-min-height: 300;
+    -fx-max-height: 300;
+}
+
+#scrollpane{
+    -fx-hbar-policy: never;
+    -fx-blend-mode: screen;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
+}
+#closeButton{
+    -fx-alignment: center;
+}
+#close{
+    -fx-alignment: center;
 }

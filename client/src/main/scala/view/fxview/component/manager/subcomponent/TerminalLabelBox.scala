@@ -25,8 +25,9 @@ object TerminalLabelBox {
       labelOne.setText(setTerminalName())
     }
     def setTerminalName():String={
-      val DEFAULT_VALUE:String =String.valueOf("  ")
-      terminals.foldLeft(DEFAULT_VALUE)(_ +DEFAULT_VALUE+ _)
+      val DEFAULT_VALUE:String =String.valueOf("")
+      val VALUE:String = String.valueOf(" ")
+      terminals.foldLeft(DEFAULT_VALUE)((default,actual)=>default+actual+VALUE)
     }
   }
 

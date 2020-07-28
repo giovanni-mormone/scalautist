@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.*?>
+
 <VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/GroupModal.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <HBox fx:id="hbox">
       <DatePicker fx:id="days" />
-      <ComboBox fx:id="rules" />
+      <ComboBox fx:id="rules"  />
    </HBox>
-      <AnchorPane fx:id="ancorPane">
-         <ScrollPane fx:id="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <VBox fx:id="chosen" >
+         <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS">
+            <VBox fx:id="chosen">
                <Label fx:id="dateSelected" />
             </VBox>
          </ScrollPane>
-      </AnchorPane>
-
    <HBox fx:id="buttonbox">
-      <Button fx:id="add" mnemonicParsing="false"/>
-      <Button fx:id="done" mnemonicParsing="false"/>
+      <Button fx:id="add" mnemonicParsing="false" />
+      <Button fx:id="done" mnemonicParsing="false" />
    </HBox>
 </VBox>

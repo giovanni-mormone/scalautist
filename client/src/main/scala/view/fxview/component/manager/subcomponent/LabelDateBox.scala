@@ -18,11 +18,11 @@ object LabelDateBox {
     with LabelDateBox {
 
     @FXML
-    var terminal: Label = _
+    var labelOne: Label = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      terminal.setText(date)
+      labelOne.setText(date)
     }
   }
 

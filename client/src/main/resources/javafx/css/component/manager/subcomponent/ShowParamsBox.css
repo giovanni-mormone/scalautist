@@ -30,6 +30,10 @@
     -fx-fit-to-height: true;
     -fx-fit-to-width: true;
 }
+#internalVBox{
+    -fx-min-width: 250;
+    -fx-background-color: white;
+}
 #titleInitial,#initTitleTerminal,#titleGruppi,#titleWeek,#titleWeekS{
     -fx-text-fill: #7c8a96;
     -fx-font-size: 20px;
@@ -75,21 +79,21 @@
     -fx-spacing: 10;
 }
 #scrollpane{
+    -fx-blend-mode: src-over;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 10;
+    -fx-background-color: white;
     -fx-border-radius: 10px;
-    -fx-background-insets: 0, 1;
     -fx-background-radius: 10px;
-    -fx-background-color: white;
-    -fx-border-color: transparent;
-    -fx-alignment: center;
-    -fx-fit-to-height: true;
+    -fx-background-insets: 0, 1;
     -fx-fit-to-width: true;
-}
-#ancorPane{
     -fx-fit-to-height: true;
-    -fx-fit-to-width: true;
-    -fx-alignment: center;
-    -fx-background-color: white;
 }
+
 #senzaInfo1,#senzaInfo2,#senzaInfo3,#senzaInfo4{
     -fx-text-fill: #7c8a96;
     -fx-font-size: 15;
@@ -98,11 +102,44 @@
     -fx-font-weight: bold;
 }
 
-#oneLabel{
-    -fx-min-width: 800;
-    -fx-max-width: 800;
-    -fx-fit-to-height: true;
+#driverResult,#baseBox{
     -fx-alignment: center;
+    -fx-spacing: 10;
+}
+#baseBox >.label{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 100;
+    -fx-max-width: 100;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+#driverId{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 120;
+    -fx-max-width: 120;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+#driverTerminal{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 125;
+    -fx-max-width: 125;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+#terminal{
+    -fx-min-height:210 ;
+    -fx-background-color: white;
+    -fx-blend-mode: src-over;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: top-center;
 }
 
 #oneLabel >.label{
@@ -114,6 +151,20 @@
     -fx-fill-height: true;
 }
 
+#oneLabel{
+    -fx-alignment: top-center;
+    -fx-fill-height: false;
+}
+
+#labelOne{
+    -fx-padding: 5;
+    -fx-max-width: 500;
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 13;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+    -fx-text-alignment: justify;
+}
 
 .button:hover {
     -fx-background-color: #0074E1;
