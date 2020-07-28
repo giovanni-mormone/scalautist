@@ -1,41 +1,47 @@
 #vbox{
-    -fx-padding: 10;
-    -fx-spacing: 10;
+    -fx-padding: 20;
     -fx-alignment: center;
-    -fx-fill-height: true;
+    -fx-spacing: 25;
+    -fx-min-width: 150;
+    -fx-fit-to-height: inherit;
+    -fx-min-height: 300;
+    -fx-max-height: 300;
 }
-
-#scrollpane{
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-padding: 10;
-    -fx-fit-to-width: false;
+#rules{
+    -fx-min-width: 145;
+    -fx-max-width: 145;
+}
+#days{
+    -fx-min-width: 150;
+    -fx-max-width: 150;
 }
 
 #buttonbox,#hbox{
     -fx-spacing: 10;
     -fx-alignment: center;
 }
-#ancorPane{
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-min-height: 200;
-    -fx-alignment: top-center;
-    -fx-background-color: white;
-}
+
 #scrollPane{
+    -fx-hbar-policy: never;
+    -fx-blend-mode: src-over;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 10;
+    -fx-background-color: white;
     -fx-border-radius: 10px;
-    -fx-background-insets: 0, 1;
     -fx-background-radius: 10px;
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
 }
 
 #chosen{
-    -fx-min-height: 197;
-    -fx-min-width: 303;
-    -fx-max-width: 303;
     -fx-background-color: white;
+    -fx-blend-mode: src-over;
     -fx-text-fill: #7c8a96;
     -fx-alignment: top-center;
 }
@@ -51,7 +57,7 @@
     -fx-alignment: top-left;
     -fx-text-alignment: left;
 }
-#terminal{
+#labelOne{
     -fx-font-size:16;
     -fx-text-fill: #7c8a96;
     -fx-alignment: center;

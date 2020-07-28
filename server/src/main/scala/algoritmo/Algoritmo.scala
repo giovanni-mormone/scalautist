@@ -15,7 +15,6 @@ import utils.DateConverter._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
 trait Algoritmo {
 
   /**
@@ -80,7 +79,9 @@ object Algoritmo extends Algoritmo{
       lock.unlock()
       verifyData(algorithmExecute).collect{
         case Some(StatusCodes.SUCCES_CODE) =>Some(StatusCodes.SUCCES_CODE)
-        case value =>value
+        case value =>
+          running = false
+          value
       }
     }
 

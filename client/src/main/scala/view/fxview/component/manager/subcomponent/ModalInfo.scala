@@ -13,12 +13,11 @@ import view.fxview.component.manager.subcomponent.parent.ModalRunParent
 import view.fxview.util.ResourceBundleUtil._
 
 
-case class ModalInfo(stage:Stage) extends AbstractFXModalView(stage){
+case class ModalInfo(stage:Stage,parent:ModalRunParent) extends AbstractFXModalView(stage){
   private var modal:ModalInfoA = _
   def start():Unit = {
-    pane.setStyle("-fx-fill-height: true;")
     modal = ModalInfo()
-    pane.getChildren.add(modal.pane)
+    pane.getChildren.add(modal.setParent(parent).pane)
     show()
   }
   def message(message:String): Unit = modal.printMessage(message)
@@ -27,14 +26,15 @@ case class ModalInfo(stage:Stage) extends AbstractFXModalView(stage){
     myStage.show()
   }
   override def close(): Unit = {
-
+    myStage.close()
   }
 }
 /**
  * Companion object of [[ModalInfo]]
  */
 object ModalInfo{
-  def apply(): ModalInfoA  = new ModalInfoFX()
+  private val instance = new ModalInfoFX()
+  def apply(): ModalInfoA  = instance
   private class ModalInfoFX()
     extends AbstractComponent[ModalRunParent]("manager/subcomponent/InfoAlgorithmBox")
       with ModalInfoA {
@@ -50,11 +50,13 @@ object ModalInfo{
 
     private def intiButton(): Unit = {
       close.setText(resources.getResource(key = "close"))
+      close.setOnAction(_=>parent.closeModal())
     }
 
     override def printMessage(information: String): Unit = {
+      println(information)
       val info = InfoLabel(information)
-      messagesHeader.getChildren.add(info.setParent(parent).pane)
+      messagesHeader.getChildren.add(info.pane)
     }
   }
 

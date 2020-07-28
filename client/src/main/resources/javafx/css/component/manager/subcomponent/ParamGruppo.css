@@ -13,19 +13,70 @@
     -fx-fit-to-height: true;
     -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
 }
+
 #grouphbox,#groupvbox,#buttonbox,#buttonbox2{
     -fx-spacing: 20;
     -fx-alignment: center;
 }
+#buttonbox2{
+    -fx-padding: 30;
+    -fx-alignment: bottom-center;
+}
 #groupvbox{
-    -fx-background-color: white;
-    -fx-min-width: 250;
-    -fx-min-height: 285;
+
+    -fx-padding: 5;
+    -fx-alignment: center;
+    -fx-fit-to-height: inherit;
+    -fx-min-height: 300;
+    -fx-max-height: 300;
+    -fx-min-width: 240;
+    -fx-max-width: 240;
 }
 #grouphbox{
     -fx-background-color: white;
     -fx-min-width: 430;
     -fx-fit-to-width: inherit;
+    -fx-min-height: 300;
+    -fx-max-height: 300;
+}
+
+#scrollPane{
+    -fx-blend-mode: src-over;
+    -fx-fit-to-width: true;
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fill-width: false;
+    -fx-fill-height: false;
+}
+
+#tableInfo{
+    -fx-min-height:210 ;
+    -fx-background-color: white;
+    -fx-blend-mode: src-over;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: top-center;
+}
+#internalHBox{
+    -fx-alignment: top-center;
+    -fx-fill-height: false;
+}
+#infoGrupo{
+    -fx-min-width: 240;
+    -fx-alignment: center;
+}
+#internalHBox >.label{
+    -fx-spacing: 10;
+    -fx-text-fill: #7c8a96;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-font-size: 15;
+    -fx-min-width: 90;
+    -fx-max-width: 90;
 }
 #buttonbox > .button {
     -fx-min-width: 40;
@@ -52,32 +103,11 @@
     -fx-border-color: transparent;
     -fx-background-color: #10E7DC;
 }
-#tableInfo{
-    -fx-alignment: top-center;
-    -fx-spacing: 5;
-    -fx-min-height: 200;
-    -fx-fill-height: true;
-}
-#internalHBox,#infoGrupo{
-    -fx-min-width: 280;
-    -fx-alignment: center;
-}
-
-#internalHBox >.label{
-    -fx-spacing: 10;
-    -fx-text-fill: #7c8a96;
-    -fx-font-weight: bold;
-    -fx-alignment: center;
-    -fx-text-alignment: center;
-    -fx-font-size: 15;
-    -fx-min-width: 80;
-    -fx-max-width: 80;
-}
 
 #field1{
-    -fx-spacing: 10;
-    -fx-min-width: 80;
-    -fx-max-width: 80;
+    -fx-padding: 5;
+    -fx-min-width: 90;
+    -fx-max-width: 90;
     -fx-text-fill: #7c8a96;
     -fx-font-size: 13;
     -fx-wrap-text: true;
@@ -85,9 +115,9 @@
     -fx-text-alignment: center;
 }
 #field2{
-    -fx-spacing: 10;
-    -fx-min-width: 80;
-    -fx-max-width: 80;
+    -fx-padding: 5;
+    -fx-min-width: 90;
+    -fx-max-width: 90;
     -fx-text-fill: #7c8a96;
     -fx-font-size: 13;
     -fx-wrap-text: true;
@@ -95,29 +125,10 @@
     -fx-text-alignment: justify;
 }
 #field3{
-    -fx-spacing: 10;
-    -fx-min-width: 80;
-    -fx-max-width: 80;
+    -fx-padding: 5;
+    -fx-min-width: 90;
+    -fx-max-width: 90;
     -fx-alignment: center;
     -fx-fill-height: true;
 
-}
-#ancorPane{
-    -fx-min-width: 250;
-    -fx-min-height: 290;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-background-insets: 0, 1;
-    -fx-alignment: center;
-    -fx-background-color: white;
-}
-#scrollPane{
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-background-insets: 0, 1;
-    -fx-border-color: transparent;
-    -fx-alignment: center;
-    -fx-fit-to-height: true;
-    -fx-fit-to-width: true;
-    -fx-background-color: white;
 }

@@ -8,9 +8,7 @@
    <Insets left="30.0" right="30" bottom="30"/>
   </BorderPane.margin>
     <Label fx:id="title"/>
-    <AnchorPane fx:id="ancorPane">
-    <ScrollPane fx:id="scrollpane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                AnchorPane.topAnchor="0.0">
+    <ScrollPane fx:id="scrollpane" VBox.vgrow="ALWAYS">
         <VBox fx:id="internalVBox">
             <Label fx:id="titleInitial"/>
             <VBox>
@@ -54,7 +52,6 @@
             </VBox>
         </VBox>
     </ScrollPane>
-    </AnchorPane>
    <HBox fx:id="buttons">
       <Button fx:id="reset"/>
        <Button fx:id="run" />
