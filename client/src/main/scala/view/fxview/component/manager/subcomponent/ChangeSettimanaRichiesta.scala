@@ -178,8 +178,11 @@ object ChangeSettimanaRichiesta {
         info._1.getElements().toList.flatMap(shiftInfo => {
           val shiftId = ShiftUtil.getShiftId(shiftInfo.getShift)
           val rule: Int = rules.find(_.nomeRegola.equals(shiftInfo.getSelected.getOrElse(0))).fold(ERROR_ID)(_.idRegola.get)
-          (FIRST_WEEK_DAY_SHIFT to LAST_WEEK_DAY).map(index =>
-                SettimanaS(index, shiftId, shiftInfo.get(index).toInt, rule, Date.valueOf(daysDate(index - 1))))
+          (FIRST_WEEK_DAY_SHIFT to LAST_WEEK_DAY).collect{
+            case index if (daysDate(index - 1).isBefore(params.dateF) && daysDate(index - 1).isAfter(params.dateI)) ||
+              daysDate(index - 1).equals(params.dateI) || daysDate(index - 1).equals(params.dateF)=>
+              SettimanaS(index, shiftId, shiftInfo.get(index).toInt, rule, Date.valueOf(daysDate(index - 1)))
+          }
         })
       }).filter(_.quantita != 0)
 
@@ -191,7 +194,7 @@ object ChangeSettimanaRichiesta {
 
       for(i <- FIRST_WEEK_DAY_SHIFT until LAST_WEEK_DAY)
         days = days :+ first.plusDays(i)
-      days.filter(date=> (date.isBefore(params.dateF) && date.isAfter(params.dateI)) || date.equals(params.dateI) || date.equals(params.dateF))
+      days
     }
 
     private def getReqFromTable(table: TableParamSettimana): List[GiornoInSettimana] = {

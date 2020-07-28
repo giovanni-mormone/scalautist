@@ -40,7 +40,8 @@ object ManagerViewFX {
       myController.setView(this)
       managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
-      myController.startListenNotification() 
+      myController.startListenNotification()
+     
     }
 
     override def drawAbsencePanel(): Unit = {

@@ -24,13 +24,13 @@
     -fx-background-radius: 10px;
     -fx-background-insets: 0, 1;
     -fx-wrap-text: true;
+    -fx-fit-to-width: true;
     -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
 }
 #messagesHeader{
     -fx-background-color: white;
     -fx-wrap-text: true;
-    -fx-min-width: 320;
-    -fx-max-width: 320;
+    -fx-spacing: 5;
 }
 #closeButton{
     -fx-alignment: center;
@@ -45,14 +45,14 @@
     -fx-font-size: 20;
 }
 #oneLabel{
-    -fx-min-width: 300;
-    -fx-max-width: 300;
+    -fx-min-width: 320;
+    -fx-max-width: 320;
 }
 #labelOne{
     -fx-text-fill: #7c8a96;
     -fx-font-size: 17;
     -fx-max-width: 250;
     -fx-wrap-text: true;
-    -fx-text-alignment: justify;
+    -fx-text-alignment: left;
 
 }

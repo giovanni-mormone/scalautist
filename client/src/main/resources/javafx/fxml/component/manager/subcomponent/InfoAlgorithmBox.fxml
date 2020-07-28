@@ -4,11 +4,10 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="externalVBox" stylesheets="@../../../../css/component/manager/subcomponent/InformationAlgorithm.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-    <Label fx:id="title"/>
+    <Label fx:id="title" />
     <ScrollPane fx:id="scrollpane" VBox.vgrow="ALWAYS">
-                <VBox fx:id="messagesHeader" >
-                </VBox>
-            </ScrollPane> 
+        <VBox fx:id="messagesHeader" />
+    </ScrollPane>
         <HBox fx:id="closeButton">
             <Button fx:id="close" mnemonicParsing="false" />
         </HBox>
