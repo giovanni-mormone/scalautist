@@ -24,7 +24,7 @@ trait PersonaModel{
    * @param password
    * user password string
    * @return
-   * future of istance of persona
+   * future of istance of persona or [[messagecodes.StatusCodes.NOT_FOUND]] if the person's informations are wrong.
    */
   def login(user: String, password: String): Future[Response[Persona]]
 
@@ -38,10 +38,11 @@ trait PersonaModel{
    * @param newPassword
    * new user password string
    * @return
-   * future
+   *         Response of the status of the operation: if the operation doesn't go well returns
+   *         a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def changePassword(user: Int, oldPassword: String, newPassword: String): Future[Response[Int]]
-  def getPersone(id:Request[Int]): Future[Response[Persona]]
+
 }
 
 /**
@@ -62,10 +63,7 @@ object PersonaModel {
       val request = Post(getURI("loginpersona"), credential)
       tranformMarshal(request)
     }
-    override def getPersone(id: Request[Int]): Future[Response[Persona]] = {
-      val request = Post(getURI("getpersona"), id)
-      tranformMarshal(request)
-    }
+
     private def tranformMarshal(request: HttpRequest):Future[Response[Persona]]={
       callHttp(request).flatMap(resultRequest=>Unmarshal(resultRequest).to[Response[Persona]])
     }

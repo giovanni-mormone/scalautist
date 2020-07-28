@@ -36,8 +36,6 @@ abstract class AbstractModel extends Model{
 
   override def doHttp(request: HttpRequest): Future[HttpResponse] = dispatcher.serverRequest(request)
 
-  override def shutdownActorSystem(): Future[Terminated] =system.terminate()
-
   ///////////////GET YEAR DA MUOVERE?
 
   protected def getCalendar:Calendar={

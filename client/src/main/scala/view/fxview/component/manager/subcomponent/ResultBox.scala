@@ -16,6 +16,9 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 trait ResultBox extends Component[SelectResultParent]{
+  /**
+   * Used to tell the component to draw itself after the initialize
+   */
   def createDriverResult(): Future[Boolean]
 
 }
