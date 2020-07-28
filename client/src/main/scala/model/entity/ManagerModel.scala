@@ -10,6 +10,7 @@ import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
+import messagecodes.StatusCodes.{ERROR_CODE4, ERROR_CODE5, ERROR_CODE6}
 import model.AbstractModel
 import persistence.ConfigReceiverPersistence
 import receiver.ConfigReceiver
@@ -25,19 +26,26 @@ import scala.concurrent.Future
  *         Interface for System Manager's operation on data
  */
 trait ManagerModel {
+
   /**
    * Method that return all rule that contains a group for the algorithm
    *
-   * @return Future of Option of List of Regola that contains all Rule for group for the algorithm
+   * @return Future of Response of List of Regola that contains all Rule for group for the algorithm
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
    */
   def groupRule():Future[Response[List[Regola]]]
+
   /**
    * Method that return all rule that contains a normal week and special week for the algorithm
    *
-   * @return Future of Option of List of Regola that contains all Rule for a normal
+   * @return Future of Response of List of Regola that contains all Rule for a normal
    *         week and special week for the algorithm
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
    */
-
   def weekRule():Future[Response[List[Regola]]]
 
   def consumeNotification(tag: Long,userId: Option[Int]): Unit
@@ -50,6 +58,7 @@ trait ManagerModel {
    *
    * @return
    * Future of List of absent [[caseclass.CaseClassHttpMessage.InfoAbsenceOnDay]]
+   *
    */
   def allAbsences(): Future[Response[List[InfoAbsenceOnDay]]]
 
@@ -64,6 +73,12 @@ trait ManagerModel {
    * Id of work shift information to search for available employee
    * @return
    * Future of list of [[caseclass.CaseClassHttpMessage.InfoReplacement]]
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no rules was found
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if idResult not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE2]]  if idTerminal not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if idTurno not exist in database
    */
   def extraAvailability(idTerminale: Int, idTurno: Int, idRisultato: Int): Future[Response[List[InfoReplacement]]]
 
@@ -76,6 +91,10 @@ trait ManagerModel {
    * Id of new driver to assign to shift
    * @return
    * result of operation
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if idRisultato not exist
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if idPersona not exist
    */
   def replaceShift(idRisultato: Int, idNewDriver: Int): Future[Response[Int]]
 
@@ -86,6 +105,20 @@ trait ManagerModel {
    * information to build request body like an instance of [[InfoRichiesta]]
    * @return
    * result of operation
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the conditions on the dates are not respected
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the RichiesteTeoriche to insert are None
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if it fails the insert of [[caseclass.CaseClassDB.Richiesta]]
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the id of richiesta teorica are None
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days to insert are None
+   * [[messagecodes.StatusCodes.ERROR_CODE6]] if it's been asked to update some RichiestaTeorica but it not finds the old RichiestaTeorica in the db
+   * [[messagecodes.StatusCodes.ERROR_CODE7]] if it's been asked to update some RichiestaTeorica but it not finds the Richiesta associated to it
+   * [[messagecodes.StatusCodes.ERROR_CODE8]] if it's been asked to update some RichiestaTeorica but it not finds the Giorno to associate to it
+   * [[messagecodes.StatusCodes.ERROR_CODE9]] if there is some terminaleID duplicated in the insert request
+   * [[messagecodes.StatusCodes.ERROR_CODE10]]: Error in [[caseclass.CaseClassDB.RichiestaTeorica]] set
+   * [[messagecodes.StatusCodes.ERROR_CODE11]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some days in the set don't exist
+   * [[messagecodes.StatusCodes.ERROR_CODE12]]: Error in [[caseclass.CaseClassHttpMessage.RequestGiorno]], some shifts in the set don't exist
    */
   def defineTheoreticalRequest(info: InfoRichiesta): Future[Response[Int]]
 
@@ -95,6 +128,26 @@ trait ManagerModel {
    * @param info case class that contains all info for algorithm and yours execution
    * @return Future Response Int that represent status operation
    *         [[messagecodes.StatusCodes.SUCCES_CODE]] if algorithm init without problem
+   *
+   * Possible error codes:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if time frame have a problem, this can be:
+   *                                          time frame less that 28 days, dates to the contrary
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if list with terminal contains some terminal that not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if group contains some error, this can be:
+   *                                          group with one date, date in group outside time frame, ruler in
+   *                                          group not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if normal week contains some error, this can be:
+   *                                          idDay not correspond to day in week, ruler in week not exist in
+   *                                          database, shift in week not exist in database
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if special week contains some error, this can be:
+   *                                          idDay not correspond to day in week, ruler in week not exist in
+   *                                          database, shift in week not exist in database or date in week
+   *                                          is outside to time frame
+   * [[messagecodes.StatusCodes.ERROR_CODE6]] if time frame not contains theoretical request
+   * [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers
+   * [[messagecodes.StatusCodes.ERROR_CODE8]] if not exist shift in database
+   * [[messagecodes.StatusCodes.ERROR_CODE9]] if a driver not contains a contract
+   * [[messagecodes.StatusCodes.ERROR_CODE10]] if the algorithm is already running
    */
   def runAlgorithm(info: AlgorithmExecute, method: String => Unit): Future[Response[Int]]
 
@@ -106,13 +159,15 @@ trait ManagerModel {
    * @param idTerminale represent a terminal in database
    * @param dataI       represent init date for which you want to start
    * @param dataF       represent finish date for this call
-   * @return Future of Response of List of Result Algorithm, for description of this case class, view
-   *         [[caseclass.CaseClassHttpMessage.ResultAlgorithm]]
+   * @return Future of Response of List of Result Algorithm, if there is no result for the terminal
+   *         or the period provided returns [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def getResultAlgorithm(idTerminale: Int, dataI: Date, dataF: Date): Future[Response[(List[ResultAlgorithm], List[Date])]]
 
   /**
-   * return all parameter existing in database
+   * @return
+   *         Response with all parameter existing in database,
+   *         [[messagecodes.StatusCodes.NOT_FOUND]] if there are no parameters
    */
   def getOldParameter: Future[Response[List[Parametro]]]
 
@@ -129,7 +184,14 @@ trait ManagerModel {
    *
    * @param parameters case class that represent information for parameters, this case class contains
    *                   parametro: Parametro, giornoInSettimana: List[GiornoInSettimana]
-   * @return Future Response Int with status of operation
+   * @return Response with the status of the operation ; can be
+   *          [[messagecodes.StatusCodes.NOT_FOUND]] if delete all have a problem, this is a extreme case
+   *          [[messagecodes.StatusCodes.ERROR_CODE1]] if exist error while insert Parametro
+   *          [[messagecodes.StatusCodes.ERROR_CODE2]] if exist error while insert GiornoInSettimana
+   *          [[messagecodes.StatusCodes.ERROR_CODE3]] if ZonaTerminal is empty or name parameter is empty
+   *          [[messagecodes.StatusCodes.ERROR_CODE4]] if Regola not exist
+   *          [[messagecodes.StatusCodes.ERROR_CODE5]] if GiornoInSettimana contains quantity less that zero
+   *          [[messagecodes.StatusCodes.SUCCES_CODE]] if not exist error in operation
    */
   def saveParameters(parameters: InfoAlgorithm): Future[Response[Int]]
 
@@ -144,15 +206,28 @@ trait ManagerModel {
   /**
    * method that return Option of List of zone if exists
    *
-   * @return Option of List of zone if exists
+   * @return Response of List of zone if exists
    */
   def getAllZone: Future[Response[List[Zona]]]
 
+  /**
+   * Verifies if there i an old result for the dates and terminals requested.
+   *
+   * @param dataToCheck
+   *                    The dates and terminals to check
+   * @return
+   *          Response of List of Option with status code of operation that can be:
+   * *         [[messagecodes.StatusCodes.INFO_CODE1]] if not exist info in this time period
+   * *         [[messagecodes.StatusCodes.INFO_CODE2]] if exist a time period next to dataF
+   * *         [[messagecodes.StatusCodes.INFO_CODE3]] if exist new driver or minus driver in terminal that we want to run
+   * *         [[messagecodes.StatusCodes.INFO_CODE4]] if only re-write info in the time period
+   * *         [[messagecodes.StatusCodes.ERROR_CODE1]] if not exist drivers for some terminal
+   */
   def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]]
 
   /**
    * method that return Option of List of Terminale if exist
-   * @return Option of List of Terminale
+   * @return Response of List of Terminale in the database
    */
   def getAllTerminale: Future[Response[List[Terminale]]]
 
@@ -161,7 +236,7 @@ trait ManagerModel {
    *  in the init operation, but result contain your id
    *
    * @param zona case class that represent struct for a zona in database
-   * @return Future of Option of zona that represent zona insert into database
+   * @return Future of Response of zona that represent zona insert into database
    *          with your Id
    */
   def setZona(zona: Zona):Future[Response[Zona]]
@@ -170,8 +245,8 @@ trait ManagerModel {
    * method that update a Zona instance and return a Response of Zona, this can be empty if it fails
    *
    * @param zona zona we want update in database
-   * @return Future of Response of Int, can be None if operation if update another case is
-   *         some with id of zona
+   * @return Future of Response of Int that is empty if the terminal was already present in the db, or
+   *         the id of the terminal inserted in the db
    */
   def updateZona(zona: Zona): Future[Response[Int]]
 
@@ -179,9 +254,10 @@ trait ManagerModel {
    * method that delete a Zona instance and return a Response of Zona, this can be empty if it fails
    *
    * @param zona id that represent a zone in database
-   * @return Future of Response of Zona
+   * @return Future of Response of the status of the operation; if the zona doesn't exists returns
+   *         a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
-  def deleteZona(zona: Int): Future[Response[Zona]]
+  def deleteZona(zona: Int): Future[Response[Int]]
 
   /**
    * Insert terminal into database, this case class not contains id for terminal
@@ -195,14 +271,16 @@ trait ManagerModel {
   /**
    * method that return a None if terminal if update and Int if terminal if insert
    * @param terminale identifies a terminal we want update into database
-   * @return Response of Int that can be empty
+   * @return Response of Int that is empty if the terminal was already present in the db, or
+   *         the id of the terminal inserted in the db.
    */
   def updateTerminale(terminale:Terminale): Future[Response[Int]]
 
   /**
    * method that delete a terminal by id
    * @param id identifies a terminal into database, then select terminale associate to id and delete
-   * @return Option of list of terminal that can be empty
+   * @return Response with the status of the operation. If the terminal is not present returns
+   *         a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def deleteTerminale(id:Int): Future[Response[Int]]
 
@@ -250,7 +328,6 @@ object ManagerModel {
         info.info.flatMap(giorno => giorno._2.map(needed =>
           RequestGiorno(Giorno(needed._2, WEEK.getOrElse(giorno._1, "Vacanza"), giorno._1), needed._1)))
       val requestBody: AssignRichiestaTeorica = AssignRichiestaTeorica(theoreticalRequest, dailyRequest)
-      println(requestBody)
       val request = Post(getURI("definedailyrequest"), transform(requestBody))
       callHttp(request).flatMap(unMarshall)
     }
@@ -272,7 +349,6 @@ object ManagerModel {
     def getResultAlgorithmMemorize(ids:Int,dateI:Date,dateF:Date):Future[Response[(List[ResultAlgorithm],List[Date])]] = {
       val request = Post(getURI("getresultalgorithm"), transform((ids, dateI,dateF)))
       callHttp(request).flatMap(response => {
-        println(response)
         Unmarshal(response).to[Response[(List[ResultAlgorithm],List[Date])]]
       }
       )
@@ -345,9 +421,9 @@ object ManagerModel {
       callRequest(request)
     }
 
-    override def deleteZona(zona: Int): Future[Response[Zona]] = {
+    override def deleteZona(zona: Int): Future[Response[Int]] = {
       val request = Post(getURI("deletezona"), transform(zona))
-      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Zona]])
+      callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[Int]])
     }
 
     override def setZona(zona: Zona): Future[Response[Zona]] = {

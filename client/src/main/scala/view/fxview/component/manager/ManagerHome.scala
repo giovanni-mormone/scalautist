@@ -36,8 +36,21 @@ trait ManagerHome extends Component[ManagerHomeParent]{
 
   def drawNotifica(str: String,tag:Long): Unit
 
+  /**
+   * Draws a representation of the result on the view.
+   *
+   * @param resultList
+   *                   The List of results to draw.
+   * @param dateList
+   *                 The days of the results to draw.
+   */
   def drawResult(resultList: List[ResultAlgorithm], dateList: List[Date]): Unit
 
+  /**
+   * draws a result selection view.
+   * @param terminal
+   *                 The list of terminals present in the db.
+   */
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
   /**
@@ -47,6 +60,9 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    */
   def drawChooseParams(terminals: List[Terminale]): Unit
 
+  /**
+   * used to redraw the richiesta panel.
+   */
   def reDrawRichiesta(): Unit
 
   /**
@@ -186,8 +202,6 @@ object ManagerHome{
     var selectResultBox:SelectResultBox = _
     var terminalView: TerminalBox = _
     var zonaView: ZonaBox = _
-
-
     var gruopParamBox: GroupParamsBox = _
     var showParam: ShowParamAlgorithmBox = _
 

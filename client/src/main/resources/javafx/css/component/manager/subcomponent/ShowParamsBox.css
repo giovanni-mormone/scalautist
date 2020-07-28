@@ -27,6 +27,8 @@
     -fx-alignment: center;
     -fx-spacing: 10;
     -fx-padding: 10;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
 }
 #internalVBox{
     -fx-min-width: 250;
@@ -55,7 +57,7 @@
     -fx-alignment: center;
     -fx-spacing: 10;
 }
-#gruppi,#normalWeek,#specialWeek, #terminal{
+#gruppi,#normalWeek,#specialWeek{
     -fx-alignment: center;
     -fx-spacing: 10;
     -fx-padding: 10;
@@ -140,10 +142,13 @@
     -fx-alignment: top-center;
 }
 
-#terminal >.label{
+#oneLabel >.label{
+    -fx-spacing: 20;
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 13;
     -fx-alignment: center;
     -fx-text-alignment: center;
-    -fx-wrap-text: true;
+    -fx-fill-height: true;
 }
 
 #oneLabel{

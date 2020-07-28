@@ -73,8 +73,10 @@ object ManagerViewFX {
           managerHome.stopLoadingReplacements()
         })
       case _ =>
-        managerHome.endLoading()
-        super.showMessageFromKey(message)
+        Platform.runLater(() => {
+          managerHome.endLoading()
+          super.showMessageFromKey(message)
+        })
     }
 
     override def drawRichiestaPanel(): Unit = {
@@ -276,7 +278,6 @@ object ManagerViewFX {
     }
 
     override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
-      println(messages)
       Platform.runLater(() =>{
         modalResource = Modal[ModalRunParent, Component[ModalRunParent], ModalRunParent](myStage, this,
           RunModal(messages, algorithmExecute))

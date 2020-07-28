@@ -1,6 +1,6 @@
 import javafx.application.Application
 import javafx.stage.Stage
-import view.fxview.mainview.{HumanResourceViewFX, LoginViewFX, ManagerViewFX}
+import view.fxview.mainview.LoginViewFX
 
 object MainClient{
   def main(args: Array[String]): Unit = {

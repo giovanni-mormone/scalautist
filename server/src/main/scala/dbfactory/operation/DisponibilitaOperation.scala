@@ -44,6 +44,7 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
   def allDriverWithAvailabilityForADate(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[Option[List[InfoReplacement]]]
 
   /**
+   * Method that starting from a result, a terminal and a turn controls if they exist
    *
    * @param idRisultato represent a row in result table, this contains information per one driver in one determinate shift
    * @param idTerminal represent terminal where the idRisultato was recorded
@@ -113,7 +114,6 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   import convertToQueryPersonStoricAvail.datToQueryPersonStoricAvail
   //identifies driver by id
   private val RUOLO_DRIVER=3
-  // TODO Controllare anche la settimana :) \(-_-)/
   override def insert(element:Disponibilita): Future[Option[Int]] = {
     for{
       disponibilita <-  InstanceDisponibilita.operation().execQueryFilter(f => f.id, x => x.giorno1 === element.giorno1 && x.giorno2 === element.giorno2)

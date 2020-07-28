@@ -2,7 +2,7 @@ package view.mainview
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
 import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
@@ -149,7 +149,7 @@ trait ManagerView extends DialogView {
    * @param terminals list of [[Terminale]] that are shown
    * @param rules list of [[Regola]] that are shown
    */
-  def modalOldParamDraw(olds: List[CaseClassDB.Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
+  def modalOldParamDraw(olds: List[Parametro], terminals: List[Terminale], rules: List[Regola]): Unit
 
   /**
    * Draw the panel that recap information chosen before running the algorithm

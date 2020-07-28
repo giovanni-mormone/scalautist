@@ -11,6 +11,9 @@ import view.fxview.component.manager.subcomponent.parent.SelectResultParent
 import view.fxview.component.{AbstractComponent, Component}
 
 trait DriverResultBox extends Component[SelectResultParent]{
+  /**
+   * Used to draw the component after the initialize.
+   */
  def createShiftResult():Unit
 }
 

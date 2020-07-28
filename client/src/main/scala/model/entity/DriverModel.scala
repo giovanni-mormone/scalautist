@@ -29,7 +29,8 @@ trait DriverModel {
    * Method that obtains salary for a person
    *
    * @param id id that represent  id of a persona
-   * @return Option of List of Stipendio that represent all salary of a persona
+   * @return Response of List of Stipendio that represent all salary of a persona;
+   *         if there are none returns a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def getSalary(id: Int): Future[Response[List[Stipendio]]]
 
@@ -37,7 +38,8 @@ trait DriverModel {
    * Method that obtains information of salary for a person
    *
    * @param id id that represent  id of salary
-   * @return Option of List of Stipendio that represent all salary of a persona
+   * @return Response of List of Stipendio that represent all salary of a persona; if none
+   *         are present returns a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def getInfoForSalary(id: Int): Future[Response[StipendioInformations]]
 
@@ -45,6 +47,8 @@ trait DriverModel {
    * Method that obtains the informations about the turni of a day for a driver
    * @param userId
    * @return
+   *         A Response containg the InfoHome for the current day of a driver; if
+   *         none are present returns a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def getTurniInDay(userId: Int): Future[Response[InfoHome]]
 
@@ -53,6 +57,8 @@ trait DriverModel {
    *
    * @param userId
    * @return
+   *         A Response containg the InfoShift for the current day of a driver; if
+   *         none are present returns a [[messagecodes.StatusCodes.NOT_FOUND]]
    */
   def getTurniSettimanali(userId: Int):  Future[Response[InfoShift]]
 
@@ -62,7 +68,7 @@ trait DriverModel {
    * @param userId
    *               id employee to control
    * @return
-   *         List of day of possible extra
+   *         Response containing the List of day of possible extra
    */
   def getDisponibilita(userId: Int): Future[Response[List[String]]]
 
@@ -73,6 +79,9 @@ trait DriverModel {
    *                String of day one
    * @param giorno2
    *                String of day two
+   * @return
+   *         A response containing [[messagecodes.StatusCodes.ERROR_CODE1]] if the update fails; [[messagecodes.StatusCodes.NOT_FOUND]] if
+   *         the user not exists; SUCCESS otherwise.
    */
   def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]]
 }

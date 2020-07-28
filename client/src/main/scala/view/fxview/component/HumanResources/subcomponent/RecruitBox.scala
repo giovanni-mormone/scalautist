@@ -210,8 +210,6 @@ object RecruitBox {
             )
           )
         }
-        else
-          println("holy shit man!! You can't fill a simple form? Are you an asshole?")
       })
     }
 

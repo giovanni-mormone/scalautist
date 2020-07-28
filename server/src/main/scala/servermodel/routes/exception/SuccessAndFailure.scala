@@ -28,6 +28,8 @@ object SuccessAndFailure {
     case Success(Some(statusCodes.ERROR_CODE8)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE8))
     case Success(Some(statusCodes.ERROR_CODE9)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE9))
     case Success(Some(statusCodes.ERROR_CODE10)) => complete(StatusCodes.EnhanceYourCalm,Response[Int](statusCodes.ERROR_CODE10))
+    case Success(Some(statusCodes.ERROR_CODE11)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE11))
+    case Success(Some(statusCodes.ERROR_CODE12)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE12))
     case Success(Some(statusCodes.INFO_CODE1)) => complete(StatusCodes.Continue,Response[Int](statusCodes.INFO_CODE1))
     case Success(Some(statusCodes.INFO_CODE2)) => complete(StatusCodes.Continue,Response[Int](statusCodes.INFO_CODE2))
     case Success(Some(statusCodes.INFO_CODE3)) => complete(StatusCodes.Continue,Response[Int](statusCodes.INFO_CODE3))

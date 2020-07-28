@@ -25,6 +25,13 @@ trait HumanResourceModel{
    * Instance of Persona to save
    * @return
    * Future of type Response of Login that contains username and password
+   *
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the contratto provided not exits in the db
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the contratto not allows for disponibilita to be defined but the disponibilita is present
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the contratto is not fisso but there is a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the contratto is fisso but there is not a disponibilità present
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the turni are not right according to the contratto
    */
   def recruit(persona:Assumi):Future[Response[Login]]
 
@@ -34,6 +41,7 @@ trait HumanResourceModel{
    *  id of the persona
    * @return
    * Future of type Response of Int
+   *
    */
   def fires(ids:Int): Future[Response[Int]]
   /**
@@ -42,6 +50,8 @@ trait HumanResourceModel{
    * Set of Persona ids
    * @return
    * Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees was found
    */
   def firesAll(ids: Set[Int]): Future[Response[Int]]
 
@@ -57,6 +67,12 @@ trait HumanResourceModel{
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the days between the given day are > of GIORNI_FERIE_ANNUI
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
    */
   def illnessPeriod(assenza: Assenza): Future[Response[Int]]
 
@@ -64,6 +80,12 @@ trait HumanResourceModel{
    *  Assign an illness to an employee
    * @param assenza case class that represent absence
    * @return Future of Response of type Int
+   * Possible error code:
+   * [[messagecodes.StatusCodes.ERROR_CODE1]] if the persona alredy has an assenza in the period provided.
+   * [[messagecodes.StatusCodes.ERROR_CODE2]] if the days between the given day are > of GIORNI_FERIE_ANNUI
+   * [[messagecodes.StatusCodes.ERROR_CODE3]] if the dates given in input are not of the same year.
+   * [[messagecodes.StatusCodes.ERROR_CODE4]] if the start date is after the end date.
+   * [[messagecodes.StatusCodes.ERROR_CODE5]] if the days of the assenza to insert are greater than the remaninig day of assenza for the persona.
    */
   def holidays(assenza: Assenza):Future[Response[Int]]
 
@@ -80,6 +102,8 @@ trait HumanResourceModel{
    * method that return a Response of list of terminal, this can be empty if zone not contains a terminal
    * @param id identifies a zone into database, then select all terminale associate to id
    * @return Response of list of terminal that can be empty
+   * Possible error code:
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if not found any zones
    */
   def getTerminalByZone(id:Int): Future[Response[List[Terminale]]]
 
@@ -87,49 +111,51 @@ trait HumanResourceModel{
    * method that return a Response of terminal, this can be empty if terminal not exist
    * @param id identifies a terminal into database, then select this
    * @return Response of terminal that can be empty
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if not found any terminals
    */
   def getTerminale(id:Int): Future[Response[Terminale]]
 
   /**
    * method that return Option of List of Terminale if exist
-   * @return Option of List of Terminale
+   * @return Response of List of Terminale
    */
   def getAllTerminale: Future[Response[List[Terminale]]]
 
   /**
    * method that return Option of List of zone if exists
-   * @return Option of List of zone if exists
+   * @return Response of List of zone if exists
    */
   def getAllZone:Future[Response[List[Zona]]]
 
   /**
    * method that return all contract in database
-   * @return Option of list with all contract existing into database
+   * @return Response of list with all contract existing into database
    */
   def getAllContract:Future[Response[List[Contratto]]]
 
   /**
    * method that return all shift in database
-   * @return Option of list with all shift existing into database
+   * @return Response of list with all shift existing into database
    */
   def getAllShift:Future[Response[List[Turno]]]
 
   /**
    * Method that calculus salary for all person in the system, this method is call every 30 days
-   * @return Future of Option of List of Stipendio, for details of Stipendio,
+   * @return Future of Response of List of Stipendio, for details of Stipendio,
    *         see [[caseclass.CaseClassDB.Stipendio]]
    */
   def salaryCalculation():Future[Response[List[Stipendio]]]
 
   /**
    * Method that obtains all day of holiday of a persona
-   * @return Option of List with all day of holiday of a persona
+   * @return Response of List with all day of holiday of a persona
    */
   def getHolidayByPerson:Future[Response[List[Ferie]]]
 
   /**
    * Method that obtains all day of holiday of a persona
-   * @return Option of List with all day of holiday of a persona
+   * @return Response of List with all day of holiday of a persona
+   * [[messagecodes.StatusCodes.NOT_FOUND]] if no employees was found
    */
   def getAbsenceInYearForPerson(idPersona:Int):Future[Response[List[Assenza]]]
 

@@ -12,10 +12,22 @@ import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.component.manager.subcomponent.parent.{FillHolesParent, GroupParamsParent}
 
 trait TwoFieldCheckBox extends Component[GroupParamsParent] {
+  /**
+   * Tells if the component is selected or not
+   * @return
+   */
   def selectedItem(): Boolean
 
+  /**
+   * Tells the rule of the group
+   * @return
+   */
   def getRule: String
 
+  /**
+   * Tells the dates of the group
+   * @return
+   */
   def getDateList: List[Date]
 }
 

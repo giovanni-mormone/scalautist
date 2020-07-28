@@ -31,7 +31,7 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
   }
   it should "return Some(1) when Driver absence is updated in risultato table" in {
     val updateAbsence: Future[Option[Int]] = RisultatoOperation.updateAbsence(idRisultatoForUpdate,idNewPerson)
-    updateAbsence map {update =>println(update);  assert(update.contains(1))}
+    updateAbsence map {update => assert(update.contains(1))}
   }
   it should "return list length 6 next to update absence with date 20200618" in {
     val getAllAbsence: Future[Option[List[InfoAbsenceOnDay]]] = AssenzaOperation.getAllAbsence(date)
