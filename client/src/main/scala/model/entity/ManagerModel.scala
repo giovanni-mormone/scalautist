@@ -11,7 +11,7 @@ import caseclass.CaseClassHttpMessage._
 import jsonmessages.ImplicitDate._
 import jsonmessages.JsonFormats._
 import messagecodes.StatusCodes.{ERROR_CODE4, ERROR_CODE5, ERROR_CODE6}
-import model.AbstractModel
+import model.AbstractHttp
 import persistence.ConfigReceiverPersistence
 import receiver.ConfigReceiver
 import utils.TransferObject.InfoRichiesta
@@ -22,7 +22,7 @@ import scala.concurrent.Future
 
 /**
  * @author Francesco Cassano
- *         ManagerModel extends [[model.Model]].
+ *         ManagerModel extends [[model.Http]].
  *         Interface for System Manager's operation on data
  */
 trait ManagerModel {
@@ -297,7 +297,7 @@ object ManagerModel {
    * HTTP implementation for [[ManagerModel]]
    */
 
-  private class ManagerModelHttp extends AbstractModel with ManagerModel {
+  private class ManagerModelHttp extends AbstractHttp with ManagerModel {
 
 
     private val TODAY: Date = Date.valueOf(LocalDate.now())

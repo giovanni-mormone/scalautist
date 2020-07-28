@@ -9,14 +9,14 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage._
 import jsonmessages.JsonFormats._
-import model.AbstractModel
+import model.AbstractHttp
 
 import scala.concurrent.Future
 
 /**
  * @author Fabian Aspee Encina
- * RisorseUmaneModel extends [[model.Model]].
- * Interface for Human Resource Manager's operation on data
+ *         RisorseUmaneModel extends [[model.Http]].
+ *         Interface for Human Resource Manager's operation on data
  */
 trait HumanResourceModel{
   /**
@@ -169,7 +169,7 @@ object HumanResourceModel {
 
   def apply(): HumanResourceModel = new HumanResourceHttp()
 
-  private class HumanResourceHttp extends AbstractModel with HumanResourceModel{
+  private class HumanResourceHttp extends AbstractHttp with HumanResourceModel{
 
     override def recruit(assumi: Assumi): Future[Response[Login]] = {
       val request = Post(getURI("hireperson"), transform(assumi))
