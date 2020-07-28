@@ -5,14 +5,14 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Login, Persona}
 import caseclass.CaseClassHttpMessage.{ChangePassword, Request, Response}
 import jsonmessages.JsonFormats._
-import model.AbstractModel
+import model.AbstractHttp
 
 import scala.concurrent.Future
 
 /**
  * @author Francesco Cassano
- * PersonaModel extends [[model.Model]].
- * Interface for Persona Entity operation
+ *         PersonaModel extends [[model.Http]].
+ *         Interface for Persona Entity operation
  */
 trait PersonaModel{
 
@@ -55,7 +55,7 @@ object PersonaModel {
 
   def apply(): PersonaModel = instance
 
-  private class PersonaModelHttp extends AbstractModel with PersonaModel{
+  private class PersonaModelHttp extends AbstractHttp with PersonaModel{
 
 
     override def login(user: String, password: String): Future[Response[Persona]] = {

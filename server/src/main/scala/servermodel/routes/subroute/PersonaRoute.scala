@@ -40,7 +40,7 @@ object PersonaRoute{
     post {
       entity(as[Request[Assumi]]) {
         case Request(Some(assumi)) => onComplete(PersonaOperation.assumi(assumi)) {
-          case Success(Some(idPerson)) if idPerson>0 =>onComplete(PersonaOperation.recoveryPassword(idPerson)) {
+          case Success(Some(idPerson)) if idPerson > 0 =>onComplete(PersonaOperation.recoveryPassword(idPerson)) {
             case Success(Some(login)) => complete(StatusCodes.Created,Response(statusCodes.SUCCES_CODE, Some(login)))
             case t => anotherSuccessAndFailure(t)
           }

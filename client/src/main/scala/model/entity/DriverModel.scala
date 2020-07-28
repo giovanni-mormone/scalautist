@@ -10,7 +10,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import caseclass.CaseClassDB.{Disponibilita, Stipendio, Turno}
 import caseclass.CaseClassHttpMessage.{Dates, Id, InfoHome, InfoShift, Response, StipendioInformations}
 import jsonmessages.JsonFormats._
-import model.AbstractModel
+import model.AbstractHttp
 import persistence.ConfigReceiverPersistence
 
 import scala.concurrent.Future
@@ -18,8 +18,8 @@ import scala.concurrent.Future
 
 /**
  * @author Giovanni Mormone, Francesco Cassano
- * DriverModel extends [[model.Model]].
- * Interface for driver's operation on data
+ *         DriverModel extends [[model.Http]].
+ *         Interface for driver's operation on data
  */
 trait DriverModel {
   def verifyExistedQueue(userId: Option[Int], notificationReceived: (String, Long) => Unit): Unit
@@ -92,7 +92,7 @@ object DriverModel {
 
   def apply(): DriverModel = new DriverResourceHttp()
 
-  private class DriverResourceHttp extends AbstractModel with DriverModel{
+  private class DriverResourceHttp extends AbstractHttp with DriverModel{
 
     override def getSalary(id: Int): Future[Response[List[Stipendio]]] = {
       val request = Post(getURI("getstipendio"),transform(id))
@@ -107,23 +107,23 @@ object DriverModel {
     }
 
     override def getTurniInDay(userId: Int): Future[Response[InfoHome]] = {
-      val request = Post(getURI("getturniinday"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
+      val request = Post(getURI("getturniinday"),transform(userId,Dates(Date.valueOf(LocalDate.now()))))
       callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoHome]])
     }
 
     override def getTurniSettimanali(userId: Int): Future[Response[InfoShift]] = {
-      val request = Post(getURI("getturniinweek"),transform(userId,Dates(new Date(System.currentTimeMillis()))))
+      val request = Post(getURI("getturniinweek"),transform(userId,Dates(Date.valueOf(LocalDate.now()))))
       callHttp(request).flatMap(resultRequest => Unmarshal(resultRequest).to[Response[InfoShift]])
     }
 
     override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
-      val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(new Date(System.currentTimeMillis()))))
+      val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(Date.valueOf(LocalDate.now()))))
       callHttp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }
 
     override def setDisponibilita(giorno1: String, giorno2: String, user: Int): Future[Response[Int]] = {
       val c = Calendar.getInstance()
-      c.setTime(new Date(System.currentTimeMillis()))
+      c.setTime(Date.valueOf(LocalDate.now()))
       val request = Post(getURI("setdisponibilita"), transform((Disponibilita(c.get(Calendar.WEEK_OF_YEAR), giorno1, giorno2), Id(user))))
       callHttp(request).flatMap(unMarshall)
     }
