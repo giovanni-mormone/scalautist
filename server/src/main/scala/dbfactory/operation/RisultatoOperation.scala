@@ -13,6 +13,7 @@ import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
+import utils.EmitterHelper
 
 import scala.concurrent.Future
 
@@ -198,9 +199,7 @@ object RisultatoOperation extends RisultatoOperation {
         case (_, _) => update(idRisultato,idPersona)
       }
     }yield {
-      val notificationEmitter = ConfigEmitterPersistence("disponibilita_emitter",s"$idPersona")
-      notificationEmitter.start()
-      result.foreach(_.foreach(date=>notificationEmitter.sendMessage("Devi fare uno straordinario il giorno " +date._1,s"$idPersona")))
+      EmitterHelper.notificationExtraordinary(idPersona,result)
       finalResult
     }
 
