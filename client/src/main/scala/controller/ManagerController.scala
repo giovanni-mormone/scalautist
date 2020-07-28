@@ -41,6 +41,10 @@ trait ManagerController extends AbstractController[ManagerView]{
    */
   def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit
 
+  /**
+   * method that allow delete notification when user make click
+   * @param tag tag that allow delete notification
+   */
   def consumeNotification(tag: Long): Unit
 
   /**
@@ -204,6 +208,9 @@ trait ManagerController extends AbstractController[ManagerView]{
    */
   def terminalModalData(terminalId: Int): Unit
 
+  /**
+   * method that verify if exist queue for notification
+   */
   def startListenNotification():Unit
 }
 

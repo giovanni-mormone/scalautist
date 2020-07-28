@@ -48,6 +48,11 @@ trait DriverHome extends Component[DriverHomeParent] {
    */
   def stopLoading(): Unit
 
+  /**
+   * method that draw notification in view driver
+   * @param str message of the notification
+   * @param tag tag of message
+   */
   def drawNotifica(str: String, tag: Long): Unit
 }
 object DriverHome{
