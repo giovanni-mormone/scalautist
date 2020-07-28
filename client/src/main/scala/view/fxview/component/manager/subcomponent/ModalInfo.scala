@@ -4,7 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import javafx.fxml.FXML
-import javafx.scene.control.Button
+import javafx.scene.control.{Button, Label}
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import view.fxview.AbstractFXModalView
@@ -42,9 +42,12 @@ object ModalInfo{
     var messagesHeader: VBox = _
     @FXML
     var close: Button = _
+    @FXML
+    var title: Label = _
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
+      title.setText(resources.getResource("title"))
       intiButton()
     }
 
@@ -54,7 +57,6 @@ object ModalInfo{
     }
 
     override def printMessage(information: String): Unit = {
-      println(information)
       val info = InfoLabel(information)
       messagesHeader.getChildren.add(info.pane)
     }
