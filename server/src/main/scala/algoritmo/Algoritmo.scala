@@ -12,6 +12,7 @@ import dbfactory.setting.Table.{PersonaTableQuery, StoricoContrattoTableQuery}
 import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
+import utils.EmitterHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -185,7 +186,10 @@ object Algoritmo extends Algoritmo{
     InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
       case Some(contract) =>  //TODO controllare i contratti
       val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
-      AssignmentOperation.initOperationAssignment(algorithmExecute,result).foreach(_ => running = false)
+      AssignmentOperation.initOperationAssignment(algorithmExecute,result).foreach(_ =>{
+        EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("end-algorithm"))
+        running = false
+      })
         Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE9)
     }

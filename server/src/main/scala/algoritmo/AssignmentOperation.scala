@@ -11,6 +11,7 @@ import com.typesafe.config.ConfigFactory
 import dbfactory.operation.RisultatoOperation
 import messagecodes.StatusCodes
 import utils.DateConverter._
+import utils.EmitterHelper
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -18,11 +19,11 @@ import scala.concurrent.Future
 import scala.util.Random
 trait AssignmentOperation{
   def initOperationAssignment(algorithmExecute: AlgorithmExecute,infoForAlgorithm: Future[InfoForAlgorithm]): Future[Option[Int]]
+
 }
 
 object AssignmentOperation extends AssignmentOperation {
 
-  private val config = ConfigFactory.defaultApplication()
   private val FULL_AND_PART_TIME_5X2 = List(1, 2, 3, 4)
   final case class InfoForAlgorithm(shift: List[Turno], theoricalRequest: List[RichiestaTeorica],
                                     persons: List[(StoricoContratto, Persona)], allContract: Option[List[Contratto]] = None, absence: Option[List[(Int, Date, Date)]] = None,
@@ -37,7 +38,6 @@ object AssignmentOperation extends AssignmentOperation {
   private val SATURDAY = 6
   private val SUNDAY=0
   private val TUESDAY=2
-  private val emitter = ConfigEmitter("info_algorithm")
   private val FIRST_RULE=4
   private val SECOND_RULE=5
   private val THIRD_RULE=6
@@ -49,8 +49,8 @@ object AssignmentOperation extends AssignmentOperation {
   //A POSTO
   override def initOperationAssignment(algorithmExecute: AlgorithmExecute, infoForAlgorithm: Future[InfoForAlgorithm]): Future[Option[Int]] = {
         infoForAlgorithm.flatMap(info => {
-          emit(getFromKey("start-algorithm"))
-          emit(getFromKey("terminal-division"))
+          EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("start-algorithm"))
+          EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal-division"))
           info.theoricalRequest.map(terminal => {
             val personaFilter = info.persons.filter(_._2.idTerminale.contains(terminal.terminaleId))
             info.copy(persons = personaFilter,
@@ -61,10 +61,10 @@ object AssignmentOperation extends AssignmentOperation {
           ).foldLeft(Future.successful(Option(StatusCodes.SUCCES_CODE))){
             case (default,actual) => actual._2.flatMap {
               case Some(StatusCodes.SUCCES_CODE) =>
-                actual._1.theoricalRequest.headOption.foreach(terminale => emit(getFromKey("terminal").concat(terminale.terminaleId.toString.concat(getFromKey("success")))))
+                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("success")))))
                 default
               case _ =>
-                actual._1.theoricalRequest.headOption.foreach(terminale => emit(getFromKey("terminal").concat(terminale.terminaleId.toString.concat(getFromKey("error")))))
+                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("error")))))
                 default
             }
           }
@@ -76,7 +76,7 @@ object AssignmentOperation extends AssignmentOperation {
   private def startAlgorithm(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute): Future[Option[Int]] = Future {
     val (driver5x2, driver6x1) = partition(infoForAlgorithm.persons)
     infoForAlgorithm.absence match {
-      case Some(value) => infoForAlgorithm.theoricalRequest.headOption.foreach(x => emit(getFromKey("assign-absence").concat(x.terminaleId.toString)))
+      case Some(value) => infoForAlgorithm.theoricalRequest.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("assign-absence").concat(x.terminaleId.toString)))
         assignAbsence(driver5x2.map(v => (v._1.contrattoId,v._2)),infoForAlgorithm.allContract,value)
         .zip(assignAbsence(driver6x1.map(v => (v._1.contrattoId,v._2)),infoForAlgorithm.allContract,value))
         .map{
@@ -87,7 +87,7 @@ object AssignmentOperation extends AssignmentOperation {
   }.flatMap(x => x)
 
   def assignSundayAndSaturday(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,listInfo5x2: List[Info] = List.empty, listInfo6x1: List[Info] = List.empty): Future[Option[Int]] ={
-    infoForAlgorithm.theoricalRequest.headOption.foreach(x => emit(getFromKey("assign-sundays").concat(x.terminaleId.toString)))
+    infoForAlgorithm.theoricalRequest.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("assign-sundays").concat(x.terminaleId.toString)))
     val (driver5x2, driver6x1) = partition(infoForAlgorithm.persons)
     assignSaturdayAndSunday5x2(infoForAlgorithm.allContract, algorithmExecute, driver5x2.map(v => (v._1.contrattoId,v._2)),listInfo5x2)
       .zip(assignSunday6x1(infoForAlgorithm, algorithmExecute, driver6x1,listInfo6x1)).flatMap{
@@ -191,7 +191,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   // A POSTO
   private def groupForDriver(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute,assigned:List[Info]): Future[Option[Int]] ={
-    infoForAlgorithm.theoricalRequest.headOption.foreach(x => emit(getFromKey("groups").concat(x.terminaleId.toString)))
+    infoForAlgorithm.theoricalRequest.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("groups").concat(x.terminaleId.toString)))
     algorithmExecute.gruppo match {
       case Some(group) =>
         val resultAssignGroup = assignGroupDriver(infoForAlgorithm,group,assigned)
@@ -377,7 +377,7 @@ object AssignmentOperation extends AssignmentOperation {
 
  }
   private def assignShifts(infoForAlgorithm: InfoForAlgorithm, algorithmExecute: AlgorithmExecute, result: List[Info]):Future[Option[Int]] = Future{
-    infoForAlgorithm.theoricalRequest.headOption.foreach(x => emit(getFromKey("shifts").concat( x.terminaleId.toString)))
+    infoForAlgorithm.theoricalRequest.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("shifts").concat( x.terminaleId.toString)))
     val(fissi, rotatori) = infoForAlgorithm.persons.partition(person => infoForAlgorithm.allContract.toList.flatten.filter(_.turnoFisso)
       .flatMap(_.idContratto.toList).contains(person._1.contrattoId))
 
@@ -434,7 +434,7 @@ object AssignmentOperation extends AssignmentOperation {
 
   //A POSTO
   def assignFreeDays(drivers: List[(StoricoContratto, Persona)], request: Option[List[InfoReq]], result: List[Info], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)]):(Option[List[InfoReq]], List[Info]) = {
-    request.foreach(_.headOption.foreach(x => emit(getFromKey("free-days").concat(x.idTerminal.toString))))
+    request.foreach(_.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("free-days").concat(x.idTerminal.toString))))
     @scala.annotation.tailrec
     def _assignFreeDays(request: Option[List[InfoReq]], weeks: List[List[Date]], lastFree: List[(Option[Int],Int)], resultNew: List[Info] = List.empty):(Option[List[InfoReq]], List[Info]) = weeks match {
       case ::(week,Nil) if week.length<DAYS_IN_WEEK=>
@@ -698,7 +698,7 @@ object AssignmentOperation extends AssignmentOperation {
   }
 
   private def ruleThirdSaturday(week: List[Date], allRequest:Option[List[InfoReq]],drivers:List[Persona],result:List[Info]):(Option[List[InfoReq]],List[Info])= {
-    allRequest.foreach(_.headOption.foreach(x => emit(getFromKey("third-saturday").concat(x.idTerminal.toString))))
+    allRequest.foreach(_.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("third-saturday").concat(x.idTerminal.toString))))
       @scala.annotation.tailrec
       def _iterateDrivers(drivers:List[Persona],allRequest:Option[List[InfoReq]], result:List[Info]):(Option[List[InfoReq]],List[Info])= drivers match {
         case ::(driver, next) =>
@@ -744,12 +744,7 @@ object AssignmentOperation extends AssignmentOperation {
         }
       }).flatten)
 
-  private val getFromKey: String => String = key =>
-    config.getString(key)
-
-  private val emit :String => Unit = message => emitter.sendMessage(message)
-
   private val emitForFreeWeek: (List[Date],Option[List[InfoReq]]) => Unit = (week,allRequest)  =>
-  week.headOption.foreach(date=> allRequest.foreach(_.headOption.foreach(x => emit(getFromKey("free-week").concat(date.toString.concat(getFromKey("terminal").concat( " ".concat(x.idTerminal.toString))))))))
+  week.headOption.foreach(date=> allRequest.foreach(_.headOption.foreach(x => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("free-week").concat(date.toString.concat(EmitterHelper.getFromKey("terminal").concat( " ".concat(x.idTerminal.toString))))))))
 
 }

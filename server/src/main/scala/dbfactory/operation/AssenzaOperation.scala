@@ -10,6 +10,7 @@ import dbfactory.util.Helper._
 import messagecodes.StatusCodes
 import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
+import utils.EmitterHelper
 
 import scala.concurrent.Future
 
@@ -62,20 +63,13 @@ object AssenzaOperation extends AssenzaOperation{
     implicit def tuple5ToJoinResult(tuple:(Date,Date,Int,String,String)):JoinResult =
       JoinResult.apply _ tupled tuple
   }
-  //caricare da qualche parte?
   private val GIORNI_FERIE_ANNUI: Int = 35
-  //anche questo si può caricare da qualche parte
   private val CODICE_CONDUCENTE: Int = 3
-  //Terminal not exist
   private val NOT_TERMINAL:Int=0
-  //countAvailableForShiftOnDay not contain idRisultato
   private val NOT_RISULTATO_ID:Int=0
-  //countAvailableForShiftOnDay not contain idTurno
   private val NOT_RISULTATO_TURNO_ID:Int=0
-  //countAvailableForShiftOnDay not contain idPersone
   private val NOT_RISULTATO_PERSONE_ID:Int=0
-  private val notificationEmitter = ConfigEmitterPersistence("assenza_emitter","malattie","vacanze")
-  notificationEmitter.start()
+
   override def getAllFerie(data: Int):Future[Option[List[Ferie]]] = {
     val nextYear = dateFromYear(data+1)
     val currentYear = dateFromYear(data)
@@ -104,11 +98,10 @@ object AssenzaOperation extends AssenzaOperation{
   }
   private def sendMessage(element:Assenza): Unit ={
     if(element.malattia)
-      notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "ha una nuova malattia dal" + element.dataInizio + " al" +
-        element.dataFine,"malattie")
+      EmitterHelper.sendAssenzaNotification(EmitterHelper.getFromKey("driver").concat(element.personaId.toString).concat(EmitterHelper.getFromKey("ilness")).concat(element.dataInizio.toString).concat("-").concat(element.dataFine.toString),"malattie")
     else
-      notificationEmitter.sendMessage("Il conducente con matricola:" + element.personaId + "inizia le sue vacanze dal" + element.dataInizio + " al" +
-        element.dataFine,"vacanze")
+      EmitterHelper.sendAssenzaNotification(EmitterHelper.getFromKey("driver").concat(element.personaId.toString).concat(EmitterHelper.getFromKey("holiday")).concat(element.dataInizio.toString).concat("-").concat(element.dataFine.toString),"vacanze")
+
   }
 
   override def getAssenzeInYearForPerson(year: Int, idPersona: Int): Future[Option[List[Assenza]]] = {

@@ -4,6 +4,7 @@ import java.net.URL
 import java.util.ResourceBundle
 
 import javafx.fxml.{FXML, Initializable}
+import javafx.scene.image.Image
 import javafx.scene.layout.StackPane
 import javafx.stage.{Modality, Stage}
 import view.DialogView
@@ -30,6 +31,9 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
   protected val myStage = new Stage()
   private val PREDEF_WIDTH_SIZE: Double = 350
   private val PREDEF_HEIGHT_SIZE: Double = 300
+  private val image = new Image(getClass.getResource("../../../images/program_icon.png").toString)
+  myStage.getIcons.add(image)
+
   /**
    * Stage of this view.
    */

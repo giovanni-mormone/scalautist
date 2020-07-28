@@ -88,11 +88,6 @@ object GroupParamsBox {
       reset.setOnAction(_ => parent.resetGroupsParams())
       add.setOnAction(_ => parent.openModal(params.dateI, params.dateF, allDate(), rule))
       sub.setOnAction(_=>removeSelectedGroup())
-      /*sub.setOnAction(_ => {
-        val toDelete = getSelectedRow
-        groups = groups.filter(group => !findGroup(toDelete, group))
-        CreateTable.fillTable[GroupSelectionTable](groupstab, groups.map(_._2))
-      })*/
       run.setOnAction(_ => {
         var i = 0
         val gruppi = Option(gruopss.map(group => {
@@ -111,43 +106,24 @@ object GroupParamsBox {
       })
     }
 
-    /*private def getSelectedRow: GroupSelectionTable = {
-      groupstab.getSelectionModel.getSelectedItem
-    }*/
     def removeSelectedGroup(): Unit ={
       listFieldCheckBox.foreach(son=>{
         if(son.selectedItem()){
           val result =  tableInfo.getChildren.remove(son.setParent(parent).pane)
           if(result){
             gruopss = gruopss.filter(x=> x.date.map(x=>Date.valueOf(x)).forall(date=>son.getDateList.contains(date)))
-
           }
-
         }
       })
     }
     private def allDate(): List[LocalDate] =
       gruopss.flatMap(_.date)
 
-    private def findGroup(toFind: GroupSelectionTable, group: (Group, GroupToTable)): Boolean = {
-      if(toFind == null)
-        return false
-      group._2.regola.equals(toFind.rule.get()) &&
-        toFind.date.get().equals(group._2.date.map(_.toLocalDate)
-          .map(date => date.getDayOfMonth.toString + "/" + date.getMonth.toString + "/" + date.getYear.toString).reduce((dl, d) => dl + "; " + d))
-    }
     def initTable():Unit={
       date.setText(resources.getResource("date-column"))
       rules.setText(resources.getResource("rule-column"))
       selected.setText(resources.getResource("select-column"))
     }
-    /*private def initTable(): Unit = {
-      val fieldList = List("rule", "date")
-      CreateTable.createColumns[GroupSelectionTable](groupstab, fieldList, dim= 50)
-      groupstab.getSelectionModel.selectedItemProperty().addListener((_,_,_) => {
-        initDate(groups.find(group => findGroup(getSelectedRow, group)).map(_._1))
-      })
-    }*/
 
     private def initDate(group: List[Group]=List.empty): Unit = {
       val datePicker: DatePickerSkin =
@@ -163,10 +139,5 @@ object GroupParamsBox {
       listFieldCheckBox=listFieldCheckBox:+groupBox
       initDate(gruopss)
     }
-    /*override def updateGroup(group: Group): Unit = {
-      val newG = (group, GroupToTable(group.ruleName, group.date.map(day => Date.valueOf(day))))
-      groups = newG :: groups
-      CreateTable.fillTable[GroupSelectionTable](groupstab, groups.map(_._2))
-    }*/
   }
 }
