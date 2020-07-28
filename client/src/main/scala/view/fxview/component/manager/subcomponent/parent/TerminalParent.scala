@@ -10,14 +10,16 @@ import caseclass.CaseClassDB.Terminale
 trait TerminalParent {
 
   /**
-   *
+   * Method used to add a new zone to thee db
    * @param terminal
+   *                 The terminal to add
    */
   def newTerminale(terminal: Terminale): Unit
 
   /**
-   *
+   * Opens the modal to modify a terminal
    * @param terminal
+   *                 The Terminal to modify
    */
   def openTerminalModal(terminal: Int): Unit
 }

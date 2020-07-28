@@ -17,7 +17,6 @@ trait Model {
    * @return url where the call will be made
    */
   def getURI(request: String):String
-  def shutdownActorSystem():Future[Terminated]
 
   /**
    * method that encapsulate HttRequest for request to server

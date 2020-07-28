@@ -47,7 +47,7 @@ object ChangePasswordController{
           case Success(_) => myView.okChange()
           case _ => myView.errorChange()
         }
-      case _ => println("ERROR")
+      case _ =>  myView.errorChange()
     }
   }
 }

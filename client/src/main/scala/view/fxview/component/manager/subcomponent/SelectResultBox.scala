@@ -20,6 +20,14 @@ import view.fxview.util.ResourceBundleUtil._
 import scala.util.Success
 import scala.concurrent.ExecutionContext.Implicits.global
 trait SelectResultBox extends Component[SelectResultParent]{
+
+  /**
+   * Creates the results to be draw on the view
+   * @param resultList
+   *                   The List of results to draw
+   * @param dateList
+   *                 The list of dates to draw
+   */
   def createResult(resultList: List[ResultAlgorithm], dateList: List[Date]):Unit
 }
 object SelectResultBox{

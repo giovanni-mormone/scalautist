@@ -20,6 +20,10 @@ import view.fxview.component.{AbstractComponent, Component}
 
 trait SalaryBox extends Component[SalaryBoxParent]{
 
+  /**
+   * Draws the informations of the stipendio after the initialize
+   * @param information
+   */
   def paneInfoSalary(information:StipendioInformations):Unit
 }
 object SalaryBox{

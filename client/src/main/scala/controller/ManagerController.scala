@@ -163,15 +163,6 @@ trait ManagerController extends AbstractController[ManagerView]{
   def replacementSelected(idRisultato: Int, idPersona: Int):Unit
 
   /**
-   * Called before running the turns algorithm to check if there is some old result for
-   * the period and terminals seleted
-   * @param dataToCheck
-   *                    The period and terminals to check
-   * @return
-   */
-  def verifyOldResult(dataToCheck:CheckResultRequest): Future[Response[List[Option[Int]]]]
-
-  /**
    * Method that asks model to find data about the terminals before draw the panel
    */
   def chooseParams(): Unit
@@ -325,9 +316,6 @@ object ManagerController {
               .fold(executeAlgorithm(algorithmExecute))(list => myView.confirmRun(list, algorithmExecute))
           case _ => myView.showMessageFromKey("general-error")
         }
-
-    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] =
-      model.verifyOldResult(dataToCheck)
 
     override def chooseParams(): Unit = {
       HumanResourceModel().getAllTerminale.onComplete {
