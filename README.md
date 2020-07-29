@@ -11,6 +11,10 @@ There are three type of user:
  - Human Resource: HR manage employee, and their problem like illness and holidays 
  - Driver: D can watch his work shifts and his salary
  
+## Team members
 
+Fabia Andres Aspee Encina: (fabianAspeeEncina@studio.unibo.it)
+Giovanni Mormone: (giovanni.mormone@studio.unibo.it)
+Francesco Cassano: (francesco.cassano2@studio.unibo.it)
  
  
