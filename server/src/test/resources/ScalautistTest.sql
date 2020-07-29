@@ -1598,3 +1598,22 @@ select * from StoricoContrattoSets
 
 select * from PresenzaSets
 select * from TurnoSets
+
+select * from RichiestaTeoricaSets order by TerminalSetIdTerminale
+
+select "DataInizio", "DataFine", "TerminalSetIdTerminale", "IdRichiestaTeorica" from "RichiestaTeoricaSets"
+where ((("DataInizio" <= (convert(date, {d '2020-07-01'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'}))))
+  or (("DataInizio" <= (convert(date, {d '2020-07-01'}))) and ("DataFine" <= (convert(date, {d '2020-12-31'}))))
+   or (("DataInizio" >= (convert(date, {d '2020-07-01'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'})))))
+    and ("TerminalSetIdTerminale" in (1, 2))
+
+
+select "DataInizio", "DataFine", "TerminalSetIdTerminale", "IdRichiestaTeorica" from "RichiestaTeoricaSets"
+where (("DataInizio"<= N'20200701' and "DataFine" >=  N'20200701')
+           or ("DataFine" <=  N'20201231' and "DataFine" >=  N'20201231'))
+  and ("TerminalSetIdTerminale" in (1, 2))
+
+
+select "DataInizio", "DataFine", "TerminalSetIdTerminale", "IdRichiestaTeorica" from "RichiestaTeoricaSets"
+where ((("DataInizio" <= (convert(date, {d '2020-01-01'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'}))))
+or (("DataFine" <= (convert(date, {d '2020-12-31'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'})))))
