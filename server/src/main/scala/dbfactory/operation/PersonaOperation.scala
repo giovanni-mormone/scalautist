@@ -91,7 +91,7 @@ object PersonaOperation extends PersonaOperation {
   override def login(login: Login): Future[Option[Persona]] =
     InstancePersona.operation().selectFilter(user=>user.userName===login.user).collect {
       case Some(List(value)) if CheckPassword(login.password,value.password.toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)) =>
-        Some(value.copy(password = Some(EMPTY_STRING)))
+        Some(value.copy(password = None))
       case _ => None
     }
 
