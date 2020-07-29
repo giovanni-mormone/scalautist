@@ -21,7 +21,3 @@
     -fx-spacing: 20;
 }
 
-.date-picker-popup >  .calendar-grid {
-    -fx-min-height: 300;
-    -fx-min-width: 30;
-}

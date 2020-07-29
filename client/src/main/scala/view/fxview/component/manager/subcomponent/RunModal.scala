@@ -24,14 +24,14 @@ trait RunModal extends AbstractComponent[ModalRunParent] {
  */
 object RunModal {
 
-  def apply(message: List[String], algorithmExecute: AlgorithmExecute): RunModal = new RunModalFX(message, algorithmExecute)
+  def apply(message: List[(String,String)], algorithmExecute: AlgorithmExecute): RunModal = new RunModalFX(message, algorithmExecute)
 
   /**
    * Java FX implementation for [[RunModal]]
    * @param error list of error's code
    * @param algorithmExecute data to execute algorithm
    */
-  private class RunModalFX(error: List[String], algorithmExecute: AlgorithmExecute)
+  private class RunModalFX(error: List[(String,String)], algorithmExecute: AlgorithmExecute)
   extends AbstractComponent[ModalRunParent]("manager/subcomponent/RunModal")
   with RunModal {
 
@@ -49,7 +49,7 @@ object RunModal {
     }
 
     private def initLabel(): Unit =
-      error.foreach(error => messagesHeader.getChildren.add(TerminalModalLabels("terminal", resources.getResource(error)).pane))
+      error.foreach(error => messagesHeader.getChildren.add(TerminalModalLabels(error._2, resources.getResource(error._1)).pane))
 
     private def intiButton(): Unit = {
       ok.setText(resources.getResource(key = "ok"))

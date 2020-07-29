@@ -8,7 +8,7 @@ import caseclass.CaseClassDB.{Regola, Terminale, Turno, Zona}
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, InfoAlgorithm, InfoReplacement, ResultAlgorithm, _}
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Button, Label}
-import javafx.scene.layout.{BorderPane, Pane}
+import javafx.scene.layout.{BorderPane, Pane, VBox}
 import org.controlsfx.control.PopOver
 import view.fxview.NotificationHelper.NotificationParameters
 import view.fxview.component.manager.subcomponent.GroupParamsBox.Group
@@ -198,7 +198,7 @@ object ManagerHome{
     @FXML
     var popover: PopOver = _
     @FXML
-    var accordion:Accordion= _
+    var vBoxPopover:VBox = _
 
     var fillHolesView: FillHolesBox = _
     var managerRichiestaBoxView:ManagerRichiestaBox = _
@@ -223,15 +223,17 @@ object ManagerHome{
       richiestaButton.setOnAction(_ => parent.drawRichiestaPanel())
       generateTurnsButton.setOnAction(_ => parent.drawParamsPanel())
       printResultButton.setOnAction(_=> parent.drawResultPanel())
-      notificationButton.setOnAction(_=>openAccordion())
+      notificationButton.setOnAction(_=>showPopover())
       manageZoneButton.setOnAction(_ => parent.drawZonePanel())
       manageTerminalButton.setOnAction(_ => parent.drawTerminalPanel())
-
       nameLabel.setText(resources.println("username-label",userName))
       idLabel.setText(resources.println("id-label",userId))
     }
 
-    private def openAccordion(): Unit ={
+    private def showPopover(): Unit ={
+      if(vBoxPopover.getChildren.isEmpty){
+        popover.setContentNode(vBoxPopover)
+      }
       popover.show(notificationButton)
     }
 
@@ -305,7 +307,7 @@ object ManagerHome{
     }
 
     override def drawNotifica(str: String,tag:Long): Unit = {
-      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(popover,vBoxPopover,consumeNotification))
     }
 
     override def updateGroup(group: Group): Unit =

@@ -9,7 +9,7 @@ import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift, StipendioInformation
 import javafx.fxml.FXML
 import javafx.scene.control.{Accordion, Label, Menu}
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.{BorderPane, Pane}
+import javafx.scene.layout.{BorderPane, Pane, VBox}
 import org.controlsfx.control.PopOver
 import view.fxview.{FXHelperFactory, NotificationHelper}
 import view.fxview.NotificationHelper.NotificationParameters
@@ -82,7 +82,7 @@ object DriverHome{
     @FXML
     var popover: PopOver = _
     @FXML
-    var accordion: Accordion = _
+    var vBoxPopover:VBox = _
 
     var homeBox:HomeBox = _
 
@@ -137,7 +137,7 @@ object DriverHome{
     }
 
     override def drawNotifica(str: String,tag:Long): Unit = {
-      NotificationHelper.drawNotifica(str,tag, NotificationParameters(accordion,popover,consumeNotification))
+      NotificationHelper.drawNotifica(str,tag, NotificationParameters(popover,vBoxPopover,consumeNotification))
     }
 
     private def home(infoHome: InfoHome):Pane = {
@@ -161,6 +161,9 @@ object DriverHome{
     private def callMethod(call:(()=>Unit,()=>Unit)): (Unit, Unit) =(call._1(),call._2())
 
     private def openAccordion(): Unit ={
+      if(vBoxPopover.getChildren.isEmpty){
+        popover.setContentNode(vBoxPopover)
+      }
       popover.show(labelNotifiche)
     }
 

@@ -34,3 +34,25 @@
     -fx-wrap-text: true;
     -fx-text-alignment: center;
 }
+
+#vBoxPopover{
+    -fx-pref-height: 200;
+    -fx-pref-width: 220;
+    -fx-background-color: white;
+}
+#popover{
+    -fx-background-color: white;
+}
+#oneLabel{
+    -fx-background-color: #F79E02;
+    -fx-font-family: AvenirLTStd-Book, Helvetica, Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-min-width: 220;
+    -fx-wrap-text: true;
+    -fx-padding: 5 3 5 3;
+}
+#labelOne{
+    -fx-font-size: 13px;
+    -fx-min-width: 180;
+    -fx-wrap-text: true;
+}

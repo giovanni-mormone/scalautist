@@ -1,4 +1,4 @@
-package view.fxview.component.manager.subcomponent
+package view.fxview.component.modal
 
 import java.net.URL
 import java.util.ResourceBundle
@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import view.fxview.AbstractFXModalView
 import view.fxview.component.AbstractComponent
+import view.fxview.component.manager.subcomponent.InfoLabel
 import view.fxview.component.manager.subcomponent.parent.ModalRunParent
 import view.fxview.util.ResourceBundleUtil._
 

@@ -8,13 +8,13 @@ import caseclass.CaseClassHttpMessage.{Assumi, Ferie}
 import controller.HumanResourceController
 import javafx.application.Platform
 import javafx.stage.Stage
-import view.fxview.{AbstractFXDialogView, Popup}
+import view.fxview.AbstractFXDialogView
 import view.fxview.component.Component
 import view.fxview.component.HumanResources.HRHome
 import view.fxview.component.HumanResources.subcomponent.parent._
 import view.fxview.component.HumanResources.subcomponent.util.EmployeeView
 import view.fxview.component.HumanResources.subcomponent.ModalAbsence
-import view.fxview.component.modal.Modal
+import view.fxview.component.modal.{Modal, Popup}
 import view.mainview.HumanResourceView
 
 /**

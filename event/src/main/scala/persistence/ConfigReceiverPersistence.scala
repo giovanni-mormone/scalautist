@@ -27,7 +27,7 @@ object ConfigReceiverPersistence {
       val deliverCallback:DeliverCallback = (consumerTag, delivery) => {
         val message = new String(delivery.getBody, "UTF-8")
         method(message,delivery.getEnvelope.getDeliveryTag)
-        channel.basicAck(delivery.getEnvelope.getDeliveryTag,false)
+        channel.basicAck(delivery.getEnvelope.getDeliveryTag,true)
       }
       val cancel: CancelCallback = _ => {}
       val autoAck = false
@@ -37,22 +37,4 @@ object ConfigReceiverPersistence {
       channel.basicAck(tag,false)
     }
   }
-}
-object ssa extends App{
-  def g(s:String,long: Long):Unit = println(s)
-  val e = ConfigReceiverPersistence("licenzia","assumi")
-  e.start()
-  e.receiveMessage(g)
-}
-object ssa1 extends App{
-  def g(s:String,long: Long):Unit = println(s)
-  val e = ConfigReceiverPersistence("licenzia2","assumi")
-  e.start()
-  e.receiveMessage(g)
-}
-object ssa2 extends App{
-  def g(s:String,long: Long):Unit = println(s)
-  val e = ConfigReceiverPersistence("assumi","licenzia3")
-  e.start()
-  e.receiveMessage(g)
 }

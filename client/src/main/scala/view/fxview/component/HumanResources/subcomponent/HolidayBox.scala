@@ -44,7 +44,7 @@ object HolidayBox {
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       val columnFields = List("id","nameSurname","holiday")
 
-      CreateTable.createColumns[FerieTable](employeeTable, columnFields)
+      CreateTable.createColumns[FerieTable](employeeTable, columnFields,177)
       CreateTable.fillTable[FerieTable](employeeTable, employees)
       initializeSearch(resources)
       CreateTable.clickListener[FerieTable](

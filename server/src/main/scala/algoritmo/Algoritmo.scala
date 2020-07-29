@@ -1,6 +1,7 @@
 package algoritmo
 
 import java.sql.Date
+import java.time.LocalDate
 import java.util.concurrent.locks.ReentrantLock
 
 import algoritmo.AssignmentOperation.InfoForAlgorithm
@@ -42,7 +43,7 @@ trait Algoritmo {
    *                                                  database, shift in week not exist in database or date in week
    *                                                  is outside to time frame
    *         [[messagecodes.StatusCodes.ERROR_CODE6]] if time frame not contains theoretical request
-   *         [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers
+   *         [[messagecodes.StatusCodes.ERROR_CODE7]] if some terminal not contains drivers availability for this time frame
    *         [[messagecodes.StatusCodes.ERROR_CODE8]] if not exist shift in database
    *         [[messagecodes.StatusCodes.ERROR_CODE9]] if a driver not contains a contract
    *         [[messagecodes.StatusCodes.ERROR_CODE10]] if the algorithm is already running
@@ -165,7 +166,7 @@ object Algoritmo extends Algoritmo{
   private def verifyTheoricalRequest(algorithmExecute: AlgorithmExecute,shift: List[Turno]): Future[Option[Int]] = {
     InstanceRichiestaTeorica.operation().selectFilter(richiesta=>richiesta.dataInizio<=algorithmExecute.dateI
       && richiesta.dataFine>=algorithmExecute.dateF && richiesta.terminaleId.inSet(algorithmExecute.idTerminal)).flatMap {
-        case Some(theoricalRequest) if theoricalRequest.length==algorithmExecute.idTerminal.length=>
+        case Some(theoricalRequest) if theoricalRequest.map(_.terminaleId).equals(algorithmExecute.idTerminal)=>
           getPersonByTerminal(algorithmExecute,shift,theoricalRequest)
         case _ =>future(StatusCodes.ERROR_CODE6)
       }
@@ -196,3 +197,35 @@ object Algoritmo extends Algoritmo{
   }
 }
 
+object eas extends App{
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
+  val timeFrameInitError: Date =Date.valueOf(LocalDate.of(2020,6,1))
+  val timeFrameFinishError: Date =Date.valueOf(LocalDate.of(2020,6,15))
+  val terminals=List(1)//,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
+  val terminalWithoutTheoricRequest=List(4)
+  val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,10))
+  val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,11))
+  val gruppi = List(GruppoA(1,List(firstDateGroup,secondDateGroup),2))
+  val gruppiWithRulerNotExist = List(GruppoA(1,List(firstDateGroup,secondDateGroup),20),GruppoA(1,List(firstDateGroup),2))
+  val normalWeek = List(SettimanaN(1,2,15,3),SettimanaN(2,2,15,2))
+  val normalWeekWithIdDayGreater7 = List(SettimanaN(1,2,15,3),SettimanaN(9,2,15,2))
+  val normalWeekWithShiftNotExist = List(SettimanaN(1,2,15,3),SettimanaN(2,50,15,2))
+  val specialWeek = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,6,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,6,8))))
+  val specialWeekWithDateOutside  = List(SettimanaS(1,2,15,3,Date.valueOf(LocalDate.of(2020,6,8))),SettimanaS(1,3,15,3,Date.valueOf(LocalDate.of(2020,12,8))))
+  val threeSaturday=false
+
+  val algorithmExecute: AlgorithmExecute =
+    AlgorithmExecute(timeFrameInit,timeFrameFinish,terminals,None,None,None,threeSaturday)
+  Algoritmo.shiftAndFreeDayCalculus(algorithmExecute) onComplete(println)
+  while(true){}
+}
+
+object esda extends App{
+  val a = List(1,2,3,4)
+  val b = List(1,2,3,4)
+  val aa = List(1,1,2,2,3,3,4,4)
+  val bb = List(1,2,3,4)
+  println(a.equals(b))
+  println(aa.equals(bb))
+}

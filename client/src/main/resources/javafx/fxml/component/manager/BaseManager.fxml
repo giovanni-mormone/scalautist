@@ -29,5 +29,5 @@
             <Button fx:id="richiestaButton" mnemonicParsing="false"/>
         </VBox>
     </left>
-    <Accordion fx:id="accordion"/>
+    <VBox fx:id="vBoxPopover"/>
 </BorderPane>

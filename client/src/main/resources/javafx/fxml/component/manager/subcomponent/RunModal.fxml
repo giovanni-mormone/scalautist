@@ -10,8 +10,8 @@
             <VBox fx:id="messagesHeader"/>
          </ScrollPane>
       <HBox fx:id="buttonbox">
-         <Button fx:id="ok" mnemonicParsing="false"/>
          <Button fx:id="cancel" mnemonicParsing="false"/>
+          <Button fx:id="ok" mnemonicParsing="false"/>
       </HBox>
    </VBox>
 </VBox>

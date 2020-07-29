@@ -10,7 +10,6 @@ import dbfactory.implicitOperation.OperationCrud
 import dbfactory.setting.Table.{PersonaTableQuery, RisultatoTableQuery, StoricoContrattoTableQuery, TurnoTableQuery}
 import dbfactory.util.Helper._
 import messagecodes.StatusCodes
-import persistence.ConfigEmitterPersistence
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 import utils.EmitterHelper
@@ -89,11 +88,10 @@ trait RisultatoOperation extends OperationCrud[Risultato]{
    * @return Future of List of Option with status code of operation that can be:
    *         [[messagecodes.StatusCodes.INFO_CODE1]] if not exist info in this time period
    *         [[messagecodes.StatusCodes.INFO_CODE2]] if exist a time period next to dataF
-   *         [[messagecodes.StatusCodes.INFO_CODE3]] if exist new driver or minus driver in terminal that we want to run
-   *         [[messagecodes.StatusCodes.INFO_CODE4]] if only re-write info in the time period
+    *         [[messagecodes.StatusCodes.INFO_CODE4]] if only re-write info in the time period
    *         [[messagecodes.StatusCodes.ERROR_CODE1]] if not exist drivers for some terminal
    */
-  def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[Int]]]
+  def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[(Int,String)]]]
 }
 
 object RisultatoOperation extends RisultatoOperation {
@@ -353,18 +351,17 @@ object RisultatoOperation extends RisultatoOperation {
       case Nil =>WITHOUT_SHIFT
     }
 
-  override def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[Int]]]={
-    Future.sequence(idTerminal.map(id=>verifyOldResult(id,dataI,dataF)))
-  }
+  override def verifyOldResult(idTerminal:List[Int],dataI:Date,dataF:Date): Future[List[Option[(Int,String)]]]=
+    InstanceTerminale.operation().execQueryFilter(terminal=>(terminal.id,terminal.nomeTerminale),_.id.inSet(idTerminal))
+        .flatMap(info=> Future.sequence(info.toList.flatten.map(id=> verifyOldResult(id._1,dataI,dataF).map(_.map(result=>(result,id._2))))))
 
   private def verifyOldResult(idTerminal:Int,dataI:Date,dataF:Date): Future[Option[Int]]={
-      InstancePersona.operation().execQueryFilter(x=>x,x=>Option(x.terminaleId).isDefined).flatMap {
+      InstancePersona.operation().execQueryFilter(x=>x,x=>x.terminaleId.isDefined).flatMap {
         case Some(value) =>
           val driverTerminal = value.filter(_.idTerminale.contains(idTerminal))
+
           InstanceRisultato.operation().selectFilter(x=> x.data>=dataI && x.personeId.inSet(driverTerminal.flatMap(_.matricola.toList))).collect {
             case Some(result) if result.exists(date=>date.data.compareTo(subtract(dataF,1))==0)=>Some(StatusCodes.INFO_CODE2)
-            case Some(result) if result.map(_.personaId).distinct.length>driverTerminal.flatMap(_.matricola.toList).length ||
-              result.map(_.personaId).distinct.length<driverTerminal.flatMap(_.matricola.toList).length =>Some(StatusCodes.INFO_CODE3)
             case None =>Some(StatusCodes.INFO_CODE1)
             case _ =>Some(StatusCodes.INFO_CODE4)
           }
@@ -393,6 +390,8 @@ object RisultatoOperation extends RisultatoOperation {
       }
     }
   override def verifyAndSaveResultAlgorithm(result: List[Info],dataI:Date): Future[Option[Int]] = {
+    val terminal = result.headOption.toList.flatMap(_.idTerminal.map(_.toString).toList).headOption
+    callEmitter(terminal,"save-algorithm")
     val finalResult = result.map(infoCopy).flatMap(x=>{
       x.infoDay.collect{
         case InfoDay(data, Some(shift), None, None,_,_)=>x.idDriver.toList.map(id=>Risultato(data,id,shift))
@@ -405,18 +404,19 @@ object RisultatoOperation extends RisultatoOperation {
     }).flatten
     insertPresenza(result,dataI)
     InstanceRisultato.operation().selectFilter(res=>res.data>=dataI && res.personeId.inSet(finalResult.map(_.personaId).distinct)).flatMap {
-      case Some(value) =>resultForUpdate(value,finalResult)
-      case None =>insertAllBatchResult(finalResult)
+      case Some(value) =>resultForUpdate(value,finalResult,terminal)
+      case None =>insertAllBatchResult(finalResult,terminal)
     }
   }
 
-  private def resultForUpdate(oldR: List[Risultato],newR: List[Risultato]): Future[Option[Int]] ={
-    insertAllBatchResult(newR).flatMap {
-      case Some(StatusCodes.SUCCES_CODE) => deleteAllRecursive(oldR)
+  private def resultForUpdate(oldR: List[Risultato],newR: List[Risultato],terminal:Option[String]): Future[Option[Int]] ={
+    insertAllBatchResult(newR,terminal).flatMap {
+      case Some(StatusCodes.SUCCES_CODE) => deleteAllRecursive(oldR,terminal)
       case _ => Future.successful(Option(StatusCodes.ERROR_CODE1))
     }
   }
-  private def deleteAllRecursive(oldR: List[Risultato])={
+  private def deleteAllRecursive(oldR: List[Risultato],terminal:Option[String])={
+    callEmitter(terminal,"delete-old-result")
     val idForDelete = oldR.flatMap(_.idRisultato.toList)
     val myTake = if(idForDelete.length>1000) 1000 else idForDelete.length
     def _deleteAllRecursive(delete:List[Int],rest:List[Int]):Future[Option[Int]]= rest match {
@@ -434,13 +434,15 @@ object RisultatoOperation extends RisultatoOperation {
     _deleteAllRecursive(delete,rest)
   }
 
-  private def insertAllBatchResult(finalResult: List[Risultato]): Future[Option[Int]] = {
+  private def insertAllBatchResult(finalResult: List[Risultato],terminal:Option[String]): Future[Option[Int]] = {
+    callEmitter(terminal,"insert-new-result")
     super.insertAllBatch(finalResult).collect {
       case Some(_) => Some(StatusCodes.SUCCES_CODE)
       case None =>Some(StatusCodes.ERROR_CODE1)
     }
   }
-
+  private def callEmitter(terminal:Option[String],key:String):Unit=
+    terminal.foreach(terminal=>EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey(key).concat(terminal)))
   private def presenzeForUpdate(oldR: List[Presenza],newR: List[Presenza]): Future[Option[Int]] ={
     insertAllBatchPresenza(newR).flatMap {
       case Some(StatusCodes.SUCCES_CODE) => deleteAllRecursivePresenza(oldR)

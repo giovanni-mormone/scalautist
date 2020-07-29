@@ -31,7 +31,7 @@ abstract class AbstractFXModalView(val parentStage:Stage) extends Initializable 
   protected val myStage = new Stage()
   private val PREDEF_WIDTH_SIZE: Double = 350
   private val PREDEF_HEIGHT_SIZE: Double = 300
-  private val image = new Image(getClass.getResource("../../../images/program_icon.png").toString)
+  private val image = new Image(getClass.getResource("../../../../images/program_icon.png").toString)
   myStage.getIcons.add(image)
 
   /**
