@@ -11,6 +11,16 @@ There are three type of user:
  - Human Resource: HR manage employee, and their problem like illness and holidays 
  - Driver: D can watch his work shifts and his salary
  
+## Note to work
+To run correctly the system you need to start RabbitMQ on docker with this command
+```bash
+docker run -p 8888:5672 rabbitmq:3-management
+```
+If you've some problem install docker and run this command
+```bash
+docker pull rabbitmq
+```
+ 
 ## Client
 Client is the sub-system that allows user to interface to the system and make operation that he needs.
 To run the client application with the local server:
@@ -31,7 +41,7 @@ scala server.jar
 But there is a docker instance of server
 To run the client application with the local server:
 ```bash
-docker client.jar
+scala client.jar
 ```
 
 ## Team members
