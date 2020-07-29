@@ -10,6 +10,7 @@ import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceAssenza, Ins
 import dbfactory.setting.Table.{GiornoTableQuery, RichiestaTableQuery}
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
+import utils.EmitterHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,6 +47,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 
   }
   private def joinBetweenGiornoAndRichiesta(theoricalRequest: List[RichiestaTeorica], shift: List[Turno],algorithmExecute: AlgorithmExecute):Future[Option[List[InfoReq]]]={
+    EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("extract-request"))
     val join = for{
       richiesta<-RichiestaTableQuery.tableQuery()
       giorno <- GiornoTableQuery.tableQuery()
@@ -53,26 +55,27 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
         && richiesta.turnoId.inSet(shift.flatMap(_.id.toList)) && richiesta.giornoId===giorno.id)
     }yield(richiesta,giorno)
     InstanceRichiesta.operation().execJoin(join).collect{
-      case Some(result) =>emitter.sendMessage("join with result")
+      case Some(result) =>
         createInfoDay(result.sortBy(value=>(value._1.richiestaTeoricaId,value._2.idGiornoSettimana)),algorithmExecute,theoricalRequest)
     }
   }
 
   private def createInfoDay(resultJoin:List[(Richiesta,Giorno)],algorithmExecute: AlgorithmExecute,theoricalRequest: List[RichiestaTeorica]):Option[List[InfoReq]]={
+    EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("construct-request"))
     val resultJoinWithTerminal=createResultJoinWithTerminal(resultJoin,theoricalRequest)
     @scala.annotation.tailrec
     def _createInfoDay(theoricalRequest: List[RichiestaTeorica],infoReq: List[InfoReq]=List.empty):Option[List[InfoReq]]= theoricalRequest match {
       case ::(request, next) => _createInfoDay(next,createListInfoDay(resultJoinWithTerminal
-        .filter(id=>request.idRichiestaTeorica.contains(id._2.richiestaTeoricaId)),algorithmExecute):::infoReq)
+        .filter(id=>request.idRichiestaTeorica.contains(id._2.richiestaTeoricaId)),request):::infoReq)
       case Nil => Option(constructInfoReq(infoReq,algorithmExecute))
     }
     _createInfoDay(theoricalRequest)
   }
 
-  private def createListInfoDay(resultJoin:List[(Int, Richiesta, Giorno)],algorithmExecute: AlgorithmExecute):List[InfoReq]={
-    (DEFAULT_INIT_DAY until computeDaysBetweenDates(algorithmExecute.dateI,algorithmExecute.dateF))
+  private def createListInfoDay(resultJoin:List[(Int, Richiesta, Giorno)],richiesta: RichiestaTeorica):List[InfoReq]={
+    (DEFAULT_INIT_DAY until computeDaysBetweenDates(richiesta.dataInizio,richiesta.dataFine))
       .flatMap(value=>{
-        val day = subtract(algorithmExecute.dateI,value)
+        val day = subtract(richiesta.dataInizio,value)
         createInfoDayCaseClass(resultJoin,day)
       }).toList
   }
@@ -88,8 +91,6 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
     val dayInWeek  = if(getDayNumber(day)!=0)getDayNumber(day) else 7
     _createInfoDayCaseClass(resultJoin.filter(value=>value._3.idGiornoSettimana==dayInWeek))
   }
-
-
 
   private def constructInfoReq(infoReq: List[InfoReq], algorithmExecute: AlgorithmExecute):List[InfoReq]=
     algorithmExecute.settimanaSpeciale match {
@@ -112,7 +113,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
       case ::(index, next) => _modifiedSpecialWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
       case Nil =>infoReq
     }
-    emitter.sendMessage("Modificando settimana speciale")
+    EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("modified-special-week"))
   _modifiedSpecialWeek(specialWeek.map(res=>(res.quantita,infoReq.indexWhere(x=>x.idShift==res.turnoId && x.idDay==res.idDay && x.data.compareTo(res.date)==0))),infoReq)
 
   }
@@ -123,7 +124,7 @@ object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
       case ::(index, next) => _modifiedNormalWeek(next,infoReq.updated(index._2,infoReq(index._2).copy(request = infoReq(index._2).request+index._1)))
       case Nil =>infoReq
     }
-    emitter.sendMessage("Modificando settimana normale")
+    EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("modified-normal-week"))
     val t = normalWeek.flatMap(res=>{
       infoReq.foldLeft((List[(Int,Int)](),0)){
         case (index,element) if element.idShift==res.turnoId && element.idDay==res.idDay=>(index._1:+(res.quantita,index._2),index._2+1)
