@@ -102,10 +102,7 @@ object RisultatoOperation extends RisultatoOperation {
   private val FREE_DAY_VALUE: String ="Libero"
   private val DEFAULT_TERMINAL: String =""
   private val WITHOUT_CONTRACT: String = "Senza Contratto"
-  private val WITHOUT_CONTRACT_VALUE=1
-  private val DATE_IN_ABSENCE=2
-  private val FREE_DAY = 3
-  private val NORMAL_CASE = 4
+  private val MINUS_DAY = -1
 
   def verifyResult(idRisultato: Int): Future[Option[Int]] = {
     select(idRisultato).collect{
@@ -302,7 +299,7 @@ object RisultatoOperation extends RisultatoOperation {
     val orderResult=result.filter(day => !infoAbsence.exists(x => x.date.compareTo(day.data) == 0)).sortBy(value => (value.data, value.personaId, value.turnoId))
     val resultContract = verifyContract(driver.initContract,driver.finishContract,infoResult)
     val allFreeDay = assignFreeDay(infoAbsence:::resultContract,orderResult,infoResult.dateInit,infoResult.dateFinish)
-    _insertInfoShiftInInfoDates(infoResult.copy(result=orderResult),allFreeDay:::infoAbsence)
+    _insertInfoShiftInInfoDates(infoResult.copy(result=orderResult),allFreeDay:::infoAbsence:::resultContract)
 
   }
 
@@ -322,7 +319,7 @@ object RisultatoOperation extends RisultatoOperation {
   }
 
   def assignDayWithoutContract(infoResult: InfoForResult,initContract:Date): List[InfoDates] = {
-        createListDayBetween(infoResult.dateInit,initContract).map(day=>InfoDates(day,WITHOUT_CONTRACT,Some(WITHOUT_CONTRACT)))
+        createListDayBetween(infoResult.dateInit,subtract(initContract,MINUS_DAY)).map(day=>InfoDates(day,WITHOUT_CONTRACT,Some(WITHOUT_CONTRACT)))
   }
 
   def assignDayWithoutContractFinish(infoResult: InfoForResult,finish:Date): List[InfoDates] = {

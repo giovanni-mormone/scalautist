@@ -142,7 +142,8 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   }
   override def allDriverWithAvailabilityForADate(idRisultato:Int, idTemrinale:Int, idTurno:Int): Future[Option[List[InfoReplacement]]] = {
     callOperation(idRisultato, idTemrinale, idTurno).collect{
-      case (personWithoutShift, allWithAbsence) =>personWithoutShift.toList.flatten.filter(absence=> !allWithAbsence.toList.flatten
+      case (personWithoutShift, allWithAbsence) =>
+        personWithoutShift.toList.flatten.filter(absence=> !allWithAbsence.toList.flatten
         .contains(absence)
        )
     }.flatMap(result=>selectAllDriverNameAndSurname(result,idRisultato))
@@ -178,16 +179,30 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(_.distinct))
   }
 
+
   private def getPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail): Future[Option[List[Int]]] ={
+    val allDriver = for{
+      persona<- PersonaTableQuery.tableQuery()
+      risultato<-RisultatoTableQuery.tableQuery()
+      if persona.terminaleId===dat.idTerminale && persona.id===risultato.personeId && risultato.turnoId===dat.idTurno
+    }yield risultato.personeId
+
+    InstancePersona.operation().execJoin(allDriver).flatMap {
+      case Some(value) => finalGetPersonaWithoutShiftAndAvailability(dat,Some(value))
+      case None =>finalGetPersonaWithoutShiftAndAvailability(dat,None)
+    }
+  }
+
+  private def finalGetPersonaWithoutShiftAndAvailability(dat:QueryPersonStoricAvail,idDriver:Option[List[Int]])={
     val joinQuery = for {
       persona<- PersonaTableQuery.tableQuery()
       storico<-StoricoContrattoTableQuery.tableQuery()
       disp<-DisponibilitaTableQuery.tableQuery()
       risultato<-RisultatoTableQuery.tableQuery()
       if(persona.id===storico.personaId && persona.disponibilitaId===disp.id && risultato.personeId===persona.id && persona.terminaleId===dat.idTerminale
-        && risultato.data===dat.date && risultato.turnoId =!= dat.idTurno && disp.settimana===dat.week &&
+        && risultato.data===dat.date && disp.settimana===dat.week &&
         ((disp.giorno1===dat.giorno || disp.giorno2===dat.giorno) && ((storico.dataFine >= dat.date || !storico.dataFine.isDefined) && storico.dataInizio <= dat.date))
-        && persona.id.inSet(dat.idPerson.toList.flatten) && persona.disponibilitaId.isDefined)
+        && persona.id.inSet(dat.idPerson.toList.flatten) && !persona.id.inSet(idDriver.toList.flatten) && persona.disponibilitaId.isDefined)
     } yield storico.personaId
     InstancePersona.operation().execJoin(joinQuery).map(result=>result.map(persons=>persons
       .filter(id=>persons.count(_ == id)==SHIFT_IN_DAY)).map(_.distinct))

@@ -24,10 +24,10 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
       .allDriverWithAvailabilityForADate(idRisultatoWithoutReplace,idTerminalWithoutReplace,idTurnoWithoutReplace)
     getAllAvailability map {allAvailability =>  assert(allAvailability.isEmpty)}
   }
-  it should "return list length 6 when a shift in terminal contains replace" in {
+  it should "return None  when a terminal not contains replace" in {
     val getAllAvailability: Future[Option[List[InfoReplacement]]] = DisponibilitaOperation
       .allDriverWithAvailabilityForADate(idRisultatoWithReplace,idTerminalWithReplace,idTurnoWithReplace)
-    getAllAvailability map {allAvailability =>  assert(allAvailability.head.length==6)}
+    getAllAvailability map {allAvailability =>  assert(allAvailability.isEmpty)}
   }
   it should "return Some(1) when Driver absence is updated in risultato table" in {
     val updateAbsence: Future[Option[Int]] = RisultatoOperation.updateAbsence(idRisultatoForUpdate,idNewPerson)
@@ -40,7 +40,7 @@ class TestRimpiazzaAssenza extends  AsyncFlatSpec with BeforeAndAfterEach with S
   it should "return list length 5 next to update absence and driver have 3 shift in a day" in {
     val getAllAvailability: Future[Option[List[InfoReplacement]]] = DisponibilitaOperation
       .allDriverWithAvailabilityForADate(idRisultatoWithReplace,idTerminalWithReplace,idTurnoWithReplace)
-    getAllAvailability map {allAvailability =>  assert(allAvailability.head.length==5)}
+    getAllAvailability map {allAvailability =>  assert(allAvailability.isEmpty)}
   }
   it should "return None if not exist absence in on day" in {
     val getAllAbsence: Future[Option[List[InfoAbsenceOnDay]]] = AssenzaOperation.getAllAbsence(date)

@@ -1617,3 +1617,25 @@ where (("DataInizio"<= N'20200701' and "DataFine" >=  N'20200701')
 select "DataInizio", "DataFine", "TerminalSetIdTerminale", "IdRichiestaTeorica" from "RichiestaTeoricaSets"
 where ((("DataInizio" <= (convert(date, {d '2020-01-01'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'}))))
 or (("DataFine" <= (convert(date, {d '2020-12-31'}))) and ("DataFine" >= (convert(date, {d '2020-12-31'})))))
+
+select s37."Persone_Matricola" from "PersoneSets" s40, "StoricoContrattoSets" s37, "DisponibilitaStraordinarioSets" s35, "RisultatoSets" s36
+where (((((s36."Data" = (convert(date, {d '2020-06-18'}))) and (not (s36."Turno_IdTurno" = 5))) and (s35."Settimana" = 25))
+    and ((s35."Giorno1" = 'Giovedi') or (s35."Giorno2" = 'Giovedi'))) and (((s37."DataFine" >= (convert(date, {d '2020-06-18'}))) or
+                                                                            (not (s37."DataFine" is not null))) and (s37."DataInizio" <= (convert(date, {d '2020-06-18'}))))) and ((((((s40."Matricola" = s37."Persone_Matricola")
+    and (s40."DisponibilitaStraordinarioSetIdDisponibilitaStraordinario" = s35."IdDisponibilitaStraordinario")) and (s36."Persone_Matricola" = s40."Matricola"))
+    and (s40."Terminale_IdTerminale" = 3)) and (s40."Matricola" in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)))
+    and (s40."DisponibilitaStraordinarioSetIdDisponibilitaStraordinario" is not null))
+
+
+select s37."Persone_Matricola" from "PersoneSets" s40, "StoricoContrattoSets" s37, "DisponibilitaStraordinarioSets" s35, "RisultatoSets" s36 where
+    (((((s36."Data" = (convert(date, {d '2020-06-18'}))) and (not (s36."Turno_IdTurno" = 5))) and (s35."Settimana" = 25))
+        and ((s35."Giorno1" = 'Giovedi') or (s35."Giorno2" = 'Giovedi'))) and (((((not (s37."Turno_IdTurno" = 5)) or (not (s37."Turno1_IdTurno" = 5)))
+        and ((s37."DataFine" >= (convert(date, {d '2020-06-18'}))) or (not (s37."DataFine" is not null))))
+        and (s37."DataInizio" <= (convert(date, {d '2020-06-18'}))))))    and ((((((s40."Matricola" = s37."Persone_Matricola") and (s36."Persone_Matricola" = s40."Matricola"))
+        and (s40."DisponibilitaStraordinarioSetIdDisponibilitaStraordinario" = s35."IdDisponibilitaStraordinario"))
+        and (s40."Matricola" in (6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19))) and (s40."Terminale_IdTerminale" = 3)) and (s40."DisponibilitaStraordinarioSetIdDisponibilitaStraordinario" is not null))
+
+
+select * from risultatosets where idrisultato=391
+
+select * from risultatosets order by Persone_Matricola where Persone_Matricola=12
