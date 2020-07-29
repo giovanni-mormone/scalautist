@@ -88,13 +88,12 @@ object PersonaOperation extends PersonaOperation {
   override def filterBySurname(surname: String): Future[Option[List[Persona]]] =
     selectPersone(x => x.cognome === surname)
 
-  override def login(login: Login): Future[Option[Persona]] = {
+  override def login(login: Login): Future[Option[Persona]] =
     InstancePersona.operation().selectFilter(user=>user.userName===login.user).collect {
       case Some(List(value)) if CheckPassword(login.password,value.password.toList.foldLeft(EMPTY_STRING)((_,actual)=>actual)) =>
-        Some(value)
+        Some(value.copy(password = None))
       case _ => None
     }
-  }
 
   override def changePassword(changePassword: ChangePassword):Future[Option[Int]]= {
     InstancePersona.operation().selectFilter(user=>user.id===changePassword.id).flatMap {

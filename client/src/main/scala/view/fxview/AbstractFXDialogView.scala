@@ -27,7 +27,7 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
   @FXML
   protected var pane: StackPane = _
   protected var generalResources: ResourceBundle = _
-  private val image = new Image(getClass.getResource("../../../images/program_icon.png").toString)
+  private val image = new Image(getClass.getResource("/images/program_icon.png").toString)
   myStage.getIcons.add(image)
   /**
    * Stage of this view.
@@ -37,6 +37,11 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
   override def initialize(location: URL, resources: ResourceBundle): Unit ={
     myStage.setTitle(resources.getResource("nome"))
     generalResources = resources
+  }
+
+
+  override def close(): Unit = {
+    Platform.exit()
   }
 
   override def show(): Unit =
@@ -53,4 +58,10 @@ abstract class AbstractFXDialogView(val myStage:Stage) extends Initializable wit
 
   override def alertMessage(message: String): Boolean =
     FXHelperFactory.modalAlert(myStage,message)
+
+  myStage.setOnCloseRequest(e => {
+    e.consume()
+    close()
+  })
+
 }

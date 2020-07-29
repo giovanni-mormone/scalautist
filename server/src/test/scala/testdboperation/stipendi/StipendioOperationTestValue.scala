@@ -23,5 +23,4 @@ object StipendioOperationTestValue {
                                                      InfoPresenza(41.6,"22:00 alle 2:00","Tarda Serata",Date.valueOf(LocalDate.of(2020,5,1)),straordinario = false)),
                                                      InfoValorePresenza(10,0.0,457.6000000000001),
                                                      InfoAssenza(18,11))
-
 }

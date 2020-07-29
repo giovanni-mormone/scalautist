@@ -4,7 +4,7 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Awaitable, Future, Promise}
+import scala.concurrent.{Future, Promise}
 import scala.io.Source
 import scala.util.{Failure, Success}
 

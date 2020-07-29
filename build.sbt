@@ -5,7 +5,6 @@ version := "0.1"
 
 ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
-
 lazy val client = project.settings(
   mainClass := Some("MainClient"),
   name := "scalautist-client-scala",
@@ -25,8 +24,8 @@ lazy val client = project.settings(
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
-
 ).dependsOn(utils,event)
+
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
   dockerBaseImage       := "openjdk:jre",
@@ -176,7 +175,8 @@ lazy val librariesTest = new {
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
   scalacOptions ++= compilerOptions,
-  excludeDependencies ++= Seq(
+  test in assembly := {},
+    excludeDependencies ++= Seq(
     librariesTest.scalatestOrg,
     librariesTest.junitCom,
     librariesTest.scalaCheckOrg,

@@ -41,8 +41,6 @@ object HumanResourceViewFX {
     private var hrHome: HRHome = _
     private var popup: Popup = _
 
-    override def close(): Unit = stage.close()
-
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       myController = HumanResourceController()
