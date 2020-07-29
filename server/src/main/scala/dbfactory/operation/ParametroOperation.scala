@@ -50,7 +50,7 @@ object ParametroOperation extends ParametroOperation {
   override def saveInfoAlgorithm(infoAlgorithm: InfoAlgorithm): Future[Option[Int]] = infoAlgorithm match {
     case value if value.zonaTerminale.isEmpty || value.parametro.nome.isEmpty =>
       Future.successful(Some(StatusCodes.ERROR_CODE3))
-    case value if value.giornoInSettimana.forall(giorno=>giorno.exists(quant=>quant.quantita<=0))=>
+    case value if value.giornoInSettimana.isDefined && value.giornoInSettimana.forall(giorno=>giorno.exists(quant=>quant.quantita<=0))=>
       Future.successful(Some(StatusCodes.ERROR_CODE5))
     case _ =>for{
       idParametri <- insert(infoAlgorithm.parametro)
