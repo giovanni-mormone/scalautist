@@ -25,10 +25,6 @@ object LoginViewFX{
     private var myController: LoginController = _
     private var loginBox: LoginBox = _
 
-    override def close(): Unit =
-      myStage.close()
-
-
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       myController = LoginController()

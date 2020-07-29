@@ -3,7 +3,7 @@
 -- Script has ended
 -- --------------------------------------------------
 
-USE [viroli]
+USE [virolitest]
 
 --
 -- STARE ATTENTI CON LE FOREIGN KEY, CHIEDERE PRIMA !!!!!!! =)
