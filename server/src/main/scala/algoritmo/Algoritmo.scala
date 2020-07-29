@@ -162,13 +162,22 @@ object Algoritmo extends Algoritmo{
       case None =>verifyTheoricalRequest(algorithmExecute,shift)
     }
   }
+  private val conditionTheoricalRequest:(List[Int],List[RichiestaTeorica])=>Boolean = (idTerminal,theoricalRequest)=> 
+    idTerminal.forall(id=>theoricalRequest.map(_.terminaleId).count(teorical=>id==teorical)>=1) &&
+    theoricalRequest.groupBy(_.terminaleId).map(x=>x->x._2.sortBy(_.dataInizio)).forall(x=>x._2.zipWithIndex.forall{
+      case (_,index) if index==(x._2.length-1)=>true
+      case (date,_) if x._2.exists(dates=> dates.dataInizio.compareTo(subtract(date.dataFine,1))==0)=> true 
+    })
 
-  private def verifyTheoricalRequest(algorithmExecute: AlgorithmExecute,shift: List[Turno]): Future[Option[Int]] = {
-    InstanceRichiestaTeorica.operation().selectFilter(richiesta=>richiesta.dataInizio<=algorithmExecute.dateI
-      && richiesta.dataFine>=algorithmExecute.dateF && richiesta.terminaleId.inSet(algorithmExecute.idTerminal)).flatMap {
-        case Some(theoricalRequest) if theoricalRequest.map(_.terminaleId).equals(algorithmExecute.idTerminal)=>
+  private def verifyTheoricalRequest(algorithmExecute: AlgorithmExecute, shift: List[Turno]): Future[Option[Int]] = {
+    InstanceRichiestaTeorica.operation().selectFilter(richiesta=>((richiesta.dataInizio<=algorithmExecute.dateI
+      && richiesta.dataFine>=algorithmExecute.dateI) || (richiesta.dataFine<=algorithmExecute.dateF
+      && richiesta.dataFine>=algorithmExecute.dateF)) && richiesta.terminaleId.inSet(algorithmExecute.idTerminal)).flatMap {
+        case Some(theoricalRequest) if algorithmExecute.idTerminal.forall(id=>theoricalRequest.map(_.terminaleId).count(teorical=>id==teorical)==1)=>
           getPersonByTerminal(algorithmExecute,shift,theoricalRequest)
-        case _ =>future(StatusCodes.ERROR_CODE6)
+        case Some(theoricalRequest) if conditionTheoricalRequest(algorithmExecute.idTerminal,theoricalRequest)=>
+          getPersonByTerminal(algorithmExecute,shift,theoricalRequest)
+        case _ =>  future(StatusCodes.ERROR_CODE6)
       }
   }
 
@@ -198,11 +207,9 @@ object Algoritmo extends Algoritmo{
 }
 
 object eas extends App{
-  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,6,1))
-  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,6,30))
-  val timeFrameInitError: Date =Date.valueOf(LocalDate.of(2020,6,1))
-  val timeFrameFinishError: Date =Date.valueOf(LocalDate.of(2020,6,15))
-  val terminals=List(1)//,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
+  val timeFrameInit: Date =Date.valueOf(LocalDate.of(2020,1,1))
+  val timeFrameFinish: Date =Date.valueOf(LocalDate.of(2020,12,31))
+  val terminals=List(1,2)//,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
   val terminalWithoutTheoricRequest=List(4)
   val firstDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,10))
   val secondDateGroup: Date =Date.valueOf(LocalDate.of(2020,6,11))
@@ -220,12 +227,19 @@ object eas extends App{
   Algoritmo.shiftAndFreeDayCalculus(algorithmExecute) onComplete(println)
   while(true){}
 }
+object s extends App{
+  val r = List(RichiestaTeorica(Date.valueOf(LocalDate.of(2020,1,1)),Date.valueOf(LocalDate.of(2020,6,30)),1),
+    RichiestaTeorica(Date.valueOf(LocalDate.of(2020,7,1)),Date.valueOf(LocalDate.of(2020,12,31)),1),
+    RichiestaTeorica(Date.valueOf(LocalDate.of(2020,1,1)),Date.valueOf(LocalDate.of(2020,6,30)),2),
+  RichiestaTeorica(Date.valueOf(LocalDate.of(2020,7,1)),Date.valueOf(LocalDate.of(2020,12,31)),2),
+    RichiestaTeorica(Date.valueOf(LocalDate.of(2021,1,1)),Date.valueOf(LocalDate.of(2021,6,30)),2),
+    RichiestaTeorica(Date.valueOf(LocalDate.of(2021,7,1)),Date.valueOf(LocalDate.of(2021,12,31)),2))
 
-object esda extends App{
-  val a = List(1,2,3,4)
-  val b = List(1,2,3,4)
-  val aa = List(1,1,2,2,3,3,4,4)
-  val bb = List(1,2,3,4)
-  println(a.equals(b))
-  println(aa.equals(bb))
+
+  val datei2 = Date.valueOf(LocalDate.of(2020,1,1))
+  val datef2 =Date.valueOf(LocalDate.of(2020,12,31))
+
+
+  println(r.filter(x=> (x.dataInizio.compareTo(datei2)<=0  &&  x.dataFine.compareTo(datei2)>=0) ||
+    x.dataInizio.compareTo(datef2)<=0 && x.dataFine.compareTo(datef2)>=0))
 }

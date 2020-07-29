@@ -95,7 +95,7 @@ class DatabaseHelper private{
 }
 object DatabaseHelper{
   def apply(): DatabaseHelper = new DatabaseHelper()
-  private val dbCo:DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("sqlserver")
+  private val dbCo:DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("tsql")
   private val database = dbCo.db
   private val clean_DB: String = Source.fromResource("Scalautist.sql").mkString
   private val inserts_sql: String = Source.fromResource("ScalautistTest.sql").mkString

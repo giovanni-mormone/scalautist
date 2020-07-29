@@ -8,7 +8,7 @@
 
 SET QUOTED_IDENTIFIER OFF;
 
-USE [viroli];
+USE [virolitest];
 
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 
