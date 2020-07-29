@@ -1,11 +1,10 @@
 package utils
-import com.typesafe.config.ConfigFactory
 import slick.basic.{DatabaseConfig, StaticDatabaseConfig}
 import slick.jdbc.JdbcProfile
 import slick.jdbc.SQLServerProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Awaitable, Future, Promise}
+import scala.concurrent.{Future, Promise}
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -96,7 +95,7 @@ class DatabaseHelper private{
 }
 object DatabaseHelper{
   def apply(): DatabaseHelper = new DatabaseHelper()
-  private val dbCo:DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("tsql")
+  private val dbCo:DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("sqlserver")
   private val database = dbCo.db
   private val clean_DB: String = Source.fromResource("Scalautist.sql").mkString
   private val inserts_sql: String = Source.fromResource("ScalautistTest.sql").mkString
