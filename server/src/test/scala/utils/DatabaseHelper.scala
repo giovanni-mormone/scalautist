@@ -1,4 +1,5 @@
 package utils
+import com.typesafe.config.ConfigFactory
 import slick.basic.{DatabaseConfig, StaticDatabaseConfig}
 import slick.jdbc.JdbcProfile
 import slick.jdbc.SQLServerProfile.api._

@@ -3,7 +3,7 @@
 -- Script has ended
 -- --------------------------------------------------
 
-USE [viroli]
+USE [virolitest]
 
 --
 -- STARE ATTENTI CON LE FOREIGN KEY, CHIEDERE PRIMA !!!!!!! =)
@@ -1587,7 +1587,7 @@ SET IDENTITY_INSERT [dbo].[StoricoContrattoSets] OFF
 
 
 --//STORICOCONTRATTO
-select * from [dbo].[PresenzaSets] where data < '2020-06-06'
+select * from [dbo].[PresenzaSets] where Persone_Matricola = 5
 select * from AssenzaSets;
 select * from StipendioSets
 select * from PersoneSets
