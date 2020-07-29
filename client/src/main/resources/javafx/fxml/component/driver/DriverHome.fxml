@@ -20,5 +20,5 @@
     <Label fx:id="labelNotifiche">
         <PopOver fx:id="popover" />
     </Label>
-    <Accordion fx:id="accordion" />
+    <VBox fx:id="vBoxPopover"/>
 </BorderPane>

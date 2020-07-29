@@ -1,4 +1,4 @@
-package view.fxview.component.manager.subcomponent
+package view.fxview.component.modal
 
 import view.fxview.component.Component
 import view.fxview.component.manager.subcomponent.parent.ModalRunParent

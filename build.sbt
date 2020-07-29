@@ -7,7 +7,7 @@ ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
 
 lazy val client = project.settings(
-  mainClass := Some("view.MainClient"),
+  mainClass := Some("MainClient"),
   name := "scalautist-client-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,

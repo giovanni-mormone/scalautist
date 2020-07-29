@@ -1,10 +1,9 @@
 package controller
 
 import java.sql.Date
-import java.time.LocalDate
 
 import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Zona}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, GruppoA, InfoAlgorithm, Response, SettimanaN, SettimanaS}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, InfoAlgorithm, Response}
 import javafx.application.Platform
 import messagecodes.StatusCodes
 import model.entity.{HumanResourceModel, ManagerModel}
@@ -283,7 +282,14 @@ object ManagerController {
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
         case Success(Response(StatusCodes.SUCCES_CODE,_)) => myView.showMessageFromKey("ok-save-request")
-        case _ => myView.showMessageFromKey("general-error")
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("error-date-request")
+        case Success(Response(StatusCodes.ERROR_CODE2 | StatusCodes.ERROR_CODE3 |
+                              StatusCodes.ERROR_CODE4 | StatusCodes.ERROR_CODE5 |
+                              StatusCodes.ERROR_CODE6 | StatusCodes.ERROR_CODE7 |
+                              StatusCodes.ERROR_CODE8 | StatusCodes.ERROR_CODE9 |
+                              StatusCodes.ERROR_CODE10| StatusCodes.ERROR_CODE11|
+                              StatusCodes.ERROR_CODE12,_)) => myView.showMessageFromKey("general-error-request")
+            case _ => myView.showMessageFromKey("general-error")
       }
     }
     override def runAlgorithm2(algorithmExecute: AlgorithmExecute):Future[Response[Int]]=
@@ -314,13 +320,18 @@ object ManagerController {
       model.verifyOldResult(CheckResultRequest(algorithmExecute.idTerminal, algorithmExecute.dateI, algorithmExecute.dateF))
         .onComplete {
           case Success(Response(StatusCodes.SUCCES_CODE, Some(list))) =>
-            Option(list.collect{
-              case Some(StatusCodes.INFO_CODE2) =>
-                "info-run-other"
-              case Some(StatusCodes.INFO_CODE4) =>
-                "info-run-overwrite"
-            }).filter(_.nonEmpty)
-              .fold(executeAlgorithm(algorithmExecute))(list => myView.confirmRun(list, algorithmExecute))
+            val newList= list.collect{
+              case Some((StatusCodes.INFO_CODE2,terminal)) =>
+                ("info-run-other",terminal)
+              case Some((StatusCodes.INFO_CODE4,terminal)) =>
+                ("info-run-overwrite",terminal)
+            }
+            newList match {
+              case ::(_,_) =>
+                myView.confirmRun(newList, algorithmExecute)
+              case _ =>
+                executeAlgorithm(algorithmExecute)
+            }
           case _ => myView.showMessageFromKey("general-error")
         }
 

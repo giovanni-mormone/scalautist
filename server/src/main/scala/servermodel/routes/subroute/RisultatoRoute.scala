@@ -78,7 +78,7 @@ object RisultatoRoute {
     post {
       entity(as[Request[CheckResultRequest]]) {
         case Request(Some(value)) => onComplete(RisultatoOperation.verifyOldResult(value.terminalsId, value.dateI, value.dateF)) {
-          case Success(x) => complete(Response[List[Option[Int]]](statusCodes.SUCCES_CODE,Some(x)))
+          case Success(x) => complete(Response[List[Option[(Int,String)]]](statusCodes.SUCCES_CODE,Some(x)))
           case other => anotherSuccessAndFailure(other)
         }
         case _ => complete(StatusCodes.BadRequest, badHttpRequest)

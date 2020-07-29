@@ -1,6 +1,7 @@
-package view.fxview
+package view.fxview.component.modal
 
 import javafx.stage.Stage
+import view.fxview.AbstractFXModalView
 
 class Popup (stage: Stage) extends AbstractFXModalView(stage){
   /**

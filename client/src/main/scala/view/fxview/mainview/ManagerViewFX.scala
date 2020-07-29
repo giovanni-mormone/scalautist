@@ -17,7 +17,7 @@ import view.fxview.component.manager.ManagerHome
 import view.fxview.component.manager.subcomponent.parent.{ManagerHomeParent, ModalGruopParent, ModalParamParent, _}
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
 import view.fxview.component.manager.subcomponent._
-import view.fxview.component.modal.Modal
+import view.fxview.component.modal.{Modal, ModalInfo}
 import view.mainview.ManagerView
 
 object ManagerViewFX {
@@ -41,7 +41,6 @@ object ManagerViewFX {
       managerHome = ManagerHome(userName,userId)
       pane.getChildren.add(managerHome.setParent(this).pane)
       myController.startListenNotification()
-
     }
 
     override def drawAbsencePanel(): Unit = {
@@ -277,7 +276,7 @@ object ManagerViewFX {
       })
     }
 
-    override def confirmRun(messages: List[String], algorithmExecute: AlgorithmExecute): Unit = {
+    override def confirmRun(messages: List[(String,String)], algorithmExecute: AlgorithmExecute): Unit = {
       Platform.runLater(() =>{
         modalResource = Modal[ModalRunParent, Component[ModalRunParent], ModalRunParent](myStage, this,
           RunModal(messages, algorithmExecute))

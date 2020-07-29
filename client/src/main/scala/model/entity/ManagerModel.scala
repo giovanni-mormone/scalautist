@@ -223,7 +223,7 @@ trait ManagerModel {
    * *         [[messagecodes.StatusCodes.INFO_CODE4]] if only re-write info in the time period
    * *         [[messagecodes.StatusCodes.ERROR_CODE1]] if not exist drivers for some terminal
    */
-  def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]]
+  def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[(Int,String)]]]]
 
   /**
    * method that return Option of List of Terminale if exist
@@ -369,9 +369,9 @@ object ManagerModel {
       callHttp(request).flatMap(unMarshall)
     }
 
-    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[Int]]]] = {
+    override def verifyOldResult(dataToCheck: CheckResultRequest): Future[Response[List[Option[(Int,String)]]]] = {
       val request = Post(getURI("checkresultprealgorithm"), transform(dataToCheck))
-      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[Int]]]])
+      callHttp(request).flatMap(response => Unmarshal(response).to[Response[List[Option[(Int,String)]]]])
     }
 
     override def verifyExistedQueue(userId: Option[Int],f:(String,Long)=>Unit): Unit = {

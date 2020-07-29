@@ -49,7 +49,7 @@ object FireBox {
       initializeButton(resources)
 
       val columnFields = List("id", "name", "surname", "selected")
-      CreateTable.createColumns[PersonaTableWithSelection](employeeTable, columnFields)
+      CreateTable.createColumns[PersonaTableWithSelection](employeeTable, columnFields,177)
       CreateTable.fillTable[PersonaTableWithSelection](employeeTable, employees)
 
       initializeSearch(resources)

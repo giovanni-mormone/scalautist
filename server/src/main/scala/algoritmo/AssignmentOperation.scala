@@ -61,10 +61,10 @@ object AssignmentOperation extends AssignmentOperation {
           ).foldLeft(Future.successful(Option(StatusCodes.SUCCES_CODE))){
             case (default,actual) => actual._2.flatMap {
               case Some(StatusCodes.SUCCES_CODE) =>
-                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("success")))))
+                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal-key").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("success")))))
                 default
               case _ =>
-                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("error")))))
+                actual._1.theoricalRequest.headOption.foreach(terminale => EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("terminal-key").concat(terminale.terminaleId.toString.concat(EmitterHelper.getFromKey("error")))))
                 default
             }
           }

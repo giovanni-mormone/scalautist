@@ -43,7 +43,7 @@ object IllBox{
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       val columnFields = List("id", "name", "surname")
-      CreateTable.createColumns[PersonaTable](employeeTable, columnFields)
+      CreateTable.createColumns[PersonaTable](employeeTable, columnFields,177)
       CreateTable.fillTable[PersonaTable](employeeTable, employees)
 
       initializeSearch(resources)

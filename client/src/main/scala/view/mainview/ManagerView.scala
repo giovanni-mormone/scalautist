@@ -14,10 +14,10 @@ trait ManagerView extends DialogView {
   /**
    * method that draw a modal to choose whether to continue with the algorithm and overwrite old data or not
    *
-   * @param message Type of error that occur
+   * @param message Type of error that occur, and name terminal
    * @param algorithmExecute information that allows the algorithm to work
    */
-  def confirmRun(message: List[String], algorithmExecute: AlgorithmExecute): Unit
+  def confirmRun(message: List[(String,String)], algorithmExecute: AlgorithmExecute): Unit
 
   def drawNotification(str: String, tag: Long): Unit
 

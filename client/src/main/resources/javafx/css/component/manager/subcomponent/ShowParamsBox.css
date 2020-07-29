@@ -91,7 +91,6 @@
     -fx-background-radius: 10px;
     -fx-background-insets: 0, 1;
     -fx-fit-to-width: true;
-    -fx-fit-to-height: true;
 }
 
 #senzaInfo1,#senzaInfo2,#senzaInfo3,#senzaInfo4{

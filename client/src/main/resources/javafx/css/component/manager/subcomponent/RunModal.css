@@ -6,13 +6,13 @@
 }
 
 #vbox{
-    -fx-spacing: 20;
+    -fx-spacing: 10;
     -fx-alignment: top-center;
     -fx-fill-width: true;
     -fx-max-width: 400;
     -fx-min-width: 400;
     -fx-fill-height: false;
-    -fx-padding: 20;
+    -fx-padding: 10;
     -fx-background-color: white;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
@@ -23,21 +23,16 @@
 }
 
 #scrollpane{
+    -fx-hbar-policy: never;
     -fx-border-radius: 10px;
     -fx-background-insets: 0, 1;
     -fx-background-radius: 10px;
     -fx-background-color: white;
     -fx-border-color: transparent;
     -fx-alignment: center;
-    -fx-fit-to-height: true;
     -fx-fit-to-width: true;
 }
-#ancorPane{
-    -fx-fit-to-height: true;
-    -fx-fit-to-width: true;
-    -fx-alignment: center;
-    -fx-background-color: white;
-}
+
 
 #buttonbox{
     -fx-spacing: 10;
@@ -63,4 +58,10 @@
      -fx-background-color: #0074E1;
      -fx-border-color: transparent;
  }
+#messagesHeader{
+    -fx-background-color: white;
+    -fx-wrap-text: true;
+    -fx-fit-to-height: true;
+    -fx-spacing: 5;
 
+}
