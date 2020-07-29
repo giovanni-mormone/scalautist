@@ -72,7 +72,7 @@ object FXHelperFactory {
     @FXML
     var confirmationButton:Button = _
     private val myStage = new Stage()
-    private val image = new Image(getClass.getResource("../../images/program_icon.png").toString)
+    private val image = new Image(getClass.getResource("/images/program_icon.png").toString)
     myStage.getIcons.add(image)
     FXLoader.loadScene(myStage,this,"ModalBase")
 

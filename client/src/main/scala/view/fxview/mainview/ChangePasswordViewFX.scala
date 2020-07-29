@@ -41,9 +41,6 @@ object ChangePasswordViewFX{
       myController.changePassword(oldPassword,newPassword)
     }
 
-    override def close(): Unit =
-      myStage.close()
-
     override def errorChange(): Unit ={
       Platform.runLater(() =>{
         stopLoading()

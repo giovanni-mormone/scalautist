@@ -33,11 +33,6 @@ object DriverViewFX {
     private var driverHome: DriverHome = _
     private var modal: Modal = _
 
-    /**
-     * Closes the view.
-     */
-    override def close(): Unit = stage.close()
-
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
       myController = DriverController()

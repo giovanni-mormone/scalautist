@@ -233,16 +233,6 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         case None =>GiornoOperation.insert(day.day)
       }
 
-  /*
-   * error 3 fallisce inserimento
-   * error 4 giorno è none
-   * error 5 idrichiseteteoriche sono none
-   * @param giorno
-   * @param idRT
-   * @param day
-   * @return
-   */
-
   private def richiestaOperation(giorno: Option[Int], idRT: Option[List[Int]], day: RequestGiorno):Future[Option[Int]] = {
 
     @scala.annotation.tailrec

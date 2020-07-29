@@ -32,7 +32,6 @@ object ManagerViewFX {
     private var myController: ManagerController = _
     private var managerHome: ManagerHome = _
     private val REPLACEMENT_WITHOUT_ERROR = "no-replacement-error"
-    override def close(): Unit = stage.close()
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
