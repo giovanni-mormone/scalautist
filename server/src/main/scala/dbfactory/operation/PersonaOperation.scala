@@ -160,6 +160,7 @@ object PersonaOperation extends PersonaOperation {
       case Some(x) =>
         EmitterHelper.sendPersonaNotification(EmitterHelper.getFromKey("fired").concat(x.toString).concat(EmitterHelper.getFromKey("drivers")),"licenzia")
         Some(x)
+      case None => None
     }
   }
 
