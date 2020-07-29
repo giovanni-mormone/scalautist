@@ -1,6 +1,4 @@
-*ScalaAutist 1.0* 
-
-****Descrizione****
+#ScalaAutist 1.0
 
 ScalaAutist is developed with Scala.
 
