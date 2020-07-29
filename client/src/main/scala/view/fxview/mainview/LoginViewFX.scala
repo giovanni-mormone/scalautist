@@ -91,6 +91,11 @@ object LoginViewFX{
         ManagerViewFX(myStage, userName, userId)
       })
     }
+
+    override def showMessageFromKey(message: String): Unit = {
+      super.showMessageFromKey(message)
+      stopLoading()
+    }
   }
     def apply(stage: Stage): LoginView = new LoginViewFX(stage)
 }

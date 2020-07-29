@@ -43,8 +43,8 @@ class TestPersona  extends  AsyncFlatSpec with BeforeAndAfterEach with StartServ
     insertAllPersona map { insertAll => assert(insertAll.head.length == 2) }
   }
   it should "return a person when select for id" in {
-    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(persona.matricola.get)
-    selectPersona map {pers =>  assert(pers.get == persona) }
+    val selectPersona: Future[Option[Persona]] = PersonaOperation.select(personaSelect.matricola.get)
+    selectPersona map {pers =>  assert(pers.get == personaSelect) }
   }
   it should "return a List of Person when selectAll" in {
     val selectAllPersona: Future[Option[List[Persona]]] = PersonaOperation.selectAll

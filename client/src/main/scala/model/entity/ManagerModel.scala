@@ -291,7 +291,8 @@ trait ManagerModel {
  */
 object ManagerModel {
 
-  def apply():ManagerModel = new ManagerModelHttp()
+  private val instance:ManagerModel = new ManagerModelHttp()
+  def apply():ManagerModel = instance
 
   /**
    * HTTP implementation for [[ManagerModel]]

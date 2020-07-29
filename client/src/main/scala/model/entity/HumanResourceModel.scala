@@ -167,7 +167,8 @@ trait HumanResourceModel{
  */
 object HumanResourceModel {
 
-  def apply(): HumanResourceModel = new HumanResourceHttp()
+  private val instance: HumanResourceModel = new HumanResourceHttp()
+  def apply(): HumanResourceModel = instance
 
   private class HumanResourceHttp extends AbstractHttp with HumanResourceModel{
 
