@@ -6,7 +6,7 @@ import java.util.ResourceBundle
 import caseclass.CaseClassDB.Zona
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, TableView, TextField}
-import regularexpressionutilities.NameChecker
+import regularexpressionutilities.ZonaChecker
 import view.fxview.component.HumanResources.subcomponent.util.{CreateTable, TextFieldControl, ZonaTable}
 import view.fxview.component.manager.subcomponent.parent.ZonaParent
 import view.fxview.component.{AbstractComponent, Component}
@@ -69,7 +69,7 @@ object ZonaBox {
     private def initializeTextField(resources: ResourceBundle): Unit = {
       newName.setPromptText(resources.getResource("nametxt"))
       newName.textProperty().addListener((_, old, word) => {
-        TextFieldControl.controlNewChar(newName, NameChecker, word, old)
+        TextFieldControl.controlNewChar(newName, ZonaChecker, word, old)
         ableToSave()
       })
     }

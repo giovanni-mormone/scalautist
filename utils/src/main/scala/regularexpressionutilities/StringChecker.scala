@@ -72,7 +72,7 @@ object NameChecker extends Checker {
  * Name of Zona utilities object, such as regex to check Zona's name single character.
  */
 object ZonaChecker extends Checker {
-  private val regex: Regex = "^[A-Za-z0-9]*$".r   //"^[A-Za-z].[A-Za-z0-9]$".r
+  private val regex: Regex = "^[A-Za-z 0-9]*$".r   //"^[A-Za-z].[A-Za-z0-9]$".r
 
   override def checkRegex: Regex = regex
 }
