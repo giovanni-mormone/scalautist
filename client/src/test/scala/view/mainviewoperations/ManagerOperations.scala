@@ -2,6 +2,8 @@ package view.mainviewoperations
 
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait ManagerOperations {
   def openGenerateTurns(): Unit
   def openManageAbsence(): Unit

@@ -5,6 +5,8 @@ import java.time.LocalDate
 import javafx.scene.control.DatePicker
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait FerieOperation{
   def enterFirstDate(day: LocalDate): Unit
   def enterSecondDate(day: LocalDate): Unit
@@ -19,13 +21,13 @@ object FerieOperation {
   private class FerieOperationImpl(toTest: BaseTest) extends FerieOperation{
 
     override def enterFirstDate(day: LocalDate): Unit = {
-      val initDate:DatePicker = toTest.find("#initDate")
+      val initDate:DatePicker = toTest.find("#initDate"): @nowarn
       toTest.clickOn(initDate)
       initDate.setValue(day)
     }
 
     override def enterSecondDate(day: LocalDate): Unit = {
-      val finishDate:DatePicker = toTest.find("#finishDate")
+      val finishDate:DatePicker = toTest.find("#finishDate"): @nowarn
       toTest.clickOn(finishDate)
       finishDate.setValue(day)
     }

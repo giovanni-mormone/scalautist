@@ -2,6 +2,8 @@ package view.mainviewoperations
 
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait ChangePasswordOperations {
   def changePassword(oldPassword: String, newPassword: String, confirmPassword: String): Unit
   def enterOldPassword(password: String): Unit

@@ -30,7 +30,6 @@ class BaseTest extends ApplicationTest{
 
   def ensureEventQueueComplete():Unit = WaitForAsyncUtils.waitForFxEvents(2)
 
-  @nowarn
   def find[T<:Node](query:String): T =
     lookup(query).queryAll().iterator().next().asInstanceOf[T]: @nowarn//metodo find non capito bene da scala
 }

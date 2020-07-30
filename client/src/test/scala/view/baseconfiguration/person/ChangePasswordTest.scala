@@ -10,6 +10,8 @@ import view.baseconfiguration.BaseTest
 import view.launchview.ChangePasswordLaunch
 import view.mainviewoperations.ChangePasswordOperations
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class ChangePasswordTest extends BaseTest {
   private val VALID_PASS = "mammaMia1"
@@ -30,7 +32,7 @@ class ChangePasswordTest extends BaseTest {
     changeView.changePassword(OLD_PASS,VALID_PASS,VALID_PASS)
     ensureEventQueueComplete()
     Thread.sleep(10000)
-    val msgLabel:Label = find("#messageLabel")
+    val msgLabel:Label = find("#messageLabel"): @nowarn
     assert(msgLabel.getText.equals("Password Cambiata con successo!"))
     changeView.clickModalButton()
   }
@@ -39,7 +41,7 @@ class ChangePasswordTest extends BaseTest {
   def displayLoading(): Unit = {
     changeView.changePassword(OLD_PASS, VALID_PASS, VALID_PASS)
     ensureEventQueueComplete()
-    val loadBox: VBox = find("#loadingBox")
+    val loadBox: VBox = find("#loadingBox"): @nowarn
     assert(loadBox.isVisible)
   }
 
@@ -95,17 +97,17 @@ class ChangePasswordTest extends BaseTest {
   }
 
   private def confirmError(): Unit = {
-    val error: Label = find("#confirmError")
+    val error: Label = find("#confirmError"): @nowarn
     assert(error.isVisible)
   }
 
   private def passError(): Unit = {
-    val error: Label = find("#passError")
+    val error: Label = find("#passError"): @nowarn
     assert(error.isVisible)
   }
 
   private def changeButtonDisabled(): Unit = {
-    val changeButton: Button = find("#changePasswordButton")
+    val changeButton: Button = find("#changePasswordButton"): @nowarn
     assert(changeButton.isDisable)
   }
 

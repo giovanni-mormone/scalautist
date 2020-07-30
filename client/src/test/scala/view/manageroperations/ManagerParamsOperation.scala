@@ -46,9 +46,8 @@ object ManagerParamsOperation {
     override def sleep(time: Int): Unit =
       toTest.sleep(time)
 
-    @nowarn("msg=metodo find non capito bene da scala")
     override def setTime(datePicker: String, day: Int): Unit = {
-      val datePic: DatePicker = toTest.find(datePicker)
+      val datePic: DatePicker = toTest.find(datePicker): @nowarn
       day match {
         case 1 => datePic.setValue(FIRST_OF_MONTH)
         case 2 => datePic.setValue(LAST_OF_MONTH)
@@ -65,7 +64,7 @@ object ManagerParamsOperation {
       toTest.find[TableView[ParamsTable]]("#params")
         .getSelectionModel.select(10) //10
 
-    override def isThere(component: String): Boolean =
+    @nowarn override def isThere(component: String): Boolean =
       Option(toTest.find(component)).isDefined
   }
 }

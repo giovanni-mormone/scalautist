@@ -32,7 +32,7 @@ trait Checker{
  * Number utilities object, such as regex to check numbers.
  */
 object NumberChecker extends Checker {
-  private val regex: Regex = "^\\d$".r
+  private val regex: Regex = "^[0-9]{1,10}$".r
 
   /**
    * Stores the regex to validate a number.
@@ -55,7 +55,7 @@ object NumbersChecker extends Checker {
  * Name or surname utilities object, such as regex to check Persona's name single character.
  */
 object NameChecker extends Checker {
-  private val regex: Regex = "^[A-Za-z ']$".r
+  private val regex: Regex = "^[A-Za-z ']*$".r
 
   /**
    * Stores the regex to validate a name.
@@ -72,7 +72,7 @@ object NameChecker extends Checker {
  * Name of Zona utilities object, such as regex to check Zona's name single character.
  */
 object ZonaChecker extends Checker {
-  private val regex: Regex = "^[A-Za-z0-9]$".r   //"^[A-Za-z].[A-Za-z0-9]$".r
+  private val regex: Regex = "^[A-Za-z 0-9]*$".r   //"^[A-Za-z].[A-Za-z0-9]$".r
 
   override def checkRegex: Regex = regex
 }
