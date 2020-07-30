@@ -71,7 +71,7 @@ object ParamsModal {
 
     override def initialize(location: URL, resources: ResourceBundle): Unit = {
       super.initialize(location, resources)
-      data.info.fold()(info => infoAlgorithm = info)
+      data.info.foreach(info => infoAlgorithm = info)
       initButton()
       initTable()
       initCheckBox()
@@ -120,7 +120,7 @@ object ParamsModal {
     private def initButton(): Unit = {
       open.setText(resources.getResource(key = "buttontxt"))
       data.info.fold(open.setDisable(true))(_ => open.setDisable(false))
-      open.setOnAction(_ => selectedItem(selectedItemId()).fold()(_ => {
+      open.setOnAction(_ => selectedItem(selectedItemId()).foreach(_ => {
         val n = infoAlgorithm
         parent.loadParam(infoAlgorithm)
       }))

@@ -1,7 +1,8 @@
 package testhttp
 
 
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.actor.ActorSystem
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import caseclass.CaseClassDB.{GiornoInSettimana, Parametro, ZonaTerminale}
 import caseclass.CaseClassHttpMessage.{InfoAlgorithm, Request, Response}
 import jsonmessages.JsonFormats._
@@ -10,6 +11,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
 import servermodel.routes.masterroute.MasterRouteParametro._
 import utils.StartServer4
+
+import scala.concurrent.duration.DurationInt
 
 object TestHttpParametri{
   private def startServer(): Unit = MainServer
@@ -35,6 +38,8 @@ object TestHttpParametri{
 }
 class TestHttpParametri  extends AnyWordSpec with ScalatestRouteTest with StartServer4{
   import TestHttpParametri._
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
   "The service" should {
     "return not found if not exist parameters" in {

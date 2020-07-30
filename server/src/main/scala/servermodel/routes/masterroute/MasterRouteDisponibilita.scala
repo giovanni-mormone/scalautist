@@ -9,7 +9,10 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
+import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import servermodel.routes.subroute.DisponibilitaRoute._
+
+import scala.concurrent.duration._
 /**
  * @author  Fabian Aspée Encina
  * This object manage routes that act on the disponibilita entity and its related entities
@@ -60,7 +63,11 @@ object MasterRouteDisponibilita extends Directives with MasterRouteDisponibilita
 
   override def extraAvailability(): Route =
     path("extraavailability") {
-      getExtraAvailability
+      withRequestTimeout(10 minute) {
+        withRequestTimeoutResponse(request => timeoutResponse) {
+          getExtraAvailability
+        }
+      }
     }
 
   override def chooseExtra(): Route =

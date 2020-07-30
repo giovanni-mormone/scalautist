@@ -1,6 +1,7 @@
 package testhttp
 
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.actor.ActorSystem
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import caseclass.CaseClassDB.Disponibilita
 import caseclass.CaseClassHttpMessage.{Dates, Id, Request, Response}
 import org.scalatest.wordspec.AnyWordSpec
@@ -9,6 +10,8 @@ import jsonmessages.JsonFormats._
 import servermodel.routes.masterroute.MasterRouteDisponibilita._
 import utils.StartServer
 import messagecodes.{StatusCodes => statusCodes}
+
+import scala.concurrent.duration.DurationInt
 
 object TestHttpDisponibilita {
   private def startServer(): Unit = MainServer
@@ -22,6 +25,8 @@ object TestHttpDisponibilita {
 
 class TestHttpDisponibilita extends AnyWordSpec with ScalatestRouteTest with StartServer {
   import TestHttpDisponibilita._
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
 
   "The service" should {

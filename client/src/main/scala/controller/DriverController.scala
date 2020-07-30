@@ -85,8 +85,8 @@ object DriverController{
       )
 
     private def generalSuccessAndError[A](response:Try[A]): Unit = response match {
-      case Failure(_)  => myView.showMessageError("general-error")
       case Success(Response(StatusCodes.BAD_REQUEST,_))=>myView.showMessageError("bad-request-error")
+      case _  => myView.showMessageError("general-error")
     }
     override def drawSalaryPanel(): Unit =
       Utils.userId.foreach(id=>

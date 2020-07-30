@@ -55,7 +55,7 @@ object ResultBox {
       result.map(res=>{
         val driver = DriverResultBox(res)
         father.getChildren.add(driver.setParent(parent).pane)
-      }).foldLeft(true)((default,actual) => default)
+      }).foldLeft(true)((default,_) => default)
     }
   }
 

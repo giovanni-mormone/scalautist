@@ -244,11 +244,13 @@ object ManagerController {
         case Success(Response(StatusCodes.ERROR_CODE2,_)) => myView.showMessageFromKey("terminal-error")
         case Success(Response(StatusCodes.ERROR_CODE3,_)) => myView.showMessageFromKey("turn-error")
         case Success(Response(StatusCodes.NOT_FOUND,_)) =>
-          dataToAbsencePanel()
           myView.showMessageFromKey("no-replacement-error")
+          dataToAbsencePanel()
         case Success(Response(StatusCodes.SUCCES_CODE,payload)) => payload.foreach(result => myView.drawReplacement(result))
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case _ => myView.showMessageFromKey("general-error")
+        case _ =>
+          myView.showMessageFromKey("general-error")
+          dataToAbsencePanel()
       }
     }
 
@@ -260,7 +262,9 @@ object ManagerController {
           dataToAbsencePanel()
           myView.showMessageFromKey("replaced-driver")
         case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case _ => myView.showMessageFromKey("general-error")
+        case _ =>
+          myView.showMessageFromKey("general-error")
+          dataToAbsencePanel()
       }
     }
 

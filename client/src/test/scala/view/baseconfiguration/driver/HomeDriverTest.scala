@@ -12,6 +12,9 @@ import view.baseconfiguration.BaseTest
 import view.driverviewoperations.HomeDriver
 import view.launchview.DriverLaunch
 
+import scala.annotation.nowarn
+
+@nowarn("msg=metodo find non capito bene da scala")
 @RunWith(classOf[JUnitParamsRunner])
 class HomeDriverTest extends BaseTest {
   var driverHome:HomeDriver=_

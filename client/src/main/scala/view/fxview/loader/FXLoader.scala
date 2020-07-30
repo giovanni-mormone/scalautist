@@ -9,6 +9,8 @@ import javafx.stage.Stage
 import view.BaseView
 import view.fxview.component.Component
 
+import scala.annotation.nowarn
+
 /**
  * @author Giovanni Mormone.
  *
@@ -34,12 +36,13 @@ object FXLoader {
    * @param layoutPath
    *                   The path of the fxml to load.
    */
+  @nowarn//non è dead code, qui ci arriva sempre
   def loadScene(primaryStage: Stage, controller: BaseView, layoutPath: String):Unit = {
     val loader = new FXMLLoader(getClass.getResource(SCENE_PATH +  layoutPath + EXTENSION))
     val bundle = ResourceBundle.getBundle(SCENE_BUNDLE_PATH + layoutPath ,new Locale("it","IT"))
     loader.setController(controller)
     loader.setResources(bundle)
-    loader.load
+    loader.load // warn per questa zona qua
     primaryStage.setScene(new Scene(loader.getRoot[Parent]))
   }
 

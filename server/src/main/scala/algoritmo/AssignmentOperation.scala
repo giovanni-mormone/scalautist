@@ -2,17 +2,16 @@ package algoritmo
 
 import java.sql.Date
 
-import _root_.emitter.ConfigEmitter
 import algoritmo.AssignmentOperation.InfoForAlgorithm
 import algoritmo.ExtractAlgorithmInformation.DisponibilitaFixed
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, GruppoA}
-import com.typesafe.config.ConfigFactory
 import dbfactory.operation.RisultatoOperation
 import messagecodes.StatusCodes
 import utils.DateConverter._
 import utils.EmitterHelper
 
+import scala.annotation.nowarn
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -259,6 +258,7 @@ object AssignmentOperation extends AssignmentOperation {
 
     val assignableDays:List[(Persona,(Int,List[Date]))]=drivers._2.map(res=>res._2->
       filterDayToAssignDriver(group,assigned.filter(driver=>res._2.matricola.equals(driver.idDriver)))).sortWith(_._2._1<_._2._1)
+    @nowarn //se arriva al match interno su date ci sono delle date sicuramente
     @scala.annotation.tailrec
     def _iteraDriver(assignableDays:List[(Persona,List[Date])],dateGroup:Map[Date,Int], result:List[Info]=List.empty):(List[Info],Map[Date,Int]) = assignableDays match {
       case ::(assignableDay, next) =>
@@ -304,6 +304,7 @@ object AssignmentOperation extends AssignmentOperation {
  // A POSTO
   private def assignBalancedSundays(drivers: List[(Int, Persona)], sundays: List[Date], previousSundays: List[Date],contract: Option[List[Contratto]], previousSequence: Option[List[PreviousSequence]], assigned: Map[Int,Int]): (List[Info],Map[Int,Int],Option[List[PreviousSequence]]) = {
 
+    @nowarn
     @scala.annotation.tailrec
     def _assignBalancedSundays(drivers: List[(Int, Persona)], assigned: Map[Int,Int], result: List[Info] = List.empty,previousSequences: Option[List[PreviousSequence]]= None): (List[Info],Map[Int,Int],Option[List[PreviousSequence]]) = drivers match {
       case ::(driver, next) => previousSequence.toList.flatten.find(x => driver._2.matricola.contains(x.idDriver)) match {
@@ -408,13 +409,8 @@ object AssignmentOperation extends AssignmentOperation {
   private def assignExtraOrdinaryShift(resultFreeDay: (Option[List[InfoReq]], List[Info]), algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm): Future[Option[Int]] ={
     val listWeek = createWeekLists(algorithmExecute.dateI,algorithmExecute.dateF)
     var resultAssignExtraOrdinary:(List[Info], Option[List[InfoReq]]) = (List.empty,None)
-    try{
-      resultAssignExtraOrdinary = assignExtraOrdinary(resultFreeDay._2,resultFreeDay._1,infoForAlgorithm,listWeek)
-      RisultatoOperation.verifyAndSaveResultAlgorithm(resultAssignExtraOrdinary._1,algorithmExecute.dateI)
-    }catch {
-      case e:Exception=>println(e)
-        Future.successful(None)
-    }
+    resultAssignExtraOrdinary = assignExtraOrdinary(resultFreeDay._2,resultFreeDay._1,infoForAlgorithm,listWeek)
+    RisultatoOperation.verifyAndSaveResultAlgorithm(resultAssignExtraOrdinary._1,algorithmExecute.dateI)
   }
 
   private val verifyIfExistAnotherFree:(List[Date],List[InfoDay])=>Boolean=(week,infoDay)=> week.exists(date=>

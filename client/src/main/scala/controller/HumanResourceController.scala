@@ -8,6 +8,7 @@ import model.entity.HumanResourceModel
 import view.fxview.component.HumanResources.subcomponent.util.{EmployeeView, ErrorName}
 import view.mainview.HumanResourceView
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
@@ -128,6 +129,8 @@ object HumanResourceController {
           EmployeeView.recruit,
           showSuccess = false))
 
+
+
     override def fires(ids: Set[Int]): Unit = {
       if(ids.nonEmpty) {
         val future: Future[Response[Int]]= ids match {
@@ -137,7 +140,7 @@ object HumanResourceController {
           }
         }
         future.onComplete(result => responseValutation[Int](result, _ => None, _ => None, EmployeeView.fire))
-      }
+      }: @nowarn
       else
         showResult(messageOnModal = false, "Error6", EmployeeView.fire)
     }

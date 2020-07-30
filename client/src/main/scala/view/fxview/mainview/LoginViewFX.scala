@@ -93,8 +93,8 @@ object LoginViewFX{
     }
 
     override def showMessageFromKey(message: String): Unit = {
-      super.showMessageFromKey(message)
       stopLoading()
+      super.showMessageFromKey(message)
     }
   }
     def apply(stage: Stage): LoginView = new LoginViewFX(stage)

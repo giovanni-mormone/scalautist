@@ -3,7 +3,8 @@ package testhttp
 import java.sql.Date
 import java.time.LocalDate
 
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.actor.ActorSystem
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import caseclass.CaseClassHttpMessage.{Request, Response, ResultAlgorithm}
 import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
@@ -12,6 +13,8 @@ import jsonmessages.ImplicitDate._
 import utils.StartServer5
 import servermodel.routes.masterroute.MasterRouteRisultato._
 import messagecodes.{StatusCodes => statusCodes}
+
+import scala.concurrent.duration.DurationInt
 
 object TestHttpRisultato {
   private def startServer(): Unit = MainServer
@@ -25,6 +28,8 @@ object TestHttpRisultato {
 
 class TestHttpRisultato extends AnyWordSpec with ScalatestRouteTest with StartServer5 {
   import TestHttpRisultato._
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
 
   "The service" should {
@@ -35,12 +40,12 @@ class TestHttpRisultato extends AnyWordSpec with ScalatestRouteTest with StartSe
     }
     "return a notFound per getResult if not existing" in {
       Post(getResultNotFound._1, getResultNotFound._2) ~> routeRisultato ~> check {
-        responseAs[Response[List[ResultAlgorithm]]].statusCode==statusCodes.NOT_FOUND
+        responseAs[Response[(Option[List[ResultAlgorithm]],List[Date])]].statusCode==statusCodes.NOT_FOUND
       }
     }
     "return a None per getResult if not existing" in {
       Post(getResultNotFound._1, getResultNotFound._2) ~> routeRisultato ~> check {
-        responseAs[Response[List[ResultAlgorithm]]].payload.isEmpty
+        responseAs[Response[(Option[List[ResultAlgorithm]],List[Date])]].payload.isEmpty
       }
     }
     "return a notFound per getResult if not existing in another terminal" in {
@@ -56,17 +61,17 @@ class TestHttpRisultato extends AnyWordSpec with ScalatestRouteTest with StartSe
 
     "return a success code for getResult  if a result is search" in {
       Post(getResultSuccess._1, getResultSuccess._2) ~> routeRisultato ~> check {
-        responseAs[Response[List[ResultAlgorithm]]].statusCode==statusCodes.SUCCES_CODE
+        responseAs[Response[(Option[List[ResultAlgorithm]],List[Date])]].statusCode==statusCodes.SUCCES_CODE
       }
     }
     "return a list with 14 person for specific terminal. 3" in {
-      Post(getResultSuccess._1, getResultSuccess._2) ~> routeRisultato ~> check {
-        responseAs[Response[List[ResultAlgorithm]]].payload.head.length==14
+      Post(getResultSuccess2._1, getResultSuccess2._2) ~> routeRisultato ~> check {
+        responseAs[Response[(Option[List[ResultAlgorithm]],List[Date])]].payload.head._1.head.length==14
       }
     }
     "return a list with 3 person for specific terminal. 1" in {
-      Post(getResultSuccess2._1, getResultSuccess2._2) ~> routeRisultato ~> check {
-        responseAs[Response[List[ResultAlgorithm]]].payload.head.length==3
+      Post(getResultSuccess._1, getResultSuccess._2) ~> routeRisultato ~> check {
+        responseAs[Response[(Option[List[ResultAlgorithm]],List[Date])]].payload.head._1.head.length==3
       }
     }
 
