@@ -5,6 +5,8 @@ import akka.dispatch.Dispatchers
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.SystemMaterializer
+import com.typesafe.config.ConfigFactory
+
 import scala.concurrent.Future
 
 /**
@@ -12,8 +14,8 @@ import scala.concurrent.Future
  * Generic definition of model dispatcher. It contains the server's address and the actor system information.
  */
 trait ModelDispatcher {
-  private val port = 8080 //util
-  val address: String = "http://localhost:" + port
+
+  val address:String = AddressManager.address
 
   private val actorSystemName: String = "ClientSystem"
   implicit val system: ActorSystem = ActorSystem(actorSystemName)
@@ -43,3 +45,4 @@ object ModelDispatcher {
       Http().singleRequest(request)
   }
 }
+

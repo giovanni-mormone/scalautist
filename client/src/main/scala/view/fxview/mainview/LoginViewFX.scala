@@ -79,8 +79,10 @@ object LoginViewFX{
       })
 
     private def stopLoading(): Unit = {
-      loginBox.enable()
-      pane.getChildren.remove(FXHelperFactory.loadingBox)
+      Platform.runLater(()=>{
+        loginBox.enable()
+        pane.getChildren.remove(FXHelperFactory.loadingBox)
+      })
     }
 
     override def managerAccess(userName: String, userId: String): Unit = {
