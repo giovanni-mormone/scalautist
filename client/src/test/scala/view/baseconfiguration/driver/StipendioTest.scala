@@ -11,6 +11,8 @@ import view.baseconfiguration.BaseTest
 import view.driverviewoperations.StipendioDriver
 import view.launchview.DriverLaunch
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class StipendioTest extends BaseTest {
   var driverStipendio:StipendioDriver=_
@@ -34,7 +36,7 @@ class StipendioTest extends BaseTest {
   def lengthListView():Unit={
     driverStipendio.clickStipendioMenu()
     sleep(4000)
-    val list:ListView[Stipendio] = find("#salaryList")
+    val list:ListView[Stipendio] = find("#salaryList"): @nowarn
     assert(list.getItems.parallelStream().count()==TOTAL_STIPENDI)
   }
   @Test
@@ -43,7 +45,7 @@ class StipendioTest extends BaseTest {
     sleep(4000)
     driverStipendio.clickElementListView("2020-05-01")
     sleep(3000)
-    val normalDay:Label = find("#normalDay")
+    val normalDay:Label = find("#normalDay"): @nowarn
     assert(normalDay.getText.equals(NORMAL_DAY))
   }
   @Test
@@ -52,7 +54,7 @@ class StipendioTest extends BaseTest {
     sleep(4000)
     driverStipendio.clickElementListView("2020-05-01")
     sleep(3000)
-    val extraDay:Label = find("#dayM")
+    val extraDay:Label = find("#dayM"): @nowarn
     assert(extraDay.getText.equals(EXTRA_DAY))
   }
   @Test
@@ -61,7 +63,7 @@ class StipendioTest extends BaseTest {
     sleep(4000)
     driverStipendio.clickElementListView("2020-05-01")
     sleep(3000)
-    val salaryInfo:HBox = find("#salaryInfo")
+    val salaryInfo:HBox = find("#salaryInfo"): @nowarn
     val datepicker:Label = salaryInfo.getChildren.get(1).asInstanceOf[DatePickerContent]
       .getChildren.get(0).asInstanceOf[BorderPane].getChildren.get(0).asInstanceOf[HBox]
       .getChildren.get(1).asInstanceOf[Label]
@@ -74,7 +76,7 @@ class StipendioTest extends BaseTest {
     sleep(4000)
     driverStipendio.clickElementListView("2020-04-01")
     sleep(3000)
-    val salaryInfo:HBox = find("#salaryInfo")
+    val salaryInfo:HBox = find("#salaryInfo"): @nowarn
     val datepicker:Label = salaryInfo.getChildren.get(1).asInstanceOf[DatePickerContent]
       .getChildren.get(0).asInstanceOf[BorderPane].getChildren.get(0).asInstanceOf[HBox]
       .getChildren.get(1).asInstanceOf[Label]

@@ -2,6 +2,8 @@ package view.mainviewoperations
 
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait LoginOperations {
   def login(user:String, pass: String):Unit
   def enterPassword(pass: String): Unit

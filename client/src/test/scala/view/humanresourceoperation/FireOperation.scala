@@ -4,6 +4,8 @@ import javafx.scene.control.{Label, TableColumn, TableView}
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 
+import scala.annotation.nowarn
+
 trait FireOperation {
   def openFireBox(): Unit
   def fireOne(): Unit
@@ -28,12 +30,12 @@ object FireOperation {
     override def openFireBox(): Unit =
       toTest.clickOn(nameId)
 
-    override def fireOne(): Unit =
+    @nowarn override def fireOne(): Unit =
       toTest.find(tableNameId).asInstanceOf[TableView[PersonaTableWithSelection]]
                               .getItems.get(0)
                               .selected.setSelected(true)
 
-    override def fireMore(): Unit = {
+    @nowarn override def fireMore(): Unit = {
       toTest.find(tableNameId).asInstanceOf[TableView[PersonaTableWithSelection]]
         .getItems.get(0)
         .selected.setSelected(true)

@@ -5,6 +5,8 @@ import javafx.scene.input.KeyCode
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTable
 
+import scala.annotation.nowarn
+
 trait ZonaOperation {
   def openZona(): Unit
   def updateZona(): Unit
@@ -71,7 +73,7 @@ object ZonaOperation {
 
     override def clickNotUpdate(): Unit = {
       toTest.clickOn(nameZonaId)
-      val text: TextField = toTest.find(nameZonaId)
+      val text: TextField = toTest.find(nameZonaId): @nowarn
       while(!text.getText.equals("")) {
         toTest.press(KeyCode.BACK_SPACE)
         toTest.release(KeyCode.BACK_SPACE)

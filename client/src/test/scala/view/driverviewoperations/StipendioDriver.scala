@@ -2,6 +2,8 @@ package view.driverviewoperations
 
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait StipendioDriver {
   def clickStipendioMenu():Unit
   def clickElementListView(date:String):Unit
