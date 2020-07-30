@@ -27,11 +27,7 @@ lazy val client = project.settings(
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings,
-  testOptions in Test += Tests.Setup(() =>
-    (runMain in Compile in server).toTask(" servermodel.MainServer arg1 arg2").value
-  ),
-
-).dependsOn(utils,event)
+).dependsOn(utils,event,server)
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
@@ -105,7 +101,9 @@ lazy val compilerOptions = Seq(
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
   "-language:postfixOps",
-  "-Wunused:nowarn"
+  "-Wunused:nowarn",
+  "-language:implicitConversions",
+  "-feature"
 )
 
 lazy val libraries = new {
