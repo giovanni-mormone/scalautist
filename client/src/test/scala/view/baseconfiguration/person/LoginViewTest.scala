@@ -9,6 +9,8 @@ import view.baseconfiguration.BaseTest
 import view.launchview.LoginLaunch
 import view.mainviewoperations.LoginOperations
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class LoginViewTest extends BaseTest {
 
@@ -29,7 +31,7 @@ class LoginViewTest extends BaseTest {
     Thread.sleep(25000)
     loginView.clickModalButton()
     Thread.sleep(1000)
-    val titleRes: Label = find("#title")
+    val titleRes: Label = find("#title"): @nowarn
     assert(titleRes.getText.equals("Cambia Password"))
   }
 
@@ -38,7 +40,7 @@ class LoginViewTest extends BaseTest {
   def newUserLoginModal(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
     Thread.sleep(12000)
-    val msgLabel: Label = find("#messageLabel")
+    val msgLabel: Label = find("#messageLabel"): @nowarn
     assert(msgLabel.getText.equals("È il tuo primo login! Cambia password per poter accedere al programma!"))
     loginView.clickModalButton()
   }
@@ -47,7 +49,7 @@ class LoginViewTest extends BaseTest {
   def displayLoading(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
     ensureEventQueueComplete()
-    val loadBox: VBox = find("#loadingBox")
+    val loadBox: VBox = find("#loadingBox"): @nowarn
     assert(loadBox.isVisible)
   }
   @Test
@@ -78,7 +80,7 @@ class LoginViewTest extends BaseTest {
 
   private def credentialError(): Unit = {
     ensureEventQueueComplete()
-    val errorLabel:Label = find("#error")
+    val errorLabel:Label = find("#error"): @nowarn
     assert(errorLabel.isVisible)
   }
 }

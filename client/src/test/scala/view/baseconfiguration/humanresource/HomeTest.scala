@@ -9,6 +9,8 @@ import view.baseconfiguration.BaseTest
 import view.launchview.HumanResourceLaunch
 import view.mainviewoperations.HumanResourceOperations
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class HomeTest extends BaseTest {
 
@@ -31,7 +33,7 @@ class HomeTest extends BaseTest {
     home.openRescruit()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -40,7 +42,7 @@ class HomeTest extends BaseTest {
     home.openFire()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -49,7 +51,7 @@ class HomeTest extends BaseTest {
     home.openSick()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -58,7 +60,7 @@ class HomeTest extends BaseTest {
     home.openHoliday()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -67,7 +69,7 @@ class HomeTest extends BaseTest {
     home.openZona()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -76,7 +78,7 @@ class HomeTest extends BaseTest {
     home.openTerminal()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR")
+    val homePanel: BorderPane = find("#baseHR"): @nowarn
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -85,7 +87,7 @@ class HomeTest extends BaseTest {
     home.openChangePassword()
     ensureEventQueueComplete()
     sleep(2000)
-    val changePassword: VBox = find("#changepasswordbox")
+    val changePassword: VBox = find("#changepasswordbox"): @nowarn
     assert(changePassword.isVisible)
   }
 }

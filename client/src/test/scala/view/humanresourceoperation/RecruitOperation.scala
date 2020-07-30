@@ -5,6 +5,8 @@ import java.time.LocalDate
 import javafx.scene.control._
 import view.baseconfiguration.BaseTest
 
+import scala.annotation.nowarn
+
 trait RecruitOperation {
   def openRecruit(): Unit
   def enterName(name: String): Unit
@@ -69,7 +71,7 @@ object RecruitOperation {
       test.ensureEventQueueComplete()
     }
 
-    override def enterData(day: LocalDate): Unit =
+    @nowarn def enterData(day: LocalDate): Unit =
       test.find(dateId).asInstanceOf[DatePicker].setValue(day)
 
     override def chooseRole(role: String): Unit = {

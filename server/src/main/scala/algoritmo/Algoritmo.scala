@@ -1,7 +1,6 @@
 package algoritmo
 
 import java.sql.Date
-import java.time.LocalDate
 import java.util.concurrent.locks.ReentrantLock
 
 import algoritmo.AssignmentOperation.InfoForAlgorithm
@@ -30,7 +29,7 @@ trait Algoritmo {
    * @return Future of Option of Int that specified status of operation, this code can be :
    *         [[messagecodes.StatusCodes.SUCCES_CODE]] if all condition are satisfied
    *         [[messagecodes.StatusCodes.ERROR_CODE1]] if time frame have a problem, this can be:
-   *                                                    time frame less that 28 days, dates to the contrary
+   *                                                    time frame less than one month or inverted dates
    *         [[messagecodes.StatusCodes.ERROR_CODE2]] if list with terminal contains some terminal that not exist in database
    *         [[messagecodes.StatusCodes.ERROR_CODE3]] if group contains some error, this can be:
    *                                                  group with one date, date in group outside time frame, ruler in

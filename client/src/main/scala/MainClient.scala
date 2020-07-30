@@ -9,7 +9,6 @@ private class Main extends Application{
 }
 
 object MainClient{
-
     def main(Args: Array[String]): Unit ={
         Application.launch(classOf[Main])
         System.exit(0)

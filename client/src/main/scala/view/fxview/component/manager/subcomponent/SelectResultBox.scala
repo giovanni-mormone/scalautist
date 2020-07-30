@@ -17,6 +17,7 @@ import view.fxview.component.manager.subcomponent.parent.SelectResultParent
 import view.fxview.component.{AbstractComponent, Component}
 import view.fxview.util.ResourceBundleUtil._
 
+import scala.annotation.nowarn
 import scala.util.Success
 import scala.concurrent.ExecutionContext.Implicits.global
 trait SelectResultBox extends Component[SelectResultParent]{
@@ -92,7 +93,7 @@ object SelectResultBox{
       val resultBox = ResultBox(resultList,dateList)
       resultBox.onComplete{
         case Success(value) =>  Platform.runLater(() => dateAndTerminal.getChildren.add(value.setParent(parent).pane))
-      }
+      }: @nowarn
     }
   }
 }

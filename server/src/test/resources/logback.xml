@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <logger name="scala.slick" level="INFO" />
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="scala.slick" level="INFO" />
+>>>>>>> 4c402c7fcc86c2debbadf6769494389045facbbf
 </configuration>

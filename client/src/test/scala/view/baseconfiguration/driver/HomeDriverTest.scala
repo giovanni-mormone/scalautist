@@ -12,6 +12,8 @@ import view.baseconfiguration.BaseTest
 import view.driverviewoperations.HomeDriver
 import view.launchview.DriverLaunch
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class HomeDriverTest extends BaseTest {
   var driverHome:HomeDriver=_
@@ -40,7 +42,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickTable()
-    val table:TableColumnHeader = find("#orario")
+    val table:TableColumnHeader = find("#orario"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(ORARIO_PRIMA_MATTINATA))
   }
   @Test
@@ -49,8 +51,8 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickTable()
-    val columnOrario:TableColumnHeader = find("#orario")
-    val columnTurno:TableColumnHeader = find("#turno")
+    val columnOrario:TableColumnHeader = find("#orario"): @nowarn
+    val columnTurno:TableColumnHeader = find("#turno"): @nowarn
     assert(columnOrario.getTableColumn.getCellData(0).equals(ORARIO_PRIMA_MATTINATA) && columnTurno.getTableColumn.getCellData(0).equals(PRIMA_MATTINATA))
   }
   @Test
@@ -59,7 +61,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickHeader()
-    val table:TableColumnHeader = find("#orario")
+    val table:TableColumnHeader = find("#orario"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(ORARIO_PRIMA_POMERIGGIO))
   }
   @Test
@@ -68,7 +70,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickHeader()
-    val table:TableColumnHeader = find("#turno")
+    val table:TableColumnHeader = find("#turno"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(PRIMA_POMERIGGIO))
   }
   @Test
@@ -77,7 +79,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickTableAvailability()
-    val table:TableColumnHeader = find("#disponibilita")
+    val table:TableColumnHeader = find("#disponibilita"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(DISPONIBILITA))
   }
   @Test
@@ -86,7 +88,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickTableAvailability()
-    val table:TableColumnHeader = find("#giorno")
+    val table:TableColumnHeader = find("#giorno"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(GIORNO))
   }
   @Test
@@ -95,7 +97,7 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickHeaderAvailability()
-    val table:TableColumnHeader = find("#disponibilita")
+    val table:TableColumnHeader = find("#disponibilita"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(DISPONIBILITA))
   }
   @Test
@@ -104,13 +106,13 @@ class HomeDriverTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(4000)
     driverHome.clickHeaderAvailability()
-    val table:TableColumnHeader = find("#giorno")
+    val table:TableColumnHeader = find("#giorno"): @nowarn
     assert(table.getTableColumn.getCellData(0).equals(GIORNO2))
   }
   @Test
   def verifyDatepicker():Unit={
     driverHome.clickHomeMenu()
-    val table:AnchorPane = find("#datepicker")
+    val table:AnchorPane = find("#datepicker"): @nowarn
     val datepicker:Label = table.getChildren.get(0).asInstanceOf[DatePickerContent]
       .getChildren.get(0).asInstanceOf[BorderPane].getChildren.get(0).asInstanceOf[HBox]
       .getChildren.get(1).asInstanceOf[Label]

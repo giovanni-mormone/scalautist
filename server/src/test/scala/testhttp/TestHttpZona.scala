@@ -1,7 +1,8 @@
 package testhttp
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import caseclass.CaseClassDB.Zona
 import caseclass.CaseClassHttpMessage.{Request, Response}
 import jsonmessages.JsonFormats._
@@ -9,6 +10,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
 import servermodel.routes.masterroute.MasterRouteZona.routeZona
 import utils.StartServer
+
+import scala.concurrent.duration.DurationInt
 
 object TestHttpZona{
   private def startServer():Unit=MainServer
@@ -19,6 +22,8 @@ object TestHttpZona{
 }
 class TestHttpZona extends AnyWordSpec with ScalatestRouteTest with StartServer {
   import TestHttpZona._
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
   "The service" should {
     "return a id for request post to insert zona" in {

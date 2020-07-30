@@ -7,13 +7,15 @@ import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 import view.fxview.component.manager.subcomponent.util.ParamsTable
 
+import scala.annotation.nowarn
+
 trait ManagerParamsOperation {
 
   def clickNext(): Unit
   def clickReset(): Unit
   def clickOnComponent(name: String): Unit
   def sleep(time: Int): Unit
-  def setTime(datePicker: String, day: Int)
+  def setTime(datePicker: String, day: Int): Unit
   def isButtonEnable(component: String): Boolean
   def chooseOldParam(): Unit
   def isThere(component: String): Boolean
@@ -45,7 +47,7 @@ object ManagerParamsOperation {
       toTest.sleep(time)
 
     override def setTime(datePicker: String, day: Int): Unit = {
-      val datePic: DatePicker = toTest.find(datePicker)
+      val datePic: DatePicker = toTest.find(datePicker): @nowarn
       day match {
         case 1 => datePic.setValue(FIRST_OF_MONTH)
         case 2 => datePic.setValue(LAST_OF_MONTH)
@@ -62,7 +64,7 @@ object ManagerParamsOperation {
       toTest.find[TableView[ParamsTable]]("#params")
         .getSelectionModel.select(10) //10
 
-    override def isThere(component: String): Boolean =
+    @nowarn override def isThere(component: String): Boolean =
       Option(toTest.find(component)).isDefined
   }
 }

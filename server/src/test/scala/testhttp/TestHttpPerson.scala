@@ -1,6 +1,7 @@
 package testhttp
 
 import java.sql.Date
+import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
@@ -11,8 +12,11 @@ import jsonmessages.JsonFormats._
 import org.scalatest.wordspec.AnyWordSpec
 import servermodel.MainServer
 import servermodel.routes.masterroute.MasterRoutePersona.routePersona
+import servermodel.routes.masterroute.MasterRouteStipendio.routeStipendio
+import servermodel.routes.masterroute.MasterRouteAssenza.routeAssenza
 import utils.StartServer
-import messagecodes.{StatusCodes=>statusCodes}
+import messagecodes.{StatusCodes => statusCodes}
+
 import scala.concurrent.duration.DurationInt
 
 object TestHttpPerson{
@@ -22,9 +26,9 @@ object TestHttpPerson{
   private val recoveryPassword: (String,Request[Int]) = ("/recoverypassword",Request(Some(1)))
   private val loginPersona: (String,Request[Login]) = ("/loginpersona",Request(Some(Login("admin","admin"))))
   private val deletePersona: (String,Request[Int]) = ("/deletepersona",Request(Some(1)))
-  private val calcoloStipendio: (String,Request[Dates]) = ("/calcolostipendio",Request(Some(Dates(new Date(System.currentTimeMillis())))))
+  private val calcoloStipendio: (String,Request[Dates]) = ("/calcolostipendio",Request(Some(Dates(Date.valueOf(LocalDate.of(2020,6,30))))))
   private val getStipendio: (String,Request[Int]) = ("/getstipendio",Request(Some(1)))
-  private val assenza:Assenza = Assenza(2,new Date(System.currentTimeMillis()),new Date(System.currentTimeMillis()+System.currentTimeMillis()),malattia = true)
+  private val assenza:Assenza = Assenza(5, Date.valueOf(LocalDate.of(2020,12,1)), Date.valueOf(LocalDate.of(2020,12,7)),malattia = false)
   private val persona:Persona = Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,None,Some(1))
   private val addAbsence: (String,Request[Assenza]) = ("/addabsence",Request(Some(assenza)))
   private val loginNotFound: (String,Request[Login]) = ("/loginpersona",Request(Some(Login("","admin"))))
@@ -40,7 +44,8 @@ object TestHttpPerson{
 
 class TestHttpPerson extends AnyWordSpec with ScalatestRouteTest with StartServer{
   import TestHttpPerson._
-  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(5).second)
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
   "The service" should {
     "return login with credential of a person" in {
@@ -73,19 +78,19 @@ class TestHttpPerson extends AnyWordSpec with ScalatestRouteTest with StartServe
         responseAs[Response[Int]].payload.contains(statusCodes.SUCCES_CODE)
       }
     }
-    "return a StatusCodes.Created for Post requests" in {
-      Post(calcoloStipendio._1,calcoloStipendio._2) ~> routePersona ~> check {
-        responseAs[Response[Int]].statusCode==StatusCodes.Created.intValue
+    "return a statusCodes.SUCCES_CODE for Post requests" in {
+      Post(calcoloStipendio._1,calcoloStipendio._2) ~> routeStipendio ~> check {
+        responseAs[Response[Int]].statusCode==statusCodes.SUCCES_CODE
       }
     }
-    "return a StatusCodes.Created for Post requests  when get stipendio" in {
-      Post(getStipendio._1,getStipendio._2) ~> routePersona ~> check {
-        responseAs[Response[Stipendio]].statusCode==StatusCodes.Created.intValue
+    "return a statusCodes.SUCCES_CODE for Post requests  when get stipendio" in {
+      Post(getStipendio._1,getStipendio._2) ~> routeStipendio ~> check {
+        responseAs[Response[Stipendio]].statusCode==statusCodes.SUCCES_CODE
       }
     }
-    "return a id for Post requests to the create absence" in {
-      Post(addAbsence._1,addAbsence._2) ~> routePersona ~> check {
-        responseAs[Response[Int]].payload.isDefined
+    "return statusCodes.SUCCES_CODE for Post requests to the create absence" in {
+      Post(addAbsence._1,addAbsence._2) ~> routeAssenza ~> check {
+        responseAs[Response[Int]].statusCode==statusCodes.SUCCES_CODE
       }
     }
     "return StatusCodes.NotFound for Post requests login with not exist" in {

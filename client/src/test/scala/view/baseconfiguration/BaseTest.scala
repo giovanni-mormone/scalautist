@@ -8,6 +8,8 @@ import org.junit.After
 import org.testfx.framework.junit.ApplicationTest
 import org.testfx.util.WaitForAsyncUtils
 
+import scala.annotation.nowarn
+
 class BaseTest extends ApplicationTest{
 
   protected var myStage:Stage = _
@@ -29,6 +31,5 @@ class BaseTest extends ApplicationTest{
   def ensureEventQueueComplete():Unit = WaitForAsyncUtils.waitForFxEvents(2)
 
   def find[T<:Node](query:String): T =
-    lookup(query).queryAll().iterator().next().asInstanceOf[T]
-
+    lookup(query).queryAll().iterator().next().asInstanceOf[T]: @nowarn//metodo find non capito bene da scala
 }

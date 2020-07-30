@@ -3,6 +3,7 @@ name := "scalautist"
 version := "0.1"
 ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
+ThisBuild /Test / parallelExecution := false
 
 lazy val client = project.settings(
   mainClass := Some("MainClient"),
@@ -102,7 +103,8 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
-  "-language:postfixOps"
+  "-language:postfixOps",
+  "-Wunused:nowarn"
 )
 
 lazy val libraries = new {

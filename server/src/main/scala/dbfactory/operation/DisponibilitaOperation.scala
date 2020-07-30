@@ -13,6 +13,7 @@ import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 /**
  * @author Giovanni Mormone,Fabian Aspee Encina, Francesco Cassano
@@ -325,11 +326,13 @@ object DisponibilitaOperation extends DisponibilitaOperation{
     InstancePersona.operation().execJoin(join).flatMap{
       case Some(persone) =>
         val previousWeek = persone.flatMap(_.disponibilita.toList)
-        InstanceDisponibilita.operation().selectFilter(x=>x.settimana===week || x.id.inSet(previousWeek)).flatMap {
+      InstanceDisponibilita.operation().selectFilter(x=>x.settimana===week || x.id.inSet(previousWeek)).flatMap {
         case Some(availability) => updateAvailability(availability,week,persone)
-      }
+      }: @nowarn
+      case None => Future.successful(List.empty)
     }
   }
+
   private def updateAvailability(availability:List[Disponibilita],week:Int,persone:List[Persona]): Future[List[Option[Int]]] ={
     val (actualAvailability, previousAvailabiliti) = availability.partition(_.settimana==week)
     @scala.annotation.tailrec

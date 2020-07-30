@@ -10,6 +10,8 @@ import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.MalattieOperation
 import view.launchview.HumanResourceLaunch
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class MalattieTest extends BaseTest {
   val textOk:String = "Malattia Inserite Correttamente"
@@ -39,7 +41,7 @@ class MalattieTest extends BaseTest {
     malattie.enterSecondDate(dateF)
     malattie.clickModalButton()
     sleep(5000)
-    val msgLabel:Label = find("#messageLabel")
+    val msgLabel:Label = find("#messageLabel"): @nowarn
     assert(msgLabel.getText.equals(textOk))
 
   }
@@ -51,7 +53,7 @@ class MalattieTest extends BaseTest {
     malattie.clickTable()
     sleep(3000)
     malattie.clickModalButton()
-    val modalButton:Button = find("#button")
+    val modalButton:Button = find("#button"): @nowarn
     assert(modalButton.isDisable)
 
   }
@@ -64,7 +66,7 @@ class MalattieTest extends BaseTest {
     sleep(3000)
     malattie.enterFirstDate(date)
     malattie.clickModalButton()
-    val modalButton:Button = find("#button")
+    val modalButton:Button = find("#button"): @nowarn
     assert(modalButton.isDisable)
 
   }

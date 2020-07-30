@@ -11,6 +11,8 @@ import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.FerieOperation
 import view.launchview.HumanResourceLaunch
 
+import scala.annotation.nowarn
+
 @RunWith(classOf[JUnitParamsRunner])
 class FerieTest extends BaseTest {
   val textOk:String = "Ferie Assegnate Correttamente"
@@ -40,7 +42,7 @@ class FerieTest extends BaseTest {
     ferie.enterSecondDate(dateF)
     ferie.clickModalButton()
     sleep(5000)
-    val msgLabel:Label = find("#messageLabel")
+    val msgLabel:Label = find("#messageLabel"): @nowarn
     assert(msgLabel.getText.equals(textOk))
 
   }
@@ -52,7 +54,7 @@ class FerieTest extends BaseTest {
     ferie.clickTable()
     sleep(3000)
     ferie.clickModalButton()
-    val modalButton:Button = find("#button")
+    val modalButton:Button = find("#button"): @nowarn
     assert(modalButton.isDisable)
 
   }
@@ -65,7 +67,7 @@ class FerieTest extends BaseTest {
     sleep(3000)
     ferie.enterFirstDate(date)
     ferie.clickModalButton()
-    val modalButton:Button = find("#button")
+    val modalButton:Button = find("#button"): @nowarn
     assert(modalButton.isDisable)
 
   }

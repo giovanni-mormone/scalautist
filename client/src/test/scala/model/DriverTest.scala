@@ -9,7 +9,7 @@ import utils.{ClientAkkaHttp, StartServer}
 
 import scala.annotation.nowarn
 import scala.concurrent.Future
-@nowarn()
+
 class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServer{
   var model: DriverModel = _
   val user: Int = 6
