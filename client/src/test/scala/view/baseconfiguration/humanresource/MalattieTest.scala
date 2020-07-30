@@ -7,10 +7,11 @@ import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
-import utils.scriptCallServer.ScriptServer
 import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.MalattieOperation
 import view.launchview.HumanResourceLaunch
+
+import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
 class MalattieTest extends BaseTest {

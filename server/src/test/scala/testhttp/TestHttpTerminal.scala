@@ -21,7 +21,7 @@ class TestHttpTerminal extends AnyWordSpec with ScalatestRouteTest with StartSer
 
   import TestHttpTerminal._
 
-  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(5).second)
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
 
   startServer()
   "The service" should {

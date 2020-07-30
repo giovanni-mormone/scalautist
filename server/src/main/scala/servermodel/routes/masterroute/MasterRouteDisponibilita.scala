@@ -12,7 +12,7 @@ import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import servermodel.routes.subroute.DisponibilitaRoute._
 
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration._
 /**
  * @author  Fabian Aspée Encina
  * This object manage routes that act on the disponibilita entity and its related entities

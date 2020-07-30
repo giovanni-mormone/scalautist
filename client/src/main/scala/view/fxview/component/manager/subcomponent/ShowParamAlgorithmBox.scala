@@ -197,7 +197,7 @@ object ShowParamAlgorithmBox {
     def initButton(): Unit = {
       reset.setOnAction(_ => parent.resetParams())
       run.setOnAction(_ => {
-        name.fold()(name => {
+        name.foreach(name => {
           parent.saveParam( InfoAlgorithm(
             Parametro(info.regolaTreSabato, name),
             info.idTerminal.collect{

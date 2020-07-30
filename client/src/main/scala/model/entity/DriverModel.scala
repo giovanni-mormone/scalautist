@@ -90,7 +90,8 @@ trait DriverModel {
 
 object DriverModel {
 
-  def apply(): DriverModel = new DriverResourceHttp()
+  private val instance:DriverModel = new DriverResourceHttp()
+  def apply(): DriverModel = instance
 
   private class DriverResourceHttp extends AbstractHttp with DriverModel{
 

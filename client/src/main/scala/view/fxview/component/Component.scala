@@ -11,7 +11,7 @@ import view.fxview.loader.FXLoader
 /**
  * @author Giovanni Mormone.
  *
- * Generic component of the view. It should be inside some [[view.BaseView]]
+ * Generic component of the view.
  *
  * @tparam A
  *           The parent/container of the component.

@@ -20,7 +20,7 @@ object StipendioOperationTestValue {
                                                      InfoPresenza(41.6,"22:00 alle 2:00","Tarda Serata",Date.valueOf(LocalDate.of(2020,5,29)),straordinario = false),
                                                      InfoPresenza(41.6,"22:00 alle 2:00","Tarda Serata",Date.valueOf(LocalDate.of(2020,5,30)),straordinario = false),
                                                      InfoPresenza(41.6,"22:00 alle 2:00","Tarda Serata",Date.valueOf(LocalDate.of(2020,5,1)),straordinario = false),
-                                                     InfoPresenza(41.6,"22:00 alle 2:00","Tarda Serata",Date.valueOf(LocalDate.of(2020,5,1)),straordinario = false)),
-                                                     InfoValorePresenza(10,0.0,457.6000000000001),
+                                                     InfoPresenza(62.400000000000006,"2:00 alle 6:00","Notte",Date.valueOf(LocalDate.of(2020,5,1)),straordinario = true)),
+                                                     InfoValorePresenza(10,416.00000000000006,62.400000000000006),
                                                      InfoAssenza(18,11))
 }

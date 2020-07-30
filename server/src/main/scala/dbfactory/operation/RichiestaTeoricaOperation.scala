@@ -1,7 +1,6 @@
 package dbfactory.operation
 
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceRichiesta, InstanceRichiestaTeorica}
-
 import caseclass.CaseClassDB.{Richiesta, RichiestaTeorica}
 import caseclass.CaseClassHttpMessage.RequestGiorno
 import dbfactory.implicitOperation.ImplicitInstanceTableDB.{InstanceGiorno, InstanceTerminale, InstanceTurno}
@@ -13,6 +12,7 @@ import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter._
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 
 /**
@@ -110,6 +110,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         case _ => Some(false)
       }).convert()
 
+  @nowarn
   private def verify(daysOk: Option[Boolean], requestOk: Option[Boolean], shiftOk: Option[Boolean]): Option[Int] = (daysOk, requestOk, shiftOk) match {
     case (Some(true), Some(true), Some(true)) => Some(SUCCES_CODE)
     case (Some(false), _, _) => Some(ERROR_CODE11)
@@ -199,7 +200,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
       insertDay<-insertDay(days,allInsert)
     }yield if (!insertDay.contains(StatusCodes.SUCCES_CODE))  {allInsert.foreach(deleteAll); insertDay} else insertDay
 
-
+  @nowarn//at this point req is always defined
   private def checkOverlappingRequests(requests: List[RichiestaTeorica], toCompareList: List[RichiestaTeorica]):Option[(List[RichiestaTeorica],List[RichiestaTeorica])] = {
     @scala.annotation.tailrec
     def _checkOverlappingRequests(_requests: List[RichiestaTeorica],toCompare: RichiestaTeorica, result: (List[RichiestaTeorica],List[RichiestaTeorica])=(List.empty,List.empty)): Option[(List[RichiestaTeorica],List[RichiestaTeorica])]= _requests match {
@@ -211,7 +212,7 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         _checkOverlappingRequests(next,toCompare,(toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
       case ::(req, next) if req.dataInizio.compareTo(toCompare.dataInizio) ==0 && req.dataFine.compareTo(toCompare.dataFine) ==0 =>  _checkOverlappingRequests(next,toCompare, (result._1,toCompare.copy(terminaleId = req.terminaleId) :: result._2))
       case ::(req, next) if req.dataInizio.compareTo(toCompare.dataFine) <=0 && req.dataFine.compareTo(toCompare.dataInizio) >=0 =>
-        delete(req.idRichiestaTeorica match{case Some(x) => x})
+        delete(req.idRichiestaTeorica match{case Some(x) => x}) //il warn è riferito a me
         _checkOverlappingRequests(next,toCompare, (toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
       case ::(req,next) => _checkOverlappingRequests(next,toCompare, (toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
       case Nil =>

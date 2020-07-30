@@ -7,13 +7,15 @@ import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 import view.fxview.component.manager.subcomponent.util.ParamsTable
 
+import scala.annotation.nowarn
+
 trait ManagerParamsOperation {
 
   def clickNext(): Unit
   def clickReset(): Unit
   def clickOnComponent(name: String): Unit
   def sleep(time: Int): Unit
-  def setTime(datePicker: String, day: Int)
+  def setTime(datePicker: String, day: Int): Unit
   def isButtonEnable(component: String): Boolean
   def chooseOldParam(): Unit
   def isThere(component: String): Boolean
@@ -44,6 +46,7 @@ object ManagerParamsOperation {
     override def sleep(time: Int): Unit =
       toTest.sleep(time)
 
+    @nowarn("msg=metodo find non capito bene da scala")
     override def setTime(datePicker: String, day: Int): Unit = {
       val datePic: DatePicker = toTest.find(datePicker)
       day match {

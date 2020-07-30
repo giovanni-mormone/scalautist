@@ -139,7 +139,7 @@ trait ManagerHome extends Component[ManagerHomeParent]{
    * @param info instance of [[AlgorithmExecute]] that contains all information chosen
    * @param name optional of name of parameter
    */
-  def showParamAlgorithm(info: AlgorithmExecute, name: Option[String])
+  def showParamAlgorithm(info: AlgorithmExecute, name: Option[String]): Unit
 
   /** Initialize zona Manager view before show
    *

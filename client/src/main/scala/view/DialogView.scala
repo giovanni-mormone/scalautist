@@ -19,7 +19,7 @@ trait DialogView extends BaseView{
   def showMessageFromKey(key:String):Unit
 
   /**
-   *
+   * Shows an alert modal on the screen.
    * @param message
    * @return
    */

@@ -30,7 +30,7 @@ class TestRisultato extends  AsyncFlatSpec with BeforeAndAfterEach with StartSer
 
   it should "return nothing if is absent" in {
     val req: Future[Option[InfoHome]] = RisultatoOperation.getTurniInDate(idAutist2, date2)
-    req map { one => assert(one.isEmpty ) }
+    req map { one => assert(one.isEmpty )}
   }
 
   it should "return empty the daily work shift if employee isn't a driver" in {

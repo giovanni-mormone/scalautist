@@ -11,6 +11,7 @@ import messagecodes.StatusCodes
 import slick.jdbc.SQLServerProfile.api._
 import utils.DateConverter.nameOfDayFromId
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -73,8 +74,10 @@ object ParametroOperation extends ParametroOperation {
         case Some(id) =>
           val newGiorno = giorno.copy(giornoId = id, parametriId = parametroId)
           GiornoInSettimanaOperation.insert(newGiorno)
+        case _ => Future.successful(None)
       }
   }
+  @nowarn//verifyRegolaAndInsert returns only the codes checked
   private def insertGiornoInSettimanaAndZonaTerminal(idParametri:Option[Int],infoAlgorithm: InfoAlgorithm):Future[Option[Int]]={
     (idParametri,infoAlgorithm.giornoInSettimana) match {
       case (Some(id),Some(giornoInSettimana)) => verifyRegolaAndInsert(giornoInSettimana).flatMap{

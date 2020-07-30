@@ -107,7 +107,7 @@ object StipendioOperation extends StipendioOperation {
         .map(t => t.paga * multiplier(x.isStraordinario)))).sum)
     val isStraordinario = true
     Future.successful(InfoValorePresenza(presenze.toList.flatten.groupBy(_.data).keys.size,
-                                          moneyMap.getOrElse(isStraordinario,0.0),moneyMap.getOrElse(!isStraordinario,0.0)))
+                                          moneyMap.getOrElse(!isStraordinario,0.0),moneyMap.getOrElse(isStraordinario,0.0)))
   }
 
   private def getInfoAssenza(assenze:Option[List[Assenza]]):Future[InfoAssenza]={
