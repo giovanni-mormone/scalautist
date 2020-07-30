@@ -1,5 +1,6 @@
 import javafx.application.Application
 import javafx.stage.Stage
+import model.{AddressManager, ModelDispatcher}
 import view.fxview.mainview.LoginViewFX
 
 private class Main extends Application{
@@ -9,7 +10,11 @@ private class Main extends Application{
 }
 
 object MainClient{
-    def main(Args: Array[String]): Unit ={
+    def main(args: Array[String]): Unit ={
+        if(args.length >= 1 && args(0).equals("remote")){
+            AddressManager.remoteServer()
+        }
+
         Application.launch(classOf[Main])
         System.exit(0)
     }

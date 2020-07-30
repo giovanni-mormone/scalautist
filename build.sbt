@@ -30,7 +30,6 @@ lazy val client = project.settings(
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
-  coverageEnabled:=true,
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
   mainClass  in Compile := Some("servermodel.MainServer"),
@@ -100,7 +99,9 @@ lazy val compilerOptions = Seq(
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
   "-language:postfixOps",
-  "-Wunused:nowarn"
+  "-Wunused:nowarn",
+  "-language:implicitConversions",
+  "-feature"
 )
 
 lazy val libraries = new {
