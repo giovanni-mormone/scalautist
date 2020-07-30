@@ -117,6 +117,7 @@ object DriverModel {
     }
 
     override def getDisponibilita(userId: Int): Future[Response[List[String]]] = {
+      println("12212")
       val request = Post(getURI("getdisponibilitainweek"), transform(userId, Dates(Date.valueOf(LocalDate.now()))))
       callHttp(request).flatMap(result => Unmarshal(result).to[Response[List[String]]])
     }

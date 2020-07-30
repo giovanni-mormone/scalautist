@@ -1,10 +1,9 @@
-
 name := "scalautist"
 
 version := "0.1"
-
 ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
+
 lazy val client = project.settings(
   mainClass := Some("MainClient"),
   name := "scalautist-client-scala",
@@ -20,14 +19,21 @@ lazy val client = project.settings(
     librariesTest.junit,
     librariesTest.monocle,
     librariesTest.testFXCore,
-    librariesTest.junitParams
+    librariesTest.junitParams,
+    libraries.slick,
+    libraries.mssql,
+    libraries.slickHikaricp
   ),
   scalacOptions ++= compilerOptions,
-  assemblySettings
+  assemblySettings,
+  testOptions in Test += Tests.Setup(() =>
+    (runMain in Compile in server).toTask(" servermodel.MainServer arg1 arg2").value
+  )
 ).dependsOn(utils,event)
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
+  coverageEnabled  := true,
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
   mainClass  in Compile := Some("servermodel.MainServer"),
@@ -186,3 +192,5 @@ lazy val assemblySettings = Seq(
     librariesTest.akkaHttp
   )
 )
+
+

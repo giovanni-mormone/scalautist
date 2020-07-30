@@ -21,19 +21,3 @@ object ConfigEmitterPersistence {
     }
   }
 }
-
-object das extends App{
-  val s = ConfigEmitterPersistence("emitter","assumi","licenzia")
-  s.start()
-  s.sendMessage("Abbiamo assunto a pedrito","assumi")
-}
-object das2 extends App{
-  val s = ConfigEmitterPersistence("emitter","assumi","licenzia")
-  s.start()
-  s.sendMessage("Abbiamo licenziato a pedrito","licenzia")
-}
-object das22 extends App{
-  val s = ConfigEmitterPersistence("emitter","OPA2")
-  s.start()
-  s.sendMessage("Abbiamo licenziato a pedrito :C","OPA2")
-}
