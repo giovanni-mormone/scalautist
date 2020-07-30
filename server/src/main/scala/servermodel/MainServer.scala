@@ -7,7 +7,7 @@ import servermodel.ServerConf.StartServer
  */
 object MainServer{
     def main(args: Array[String]): Unit = {
-      println(args)
+      println(1212112)
       ActorSystem[StartServer](ServerConf(), "AkkaHttpServer")
     }
 }

@@ -276,6 +276,7 @@ object DisponibilitaOperation extends DisponibilitaOperation{
   }
 
   override def getGiorniDisponibilita(idUser: Int, date: Date):Future[Option[List[String]]]={
+    println(94994)
     getDayNumber(date) match {
       case SUNDAY | SATURDAY => DEFAULT_RESPONSE
       case _ => InstanceAssenza.operation().execQueryFilter(disp=>(disp.dataInizio,disp.dataFine),disp=>

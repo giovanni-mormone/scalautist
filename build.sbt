@@ -29,7 +29,8 @@ lazy val client = project.settings(
   assemblySettings,
   testOptions in Test += Tests.Setup(() =>
     (runMain in Compile in server).toTask(" servermodel.MainServer arg1 arg2").value
-  )
+  ),
+
 ).dependsOn(utils,event)
 
 lazy val server = project.enablePlugins(JavaAppPackaging).

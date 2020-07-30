@@ -2,12 +2,11 @@ package model
 
 import caseclass.CaseClassHttpMessage.Response
 import messagecodes.{StatusCodes => statusCodes}
-import model.entity.{DriverModel, ManagerModel}
+import model.entity.DriverModel
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
 import utils.{ClientAkkaHttp, StartServer}
 
-import scala.annotation.nowarn
 import scala.concurrent.Future
 
 class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServer{
