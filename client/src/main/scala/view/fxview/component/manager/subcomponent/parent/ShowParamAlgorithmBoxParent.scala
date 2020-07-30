@@ -19,7 +19,7 @@ trait ShowParamAlgorithmBoxParent {
    * Allows to save main params
    * @param param instance of [[InfoAlgorithm]] that contains information to save algorithm
    */
-  def saveParam(param: InfoAlgorithm)
+  def saveParam(param: InfoAlgorithm): Unit
 
   /**
    * Reset data chosen

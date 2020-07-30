@@ -5,6 +5,8 @@ version := "0.1"
 
 ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
+ThisBuild /Test / parallelExecution := false
+
 lazy val client = project.settings(
   mainClass := Some("MainClient"),
   name := "scalautist-client-scala",
@@ -28,6 +30,7 @@ lazy val client = project.settings(
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
+  coverageEnabled:=true,
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
   mainClass  in Compile := Some("servermodel.MainServer"),
@@ -96,7 +99,8 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
-  "-language:postfixOps"
+  "-language:postfixOps",
+  "-Wunused:nowarn"
 )
 
 lazy val libraries = new {

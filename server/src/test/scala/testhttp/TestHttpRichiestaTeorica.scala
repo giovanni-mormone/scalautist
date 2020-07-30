@@ -1,6 +1,7 @@
 package testhttp
 
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.actor.ActorSystem
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import caseclass.CaseClassDB.RichiestaTeorica
 import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, Request, RequestGiorno, Response}
 import jsonmessages.JsonFormats._
@@ -9,6 +10,8 @@ import servermodel.MainServer
 import utils.StartServer
 import messagecodes.{StatusCodes => statusCodes}
 import servermodel.routes.masterroute.MasterRouteRichiestaTeorica._
+
+import scala.concurrent.duration.DurationInt
 
 object TestHttpRichiestaTeorica{
   private case class RichiestaTeoricaOp(path: String, request: Request[AssignRichiestaTeorica])
@@ -20,6 +23,8 @@ object TestHttpRichiestaTeorica{
 
 class TestHttpRichiestaTeorica extends AnyWordSpec with ScalatestRouteTest with StartServer {
   import TestHttpRichiestaTeorica._
+    implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
+
   startServer()
 
   "The service" should {

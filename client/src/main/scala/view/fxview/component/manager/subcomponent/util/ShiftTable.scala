@@ -16,7 +16,7 @@ class ShiftTable(shiftVal: String, mondayVal: String, tuesdayVal: String, wednes
     val el = FXCollections.observableArrayList[String]()
     combos.foreach(rule => el.add(rule))
     val combo =  new ComboBox[String](el)
-    selected.fold()(rule => combo.getSelectionModel.select(rule))
+    selected.foreach(rule => combo.getSelectionModel.select(rule))
     combo
   }
   var shift = new SimpleStringProperty(shiftVal)

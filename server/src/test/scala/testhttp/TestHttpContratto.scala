@@ -23,7 +23,7 @@ object TestHttpContratto{
 
 class TestHttpContratto extends AnyWordSpec with ScalatestRouteTest with StartServer{
   import TestHttpContratto._
-  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(5).second)
+  implicit def default(implicit system: ActorSystem): RouteTestTimeout = RouteTestTimeout(new DurationInt(60).second)
   startServer()
   "The service" should {
     "return a contract for Post requests to the root path" in {

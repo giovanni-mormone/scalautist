@@ -16,7 +16,7 @@ object SuccessAndFailure {
   def anotherSuccessAndFailure[A](result:Try[A]): StandardRoute =result match {
     case Success(None) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success((None,_)) => complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
-    case Success(Some(List())) =>    complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
+    case Success(Some(List())| List())  =>    complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success(Some(statusCodes.NOT_FOUND)) =>    complete(StatusCodes.NotFound,Response[Int](statusCodes.NOT_FOUND))
     case Success(Some(statusCodes.ERROR_CODE1)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE1))
     case Success(Some(statusCodes.ERROR_CODE2)) => complete(StatusCodes.BadRequest,Response[Int](statusCodes.ERROR_CODE2))
