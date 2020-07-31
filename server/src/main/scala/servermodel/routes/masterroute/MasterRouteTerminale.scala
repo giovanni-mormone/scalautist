@@ -18,7 +18,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Terminal", description = "Return Terminal from database by id",
+  @Operation(tags = Array("Terminal Operation"),summary = "Get Terminal", description = "Return Terminal from database by id",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -30,7 +30,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Terminal", description = "Return all Terminal from database",
+  @Operation(tags = Array("Terminal Operation"),summary = "Get All Terminal", description = "Return all Terminal from database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -42,7 +42,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Create Terminal", description = "Create Terminal in database",
+  @Operation(tags = Array("Terminal Operation"),summary = "Create Terminal", description = "Create Terminal in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -54,7 +54,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Create All Terminal", description = "Create All Terminal in database",
+  @Operation(tags = Array("Terminal Operation"),summary = "Create All Terminal", description = "Create All Terminal in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -66,7 +66,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete Terminal", description = "Delete Terminal in database by id",
+  @Operation(tags = Array("Terminal Operation"),summary = "Delete Terminal", description = "Delete Terminal in database by id",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -78,7 +78,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete All Terminal", description = "Delete All Terminal in database by ids",
+  @Operation(tags = Array("Terminal Operation"),summary = "Delete All Terminal", description = "Delete All Terminal in database by ids",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "delete all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -90,7 +90,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Update Terminal", description = "Update Terminal in database",
+  @Operation(tags = Array("Terminal Operation"),summary = "Update Terminal", description = "Update Terminal in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Update success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -102,7 +102,7 @@ trait MasterRouteTerminale{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Terminale By Zona", description = "Get all Terminal of one Zona by id",
+  @Operation(tags = Array("Terminal Operation"),summary = "Get Terminale By Zona", description = "Get all Terminal of one Zona by id",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get all by id success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),

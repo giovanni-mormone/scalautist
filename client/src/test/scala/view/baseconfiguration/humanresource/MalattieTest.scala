@@ -2,7 +2,6 @@ package view.baseconfiguration.humanresource
 
 import java.time.LocalDate
 
-import javafx.application.Platform
 import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith

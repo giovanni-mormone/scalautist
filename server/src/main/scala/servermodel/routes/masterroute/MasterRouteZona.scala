@@ -18,7 +18,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Zona", description = "Return All Zone existing in database",
+  @Operation(tags = Array("Zona Operation"),summary = "Get All Zona", description = "Return All Zone existing in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -30,7 +30,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Create Zona", description = "Create a Zona into database",
+  @Operation(tags = Array("Zona Operation"),summary = "Create Zona", description = "Create a Zona into database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -42,7 +42,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Create All Zona", description = "Create all Zona into database",
+  @Operation(tags = Array("Zona Operation"),summary = "Create All Zona", description = "Create all Zona into database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -54,7 +54,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete Zona", description = "Delete a Zona by id",
+  @Operation(tags = Array("Zona Operation"),summary = "Delete Zona", description = "Delete a Zona by id",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "delete success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -66,7 +66,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete All Zona", description = "Delete all zona by ids",
+  @Operation(tags = Array("Zona Operation"),summary = "Delete All Zona", description = "Delete all zona by ids",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "delete all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -78,7 +78,7 @@ trait MasterRouteZona{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Update Zona", description = "Update Zona into database",
+  @Operation(tags = Array("Zona Operation"),summary = "Update Zona", description = "Update Zona into database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "update success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),

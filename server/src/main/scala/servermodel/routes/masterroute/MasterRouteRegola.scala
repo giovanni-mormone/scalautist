@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.Route
-import caseclass.CaseClassHttpMessage.AssignRichiestaTeorica
+import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, Request}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -22,8 +22,7 @@ trait MasterRouteRegola {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Return Regola for Group", description = "Return all Rule for Group ",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AssignRichiestaTeorica])))),
+  @Operation(tags =Array("Rule Operation") ,summary = "Return Regola for Group", description = "Return all Rule for Group ",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found Rule"),
       new ApiResponse(responseCode = "404", description = "Not Found"),
@@ -35,8 +34,7 @@ trait MasterRouteRegola {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Return Regola for Normal and Special Week", description = "Return all Rule for week",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AssignRichiestaTeorica])))),
+  @Operation(tags =Array("Rule Operation") ,summary = "Return Regola for Normal and Special Week", description = "Return all Rule for week",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found Rule For Week"),
       new ApiResponse(responseCode = "404", description = "Not Found"),

@@ -2,18 +2,17 @@ package servermodel.routes.masterroute
 
 import java.sql.Date
 
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
-import caseclass.CaseClassDB.{Disponibilita, Turno}
+import akka.http.scaladsl.server.Route
+import caseclass.CaseClassDB.Turno
 import caseclass.CaseClassHttpMessage.{InfoHome, InfoShift}
-import servermodel.routes.subroute.TurnoRoute._
-import io.swagger.v3.oas.annotations.enums.ParameterIn
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.{Operation, Parameter}
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
+import servermodel.routes.subroute.TurnoRoute._
 
 /**
  * @author Francesco Cassano
@@ -25,7 +24,7 @@ trait MasterRouteTurno {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Turni", description = "Obtain all turni in database",
+  @Operation(tags = Array("Shift Operation"),summary = "Get All Turni", description = "Obtain all turni in database",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Nothing])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found One or More Turni",
@@ -38,7 +37,7 @@ trait MasterRouteTurno {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get turni for one day", description = "Obtain turni for a specific date for a person in db",
+  @Operation(tags = Array("Shift Operation"),summary = "Get turni for one day", description = "Obtain turni for a specific date for a person in db",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Date, Int)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Turni for the day of the person in the date selected",
@@ -51,7 +50,7 @@ trait MasterRouteTurno {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get turni settimanali", description = "Get turni settimanali for a specific person in db",
+  @Operation(tags = Array("Shift Operation"),summary = "Get turni settimanali", description = "Get turni settimanali for a specific person in db",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Date, Int)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Disponibilita for the persona selected",
