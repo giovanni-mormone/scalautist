@@ -179,6 +179,12 @@ lazy val librariesTest = new {
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case PathList("application.conf")  => MergeStrategy.concat
+    case PathList("reference.conf")    => MergeStrategy.concat
+    case x                             => MergeStrategy.first
+  },
   scalacOptions ++= compilerOptions,
   test in assembly := {},
     excludeDependencies ++= Seq(
