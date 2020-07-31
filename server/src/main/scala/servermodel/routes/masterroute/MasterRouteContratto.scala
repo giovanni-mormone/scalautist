@@ -18,7 +18,7 @@ trait MasterRouteContratto{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Contract", description = "Return Contract from database by id",
+  @Operation(tags =Array("Contract Operation") ,summary = "Get Contract", description = "Return Contract from database by id",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -30,7 +30,7 @@ trait MasterRouteContratto{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Contract", description = "Return all Contract existing in database",
+  @Operation(tags =Array("Contract Operation") ,summary = "Get All Contract", description = "Return all Contract existing in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get all success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -42,7 +42,7 @@ trait MasterRouteContratto{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Create Contract", description = "Insert Contract into database",
+  @Operation(tags =Array("Contract Operation") ,summary = "Create Contract", description = "Insert Contract into database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "create success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -54,7 +54,7 @@ trait MasterRouteContratto{
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Update Contract", description = "Update Contrat into database",
+  @Operation(tags =Array("Contract Operation") ,summary = "Update Contract", description = "Update Contrat into database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "update success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),

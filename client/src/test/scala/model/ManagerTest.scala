@@ -147,22 +147,7 @@ class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaH
   }
 
   behavior of "Run Algorithm"
-  it should "Return Success code if algorithm init without problem" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecute,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
-  it should "Return Success code if algorithm init without problem and Group is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithGroupNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
-  it should "Return Success code if algorithm init without problem and normal week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithNormalWeekNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
-  it should "Return Success code if algorithm init without problem and special week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithSpecialWeekNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
+
   it should "Return Error code 1 if difference between date is less that 28" in {
     val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteDateError,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE1) }
@@ -226,5 +211,22 @@ class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaH
   it should "Return Error code 6 if some terminal in list not contains theorical request" in {
     val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteTerminalsWithoutTheoricRequest,f)
     future map {info => assert(info.statusCode==statusCodes.ERROR_CODE6) }
+  }
+  it should "Return Success code if algorithm init without problem" in {
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecute,f)
+    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
+  }
+
+  it should "Return Success code if algorithm init without problem and Group is None" in {
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithGroupNone,f)
+    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
+  }
+  it should "Return Success code if algorithm init without problem and normal week is None" in {
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithNormalWeekNone,f)
+    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
+  }
+  it should "Return Success code if algorithm init without problem and special week is None" in {
+    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithSpecialWeekNone,f)
+    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
 }

@@ -23,7 +23,7 @@ trait MasterRouteStipendio {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Information Salary", description = "Information for salary of the person in the date selected",
+  @Operation(tags = Array("Salary Operation"),summary = "Get Information Salary", description = "Information for salary of the person in the date selected",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[(Date, Int)]])))),
     responses = Array(
       new ApiResponse(responseCode = "302", description = "Found person and return stipendio",
@@ -37,7 +37,7 @@ trait MasterRouteStipendio {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Salary", description = "get salary for a person by id",
+  @Operation(tags = Array("Salary Operation"),summary = "Get Salary", description = "get salary for a person by id",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Id])))),
     responses = Array(
       new ApiResponse(responseCode = "302", description = "Found person and return stipendio",
@@ -51,7 +51,7 @@ trait MasterRouteStipendio {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Salary Calculus", description = "calculus all salary for all person into database, this operation is make one time in the month",
+  @Operation(tags = Array("Salary Operation"),summary = "Salary Calculus", description = "calculus all salary for all person into database, this operation is make one time in the month",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Dates])))),
     responses = Array(
       new ApiResponse(responseCode = "201", description = "calculus salary create"),
