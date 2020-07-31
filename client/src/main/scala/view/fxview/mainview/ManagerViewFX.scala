@@ -78,10 +78,14 @@ object ManagerViewFX {
     }
 
     override def drawRichiestaPanel(): Unit = {
+      managerHome.startLoading()
       myController.datatoRichiestaPanel()
     }
 
-    override def drawRichiesta(terminal: List[Terminale]): Unit = Platform.runLater(() => managerHome.drawRichiesta(terminal))
+    override def drawRichiesta(terminal: List[Terminale]): Unit = Platform.runLater(() =>{
+      managerHome.endLoading()
+      managerHome.drawRichiesta(terminal)
+    })
 
     override def selectShift(idTerminal: Int): Unit = myController.selectShift(idTerminal)
 
@@ -96,8 +100,10 @@ object ManagerViewFX {
     override def drawRunAlgorithm(terminals: List[Terminale]): Unit =
       Platform.runLater(() => managerHome.drawChooseParams(terminals))
 
-    override def drawParamsPanel(): Unit =
+    override def drawParamsPanel(): Unit = {
+      managerHome.startLoading()
       myController.chooseParams()
+    }
 
     override def modalOldParam(terminals: List[Terminale]): Unit =
       myController.modalOldParams(terminals)
@@ -143,11 +149,15 @@ object ManagerViewFX {
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = myController.sendRichiesta(richiesta)
 
-    override def drawResultPanel(): Unit = myController.dataToResultPanel()
+    override def drawResultPanel(): Unit = {
+      managerHome.startLoading()
+      myController.dataToResultPanel()
+    }
 
-    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() =>
+    override def drawResultTerminal(terminal: List[Terminale]):Unit =  Platform.runLater(() =>{
+      managerHome.endLoading()
       managerHome.drawResultTerminal(terminal)
-    )
+    })
 
     override def resultForTerminal(value: Option[Int], date: Date, date1: Date): Unit = {
       managerHome.loadingResult()
@@ -190,10 +200,16 @@ object ManagerViewFX {
     }
 
     override def drawZonaView(zones: List[Zona]): Unit =
-      Platform.runLater(() => managerHome.drawZona(zones))
+      Platform.runLater(() => {
+        managerHome.endLoading()
+        managerHome.drawZona(zones)
+      })
 
     override def drawTerminaleView(zones: List[Zona], terminals: List[Terminale]): Unit =
-      Platform.runLater(() => managerHome.drawTerminal(zones, terminals))
+      Platform.runLater(() => {
+        managerHome.endLoading()
+        managerHome.drawTerminal(zones, terminals)
+      })
 
     override def openTerminalModal(zoneList: List[Zona], terminal: Terminale): Unit = {
       Platform.runLater(() => {
@@ -207,9 +223,9 @@ object ManagerViewFX {
 
     override def saveParam(param: InfoAlgorithm): Unit =
       myController.saveParam(param)
+
     override def openZonaModal(zona: Zona): Unit = {
       Platform.runLater(() => {
-        //          homeView()
         modalResource = Modal[ModalZoneParent, Component[ModalZoneParent], ManagerHomeModalParent](myStage, this, ModalZone(zona))
         modalResource.show()
       })
@@ -233,11 +249,15 @@ object ManagerViewFX {
     override def updateTerminal(terminal: Terminale): Unit =
       myController.updateTerminal(terminal)
 
-    override def drawZonePanel(): Unit =
+    override def drawZonePanel(): Unit = {
+      managerHome.startLoading()
       myController.dataToZone()
+    }
 
-    override def drawTerminalPanel(): Unit =
+    override def drawTerminalPanel(): Unit = {
+      managerHome.startLoading()
       myController.dataToTerminal()
+    }
 
     override def openTerminalModal(terminal: Int): Unit =
       myController.terminalModalData(terminal)
@@ -297,5 +317,4 @@ object ManagerViewFX {
     override def closeModal(): Unit =
       modalInfo.close()
   }
-
 }
