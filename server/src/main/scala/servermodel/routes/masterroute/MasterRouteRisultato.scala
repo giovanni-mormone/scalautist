@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Dates}
+import caseclass.CaseClassHttpMessage.{AlgorithmExecute, CheckResultRequest, Dates, Request}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.subroute.RisultatoRoute._
 import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
+
 import scala.concurrent.duration._
 
 
@@ -23,8 +24,8 @@ trait MasterRouteRisultato {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Check result", description = "Check the old result before running the algorithm",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[CheckResultRequest])))),
+  @Operation(tags = Array("Result Operation"),summary = "Check result", description = "Check the old result before running the algorithm",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[CheckResultRequest]])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "run success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -36,7 +37,7 @@ trait MasterRouteRisultato {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Result Algorithm", description = "Return result of algorithm from dateI to dateF",
+  @Operation(tags = Array("Result Operation"),summary = "Get Result Algorithm", description = "Return result of algorithm from dateI to dateF",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Dates, Dates)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
@@ -49,8 +50,8 @@ trait MasterRouteRisultato {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Run Algorithm", description = "Run algorithm for obtained free day and shift",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AlgorithmExecute])))),
+  @Operation(tags = Array("Result Operation"),summary = "Run Algorithm", description = "Run algorithm for obtained free day and shift",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[AlgorithmExecute]])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "run success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
@@ -62,8 +63,8 @@ trait MasterRouteRisultato {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Replace shift", description = "Reassign a shift to another employee",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int)])))),
+  @Operation(tags = Array("Result Operation"),summary = "Replace shift", description = "Reassign a shift to another employee",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[Int]])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "replace success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),

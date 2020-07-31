@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassHttpMessage.InfoAlgorithm
+import caseclass.CaseClassHttpMessage.{InfoAlgorithm, Request}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -20,59 +20,57 @@ trait MasterRouteParametro {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Parameters", description = "Return all parameters existing in database",
+  @Operation(tags = Array("Parameter Operation"),summary = "Get All Parameters", description = "Return all parameters existing in database",
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def oldParameters(): Route
+  def oldParameters: Route
 
   @Path("/getoldparametersbyid")
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Parameters By Id", description = "Return all parameters that correspond by id",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Int])))),
+  @Operation(tags = Array("Parameter Operation"),summary = "Get Parameters By Id", description = "Return all parameters that correspond by id",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[Int]])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "get success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def oldParametersById(): Route
+  def oldParametersById: Route
 
   @Path("/saveparameter")
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Save Parameters", description = "Save parameter insert in view",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[InfoAlgorithm])))),
+  @Operation(tags = Array("Parameter Operation"),summary = "Save Parameters", description = "Save parameter insert in view",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[InfoAlgorithm]])))),
     responses = Array(
-      new ApiResponse(responseCode = "200", description = "get success"),
+      new ApiResponse(responseCode = "200", description = "save success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),
       new ApiResponse(responseCode = "500", description = "Internal server error"))
   )
-  def saveParameter(): Route
+  def saveParameter: Route
 }
 object MasterRouteParametro  extends Directives with MasterRouteParametro {
 
-  override def oldParameters(): Route =
+  override def oldParameters: Route =
     path("getalloldparameters") {
       getAllOldParameters
     }
 
-  override def oldParametersById(): Route =
+  override def oldParametersById: Route =
     path("getoldparametersbyid") {
       getParametersById
     }
 
-  override def saveParameter(): Route =
+  override def saveParameter: Route =
     path("saveparameter") {
       saveParameters
     }
 
   val routeParametro: Route =
-    concat(
-      oldParameters(),oldParametersById(),saveParameter()
-    )
+    concat(oldParameters,oldParametersById,saveParameter)
 }

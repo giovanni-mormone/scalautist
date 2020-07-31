@@ -22,7 +22,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Recovery Password", description = "Recovery password for a person",
+  @Operation(tags = Array("Person Operation"),summary = "Recovery Password", description = "Recovery password for a person",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Id])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Password change and return login with new credential",
@@ -35,7 +35,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Change Password", description = "Change the password into sistem for one person",
+  @Operation(tags = Array("Person Operation"),summary = "Change Password", description = "Change the password into sistem for one person",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[ChangePassword])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "change password"),
@@ -47,7 +47,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Log-in Person", description = "Login person in the system",
+  @Operation(tags = Array("Person Operation"),summary = "Log-in Person", description = "Login person in the system",
     parameters = Array(new Parameter(name = "username", in = ParameterIn.PATH, description = "login"),
       new Parameter(name = "password", in = ParameterIn.PATH, description = "login")),
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Login])))),
@@ -63,7 +63,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Update Person", description = "Update persons if this exist in other case make a insert",
+  @Operation(tags = Array("Person Operation"),summary = "Update Person", description = "Update persons if this exist in other case make a insert",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Persona])))),
     responses = Array(
       new ApiResponse(responseCode = "201", description = "Insert Person into database",
@@ -77,7 +77,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete list of Person", description = "Delete a list of person by Id",
+  @Operation(tags = Array("Person Operation"),summary = "Delete list of Person", description = "Delete a list of person by Id",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[List[Id]])))),
     responses = Array(
       new ApiResponse(responseCode = "410", description = "Persons is not available in future",
@@ -90,7 +90,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Delete Person", description = "Delete a person by Id",
+  @Operation(tags = Array("Person Operation"),summary = "Delete Person", description = "Delete a person by Id",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Id])))),
     responses = Array(
       new ApiResponse(responseCode = "410", description = "Person is not available in future",
@@ -103,7 +103,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Hire a person into system", description = "Hire person that can be a driver",
+  @Operation(tags = Array("Person Operation"),summary = "Hire a person into system", description = "Hire person that can be a driver",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Assumi])))),
     responses = Array(
       new ApiResponse(responseCode = "201", description = "Hire Person",
@@ -116,7 +116,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get All Person", description = "Obtain all person in database",
+  @Operation(tags = Array("Person Operation"),summary = "Get All Person", description = "Obtain all person in database",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Nothing])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Found One or More Person",
@@ -130,7 +130,7 @@ trait MasterRoutePersona {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Get Persona", description = "Get one person by Id",
+  @Operation(tags = Array("Person Operation"),summary = "Get Persona", description = "Get one person by Id",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Id])))),
     responses = Array(
       new ApiResponse(responseCode = "302", description = "Found Person",
