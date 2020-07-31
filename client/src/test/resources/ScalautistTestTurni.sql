@@ -3278,11 +3278,3 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
-
-select * from PersoneSets
-
-select  * from StoricoContrattoSets where Persone_Matricola = 257
-
-select * from ContratoeSets where IdContratto = 4
-
-select * from DisponibilitaStraordinarioSets where IdDisponibilitaStraordinario = 141

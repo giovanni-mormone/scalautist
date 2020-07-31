@@ -26,9 +26,6 @@ lazy val client = project.settings(
     libraries.mssql,
     libraries.slickHikaricp
   ),
-  testOptions in Test += Tests.Setup { _ =>
-    (runMain in Compile in server).toTask(" servermodel.MainServer").value
-  },
   scalacOptions ++= compilerOptions,
   assemblySettings,
 
@@ -186,10 +183,10 @@ lazy val assemblySettings = Seq(
     case PathList("application.conf")  => MergeStrategy.concat
     case PathList("reference.conf")    => MergeStrategy.concat
     case x                             => MergeStrategy.first
-  }
-  ,
+  },
   scalacOptions ++= compilerOptions,
   cleanFiles += baseDirectory.value / "temp",
+  coverageEnabled  := false,
   test in assembly := {},
     excludeDependencies ++= Seq(
     librariesTest.scalatestOrg,

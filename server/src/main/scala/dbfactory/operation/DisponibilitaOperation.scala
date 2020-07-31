@@ -82,6 +82,12 @@ trait DisponibilitaOperation extends OperationCrud[Disponibilita]{
    *         [[messagecodes.StatusCodes.ERROR_CODE1]]  if update not have success event
    */
   def updateDisponibilita(element: Disponibilita,idUser:Int): Future[Option[Int]]
+
+  /**
+   * method that update every monday, the availability for all driver with contract fixed
+   * @param date date that represent day in week, this day is ever monday
+   * @return Future of List of Option of Int with result of the operation
+   */
   def updateAvailabilityWeekFissi(date:Date): Future[List[Option[Int]]]
 }
 
