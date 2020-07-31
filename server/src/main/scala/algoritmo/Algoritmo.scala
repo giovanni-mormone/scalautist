@@ -193,7 +193,7 @@ object Algoritmo extends Algoritmo{
   }
   private def getAllContract(algorithmExecute: AlgorithmExecute,infoForAlgorithm: InfoForAlgorithm):Future[Option[Int]]={
     InstanceContratto.operation().selectFilter(_.ruolo===RUOLO_DRIVER).collect {
-      case Some(contract) =>  //TODO controllare i contratti
+      case Some(contract) =>  
       val result = ExtractAlgorithmInformation().getAllData(algorithmExecute,infoForAlgorithm.copy(allContract=Some(contract)))
       AssignmentOperation.initOperationAssignment(algorithmExecute,result).foreach(_ =>{
         EmitterHelper.emitForAlgorithm(EmitterHelper.getFromKey("end-algorithm"))

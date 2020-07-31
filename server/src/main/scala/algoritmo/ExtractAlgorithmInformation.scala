@@ -20,7 +20,6 @@ trait ExtractAlgorithmInformation{
 }
 object ExtractAlgorithmInformation extends ExtractAlgorithmInformation {
 
-  //TODO controllare final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
   def apply():ExtractAlgorithmInformation ={
     emitter.start()
     this
