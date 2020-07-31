@@ -38,10 +38,13 @@ To run the server application:
 ```bash
 scala server.jar
 ```
-But there is a docker instance of server
-To run the client application with the local server:
+But there is a docker instance of server that you can run with the command
 ```bash
-scala client.jar
+docker run -p 8080:8080 giovannimormone/scalautistserver:lastest
+```
+To download this version you can use 
+```bash
+docker pull giovannimormone/scalautistserver
 ```
 
 ## Team members

@@ -1,6 +1,6 @@
 import javafx.application.Application
 import javafx.stage.Stage
-import model.{AddressManager, ModelDispatcher}
+import model.AddressManager
 import view.fxview.mainview.LoginViewFX
 
 private class Main extends Application{
