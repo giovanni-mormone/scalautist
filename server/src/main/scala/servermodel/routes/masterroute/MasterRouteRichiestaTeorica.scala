@@ -1,7 +1,7 @@
 package servermodel.routes.masterroute
 
 import akka.http.scaladsl.server.{Directives, Route}
-import caseclass.CaseClassHttpMessage.AssignRichiestaTeorica
+import caseclass.CaseClassHttpMessage.{AssignRichiestaTeorica, Request}
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.{Content, Schema}
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.{Consumes, POST, Path, Produces}
 import servermodel.routes.exception.SuccessAndFailure.timeoutResponse
 import servermodel.routes.subroute.RichiestaTeoricaRoute._
+
 import scala.concurrent.duration._
 
 /**
@@ -22,8 +23,8 @@ trait MasterRouteRichiestaTeorica {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Save Theoretical request", description = "Save all information about theoretical request",
-    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[AssignRichiestaTeorica])))),
+  @Operation(tags = Array("Richiesta Operation"),summary = "Save Theoretical request", description = "Save all information about theoretical request",
+    requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Request[AssignRichiestaTeorica]])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "replace success"),
       new ApiResponse(responseCode = "400", description = "Bad Request"),

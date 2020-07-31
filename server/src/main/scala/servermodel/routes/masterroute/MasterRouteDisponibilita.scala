@@ -23,7 +23,7 @@ trait MasterRouteDisponibilita {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Set new date of possible day for extra shift", description = "Save the available days to possible extra shift",
+  @Operation(tags =Array("Availability Operation"),summary = "Set new date of possible day for extra shift", description = "Save the available days to possible extra shift",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Disponibilita, Id)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "OK"),
@@ -36,7 +36,7 @@ trait MasterRouteDisponibilita {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Return possible days to overtime", description = "Return possible days to assign availability to overtime",
+  @Operation(tags =Array("Availability Operation"),summary = "Return possible days to overtime", description = "Return possible days to assign availability to overtime",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Dates)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "OK"),
@@ -49,7 +49,7 @@ trait MasterRouteDisponibilita {
   @POST
   @Consumes(Array(MediaType.APPLICATION_JSON))
   @Produces(Array(MediaType.APPLICATION_JSON))
-  @Operation(summary = "Look for available employees", description = "Search available employees to replace a shift",
+  @Operation(tags =Array("Availability Operation"),summary = "Look for available employees", description = "Search available employees to replace a shift",
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[(Int, Int, Int)])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "OK"),

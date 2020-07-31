@@ -1637,5 +1637,5 @@ select s37."Persone_Matricola" from "PersoneSets" s40, "StoricoContrattoSets" s3
 
 
 select * from risultatosets where idrisultato=391
-
+select * from personesets
 select * from risultatosets order by Persone_Matricola

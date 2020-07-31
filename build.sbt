@@ -6,6 +6,7 @@ ThisBuild /crossPaths := false
 ThisBuild /Test / parallelExecution := false
 
 lazy val client = project.settings(
+  coverageEnabled  := true,
   mainClass := Some("MainClient"),
   name := "scalautist-client-scala",
   libraryDependencies ++= Seq(
@@ -25,9 +26,13 @@ lazy val client = project.settings(
     libraries.mssql,
     libraries.slickHikaricp
   ),
+  testOptions in Test += Tests.Setup { _ =>
+    (runMain in Compile in server).toTask(" servermodel.MainServer").value
+  },
   scalacOptions ++= compilerOptions,
   assemblySettings,
-).dependsOn(utils,event,server)
+
+).dependsOn(utils,event)
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
@@ -58,8 +63,6 @@ enablePlugins(DockerPlugin).settings(
     libraries.jaxrs2Swagger,
     libraries.megard,
     libraries.bcryp,
-    libraries.apachePoi,
-    libraries.apachePoi2,
     librariesTest.scalatest,
     librariesTest.scalaCheck,
     librariesTest.junit,
@@ -148,9 +151,6 @@ lazy val libraries = new {
   val megard         = "ch.megard"                %% "akka-http-cors"           % megarVersion
   val controlsfx     = "org.controlsfx"             % "controlsfx"              % controlsfxVersion
   val bcryp          ="org.mindrot"               %  "jbcrypt"                  % bcrypVersion
-
-  val apachePoi ="org.apache.poi" % "poi" % "3.17"
-  val apachePoi2="org.apache.poi" % "poi-ooxml" % "3.17"
 }
 
 lazy val librariesTest = new {
@@ -181,7 +181,15 @@ lazy val librariesTest = new {
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case PathList("application.conf")  => MergeStrategy.concat
+    case PathList("reference.conf")    => MergeStrategy.concat
+    case x                             => MergeStrategy.first
+  }
+  ,
   scalacOptions ++= compilerOptions,
+  cleanFiles += baseDirectory.value / "temp",
   test in assembly := {},
     excludeDependencies ++= Seq(
     librariesTest.scalatestOrg,
@@ -190,8 +198,8 @@ lazy val assemblySettings = Seq(
     librariesTest.testFXOrg,
     librariesTest.juntPl,
     librariesTest.akkaStream,
-    librariesTest.akkaHttp
+    librariesTest.akkaHttp,
+      librariesTest.juntPl,
+
   )
 )
-
-

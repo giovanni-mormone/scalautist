@@ -5,11 +5,11 @@ import messagecodes.{StatusCodes => statusCodes}
 import model.entity.DriverModel
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import utils.{ClientAkkaHttp, StartServer}
+import utils.{ClientAkkaHttp, StartServerC}
 
 import scala.concurrent.Future
 
-class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServer{
+class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServerC{
   var model: DriverModel = _
   val user: Int = 6
   val day1: String = "Lunedi"
