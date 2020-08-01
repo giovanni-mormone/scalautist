@@ -2,15 +2,15 @@ package view.baseconfiguration.manager
 
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
-import org.junit.{After, Before, Test}
-import utilstest.StartServer3
+import org.junit.{Before, Test}
+import utilstest.StartServerParametri
 import view.baseconfiguration.BaseTest
 import view.launchview.ManagerLaunch
 import view.mainviewoperations.ManagerOperations
 import view.manageroperations.ManagerParamsOperation
 
 @RunWith(classOf[JUnitParamsRunner])
-class ManagerParamsTest extends BaseTest with StartServer3{
+class ManagerParamsTest extends BaseTest with StartServerParametri{
 
   var params: ManagerParamsOperation = _
   var managerOperations: ManagerOperations = _
@@ -22,10 +22,6 @@ class ManagerParamsTest extends BaseTest with StartServer3{
     managerOperations = ManagerOperations(this)
     managerOperations.openGenerateTurns()
     params.sleep(2000)
-  }
-  @After
-  def closeStage():Unit={
-    closeCurrentWindow()
   }
 
   @Test

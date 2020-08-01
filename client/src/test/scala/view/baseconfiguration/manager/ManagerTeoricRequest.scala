@@ -3,15 +3,15 @@ package view.baseconfiguration.manager
 import javafx.scene.control.{Label, TextField}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
-import org.junit.{After, Before, Test}
-import utilstest.StartServer3
+import org.junit.{Before, Test}
+import utilstest.StartServerRichiesta
 import view.baseconfiguration.BaseTest
 import view.launchview.ManagerLaunch
 import view.mainviewoperations.ManagerOperations
 import view.manageroperations.ManagerTeoricRequestOperation
 
 @RunWith(classOf[JUnitParamsRunner])
-class ManagerTeoricRequest extends BaseTest with StartServer3{
+class ManagerTeoricRequest extends BaseTest with StartServerRichiesta{
 
   var teoricRequest: ManagerTeoricRequestOperation = _
   var managerOperations: ManagerOperations = _
@@ -33,10 +33,6 @@ class ManagerTeoricRequest extends BaseTest with StartServer3{
     managerOperations = ManagerOperations(this)
   }
 
-  @After
-  def closeStage():Unit={
-    closeCurrentWindow()
-  }
 
   @Test
   def errorDatepickerTest(): Unit = {

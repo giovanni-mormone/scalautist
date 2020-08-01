@@ -3739,7 +3739,6 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (307,N'20200228',2,7,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (308,N'20200229',2,7,0)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (309,N'20200212',2,7,0)
-
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (310, N'20200622',2,23,1)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (311, N'20200619',4,4,1)
 INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_Matricola],[IsStraordinario]) VALUES (312, N'20200630',5,5,1)
@@ -3750,10 +3749,3 @@ SET IDENTITY_INSERT [dbo].[PresenzaSets] OFF
 
 --//PRESENZA 
 
-SET IDENTITY_INSERT [dbo].[ParametriSets] ON
-INSERT INTO [dbo].[ParametriSets] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,1,N'natale')
-SET IDENTITY_INSERT [dbo].[ParametriSets] OFF
-
-SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] ON
-INSERT INTO [dbo].[ZonaTerminaleSets] ([IdZonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
-SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] OFF

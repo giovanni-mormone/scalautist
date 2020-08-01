@@ -7,8 +7,6 @@ import javafx.scene.control.{DatePicker, Label}
 import javafx.scene.layout.HBox
 import view.baseconfiguration.BaseTest
 
-import scala.annotation.nowarn
-
 trait ManagerTeoricRequestOperation {
   def clickCancel():Unit
 
@@ -62,7 +60,7 @@ object ManagerTeoricRequestOperation {
       date1.setValue(DATEF)
     }
 
-    @nowarn def searchDatepicker():(DatePicker,DatePicker)=
+     def searchDatepicker():(DatePicker,DatePicker)=
       (toTest.find("#datepickerInit"),toTest.find("#datepickerFinish"))
 
     override def setTimeCorrect(): Unit = {
@@ -73,7 +71,7 @@ object ManagerTeoricRequestOperation {
 
     override def setTerminal(): Unit = {
       toTest.clickOn("#terminal")
-      val terminal:CheckBoxListCell[String] = toTest.find("Florida"): @nowarn
+      val terminal:CheckBoxListCell[String] = toTest.find("Florida")
       toTest.clickOn(terminal.getChildrenUnmodifiable.get(FIRST_SON))
       toTest.clickOn("#title")
     }
@@ -87,7 +85,7 @@ object ManagerTeoricRequestOperation {
       toTest.write("s")
     }
 
-    @nowarn def searchTextField(idHbox:String): Unit ={
+     def searchTextField(idHbox:String): Unit ={
       val textField:HBox = toTest.find(idHbox)
       toTest.clickOn(textField.getChildrenUnmodifiable.get(SECOND_SON))
     }
@@ -97,7 +95,7 @@ object ManagerTeoricRequestOperation {
       toTest.write(QUANTITY)
     }
 
-    @nowarn override def search():Label = {
+     override def search():Label = {
       val idHbox="#2"
       val textField:HBox = toTest.find(idHbox)
       textField.getChildrenUnmodifiable.get(THIRD_SON).asInstanceOf[Label]
