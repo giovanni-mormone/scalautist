@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="vBoxExternal" stylesheets="@../../../../css/component/driver/subcomponent/HomeBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane.margin>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+    </BorderPane.margin>
+    <HBox fx:id="hBox"  >
+        <VBox fx:id="vBox">
+            <TableView fx:id="tableTurno"/>
+            <TableView fx:id="tableDisponibilita"/>
+        </VBox>
+        <AnchorPane fx:id="datepicker"/>
+    </HBox>
+</VBox>
