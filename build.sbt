@@ -198,7 +198,6 @@ lazy val assemblySettings = Seq(
     librariesTest.juntPl,
     librariesTest.akkaStream,
     librariesTest.akkaHttp,
-      librariesTest.juntPl,
-
+    librariesTest.juntPl,
   )
 )

@@ -95,11 +95,13 @@ object ManagerRichiestaBox{
       this.idTerminal=idTerminal
       this.date=date
       this.date1=date1
+      startLoading()
       idTerminal.headOption.foreach(id=>parent.selectShift(id))
 
     }
 
     override def drawShiftRequest(listShift: List[Turno],position:Int=0): Unit = {
+      endLoading()
       pane.getChildren.clear()
       listShiftRequest=listShift
       pane.getChildren.add(RichiestaForDayBox(listShift, days(position)._1,days(position)._2).setParent(this).pane)
@@ -153,8 +155,10 @@ object ManagerRichiestaBox{
       addChildren()
     }
 
-    override def nextAction(listShiftRequest: InfoRichiesta): Unit =
+    override def nextAction(listShiftRequest: InfoRichiesta): Unit = {
+      startLoading()
       parent.sendRichiesta(listShiftRequest)
+    }
 
     override def cancelAction(): Unit =
       parent.showBackMessage(resources.getResource("advertencia"))
