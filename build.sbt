@@ -13,6 +13,7 @@ lazy val client = project.settings(
     libraries.akkaHttp,
     libraries.akkaActor,
     libraries.akkaStream,
+<<<<<<< HEAD
     libraries.sprayJson,
     libraries.controlsfx,
     librariesTest.scalatest,
@@ -22,18 +23,26 @@ lazy val client = project.settings(
     librariesTest.monocle,
     librariesTest.testFXCore,
     librariesTest.junitParams
+=======
+    libraries.sprayJson
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings,
 
 ).dependsOn(utils,event)
+<<<<<<< HEAD
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
 enablePlugins(DockerPlugin).settings(
   coverageEnabled  := true,
+=======
+lazy val server = project.settings(
+
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
   dockerBaseImage       := "openjdk:jre",
   dockerExposedPorts := Seq(8080),
-  mainClass  in Compile := Some("servermodel.MainServer"),
+  mainClass  := Some("main.MainServer"),
   name := "scalautist-server-scala",
   libraryDependencies ++= Seq(
     libraries.akkaHttp,
@@ -45,6 +54,7 @@ enablePlugins(DockerPlugin).settings(
     libraries.scalaReflect,
     libraries.mssql,
     libraries.logBack,
+<<<<<<< HEAD
     libraries.javax,
     libraries.swaggerAkkaHttp,
     libraries.swaggerScala ,
@@ -62,6 +72,9 @@ enablePlugins(DockerPlugin).settings(
     librariesTest.junit,
     librariesTest.testKitHttp,
     librariesTest.testKitStream
+=======
+    librariesTest.scalatest
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings
@@ -100,10 +113,13 @@ lazy val compilerOptions = Seq(
   "-unchecked",
   "-Xsource:2.13.0",
   "-Ywarn-dead-code",
+<<<<<<< HEAD
   "-language:postfixOps",
   "-Wunused:nowarn",
   "-language:implicitConversions",
   "-feature"
+=======
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 )
 
 lazy val libraries = new {
@@ -151,6 +167,7 @@ lazy val libraries = new {
 }
 
 lazy val librariesTest = new {
+<<<<<<< HEAD
   val scalatestVersion   = "3.1.2"
   val junitVersion       = "0.11"
   val scalaCheckVersion  = "1.14.0"
@@ -173,11 +190,17 @@ lazy val librariesTest = new {
   val junitParams        = "pl.pragmatists" % "JUnitParams" % junitParamsVersion % Test
   val testKitStream      ="com.typesafe.akka" %% "akka-stream-testkit" % libraries.akkaVersion % Test
   val testKitHttp        ="com.typesafe.akka" %% "akka-http-testkit" % libraries.akkaHttpVersion % Test
+=======
+  val scalatestVersion = "3.3.0-SNAP2"
+  val scalatestOrg = "org.scalatest"
+  val scalatest =  "org.scalatest" %% "scalatest" % scalatestVersion % Test
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 
 }
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
+<<<<<<< HEAD
   assemblyMergeStrategy in assembly := {
     case PathList("test", "resources", "application.conf") =>
       MergeStrategy.discard
@@ -201,3 +224,7 @@ lazy val assemblySettings = Seq(
     librariesTest.juntPl,
   )
 )
+=======
+  excludeDependencies ++= Seq(librariesTest.scalatestOrg)
+)
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836

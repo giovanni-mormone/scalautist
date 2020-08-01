@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import javafx.application.Application
 import javafx.stage.Stage
 import model.AddressManager
@@ -18,4 +19,8 @@ object MainClient{
         Application.launch(classOf[Main])
         System.exit(0)
     }
+=======
+object MainClient {
+
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 }

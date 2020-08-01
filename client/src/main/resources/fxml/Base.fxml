@@ -3,7 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<<<<<<< HEAD:client/src/main/resources/javafx/fxml/component/driver/subcomponent/SalaryBox.fxml
 <?import javafx.geometry.Insets?>
+=======
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+
+            prefHeight="400.0" prefWidth="600.0">
+>>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836:client/src/main/resources/fxml/Base.fxml
 
 <VBox fx:id="vBoxExternal" stylesheets="@../../../../css/component/driver/subcomponent/SalaryBox.css"
       xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
