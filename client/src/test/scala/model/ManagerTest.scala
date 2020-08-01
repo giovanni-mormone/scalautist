@@ -8,12 +8,13 @@ import messagecodes.{StatusCodes => statusCodes}
 import model.entity.ManagerModel
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import utils.ClientAkkaHttp
+import util.ClientAkkaHttp
 import utils.TransferObject.InfoRichiesta
+import utilstest.{StartServer4, StartServer5}
 
 import scala.concurrent.Future
 
-class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
+class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServer4{
   import ManagerOperationTest._
 
   var model: ManagerModel = _
@@ -217,16 +218,4 @@ class ManagerTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaH
     future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
   }
 
-  it should "Return Success code if algorithm init without problem and Group is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithGroupNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
-  it should "Return Success code if algorithm init without problem and normal week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithNormalWeekNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
-  it should "Return Success code if algorithm init without problem and special week is None" in {
-    val future: Future[Response[Int]] = model.runAlgorithm(algorithmExecuteWithSpecialWeekNone,f)
-    future map {info => assert(info.statusCode==statusCodes.SUCCES_CODE) }
-  }
 }

@@ -3,13 +3,14 @@ package model
 import caseclass.CaseClassHttpMessage.Response
 import messagecodes.{StatusCodes => statusCodes}
 import model.entity.DriverModel
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import utils.{ClientAkkaHttp, StartServerC}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import util.ClientAkkaHttp
+import utilstest.StartServer
 
 import scala.concurrent.Future
 
-class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp with StartServerC{
+class DriverTest extends AsyncFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll  with ClientAkkaHttp with StartServer{
   var model: DriverModel = _
   val user: Int = 6
   val day1: String = "Lunedi"

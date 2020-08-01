@@ -3,24 +3,24 @@ package model
 
 import java.sql.Date
 
-import akka.actor.Terminated
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{Assumi, Response}
 import messagecodes.{StatusCodes => statusCodes}
 import model.entity.{HumanResourceModel, PersonaModel}
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AsyncFlatSpec
-import utils.ClientAkkaHttp
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import util.ClientAkkaHttp
+import utilstest.StartServer
 
 import scala.concurrent.Future
 
-class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp {
+class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp  with BeforeAndAfterAll with StartServer{
   var terminale:HumanResourceModel=_
   var persona:PersonaModel=_
   protected var insertPersona: Assumi = _
   protected var insertWithoutStorico: Assumi = _
   val zona:Zona = Zona("Cesena",Some(1))
-  val personaC: Persona =Persona("Fabian","Aspee","569918598",Some(""),1,isNew = true,"admin",None,None,Some(1))
+  val personaC: Persona =Persona("Fabian","Aspee","569918598",None,1,isNew = true,"admin",None,None,Some(1))
   override def beforeEach(): Unit = {
     terminale = HumanResourceModel()
     persona = PersonaModel()
@@ -62,7 +62,7 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
   }
   it should "return StatusCodes.BadRequest when get terminal by id not exist" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(-1)
-    futureTerminale map { terminale => assert(terminale.statusCode==statusCodes.BAD_REQUEST)}
+    futureTerminale map { terminale => assert(terminale.statusCode==statusCodes.NOT_FOUND)}
   }
   it should "return None of terminal" in {
     val futureTerminale:Future[Response[List[Terminale]]]=terminale.getTerminalByZone(20)
@@ -80,8 +80,5 @@ class HumanResourceTest extends AsyncFlatSpec with BeforeAndAfterEach with Clien
     val futureZona:Future[Response[List[Zona]]]=terminale.getAllZone
     futureZona map { zona => assert(zona.payload.head.length==5)}
   }
-  /*it should "shutdown System" in {
-    val futureTerminated:Future[Terminated]=terminale.shutdownActorSystem()
-    futureTerminated map { terminated => assert(true)}
-  }*/
+
 }

@@ -8,6 +8,7 @@ import javafx.scene.layout.{AnchorPane, BorderPane, HBox}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer3
 import view.baseconfiguration.BaseTest
 import view.driverviewoperations.HomeDriver
 import view.launchview.DriverLaunch
@@ -15,7 +16,7 @@ import view.launchview.DriverLaunch
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class HomeDriverTest extends BaseTest {
+class HomeDriverTest extends BaseTest with StartServer3{
   var driverHome:HomeDriver=_
   val ORARIO_PRIMA_MATTINATA = "8:00-12:00"
   val PRIMA_MATTINATA = "Seconda Mattinata"
