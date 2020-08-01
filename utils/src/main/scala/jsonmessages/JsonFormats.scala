@@ -1,21 +1,14 @@
 package jsonmessages
-<<<<<<< HEAD
 
 
-=======
-import caseclass.CaseClassDB._
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import caseclass.CaseClassDB._
 import caseclass.CaseClassHttpMessage.{InfoAbsenceOnDay, _}
 import jsonmessages.ImplicitDate._
 import spray.json._
-<<<<<<< HEAD
-=======
-import ImplicitDate._
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 
 object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
+
     implicit val zonaJsonFormat: RootJsonFormat[Zona] = jsonFormat2(Zona)
     implicit val zonaTerminaleJsonFormat: RootJsonFormat[ZonaTerminale] = jsonFormat4(ZonaTerminale)
     implicit val turnoJsonFormat: RootJsonFormat[Turno] = jsonFormat4(Turno)
@@ -24,13 +17,8 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val risultatoJsonFormat: RootJsonFormat[Risultato] = jsonFormat4(Risultato)
     implicit val richiestaTeoricaJsonFormat: RootJsonFormat[RichiestaTeorica] = jsonFormat4(RichiestaTeorica)
     implicit val richiestaJsonFormat: RootJsonFormat[Richiesta] = jsonFormat4(Richiesta)
-<<<<<<< HEAD
     implicit val presenzaJsonFormat: RootJsonFormat[Presenza] = jsonFormat5(Presenza)
     implicit val personaJsonFormat: RootJsonFormat[Persona] = jsonFormat10(Persona)
-=======
-    implicit val presenzaJsonFormat: RootJsonFormat[Presenza] = jsonFormat4(Presenza)
-    implicit val personaJsonFormat: RootJsonFormat[Persona] = jsonFormat7(Persona)
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
     implicit val parametroJsonFormat: RootJsonFormat[Parametro] = jsonFormat3(Parametro)
     implicit val gruppoTerminaleJsonFormat: RootJsonFormat[GruppoTerminale] = jsonFormat2(GruppoTerminale)
     implicit val giornoJsonFormat: RootJsonFormat[Giorno] = jsonFormat4(Giorno)
@@ -38,7 +26,6 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val regolaJsonFormat: RootJsonFormat[Regola] = jsonFormat2(Regola)
     implicit val contrattoJsonFormat: RootJsonFormat[Contratto] = jsonFormat5(Contratto)
     implicit val loginJsonFormat: RootJsonFormat[Login] = jsonFormat2(Login)
-<<<<<<< HEAD
     implicit val stipendioJsonFormat: RootJsonFormat[Stipendio] = jsonFormat4(Stipendio)
     implicit val assenzaJsonFormat: RootJsonFormat[Assenza] = jsonFormat5(Assenza)
     implicit val changePasswordJsonFormat: RootJsonFormat[ChangePassword] = jsonFormat3(ChangePassword)
@@ -69,6 +56,4 @@ object JsonFormats extends SprayJsonSupport with DefaultJsonProtocol{
     implicit val checkResultRequestJsonFormat: RootJsonFormat[CheckResultRequest] = jsonFormat3(CheckResultRequest)
     implicit def requestJsonFormat[O:JsonFormat]:RootJsonFormat[Request[O]] = jsonFormat1(Request.apply[O])
     implicit def responseJsonFormat[V: JsonFormat]: RootJsonFormat[Response[V]] = jsonFormat2(Response.apply[V])
-=======
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836
 }

@@ -1,6 +1,5 @@
 package controller
 
-<<<<<<< HEAD
 
 import utils.Execution
 import view.BaseView
@@ -23,8 +22,3 @@ trait Controller[A<:BaseView] {
    */
   def setView(view:A): Unit
 }
-=======
-trait Controller {
-
-}
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836

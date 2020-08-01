@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<<<<<<< HEAD:client/src/main/resources/javafx/fxml/component/driver/subcomponent/SalaryBox.fxml
-<?import javafx.geometry.Insets?>
-=======
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
 
-            prefHeight="400.0" prefWidth="600.0">
->>>>>>> 1ba3c3074a7ddf4f6e65bc964b56d7e086f29836:client/src/main/resources/fxml/Base.fxml
-
-<VBox fx:id="vBoxExternal" stylesheets="@../../../../css/component/driver/subcomponent/SalaryBox.css"
-      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <BorderPane.margin>
-      <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
-   </BorderPane.margin>
-   <HBox fx:id="internalHbox">
-      <ListView fx:id="salaryList" />
-      <VBox fx:id="internalVBox">
-         <Label fx:id="title"/>
-      </VBox>
-     <AnchorPane fx:id="datePickerA"/>
-   </HBox>
-</VBox>
+<?import javafx.stage.Screen?>
+<StackPane fx:id="pane" stylesheets="@../css/Base.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" />
