@@ -47,13 +47,28 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Paga], [FasciaOraria]) VA
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
-
+SET IDENTITY_INSERT [dbo].[PersoneSets] ON
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (1, N'manager',  N'manager',    N'569456239',1,null,  N'$2$11$aM4rc0RdMer10tS4nG10veYvghJAiUrotL317qfzh6y1mer6FNu56',0,N'admin')
+SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 --TURNO
 
 SET IDENTITY_INSERT [dbo].[RegolaSets] ON
 INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (1,N'Integer' )
 INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (2,N'Percent' )
 INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (3,N'Relativo' )
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (4,N'Integer' )
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (5,N'Percent' )
+INSERT INTO [dbo].[RegolaSets] ([IdRegola], [NomeRegola]) VALUES (6,N'Relativo' )
 SET IDENTITY_INSERT [dbo].[RegolaSets] OFF
 
 --//TURNO
+
+SET IDENTITY_INSERT [dbo].[ParametriSets] ON
+INSERT INTO [dbo].[ParametriSets] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,1,N'natale')
+SET IDENTITY_INSERT [dbo].[ParametriSets] OFF
+
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] ON
+INSERT INTO [dbo].[ZonaTerminaleSets] ([IdZonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] OFF
+
+select * from ZonaTerminaleSets

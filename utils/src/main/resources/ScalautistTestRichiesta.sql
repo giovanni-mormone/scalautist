@@ -47,3 +47,6 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Paga], [FasciaOraria]) VA
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
+SET IDENTITY_INSERT [dbo].[PersoneSets] ON
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (1, N'manager',  N'manager',    N'569456239',1,null,  N'$2$11$aM4rc0RdMer10tS4nG10veYvghJAiUrotL317qfzh6y1mer6FNu56',0,N'admin')
+SET IDENTITY_INSERT [dbo].[PersoneSets] OFF

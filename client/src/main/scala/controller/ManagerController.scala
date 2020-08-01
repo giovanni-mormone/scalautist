@@ -374,7 +374,7 @@ object ManagerController {
     override def weekParam(params: ParamsForAlgorithm): Unit = {
       model.weekRule().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawWeekParam(params, value)
-        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-rule")
         case _ => myView.showMessageFromKey("general-error")
       }
     }
@@ -382,7 +382,7 @@ object ManagerController {
     override def groupParam(params: ParamsForAlgorithm): Unit = {
       model.groupRule().onComplete{
         case Success(Response(StatusCodes.SUCCES_CODE, Some(value))) => myView.drawGroupParam(params, value)
-        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-terminal")
+        case Success(Response(StatusCodes.NOT_FOUND, None)) =>  myView.showMessageFromKey("not-found-rule")
         case _ => myView.showMessageFromKey("general-error")
       }
     }

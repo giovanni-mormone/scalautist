@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="vBox" stylesheets="@../../../../css/component/driver/subcomponent/ShiftBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="title"/>
+   <VBox fx:id="internalVBox">
+      <Accordion fx:id="shiftAccordion" snapToPixel="false"/>
+   </VBox>
+</VBox>

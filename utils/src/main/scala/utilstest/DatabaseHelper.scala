@@ -93,10 +93,10 @@ class DatabaseHelper private{
     promiseSql.future
   }
 
-  def runScriptAlgorithm():Future[Int]={
+  def runScriptParametri():Future[Int]={
     val promiseSql = Promise[Int]
     database.run(sqlu"#$clean_DB") onComplete{
-      case Success(_) => DatabaseHelper.database.run(sqlu"#$inserts_algorithm")onComplete{
+      case Success(_) => DatabaseHelper.database.run(sqlu"#$inserts_parametri")onComplete{
         case Success(_) =>promiseSql.success(1)
         case Failure(_) => promiseSql.success(0)
       }
@@ -117,5 +117,5 @@ object DatabaseHelper{
   private val inserts_sql5: String = Source.fromResource("ScalautistTestResult.sql").mkString
   private val inserts_sqlT: String = Source.fromResource("ScalautistTestTurni.sql").mkString
   private val inserts_sqlRich: String = Source.fromResource("ScalautistTestRichiesta.sql").mkString
-  private val inserts_algorithm: String = Source.fromResource("ScalautistTestRichiesta.sql").mkString
+  private val inserts_parametri: String = Source.fromResource("ScalautistTestParametro.sql").mkString
 }

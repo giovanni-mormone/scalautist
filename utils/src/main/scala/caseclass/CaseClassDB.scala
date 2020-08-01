@@ -2,8 +2,12 @@ package caseclass
 
 import java.sql.Date
 
+/**
+ * @author Fabian Aspee Encina, Franceso Cassano, Giovanni Mormone
+ * Object that encapsulates all case class that required both the server and client,
+ * this is util because [[spray.json]] required this for make serialization of the objects
+ */
 object CaseClassDB{
-  
    /**
    * Login is a case class that represent parameters for login
     *
@@ -224,5 +228,6 @@ object CaseClassDB{
    *                        represent unambiguous for every disponibilita (for insert operation this is not mandatory)
    */
   final case class Disponibilita(settimana: Int, giorno1: String, giorno2: String, idDisponibilita: Option[Int] = None)
+
 }
 
