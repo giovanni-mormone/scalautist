@@ -39,7 +39,7 @@ object ModalZone {
     @FXML
     var id: TextField = _
     @FXML
-    var name: TextField = _
+    var namez: TextField = _
     @FXML
     var delete: Button = _
     @FXML
@@ -55,22 +55,22 @@ object ModalZone {
       delete.setOnAction(_ => parent.deleteZona(zona))
 
       update.setText(resources.getResource("update"))
-      update.setOnAction(_ => parent.updateZona(Zona(name.getText, zona.idZone)))
+      update.setOnAction(_ => parent.updateZona(Zona(namez.getText, zona.idZone)))
 
       ableToChange
     }
 
     private def manageZonaText(): Unit = {
-      name.setText(zona.zones)
-      name.setEditable(true)
-      name.textProperty().addListener((_, oldS, word) => {
-        TextFieldControl.controlNewChar(name, ZonaChecker, word, oldS)
+      namez.setText(zona.zones)
+      namez.setEditable(true)
+      namez.textProperty().addListener((_, oldS, word) => {
+        TextFieldControl.controlNewChar(namez, ZonaChecker, word, oldS)
         ableToChange()
       })
     }
 
     private def ableToChange(): Unit =
-      update.setDisable(name.getText().equals(""))
+      update.setDisable(namez.getText().equals(""))
 
   }
 }

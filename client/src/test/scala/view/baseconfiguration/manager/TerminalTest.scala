@@ -86,7 +86,8 @@ class TerminalTest extends BaseTest with StartServer3{
   @Test
   def notChange(): Unit = {
     terminal.selectTerminal("Florida")
-    sleep(2000)
+    ensureEventQueueComplete()
+    sleep(5000)
     terminal.notChange()
     ensureEventQueueComplete()
     sleep(1000)

@@ -36,7 +36,7 @@ object TerminalOperation {
     private val terminalAdd: String = "#terminalButton"
     private val updateButton: String = "#update"
     private val deleteButton: String = "#delete"
-    private val changeTerminal: String = "#name"
+    private val changeTerminal: String = "#namet"
 
     override def openTerminal(): Unit =
       test.clickOn("#manageTerminalButton")
@@ -71,6 +71,7 @@ object TerminalOperation {
     }
 
     override def notChange(): Unit = {
+      test.sleep(2000)
       test.clickOn(changeTerminal)
       test.sleep(2000)
       val text: TextField = test.find(changeTerminal)
