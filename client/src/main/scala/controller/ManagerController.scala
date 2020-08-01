@@ -67,11 +67,6 @@ trait ManagerController extends AbstractController[ManagerView]{
   def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit
 
   /**
-   * runAlgorithm checks if you can run algorithm without any problem before running it.
-   * @param algorithmExecute information that allows the algorithm to work
-   */
-  def runAlgorithm2(algorithmExecute: AlgorithmExecute):Future[Response[Int]]
-  /**
    * It makes algorithm run without check if it overwrites something
    * @param algorithmExecute information that allows the algorithm to work
    */
@@ -285,21 +280,31 @@ object ManagerController {
 
     override def sendRichiesta(richiesta: InfoRichiesta): Unit = {
       model.defineTheoreticalRequest(richiesta).onComplete {
-        case Success(Response(StatusCodes.BAD_REQUEST,_)) => myView.showMessageFromKey("bad-request-error")
-        case Success(Response(StatusCodes.NOT_FOUND,_)) => myView.showMessageFromKey("bad-request-error")
-        case Success(Response(StatusCodes.SUCCES_CODE,_)) => myView.showMessageFromKey("ok-save-request")
-        case Success(Response(StatusCodes.ERROR_CODE1,_)) => myView.showMessageFromKey("error-date-request")
+        case Success(Response(StatusCodes.BAD_REQUEST,_)) =>
+          myView.showMessageFromKey("bad-request-error")
+          datatoRichiestaPanel()
+        case Success(Response(StatusCodes.NOT_FOUND,_)) =>
+          myView.showMessageFromKey("bad-request-error")
+          datatoRichiestaPanel()
+        case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
+          myView.showMessageFromKey("ok-save-request")
+          datatoRichiestaPanel()
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) =>
+          datatoRichiestaPanel()
+          myView.showMessageFromKey("error-date-request")
         case Success(Response(StatusCodes.ERROR_CODE2 | StatusCodes.ERROR_CODE3 |
                               StatusCodes.ERROR_CODE4 | StatusCodes.ERROR_CODE5 |
                               StatusCodes.ERROR_CODE6 | StatusCodes.ERROR_CODE7 |
                               StatusCodes.ERROR_CODE8 | StatusCodes.ERROR_CODE9 |
                               StatusCodes.ERROR_CODE10| StatusCodes.ERROR_CODE11|
-                              StatusCodes.ERROR_CODE12,_)) => myView.showMessageFromKey("general-error-request")
-            case _ => myView.showMessageFromKey("general-error")
+                              StatusCodes.ERROR_CODE12,_)) =>
+          datatoRichiestaPanel()
+          myView.showMessageFromKey("general-error-request")
+            case _ =>
+              datatoRichiestaPanel()
+              myView.showMessageFromKey("general-error")
       }
     }
-    override def runAlgorithm2(algorithmExecute: AlgorithmExecute):Future[Response[Int]]=
-      model.runAlgorithm(algorithmExecute,statusAlgorithm)
 
     private def statusAlgorithm(message:String):Unit=
         myView.showInfoAlgorithm(message)
@@ -307,19 +312,19 @@ object ManagerController {
     override def executeAlgorithm(algorithmExecute: AlgorithmExecute): Unit =
       model.runAlgorithm(algorithmExecute,statusAlgorithm).onComplete {
         case Success(Response(StatusCodes.SUCCES_CODE,_)) =>
-          Platform.runLater(() => myView.showMessageFromKey(key= "start-algorithm"))
+           myView.showMessageFromKey(key= "start-algorithm")
         case Success(Response(StatusCodes.ERROR_CODE10,_)) =>
-          Platform.runLater(() => myView.showMessageFromKey("no-algorithm"))
-        case Success(Response(StatusCodes.ERROR_CODE1,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver-ter"))
-        case Success(Response(StatusCodes.ERROR_CODE2,_)) => Platform.runLater(() => myView.showMessageFromKey("error-date"))
-        case Success(Response(StatusCodes.ERROR_CODE3,_)) => Platform.runLater(() => myView.showMessageFromKey("error-terminal"))
-        case Success(Response(StatusCodes.ERROR_CODE4,_)) => Platform.runLater(() => myView.showMessageFromKey("error-group"))
-        case Success(Response(StatusCodes.ERROR_CODE5,_)) => Platform.runLater(() => myView.showMessageFromKey("error-special-week"))
-        case Success(Response(StatusCodes.ERROR_CODE6,_)) => Platform.runLater(() => myView.showMessageFromKey("no-request"))
-        case Success(Response(StatusCodes.ERROR_CODE7,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver"))
-        case Success(Response(StatusCodes.ERROR_CODE8,_)) => Platform.runLater(() => myView.showMessageFromKey("no-shift"))
-        case Success(Response(StatusCodes.ERROR_CODE9,_)) => Platform.runLater(() => myView.showMessageFromKey("no-driver-contract"))
-        case _ => Platform.runLater(() => myView.showMessageFromKey("general-error"))
+           myView.showMessageFromKey("no-algorithm")
+        case Success(Response(StatusCodes.ERROR_CODE1,_)) =>  myView.showMessageFromKey("no-driver-ter")
+        case Success(Response(StatusCodes.ERROR_CODE2,_)) =>  myView.showMessageFromKey("error-date")
+        case Success(Response(StatusCodes.ERROR_CODE3,_)) =>  myView.showMessageFromKey("error-terminal")
+        case Success(Response(StatusCodes.ERROR_CODE4,_)) =>  myView.showMessageFromKey("error-group")
+        case Success(Response(StatusCodes.ERROR_CODE5,_)) =>  myView.showMessageFromKey("error-special-week")
+        case Success(Response(StatusCodes.ERROR_CODE6,_)) =>  myView.showMessageFromKey("no-request")
+        case Success(Response(StatusCodes.ERROR_CODE7,_)) =>  myView.showMessageFromKey("no-driver")
+        case Success(Response(StatusCodes.ERROR_CODE8,_)) =>  myView.showMessageFromKey("no-shift")
+        case Success(Response(StatusCodes.ERROR_CODE9,_)) =>  myView.showMessageFromKey("no-driver-contract")
+        case _ => myView.showMessageFromKey("general-error")
       }
 
     override def runAlgorithm(algorithmExecute: AlgorithmExecute): Unit =

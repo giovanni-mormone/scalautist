@@ -178,12 +178,6 @@ lazy val librariesTest = new {
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
-  assemblyMergeStrategy in assembly := {
-    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-    case PathList("application.conf")  => MergeStrategy.concat
-    case PathList("reference.conf")    => MergeStrategy.concat
-    case x                             => MergeStrategy.first
-  },
   scalacOptions ++= compilerOptions,
   cleanFiles += baseDirectory.value / "temp",
   coverageEnabled  := false,
@@ -196,7 +190,6 @@ lazy val assemblySettings = Seq(
     librariesTest.juntPl,
     librariesTest.akkaStream,
     librariesTest.akkaHttp,
-      librariesTest.juntPl,
-
+    librariesTest.juntPl,
   )
 )
