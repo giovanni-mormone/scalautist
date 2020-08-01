@@ -1,6 +1,6 @@
 name := "scalautist"
 
-version := "0.1"
+version := "1.0"
 ThisBuild /scalaVersion := "2.13.2"
 ThisBuild /crossPaths := false
 ThisBuild /Test / parallelExecution := false
