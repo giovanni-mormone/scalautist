@@ -26,7 +26,7 @@ object ManagerOperations{
     toTest.clickOn("#passwordField")
     toTest.write(password)
     toTest.clickOn("#loginButton")
-    toTest.sleep(6000)
+    toTest.sleep(7000)
 
     override def openGenerateTurns(): Unit =
       toTest.clickOn("#generateTurnsButton")

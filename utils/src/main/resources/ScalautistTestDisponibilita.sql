@@ -3291,10 +3291,10 @@ SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
 
-SET IDENTITY_INSERT [dbo].[ParametriSet] ON
-INSERT INTO [dbo].[ParametriSet] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,true,N'natale')
-SET IDENTITY_INSERT [dbo].[ParametriSet] OFF
+SET IDENTITY_INSERT [dbo].[ParametriSets] ON
+INSERT INTO [dbo].[ParametriSets] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,1,N'natale')
+SET IDENTITY_INSERT [dbo].[ParametriSets] OFF
 
-SET IDENTITY_INSERT [dbo].[ZonaTerminaleSet] ON
-INSERT INTO [dbo].[ZonaTerminaleSet] ([IdonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
-SET IDENTITY_INSERT [dbo].[ZonaTerminaleSet] OFF
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] ON
+INSERT INTO [dbo].[ZonaTerminaleSets] ([IdZonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] OFF

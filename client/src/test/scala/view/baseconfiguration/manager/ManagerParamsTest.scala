@@ -14,7 +14,6 @@ class ManagerParamsTest extends BaseTest with StartServer3{
 
   var params: ManagerParamsOperation = _
   var managerOperations: ManagerOperations = _
-  var modalOn: Boolean = false
 
   @Before
   def beforeEachManageAbsenceTest(): Unit = {
