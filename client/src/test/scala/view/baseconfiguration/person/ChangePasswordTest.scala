@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.launchview.ChangePasswordLaunch
 import view.mainviewoperations.ChangePasswordOperations
@@ -13,7 +14,7 @@ import view.mainviewoperations.ChangePasswordOperations
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class ChangePasswordTest extends BaseTest {
+class ChangePasswordTest extends BaseTest  with StartServer{
   private val VALID_PASS = "mammaMia1"
   private val OLD_PASS = "root"
   private val INVALID_PASS = "mammamama1"

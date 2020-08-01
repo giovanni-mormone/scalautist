@@ -54,7 +54,7 @@ private object ServerConf {
         DisponibilitaOperation.updateAvailabilityWeekFissi(date).filter(_.isEmpty).map(_=>_verifyDayInWeek(count+1))
       }
       if(date.compareTo(startMonthDate(date))==0 && count<2){
-            StipendioOperation.calculateStipendi(date).filter(x => !x.contains(StatusCodes.SUCCES_CODE)).map(_=>_verifyDayInWeek(count+1))
+            StipendioOperation.calculateStipendi(previousMonthDate(date)).filter(x => !x.contains(StatusCodes.SUCCES_CODE)).map(_=>_verifyDayInWeek(count+1))
       }
     }
   _verifyDayInWeek()
