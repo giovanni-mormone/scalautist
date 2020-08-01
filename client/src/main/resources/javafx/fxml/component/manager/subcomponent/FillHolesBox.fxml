@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="fillHolesBox" stylesheets="@../../../../css/component/manager/subcomponent/FillHolesBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane.margin>
+        <Insets left="30.0" right="30" bottom="30" top="20"/>
+    </BorderPane.margin>
+    <HBox fx:id="tablesBox">
+    <ScrollPane fx:id="scroll" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="terminalsAndTurnsBox">
+            <HBox fx:id="terminalsAndTurnsHeader">
+                <Label fx:id="terminalAndTurnsBoxColumn1"/>
+                <Label fx:id="terminalAndTurnsBoxColumn2"/>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+    <ScrollPane fx:id="scroll2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox fx:id="substitutesBox">
+            <HBox fx:id="substitutesHeader">
+                <Label fx:id="substitutesBoxColumn1"/>
+                <Label fx:id="substitutesBoxColumn2"/>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+    </HBox>
+</VBox>

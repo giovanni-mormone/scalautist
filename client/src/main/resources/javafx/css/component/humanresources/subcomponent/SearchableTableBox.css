@@ -1,0 +1,14 @@
+#vbox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+#terminalTable,#zonaTable{
+    -fx-max-width: 500;
+    -fx-min-width: 500;
+}
+
+#hbox{
+    -fx-spacing: 10;
+    -fx-alignment: center;
+}

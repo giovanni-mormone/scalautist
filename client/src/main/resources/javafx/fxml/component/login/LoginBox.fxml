@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="loginbox" stylesheets="@../../../css/component/login/LoginBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="internalBox">
+            <TextField fx:id="usernameField" />
+            <PasswordField fx:id="passwordField" />
+            <Label fx:id="error" styleClass="error"/>
+        </VBox>
+        <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" />
+    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</VBox>
+
+

@@ -1,0 +1,171 @@
+#prams{
+    -fx-spacing: 20;
+    -fx-alignment: center;
+    -fx-fill-width: true;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 20 20 0 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
+}
+#title{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 25px;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+}
+#buttons{
+    -fx-alignment: bottom-center;
+    -fx-spacing: 10;
+}
+#internalVBox,#terminal{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-fit-to-height: true;
+    -fx-fit-to-width: true;
+}
+#internalVBox{
+    -fx-min-width: 250;
+    -fx-background-color: white;
+}
+#titleInitial,#initTitleTerminal,#titleGruppi,#titleWeek,#titleWeekS{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-font-weight: bold;
+}
+#titleTerminal,#idGruppo,#data,#day,
+#shift,#quantity,#ruleW,#dayS,#shiftS,#quantityS,#ruleWS{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 17;
+    -fx-font-weight: bold;
+    -fx-min-width: 100;
+    -fx-max-width: 100;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-padding:10,0,0,0;
+    -fx-spacing: 10;
+}
+#firstHBox,#secondHBox,#thirdHBox,#fourthHBox,#fifthHBox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+#gruppi,#normalWeek,#specialWeek{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+}
+#nome,#sabato{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 15;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+#nomeTitle,#sabatoTitle{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 17;
+    -fx-font-weight: bold;
+    -fx-text-alignment: left;
+    -fx-padding:5,0,0,0;
+    -fx-min-width: 150;
+    -fx-max-width: 150;
+    -fx-spacing: 10;
+}
+#scrollpane{
+    -fx-blend-mode: src-over;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 10;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+}
+
+#senzaInfo1,#senzaInfo2,#senzaInfo3,#senzaInfo4{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 15;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-font-weight: bold;
+}
+
+#driverResult,#baseBox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+#baseBox >.label{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 100;
+    -fx-max-width: 100;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+#driverId{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 120;
+    -fx-max-width: 120;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+#driverTerminal{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 125;
+    -fx-max-width: 125;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+#terminal{
+    -fx-min-height:210 ;
+    -fx-background-color: white;
+    -fx-blend-mode: src-over;
+    -fx-text-fill: #7c8a96;
+    -fx-alignment: top-center;
+}
+
+#oneLabel >.label{
+    -fx-spacing: 20;
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 13;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-fill-height: true;
+}
+
+#oneLabel{
+    -fx-alignment: top-center;
+    -fx-fill-height: false;
+}
+
+#labelOne{
+    -fx-padding: 5;
+    -fx-max-width: 500;
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 13;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+    -fx-text-alignment: justify;
+}
+
+.button:hover {
+    -fx-background-color: #0074E1;
+    -fx-border-color: #0074E1;
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="basebox" stylesheets="@../../../../css/component/manager/subcomponent/SummaryBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <HBox fx:id="datebox">
+      <Label fx:id="dataI"/>
+      <Label fx:id="dataF"/>
+   </HBox>
+   <Label fx:id="terminalLabel" />
+   <Label fx:id="dayLabel" />
+   <HBox fx:id="infoBox">
+      <Button fx:id="indietro"/>
+      <VBox fx:id="shiftInfoLabel"/>
+      <Button fx:id="avanti" />
+   </HBox>
+
+</VBox>

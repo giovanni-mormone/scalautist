@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="modal" stylesheets="@../../../../css/component/humanresources/subcomponent/Modals.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="nameSurname" disable="true" editable="false"/>
+      <DatePicker fx:id="initDate" editable="false" showWeekNumbers="true"/>
+      <DatePicker fx:id="finishDate" disable="true" editable="false" showWeekNumbers="true"/>
+      <Button fx:id="button" disable="true" mnemonicParsing="false"/>
+   </children>
+</VBox>

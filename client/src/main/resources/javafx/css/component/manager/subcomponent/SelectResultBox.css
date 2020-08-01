@@ -1,0 +1,14 @@
+#dateAndTerminal{
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-alignment: top-center;
+}
+#title{
+    -fx-font-size: 30px;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+}
+#datepickerBox{
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}

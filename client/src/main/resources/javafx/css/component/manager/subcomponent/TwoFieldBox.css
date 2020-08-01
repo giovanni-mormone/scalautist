@@ -1,0 +1,21 @@
+#baseBox {
+    -fx-spacing: 10;
+    -fx-padding: 10 0 0 5;
+    -fx-alignment: center;
+}
+#baseBox:hover{
+    -fx-background-color: #1B9CE5;
+}
+#baseBox:hover >.label{
+    -fx-text-fill: white;
+}
+#field1,#field2{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 16;
+    -fx-min-width: 150;
+    -fx-max-width: 150;
+}
+#field2{
+    -fx-alignment: bottom-center;
+}
+

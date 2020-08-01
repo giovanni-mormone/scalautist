@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.*?>
+
+<BorderPane fx:id="driverHome" stylesheets="@../../../css/component/driver/DriverHome.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+       <MenuBar fx:id="menu">
+           <Menu fx:id="home" mnemonicParsing="false" />
+           <Menu fx:id="turni" mnemonicParsing="false" />
+           <Menu fx:id="stipendi" mnemonicParsing="false" />
+           <Menu fx:id="notifiche" mnemonicParsing="false" />
+       </MenuBar>
+   </top>
+    <Label fx:id="labelHome" />
+    <Label fx:id="labelTurni" />
+    <Label fx:id="labelStipendio" />
+    <Label fx:id="labelNotifiche">
+        <PopOver fx:id="popover" />
+    </Label>
+    <VBox fx:id="vBoxPopover"/>
+</BorderPane>

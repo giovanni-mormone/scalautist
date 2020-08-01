@@ -1,0 +1,59 @@
+
+#externalVBox{
+    -fx-padding: 20;
+    -fx-alignment: center;
+    -fx-spacing: 25;
+    -fx-min-width: 430;
+    -fx-max-width: 430;
+    -fx-wrap-text: true;
+    -fx-fit-to-height: inherit;
+    -fx-min-height: 420;
+    -fx-max-height: 420;
+}
+
+#scrollpane{
+    -fx-hbar-policy: never;
+    -fx-blend-mode: src-over;
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-wrap-text: true;
+    -fx-fit-to-width: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
+}
+#messagesHeader{
+    -fx-background-color: white;
+    -fx-wrap-text: true;
+    -fx-spacing: 5;
+}
+#closeButton{
+    -fx-alignment: center;
+}
+#close{
+    -fx-alignment: center;
+}
+#title{
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+#oneLabel{
+    -fx-min-width: 320;
+    -fx-max-width: 320;
+}
+#labelOne{
+    -fx-text-fill: #7c8a96;
+    -fx-font-size: 17;
+    -fx-max-width: 280;
+    -fx-wrap-text: true;
+    -fx-text-alignment: left;
+
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="dateAndTerminal" stylesheets="@../../../../css/component/manager/subcomponent/SelectResultBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="title"/>
+    <HBox fx:id="datepickerBox">
+        <DatePicker fx:id="datepickerInit"/>
+        <DatePicker fx:id="datepickerFinish"/>
+        <ComboBox fx:id="terminal"/>
+        <Button fx:id="carica" />
+    </HBox>
+    <Label fx:id="errorLabel" styleClass="error"/>
+</VBox>

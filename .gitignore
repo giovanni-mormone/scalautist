@@ -3,3 +3,5 @@ target/
 project/target
 .DS_Store
 doc/
+nohup.out
+*.xlsx

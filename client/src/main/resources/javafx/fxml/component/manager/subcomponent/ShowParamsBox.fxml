@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<VBox fx:id="prams" stylesheets="@../../../../css/component/manager/subcomponent/ShowParamsBox.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+  <BorderPane.margin>
+   <Insets left="30.0" right="30" bottom="30"/>
+  </BorderPane.margin>
+    <Label fx:id="title"/>
+    <ScrollPane fx:id="scrollpane" VBox.vgrow="ALWAYS">
+        <VBox fx:id="internalVBox">
+            <Label fx:id="titleInitial"/>
+            <VBox>
+                <HBox fx:id="firstHBox">
+                    <Label fx:id="nomeTitle"/>
+                    <Label fx:id="nome" />
+                </HBox>
+                <HBox fx:id="secondHBox">
+                    <Label fx:id="sabatoTitle"/>
+                    <Label fx:id="sabato" />
+                </HBox>
+            </VBox>
+        <VBox fx:id="terminal">
+            <Label fx:id="initTitleTerminal"/>
+            <Label fx:id="titleTerminal"/>
+        </VBox>
+            <VBox fx:id="gruppi">
+            <Label fx:id="titleGruppi"/>
+            <HBox fx:id="thirdHBox">
+                <Label fx:id="idGruppo"/>
+                <Label fx:id="data"/>
+            </HBox>
+            </VBox>
+            <VBox fx:id="normalWeek">
+            <Label fx:id="titleWeek"/>
+            <HBox fx:id="fourthHBox">
+                <Label fx:id="day"/>
+                <Label fx:id="shift"/>
+                <Label fx:id="quantity"/>
+                <Label fx:id="ruleW"/>
+            </HBox>
+            </VBox>
+            <VBox fx:id="specialWeek">
+            <Label fx:id="titleWeekS"/>
+            <HBox fx:id="fifthHBox">
+                <Label fx:id="dayS"/>
+                <Label fx:id="shiftS"/>
+                <Label fx:id="quantityS"/>
+                <Label fx:id="ruleWS"/>
+            </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+   <HBox fx:id="buttons">
+      <Button fx:id="reset"/>
+       <Button fx:id="run" />
+   </HBox>
+    <Label fx:id="senzaInfo1"/>
+    <Label fx:id="senzaInfo2"/>
+    <Label fx:id="senzaInfo3"/>
+    <Label fx:id="senzaInfo4"/>
+</VBox>

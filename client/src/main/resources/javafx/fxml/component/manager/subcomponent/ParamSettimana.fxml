@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="basevbox" stylesheets="@../../../../css/component/manager/subcomponent/ParamSettimana.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <BorderPane.margin>
+      <Insets left="30.0" right="30" bottom="30" top="20"/>
+   </BorderPane.margin>
+   <VBox fx:id="internalBox">
+      <HBox fx:id="labelBox">
+         <Label fx:id="titleN"/>
+         <Label fx:id="error" styleClass="error"/>
+      </HBox>
+      <VBox fx:id="dayShiftN"/>
+      <HBox fx:id="lableAlert">
+         <Label fx:id="alert" />
+      </HBox>
+      <HBox fx:id="labelAndCheckbox">
+         <Label fx:id="titleS"/>
+         <CheckComboBox fx:id="weekS"/>
+      </HBox>
+      <ScrollPane fx:id="scrollpane" >
+         <VBox fx:id="dayShiftS"/>
+      </ScrollPane>
+      <HBox fx:id="buttonBox">
+         <Button fx:id="reset" mnemonicParsing="false"/>
+         <Button fx:id="run" mnemonicParsing="false"/>
+      </HBox>
+   </VBox>
+</VBox>

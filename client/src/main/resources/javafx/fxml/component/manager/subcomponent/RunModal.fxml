@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="external" stylesheets="@../../../../css/component/manager/subcomponent/RunModal.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <VBox fx:id="vbox" >
+         <ScrollPane fx:id="scrollpane" VBox.vgrow="ALWAYS">
+            <VBox fx:id="messagesHeader"/>
+         </ScrollPane>
+      <HBox fx:id="buttonbox">
+         <Button fx:id="cancel" mnemonicParsing="false"/>
+          <Button fx:id="ok" mnemonicParsing="false"/>
+      </HBox>
+   </VBox>
+</VBox>

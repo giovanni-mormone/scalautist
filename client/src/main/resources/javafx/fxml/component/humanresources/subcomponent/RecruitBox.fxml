@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.BorderPane ?>
+<VBox fx:id="recruitBox" stylesheets="@../../../../css/component/humanresources/subcomponent/RecruitBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <BorderPane.margin>
+      <Insets bottom="30.0" top="30"/>
+   </BorderPane.margin>
+   <TextField fx:id="name" promptText="Nome"/>
+   <TextField fx:id="surname" promptText="Cognome"/>
+   <TextField fx:id="tel"/>
+   <DatePicker fx:id="recruitDate" showWeekNumbers="true"/>
+   <ComboBox fx:id="role"/>
+   <ComboBox fx:id="contractTypes"/>
+   <ComboBox fx:id="shift1"/>
+   <ComboBox fx:id="shift2"/>
+   <ComboBox fx:id="day1"/>
+   <ComboBox fx:id="day2"/>
+   <ComboBox fx:id="zones"/>
+   <ComboBox fx:id="terminals"/>
+   <Button fx:id="save" mnemonicParsing="false" text="Salva"/>
+</VBox>

@@ -1,0 +1,15 @@
+#externalVBox{
+    -fx-spacing: 10;
+    -fx-alignment: top-center;
+    -fx-fill-width: false;
+    -fx-max-width: 1000;
+    -fx-fill-height: false;
+    -fx-padding: 20;
+    -fx-background-color: white;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 0, 1;
+    -fx-fit-to-width: true;
+    -fx-fit-to-height: true;
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 10, 0.0 , 0 , 0 );
+}

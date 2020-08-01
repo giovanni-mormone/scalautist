@@ -1,0 +1,32 @@
+#driverHome{
+    -fx-alignment: center;
+    -fx-fill-width: true;
+    -fx-spacing: 20;
+    -fx-border-insets: 30;
+}
+#menu{
+    -fx-background-color: #1B9CE5;
+    -fx-min-height:30;
+}
+
+#vBoxPopover{
+    -fx-pref-height: 200;
+    -fx-pref-width: 220;
+    -fx-background-color: white;
+}
+#popover{
+    -fx-background-color: white;
+}
+#oneLabel{
+    -fx-background-color: #F79E02;
+    -fx-font-family: AvenirLTStd-Book, Helvetica, Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-min-width: 220;
+    -fx-wrap-text: true;
+    -fx-padding: 5 3 5 3;
+}
+#labelOne{
+    -fx-font-size: 13px;
+    -fx-min-width: 180;
+    -fx-wrap-text: true;
+}

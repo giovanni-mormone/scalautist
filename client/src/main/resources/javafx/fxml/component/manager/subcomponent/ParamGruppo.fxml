@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="vbox" stylesheets="@../../../../css/component/manager/subcomponent/ParamGruppo.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <BorderPane.margin>
+      <Insets left="30.0" right="30" bottom="30" top="20"/>
+   </BorderPane.margin>
+   <HBox fx:id="grouphbox" VBox.vgrow="ALWAYS">
+      <VBox fx:id="groupvbox" HBox.hgrow="ALWAYS">
+         <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS" >
+            <VBox fx:id="tableInfo" >
+               <HBox fx:id="internalHBox" >
+                  <Label fx:id="rules" />
+                  <Label fx:id="date" />
+                  <Label fx:id="selected" />
+               </HBox>
+            </VBox>
+         </ScrollPane>
+         <HBox fx:id="buttonbox">
+            <Button fx:id="sub" mnemonicParsing="false" />
+            <Button fx:id="add" mnemonicParsing="false" />
+         </HBox>
+      </VBox>
+      <AnchorPane fx:id="dateg"/>
+   </HBox>
+   <HBox fx:id="buttonbox2">
+      <Button fx:id="reset" mnemonicParsing="false" />
+      <Button fx:id="run" mnemonicParsing="false" />
+   </HBox>
+</VBox>

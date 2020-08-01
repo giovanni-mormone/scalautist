@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+
+<?import javafx.geometry.Insets?>
+<VBox fx:id="vbox" stylesheets="@../../../../css/component/humanresources/subcomponent/SearchableTableBox.css"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <BorderPane.margin>
+      <Insets left="30.0" right="30"/>
+   </BorderPane.margin>
+   <ComboBox fx:id="searchBox" />
+   <TableView fx:id="terminalTable"/>
+   <HBox fx:id="hbox">
+      <ComboBox fx:id="addBox" />
+      <TextField fx:id="newName"/>
+      <Button fx:id="terminalButton" mnemonicParsing="false" text="Button" />
+   </HBox>
+</VBox>
