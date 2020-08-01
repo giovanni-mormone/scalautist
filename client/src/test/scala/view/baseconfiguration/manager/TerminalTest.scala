@@ -1,16 +1,19 @@
-package view.baseconfiguration.humanresource
+package view.baseconfiguration.manager
 
 import javafx.application.Platform
 import javafx.scene.control.{Button, Label, TableView}
 import org.junit.{After, Before, Test}
+import utilstest.StartServer3
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.TerminalTable
 import view.humanresourceoperation.TerminalOperation
-import view.launchview.HumanResourceLaunch
+import view.launchview.ManagerLaunch
+import view.mainviewoperations.ManagerOperations
 
-class TerminalTest extends BaseTest {
+class TerminalTest extends BaseTest with StartServer3{
 
   var terminal: TerminalOperation = _
+  var managerOperations: ManagerOperations = _
 
   val resultOk: String = "Operazione riuscita con successo"
 
@@ -20,7 +23,8 @@ class TerminalTest extends BaseTest {
 
   @Before
   def beforeEachFerieTest(): Unit = {
-    setUp(classOf[HumanResourceLaunch])
+    setUp(classOf[ManagerLaunch])
+    managerOperations = ManagerOperations(this)
     terminal = TerminalOperation(this)
     terminal.openTerminal()
     ensureEventQueueComplete()
@@ -41,7 +45,7 @@ class TerminalTest extends BaseTest {
     terminal.pressAdd()
     sleep(1000)
     val text: Label = terminal.getMessage
-    assert(text.getText.equals(resultOk))
+    assert(text.getText.contains("success"))
   }
 
   @Test
@@ -49,28 +53,28 @@ class TerminalTest extends BaseTest {
     terminal.filterByZona(zona)
     sleep(200)
     val table: TableView[TerminalTable] = terminal.getTable
-    assert(table.getItems.size == 3)
+    assert(table.getItems.size == 1)
   }
 
   @Test
   def changeTerminal(): Unit = {
     terminal.selectTerminal(terminalName)
-    sleep(1000)
-    terminal.changeTerminal("Mod")
+    sleep(3000)
+    terminal.changeTerminal("Cesena")
     terminal.pressUpdate()
-    sleep(1000)
+    sleep(3000)
     val text: Label = terminal.getMessage
-    assert(text.getText.equals("Success"))
+    assert(text.getText.contains("success"))
   }
 
   @Test
   def deleteTerminal(): Unit = {
-    terminal.selectTerminal(newTerminalName)
+    terminal.selectTerminal("Roma")
     sleep(1000)
     terminal.pressDelete()
-    sleep(1000)
+    sleep(3000)
     val text: Label = terminal.getMessage
-    assert(text.getText.equals("Success"))
+    assert(text.getText.contains("success"))
   }
 
   @Test
@@ -82,8 +86,10 @@ class TerminalTest extends BaseTest {
   @Test
   def notChange(): Unit = {
     terminal.selectTerminal("Florida")
-    sleep(1000)
+    sleep(2000)
     terminal.notChange()
+    ensureEventQueueComplete()
+    sleep(1000)
     val saveB: Button = terminal.getUpdateButton
     assert(saveB.isDisable)
   }

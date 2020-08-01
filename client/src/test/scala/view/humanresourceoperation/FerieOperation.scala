@@ -21,13 +21,13 @@ object FerieOperation {
   private class FerieOperationImpl(toTest: BaseTest) extends FerieOperation{
 
     override def enterFirstDate(day: LocalDate): Unit = {
-      val initDate:DatePicker = toTest.find("#initDate"): @nowarn
+      val initDate:DatePicker = toTest.find("#initDate")
       toTest.clickOn(initDate)
       initDate.setValue(day)
     }
 
     override def enterSecondDate(day: LocalDate): Unit = {
-      val finishDate:DatePicker = toTest.find("#finishDate"): @nowarn
+      val finishDate:DatePicker = toTest.find("#finishDate")
       toTest.clickOn(finishDate)
       finishDate.setValue(day)
     }

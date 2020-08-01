@@ -73,7 +73,9 @@ object ZonaOperation {
 
     override def clickNotUpdate(): Unit = {
       toTest.clickOn(nameZonaId)
-      val text: TextField = toTest.find(nameZonaId): @nowarn
+      toTest.sleep(1000)
+      val text: TextField = toTest.find(nameZonaId)
+      toTest.sleep(1000)
       while(!text.getText.equals("")) {
         toTest.press(KeyCode.BACK_SPACE)
         toTest.release(KeyCode.BACK_SPACE)
@@ -98,7 +100,7 @@ object ZonaOperation {
       toTest.find(addButtonId)
 
     override def openZona(): Unit =
-      toTest.clickOn("#zonaManage")
+      toTest.clickOn("#manageZoneButton")
 
   }
 }

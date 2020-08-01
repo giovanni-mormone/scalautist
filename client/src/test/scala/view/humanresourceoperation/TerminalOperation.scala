@@ -5,7 +5,6 @@ import javafx.scene.input.KeyCode
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.TerminalTable
 
-import scala.annotation.nowarn
 
 trait TerminalOperation {
   def openTerminal(): Unit
@@ -38,10 +37,9 @@ object TerminalOperation {
     private val updateButton: String = "#update"
     private val deleteButton: String = "#delete"
     private val changeTerminal: String = "#name"
-    private val changeZone: String = "#zones"
 
     override def openTerminal(): Unit =
-      test.clickOn("#terminalManger")
+      test.clickOn("#manageTerminalButton")
 
     override def filterByZona(zona: String): Unit = {
       test.clickOn(filter)
@@ -74,7 +72,9 @@ object TerminalOperation {
 
     override def notChange(): Unit = {
       test.clickOn(changeTerminal)
-      val text: TextField = test.find(changeTerminal): @nowarn
+      test.sleep(2000)
+      val text: TextField = test.find(changeTerminal)
+      test.sleep(2000)
       while(!text.getText.equals("")) {
         test.press(KeyCode.BACK_SPACE)
         test.release(KeyCode.BACK_SPACE)

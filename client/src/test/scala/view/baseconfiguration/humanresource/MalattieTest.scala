@@ -6,6 +6,7 @@ import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.MalattieOperation
 import view.launchview.HumanResourceLaunch
@@ -13,7 +14,7 @@ import view.launchview.HumanResourceLaunch
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class MalattieTest extends BaseTest {
+class MalattieTest extends BaseTest with StartServer{
   val textOk:String = "Malattia Inserite Correttamente"
   var malattie:MalattieOperation = _
   val date:LocalDate =LocalDate.of(2020,6,12)
@@ -22,11 +23,24 @@ class MalattieTest extends BaseTest {
   @Before
   def beforeEachFerieTest(): Unit = {
     setUp(classOf[HumanResourceLaunch])
+    login()
     malattie = MalattieOperation(this)
   }
   @After
   def closeStage():Unit={
     closeCurrentWindow()
+  }
+
+  private def login()={
+    val user: String = "risuma"
+    val password: String = "rootrootN2"
+
+    clickOn("#usernameField")
+    write(user)
+    clickOn("#passwordField")
+    write(password)
+    clickOn("#loginButton")
+    sleep(10000)
   }
 
   @Test
