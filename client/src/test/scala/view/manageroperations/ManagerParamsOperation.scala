@@ -47,7 +47,8 @@ object ManagerParamsOperation {
       toTest.sleep(time)
 
     override def setTime(datePicker: String, day: Int): Unit = {
-      val datePic: DatePicker = toTest.find(datePicker): @nowarn
+      val datePic: DatePicker = toTest.find(datePicker)
+      toTest.sleep(1000)
       day match {
         case 1 => datePic.setValue(FIRST_OF_MONTH)
         case 2 => datePic.setValue(LAST_OF_MONTH)
@@ -62,7 +63,7 @@ object ManagerParamsOperation {
 
     override def chooseOldParam(): Unit =
       toTest.find[TableView[ParamsTable]]("#params")
-        .getSelectionModel.select(10) //10
+        .getSelectionModel.select(0)
 
     @nowarn override def isThere(component: String): Boolean =
       Option(toTest.find(component)).isDefined

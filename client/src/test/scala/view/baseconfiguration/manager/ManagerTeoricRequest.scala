@@ -4,15 +4,14 @@ import javafx.scene.control.{Label, TextField}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer3
 import view.baseconfiguration.BaseTest
 import view.launchview.ManagerLaunch
 import view.mainviewoperations.ManagerOperations
 import view.manageroperations.ManagerTeoricRequestOperation
 
-import scala.annotation.nowarn
-
 @RunWith(classOf[JUnitParamsRunner])
-class ManagerTeoricRequest extends BaseTest{
+class ManagerTeoricRequest extends BaseTest with StartServer3{
 
   var teoricRequest: ManagerTeoricRequestOperation = _
   var managerOperations: ManagerOperations = _
@@ -43,7 +42,7 @@ class ManagerTeoricRequest extends BaseTest{
     managerOperations.openManageTeoricRequest()
     teoricRequest.sleep(2000)
     teoricRequest.clickNext()
-    val labelError:Label=find("#errorLabel"): @nowarn
+    val labelError:Label=find("#errorLabel")
     assert(labelError.getText.equals(MESSAGE_ERROR_1))
   }
 
@@ -55,7 +54,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.setTerminal()
     teoricRequest.clickNext()
     ensureEventQueueComplete()
-    val labelError:Label=find("#errorLabel"): @nowarn
+    val labelError:Label=find("#errorLabel")
     assert(labelError.getText.equals(MESSAGE_ERROR_2))
   }
 
@@ -65,7 +64,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.sleep(5000)
     teoricRequest.setTimeCorrect()
     teoricRequest.clickNext()
-    val labelError:Label=find("#errorLabelTerminal"): @nowarn
+    val labelError:Label=find("#errorLabelTerminal")
     assert(labelError.getText.equals(MESSAGE_ERROR_3))
   }
 
@@ -73,7 +72,7 @@ class ManagerTeoricRequest extends BaseTest{
   def setFirstViewOkTest(): Unit = {
     managerOperations.openManageTeoricRequest()
     setFirstView()
-    val titleDay:Label=find("#titleDay"): @nowarn
+    val titleDay:Label=find("#titleDay")
     assert(titleDay.getText.equals(DAY))
   }
   private def setFirstView(): Unit ={
@@ -89,7 +88,7 @@ class ManagerTeoricRequest extends BaseTest{
     managerOperations.openManageTeoricRequest()
     setFirstView()
     teoricRequest.writeInFirstShift()
-    val errorLabel:Label=find("#errorLabel"): @nowarn
+    val errorLabel:Label=find("#errorLabel")
     assert(errorLabel.getText.equals(MESSAGE_ERROR_4))
   }
 
@@ -109,7 +108,7 @@ class ManagerTeoricRequest extends BaseTest{
     setFirstView()
     teoricRequest.setAllShiftWithQuantity()
     teoricRequest.clickNext()
-    val titleDay:Label=find("#titleDay"): @nowarn
+    val titleDay:Label=find("#titleDay")
     assert(titleDay.getText.equals(DAY2))
   }
 
@@ -118,7 +117,7 @@ class ManagerTeoricRequest extends BaseTest{
     managerOperations.openManageTeoricRequest()
     setFirstView()
     teoricRequest.setAllDay()
-    val titleDay:Label=find("#titleDay"): @nowarn
+    val titleDay:Label=find("#titleDay")
     assert(titleDay.getText.equals(DAY7))
   }
 
@@ -130,7 +129,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.setAllShiftWithQuantity()
     teoricRequest.clickNext()
     teoricRequest.sleep(1000)
-    val titleDay:Label=find("#titleDay"): @nowarn
+    val titleDay:Label=find("#titleDay")
     assert(titleDay.getText.equals(RIEPILOGO))
   }
 
@@ -142,7 +141,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.setAllShiftWithQuantity()
     teoricRequest.clickNext()
     teoricRequest.sleep(1000)
-    val dataI:Label=find("#dataI"): @nowarn
+    val dataI:Label=find("#dataI")
     assert(dataI.getText.equals(teoricRequest.getDateI))
   }
 
@@ -154,7 +153,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.setAllShiftWithQuantity()
     teoricRequest.clickNext()
     teoricRequest.sleep(1000)
-    val dataI:Label=find("#dataF"): @nowarn
+    val dataI:Label=find("#dataF")
     assert(dataI.getText.equals(teoricRequest.getDateF))
   }
 
@@ -164,7 +163,7 @@ class ManagerTeoricRequest extends BaseTest{
     setFirstView()
     teoricRequest.setAllShiftWithQuantity()
     teoricRequest.clickNext()
-    val quantity:TextField=find("#quantity"): @nowarn
+    val quantity:TextField=find("#quantity")
     assert(quantity.getText.isEmpty)
   }
 
@@ -176,7 +175,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest.clickBack()
     teoricRequest.clickBack()
     teoricRequest.clickNext()
-    val quantity:TextField=find("#quantity"): @nowarn
+    val quantity:TextField=find("#quantity")
     assert(quantity.getText.equals(teoricRequest.getQuantity))
   }
   private def setTwoView(): Unit ={
@@ -191,7 +190,7 @@ class ManagerTeoricRequest extends BaseTest{
     setFirstView()
     setTwoView()
     teoricRequest.clickBack()
-    val quantity:TextField=find("#quantity"): @nowarn
+    val quantity:TextField=find("#quantity")
     assert(quantity.getText.equals(teoricRequest.getQuantity))
   }
 
@@ -201,7 +200,7 @@ class ManagerTeoricRequest extends BaseTest{
     setFirstView()
     teoricRequest.clickBack()
     teoricRequest.clickOk()
-    val titleDay:Label=find("#title"): @nowarn
+    val titleDay:Label=find("#title")
     assert(titleDay.getText.equals(TEORIC_REQUEST))
   }
 
@@ -211,7 +210,7 @@ class ManagerTeoricRequest extends BaseTest{
     setFirstView()
     teoricRequest.clickBack()
     teoricRequest.clickCancel()
-    val titleDay:Label=find("#titleDay"): @nowarn
+    val titleDay:Label=find("#titleDay")
     assert(titleDay.getText.equals(DAY))
   }
 

@@ -5,13 +5,14 @@ import javafx.scene.control.{Label, TableView}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTableWithSelection
 import view.humanresourceoperation.FireOperation
 import view.launchview.HumanResourceLaunch
 
 @RunWith(classOf[JUnitParamsRunner])
-class LicenziaTest extends BaseTest {
+class LicenziaTest extends BaseTest with StartServer{
 
   var licenzia: FireOperation = _
 
@@ -22,6 +23,7 @@ class LicenziaTest extends BaseTest {
   @Before
   def beforeEachFerieTest(): Unit = {
     setUp(classOf[HumanResourceLaunch])
+    login()
     licenzia = FireOperation(this)
     licenzia.openFireBox()
     ensureEventQueueComplete()
@@ -31,6 +33,18 @@ class LicenziaTest extends BaseTest {
   @After
   def closeStage(): Unit = {
     Platform.runLater(()=>myStage.close())
+  }
+
+  private def login()={
+    val user: String = "risuma"
+    val password: String = "rootrootN2"
+
+    clickOn("#usernameField")
+    write(user)
+    clickOn("#passwordField")
+    write(password)
+    clickOn("#loginButton")
+    sleep(10000)
   }
 
   @Test

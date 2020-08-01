@@ -3,10 +3,10 @@ package view.baseconfiguration.humanresource
 import java.time.LocalDate
 
 import javafx.application.Platform
-import javafx.scene.control.{Button, ComboBox, Label, TextField}
+import javafx.scene.control.{ComboBox, Label, TextField}
 import junitparams.JUnitParamsRunner
-import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
+import org.junit.{After, Before, Test}
 import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.RecruitOperation
@@ -35,7 +35,7 @@ class AssumiTest extends BaseTest with StartServer{
     sleep(3500)
   }
   private def login()={
-    val user: String = "root2"
+    val user: String = "risuma"
     val password: String = "rootrootN2"
 
     clickOn("#usernameField")
@@ -43,7 +43,7 @@ class AssumiTest extends BaseTest with StartServer{
     clickOn("#passwordField")
     write(password)
     clickOn("#loginButton")
-    sleep(6000)
+    sleep(10000)
   }
   @After
   def closeStage(): Unit = {

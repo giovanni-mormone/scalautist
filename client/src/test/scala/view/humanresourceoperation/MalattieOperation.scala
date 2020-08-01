@@ -5,7 +5,6 @@ import java.time.LocalDate
 import javafx.scene.control.DatePicker
 import view.baseconfiguration.BaseTest
 
-import scala.annotation.nowarn
 
 trait MalattieOperation{
   def enterFirstDate(day: LocalDate): Unit
@@ -21,13 +20,15 @@ object MalattieOperation {
   private class MalattieOperationImpl(toTest: BaseTest) extends MalattieOperation{
 
     override def enterFirstDate(day: LocalDate): Unit =  {
-      val initDate:DatePicker = toTest.find("#initDate"): @nowarn
+      val initDate:DatePicker = toTest.find("#initDate")
+      toTest.sleep(1000)
       toTest.clickOn(initDate)
       initDate.setValue(day)
 
     }
     override def enterSecondDate(day: LocalDate): Unit = {
-      val finishDate:DatePicker = toTest.find("#finishDate"): @nowarn
+      val finishDate:DatePicker = toTest.find("#finishDate")
+      toTest.sleep(1000)
       toTest.clickOn(finishDate)
       finishDate.setValue(day)
     }
