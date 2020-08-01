@@ -1,17 +1,18 @@
 package model
 
-import akka.http.scaladsl.model.StatusCodes
-import caseclass.CaseClassDB.Persona
-import model.entity.PersonaModel
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.flatspec.AsyncFlatSpec
-import utils.ClientAkkaHttp
+ import caseclass.CaseClassDB.Persona
+ import messagecodes.StatusCodes
+ import model.entity.PersonaModel
+ import org.scalatest.flatspec.AsyncFlatSpec
+ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+ import util.ClientAkkaHttp
+ import utilstest.StartServer
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+ import scala.concurrent.Await
+ import scala.concurrent.duration.Duration
 
 
-class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach with ClientAkkaHttp{
+class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach  with BeforeAndAfterAll with ClientAkkaHttp with StartServer{
 
   behavior of "ClientHttpRequestLogin"
   it should "return Persona instance on login request" in {
@@ -36,7 +37,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.statusCode.equals(StatusCodes.OK.intValue))
+    assert(result.statusCode.equals(StatusCodes.SUCCES_CODE))
   }
 
   it should "Not Found code when it try to change password with wrong" in {
@@ -45,6 +46,7 @@ class TestHttpClientPersonaModel extends AsyncFlatSpec with BeforeAndAfterEach w
     val newPassword: String = "admin2"
     val http = PersonaModel.apply()
     val result = Await.result(http.changePassword(user, oldPassword, newPassword), Duration.Inf)
-    assert(result.statusCode.equals(StatusCodes.NotFound.intValue))
+    assert( !result.statusCode.equals(StatusCodes.SUCCES_CODE))
   }
+
 }

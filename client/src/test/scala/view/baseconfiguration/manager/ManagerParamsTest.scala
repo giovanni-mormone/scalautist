@@ -3,13 +3,14 @@ package view.baseconfiguration.manager
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer3
 import view.baseconfiguration.BaseTest
 import view.launchview.ManagerLaunch
 import view.mainviewoperations.ManagerOperations
 import view.manageroperations.ManagerParamsOperation
 
 @RunWith(classOf[JUnitParamsRunner])
-class ManagerParamsTest extends BaseTest {
+class ManagerParamsTest extends BaseTest with StartServer3{
 
   var params: ManagerParamsOperation = _
   var managerOperations: ManagerOperations = _

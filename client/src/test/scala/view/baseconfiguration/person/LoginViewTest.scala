@@ -4,7 +4,8 @@ import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
-import org.junit.{Before, Test}
+import org.junit.{After, Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.launchview.LoginLaunch
 import view.mainviewoperations.LoginOperations
@@ -12,13 +13,16 @@ import view.mainviewoperations.LoginOperations
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class LoginViewTest extends BaseTest {
+class LoginViewTest extends BaseTest with StartServer{
 
   private val NEW_USER:String = "root"
   private val NEW_USER_PASS:String = "root"
 
   private var loginView:LoginOperations = _
-
+  @After
+  def closeScene():Unit={
+    closeCurrentWindow()
+  }
   @Before
   def beforeEachLoginTest(): Unit = {
     setUp(classOf[LoginLaunch])
@@ -28,10 +32,11 @@ class LoginViewTest extends BaseTest {
   @Test
   def newUserLogin(): Unit ={
     loginView.login(NEW_USER,NEW_USER_PASS)
-    Thread.sleep(25000)
+    Thread.sleep(4000)
     loginView.clickModalButton()
     Thread.sleep(1000)
     val titleRes: Label = find("#title"): @nowarn
+    Thread.sleep(2000)
     assert(titleRes.getText.equals("Cambia Password"))
   }
 
@@ -39,8 +44,9 @@ class LoginViewTest extends BaseTest {
   @Test
   def newUserLoginModal(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
-    Thread.sleep(12000)
+    Thread.sleep(4000)
     val msgLabel: Label = find("#messageLabel"): @nowarn
+    Thread.sleep(2000)
     assert(msgLabel.getText.equals("È il tuo primo login! Cambia password per poter accedere al programma!"))
     loginView.clickModalButton()
   }

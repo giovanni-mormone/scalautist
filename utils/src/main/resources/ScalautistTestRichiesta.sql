@@ -47,4 +47,3 @@ INSERT INTO [dbo].[TurnoSets] ([IdTurno], [NomeTurno],[Paga], [FasciaOraria]) VA
 SET IDENTITY_INSERT [dbo].[TurnoSets] OFF
 
 --//TURNO
-

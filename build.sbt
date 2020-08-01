@@ -21,10 +21,7 @@ lazy val client = project.settings(
     librariesTest.junit,
     librariesTest.monocle,
     librariesTest.testFXCore,
-    librariesTest.junitParams,
-    libraries.slick,
-    libraries.mssql,
-    libraries.slickHikaricp
+    librariesTest.junitParams
   ),
   scalacOptions ++= compilerOptions,
   assemblySettings,
@@ -88,7 +85,10 @@ lazy val utils = project.settings(
     libraries.sprayJson,
     libraries.jwt,
     libraries.akkaActor,
-    libraries.akkaStream
+    libraries.akkaStream,
+    libraries.slick,
+    libraries.mssql,
+    libraries.slickHikaricp
   ),
   scalacOptions ++= compilerOptions
 )
@@ -178,6 +178,14 @@ lazy val librariesTest = new {
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
+  assemblyMergeStrategy in assembly := {
+    case PathList("test", "resources", "application.conf") =>
+      MergeStrategy.discard
+    case "module-info.class" => MergeStrategy.discard
+    case x =>
+      val oldStrategy = (assemblyMergeStrategy in assembly).value
+      oldStrategy(x)
+  },
   scalacOptions ++= compilerOptions,
   cleanFiles += baseDirectory.value / "temp",
   coverageEnabled  := false,
