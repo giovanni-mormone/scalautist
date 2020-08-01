@@ -1158,6 +1158,7 @@ INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], 
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (6, N'Conducente', N'Maestro',N'91485236',3,3,  N'$2a$10$DxeTiUgaaqngkJIS9d2hOe4skaR1jDF5FADm/y9qMdyrNloM.VHLm',1,  N'tutu2',1)
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (7, N'Pro', N'Va',N'91485236',3,3,  N'$2a$10$DxeTiUgaaqngkJIS9d2hOe4skaR1jDF5FADm/y9qMdyrNloM.VHLm',1,  N'tutu2',1)
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName],[DisponibilitaStraordinarioSetIdDisponibilitaStraordinario]) VALUES (8, N'MAtto', N'Mattesi',N'91485236',3,3,  N'$2a$10$DxeTiUgaaqngkJIS9d2hOe4skaR1jDF5FADm/y9qMdyrNloM.VHLm',1,  N'tutu2',1)
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (9, N'Fabian',  N'Aspee', N'569918598',2, null, N'$2$11$aM4rc0RdMer10tS4nG10veYvghJAiUrotL317qfzh6y1mer6FNu56',0,N'root2')
 
 SET IDENTITY_INSERT [dbo].[PersoneSets] OFF
 

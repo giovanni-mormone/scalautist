@@ -19,10 +19,7 @@ class LoginViewTest extends BaseTest with StartServer{
   private val NEW_USER_PASS:String = "root"
 
   private var loginView:LoginOperations = _
-  @After
-  def closeScene():Unit={
-    closeCurrentWindow()
-  }
+
   @Before
   def beforeEachLoginTest(): Unit = {
     setUp(classOf[LoginLaunch])
@@ -35,7 +32,7 @@ class LoginViewTest extends BaseTest with StartServer{
     Thread.sleep(4000)
     loginView.clickModalButton()
     Thread.sleep(1000)
-    val titleRes: Label = find("#title"): @nowarn
+    val titleRes: Label = find("#title")
     Thread.sleep(2000)
     assert(titleRes.getText.equals("Cambia Password"))
   }
@@ -45,7 +42,7 @@ class LoginViewTest extends BaseTest with StartServer{
   def newUserLoginModal(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
     Thread.sleep(4000)
-    val msgLabel: Label = find("#messageLabel"): @nowarn
+    val msgLabel: Label = find("#messageLabel")
     Thread.sleep(2000)
     assert(msgLabel.getText.equals("È il tuo primo login! Cambia password per poter accedere al programma!"))
     loginView.clickModalButton()
@@ -55,7 +52,7 @@ class LoginViewTest extends BaseTest with StartServer{
   def displayLoading(): Unit = {
     loginView.login(NEW_USER, NEW_USER_PASS)
     ensureEventQueueComplete()
-    val loadBox: VBox = find("#loadingBox"): @nowarn
+    val loadBox: VBox = find("#loadingBox")
     assert(loadBox.isVisible)
   }
   @Test
@@ -86,7 +83,7 @@ class LoginViewTest extends BaseTest with StartServer{
 
   private def credentialError(): Unit = {
     ensureEventQueueComplete()
-    val errorLabel:Label = find("#error"): @nowarn
+    val errorLabel:Label = find("#error")
     assert(errorLabel.isVisible)
   }
 }
