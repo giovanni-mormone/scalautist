@@ -2,9 +2,9 @@ package view.mainview
 
 import java.sql.Date
 
-import caseclass.CaseClassDB.{Parametro, Regola, Terminale, Turno, Zona}
+import caseclass.CaseClassDB._
+import caseclass.CaseClassHttpMessage
 import caseclass.CaseClassHttpMessage.{AlgorithmExecute, InfoAbsenceOnDay, InfoReplacement, ResultAlgorithm}
-import caseclass.{CaseClassDB, CaseClassHttpMessage}
 import utils.TransferObject.{DataForParamasModel, InfoRichiesta}
 import view.DialogView
 import view.fxview.component.manager.subcomponent.util.ParamsForAlgorithm
@@ -19,6 +19,11 @@ trait ManagerView extends DialogView {
    */
   def confirmRun(message: List[(String,String)], algorithmExecute: AlgorithmExecute): Unit
 
+  /**
+   * This method draws status notifies emitted from server
+   * @param str text of notification
+   * @param tag type of notification
+   */
   def drawNotification(str: String, tag: Long): Unit
 
   /**
@@ -121,7 +126,7 @@ trait ManagerView extends DialogView {
 
   /**
    * Tell the view to draw the result selection view
-   * @param terminal
+   * @param terminal list of terminal to draw
    */
   def drawResultTerminal(terminal: List[Terminale]): Unit
 
@@ -163,7 +168,7 @@ trait ManagerView extends DialogView {
 
   /**
    *  Shows a summary of all the params selected.
-   * @param data
+   * @param data instance of DataForParamasModel to show
    */
 def showInfoParam(data: DataForParamasModel): Unit
 

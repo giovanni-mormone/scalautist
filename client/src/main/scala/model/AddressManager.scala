@@ -2,6 +2,10 @@ package model
 
 import com.typesafe.config.ConfigFactory
 
+/**
+ * @author Giovanni Mormone
+ * Class to set the server ip:port
+ */
 object AddressManager{
 
   private val LOCAL_KEY: String = "server.address.local"

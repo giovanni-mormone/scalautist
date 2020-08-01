@@ -1,23 +1,27 @@
-package view.baseconfiguration.humanresource
+package view.baseconfiguration.manager
 
 import javafx.application.Platform
 import javafx.scene.control.{Button, Label, TableView}
 import org.junit.{After, Before, Test}
+import utilstest.StartServer3
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTable
 import view.humanresourceoperation.ZonaOperation
-import view.launchview.HumanResourceLaunch
+import view.launchview.ManagerLaunch
+import view.mainviewoperations.ManagerOperations
 
-class ZonaTest extends BaseTest {
+class ZonaTest extends BaseTest with StartServer3{
 
   var zona: ZonaOperation = _
+  var managerOperations: ManagerOperations = _
 
   val nameToSearch: String = "ces"
-  val resultOk: String = "Success"
+  val resultOk: String = "success"
 
   @Before
   def beforeEachFerieTest(): Unit = {
-    setUp(classOf[HumanResourceLaunch])
+    setUp(classOf[ManagerLaunch])
+    managerOperations = ManagerOperations(this)
     zona = ZonaOperation(this)
     zona.openZona()
     ensureEventQueueComplete()
@@ -35,7 +39,7 @@ class ZonaTest extends BaseTest {
     ensureEventQueueComplete()
     sleep(2000)
     val text: Label = zona.getMessage
-    assert(text.getText.equals(resultOk))
+    assert(text.getText.contains(resultOk))
   }
 
   @Test
@@ -51,11 +55,11 @@ class ZonaTest extends BaseTest {
   def updateZona(): Unit = {
     zona.updateZona()
     ensureEventQueueComplete()
-    sleep(500)
+    sleep(1500)
     zona.clickUpdate()
     sleep(1500)
     val text: Label = zona.getMessage
-    assert(text.getText.equals(resultOk))
+    assert(text.getText.contains(resultOk))
   }
 
   @Test
@@ -66,13 +70,14 @@ class ZonaTest extends BaseTest {
     zona.clickUpdate()
     sleep(1500)
     val text: Label = zona.getMessage
-    assert(text.getText.equals(resultOk))
+    assert(text.getText.contains(resultOk))
   }
 
   @Test
   def notUpdateZona(): Unit = {
     zona.notUpdateZona()
     ensureEventQueueComplete()
+    sleep(2000)
     zona.clickNotUpdate()
     ensureEventQueueComplete()
     sleep(1500)

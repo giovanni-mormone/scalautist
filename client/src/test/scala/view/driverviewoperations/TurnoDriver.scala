@@ -15,6 +15,6 @@ object TurnoDriver {
 
     override def clickLunedi(): Unit = toTest.clickOn("Lunedi")
 
-    override def clickVenerdi(): Unit = ???
+    override def clickVenerdi(): Unit = toTest.clickOn("Venerdi")
   }
 }

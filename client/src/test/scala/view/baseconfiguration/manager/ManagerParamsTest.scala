@@ -14,7 +14,6 @@ class ManagerParamsTest extends BaseTest with StartServer3{
 
   var params: ManagerParamsOperation = _
   var managerOperations: ManagerOperations = _
-  var modalOn: Boolean = false
 
   @Before
   def beforeEachManageAbsenceTest(): Unit = {
@@ -51,7 +50,11 @@ class ManagerParamsTest extends BaseTest with StartServer3{
   @Test
   def openModalOldParam(): Unit = {
     params.setTime("#initDate",1)
+    ensureEventQueueComplete()
+    params.sleep(500)
     params.setTime("#endDate", 2)
+    ensureEventQueueComplete()
+    params.sleep(500)
     params.clickOnComponent("#old")
     params.sleep(2000)
     params.chooseOldParam()

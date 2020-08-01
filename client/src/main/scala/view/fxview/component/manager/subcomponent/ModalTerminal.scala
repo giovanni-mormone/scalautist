@@ -46,7 +46,7 @@ object ModalTerminal {
     @FXML
     var id: TextField = _
     @FXML
-    var name: TextField = _
+    var namet: TextField = _
     @FXML
     var delete: Button = _
     @FXML
@@ -79,22 +79,22 @@ object ModalTerminal {
     private def updateButton(resourceBundle: ResourceBundle): Unit = {
       update.setText(resourceBundle.getResource("update"))
       update.setOnAction(_ => parent.updateTerminal(
-        Terminale(name.getText(),
+        Terminale(namet.getText(),
           zonesList.filter(zone => zones.getSelectionModel.getSelectedItem.equals(zone.zones)).head.idZone.head,
           Some(id.getText.toInt)))
       )
     }
 
     private def manageTerminalText(): Unit = {
-      name.setText(terminal.nomeTerminale)
-      name.textProperty().addListener((_, oldS, word) => {
-        TextFieldControl.controlNewChar(name, ZonaChecker, word, oldS)
+      namet.setText(terminal.nomeTerminale)
+      namet.textProperty().addListener((_, oldS, word) => {
+        TextFieldControl.controlNewChar(namet, ZonaChecker, word, oldS)
         ableToChange()
       })
     }
 
     private def ableToChange(): Unit =
-      update.setDisable(name.getText().equals(""))
+      update.setDisable(namet.getText().equals(""))
 
   }
 }

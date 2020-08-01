@@ -5,8 +5,6 @@ import javafx.scene.input.KeyCode
 import view.baseconfiguration.BaseTest
 import view.fxview.component.HumanResources.subcomponent.util.PersonaTable
 
-import scala.annotation.nowarn
-
 trait ZonaOperation {
   def openZona(): Unit
   def updateZona(): Unit
@@ -33,7 +31,7 @@ object ZonaOperation {
     private val searchId: String = "#searchBox"
     private val addButtonId: String = "#zonaButton"
     private val addZoneId: String = "#newName"
-    private val nameZonaId: String = "#name"
+    private val nameZonaId: String = "#namez"
     private val updateId: String = "#update"
     private val deleteId: String = "#delete"
 
@@ -73,7 +71,9 @@ object ZonaOperation {
 
     override def clickNotUpdate(): Unit = {
       toTest.clickOn(nameZonaId)
-      val text: TextField = toTest.find(nameZonaId): @nowarn
+      toTest.sleep(1000)
+      val text: TextField = toTest.find(nameZonaId)
+      toTest.sleep(1000)
       while(!text.getText.equals("")) {
         toTest.press(KeyCode.BACK_SPACE)
         toTest.release(KeyCode.BACK_SPACE)
@@ -98,7 +98,7 @@ object ZonaOperation {
       toTest.find(addButtonId)
 
     override def openZona(): Unit =
-      toTest.clickOn("#zonaManage")
+      toTest.clickOn("#manageZoneButton")
 
   }
 }

@@ -5,6 +5,7 @@ import javafx.scene.layout.{BorderPane, VBox}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.launchview.HumanResourceLaunch
 import view.mainviewoperations.HumanResourceOperations
@@ -12,14 +13,27 @@ import view.mainviewoperations.HumanResourceOperations
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class HomeTest extends BaseTest {
+class HomeTest extends BaseTest with StartServer{
 
   var home: HumanResourceOperations = _
+
+  private def login()={
+    val user: String = "risuma"
+    val password: String = "rootrootN2"
+
+    clickOn("#usernameField")
+    write(user)
+    clickOn("#passwordField")
+    write(password)
+    clickOn("#loginButton")
+    sleep(10000)
+  }
 
   @Before
   def beforeEachFerieTest(): Unit = {
 
     setUp(classOf[HumanResourceLaunch])
+    login()
     home = HumanResourceOperations(this)
   }
 
@@ -33,7 +47,7 @@ class HomeTest extends BaseTest {
     home.openRescruit()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
+    val homePanel: BorderPane = find("#baseHR")
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -42,7 +56,7 @@ class HomeTest extends BaseTest {
     home.openFire()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
+    val homePanel: BorderPane = find("#baseHR")
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -51,7 +65,7 @@ class HomeTest extends BaseTest {
     home.openSick()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
+    val homePanel: BorderPane = find("#baseHR")
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -60,25 +74,7 @@ class HomeTest extends BaseTest {
     home.openHoliday()
     ensureEventQueueComplete()
     sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
-    assert(homePanel.getCenter.isVisible)
-  }
-
-  @Test
-  def goodOpenZone(): Unit = {
-    home.openZona()
-    ensureEventQueueComplete()
-    sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
-    assert(homePanel.getCenter.isVisible)
-  }
-
-  @Test
-  def goodOpenTerminal(): Unit = {
-    home.openTerminal()
-    ensureEventQueueComplete()
-    sleep(7000)
-    val homePanel: BorderPane = find("#baseHR"): @nowarn
+    val homePanel: BorderPane = find("#baseHR")
     assert(homePanel.getCenter.isVisible)
   }
 
@@ -87,7 +83,7 @@ class HomeTest extends BaseTest {
     home.openChangePassword()
     ensureEventQueueComplete()
     sleep(2000)
-    val changePassword: VBox = find("#changepasswordbox"): @nowarn
+    val changePassword: VBox = find("#changepasswordbox")
     assert(changePassword.isVisible)
   }
 }

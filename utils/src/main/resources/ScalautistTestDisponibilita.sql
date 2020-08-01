@@ -1168,7 +1168,8 @@ SET IDENTITY_INSERT [dbo].[ContratoeSets] OFF
 --PERSONA
 
 SET IDENTITY_INSERT [dbo].[PersoneSets] ON
-INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (1, N'Fabian',  N'Aspee',    N'569918598',1,null,  N'admin',1,N'admin')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (1, N'Fabian',  N'Aspee',    N'569918598',1,null,  N'admin',1,N'admin1')
+INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (500, N'manager',  N'manager',    N'569456239',1,null,  N'$2$11$aM4rc0RdMer10tS4nG10veYvghJAiUrotL317qfzh6y1mer6FNu56',0,N'admin')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (2, N'Francesco', N'Cassano',N'9184756',  3,1,     N'admin2',1,N'admin2')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (3, N'Giovanni', N'Mormone', N'394562358',2,null,  N'root',1,  N'root')
 INSERT INTO [dbo].[PersoneSets] ([Matricola], [Nome], [Cognome], [NumTelefono], [Ruolo], [Terminale_IdTerminale], [Password],[IsNew],[UserName]) VALUES (4, N'Luciano',  N'Fuentes', N'365478962',3,1,     N'yoyo',1,  N'yoyo')
@@ -3748,3 +3749,11 @@ INSERT INTO [dbo].[PresenzaSets] ([IdPresenza], [Data],[Turno_IdTurno],[Persone_
 SET IDENTITY_INSERT [dbo].[PresenzaSets] OFF
 
 --//PRESENZA 
+
+SET IDENTITY_INSERT [dbo].[ParametriSets] ON
+INSERT INTO [dbo].[ParametriSets] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,1,N'natale')
+SET IDENTITY_INSERT [dbo].[ParametriSets] OFF
+
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] ON
+INSERT INTO [dbo].[ZonaTerminaleSets] ([IdZonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSets] OFF

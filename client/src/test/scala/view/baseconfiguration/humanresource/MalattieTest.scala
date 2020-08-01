@@ -2,10 +2,12 @@ package view.baseconfiguration.humanresource
 
 import java.time.LocalDate
 
+import javafx.application.Platform
 import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
 import org.junit.{After, Before, Test}
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.MalattieOperation
 import view.launchview.HumanResourceLaunch
@@ -13,8 +15,8 @@ import view.launchview.HumanResourceLaunch
 import scala.annotation.nowarn
 
 @RunWith(classOf[JUnitParamsRunner])
-class MalattieTest extends BaseTest {
-  val textOk:String = "Malattia Inserite Correttamente"
+class MalattieTest extends BaseTest with StartServer{
+  val textOk:String = "Inserito Correttamente"
   var malattie:MalattieOperation = _
   val date:LocalDate =LocalDate.of(2020,6,12)
   val dateF:LocalDate =LocalDate.of(2020,6,15)
@@ -22,11 +24,24 @@ class MalattieTest extends BaseTest {
   @Before
   def beforeEachFerieTest(): Unit = {
     setUp(classOf[HumanResourceLaunch])
+    login()
     malattie = MalattieOperation(this)
   }
   @After
   def closeStage():Unit={
-    closeCurrentWindow()
+    Platform.runLater(()=>myStage.close())
+  }
+
+  private def login()={
+    val user: String = "risuma"
+    val password: String = "rootrootN2"
+
+    clickOn("#usernameField")
+    write(user)
+    clickOn("#passwordField")
+    write(password)
+    clickOn("#loginButton")
+    sleep(10000)
   }
 
   @Test
@@ -41,7 +56,8 @@ class MalattieTest extends BaseTest {
     malattie.enterSecondDate(dateF)
     malattie.clickModalButton()
     sleep(5000)
-    val msgLabel:Label = find("#messageLabel"): @nowarn
+    val msgLabel:Label = find("#messageLabel")
+    sleep(1000)
     assert(msgLabel.getText.equals(textOk))
 
   }
@@ -53,7 +69,8 @@ class MalattieTest extends BaseTest {
     malattie.clickTable()
     sleep(3000)
     malattie.clickModalButton()
-    val modalButton:Button = find("#button"): @nowarn
+    val modalButton:Button = find("#button")
+    sleep(1000)
     assert(modalButton.isDisable)
 
   }
@@ -66,7 +83,8 @@ class MalattieTest extends BaseTest {
     sleep(3000)
     malattie.enterFirstDate(date)
     malattie.clickModalButton()
-    val modalButton:Button = find("#button"): @nowarn
+    val modalButton:Button = find("#button")
+    sleep(1000)
     assert(modalButton.isDisable)
 
   }
