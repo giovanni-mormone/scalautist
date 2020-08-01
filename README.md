@@ -45,16 +45,15 @@ java -jar server.jar
 ```
 If you like you can also pull a docker image containing an istance of the server.
 ```bash
-pull DOCKER DEL SERVER
+docker pull giovannimormone/scalautistserver
 ```
 This instance is meant to work locally as a substitute of the server.jar, you can run it
 with:
 ```bash
-docker run -p8080:8080 dockerimage
+docker run -p8080:8080 <dockerimage>
 ```
 There is also a remote docker container with an istance of the server already running, you can interact with it
 simply running the client in remote mode.
-
 
 
 ## Team members
