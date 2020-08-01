@@ -7,12 +7,13 @@ import javafx.scene.control.{Button, ComboBox, Label, TextField}
 import junitparams.JUnitParamsRunner
 import org.junit.{After, Before, Test}
 import org.junit.runner.RunWith
+import utilstest.StartServer
 import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.RecruitOperation
 import view.launchview.HumanResourceLaunch
 
 @RunWith(classOf[JUnitParamsRunner])
-class AssumiTest extends BaseTest {
+class AssumiTest extends BaseTest with StartServer{
 
   var assumi: RecruitOperation = _
 
@@ -25,13 +26,25 @@ class AssumiTest extends BaseTest {
 
   @Before
   def beforeEachFerieTest(): Unit = {
+
     setUp(classOf[HumanResourceLaunch])
+    login()
     assumi = RecruitOperation(this)
     assumi.openRecruit()
     ensureEventQueueComplete()
-    sleep(7500)
+    sleep(3500)
   }
+  private def login()={
+    val user: String = "root2"
+    val password: String = "rootrootN2"
 
+    clickOn("#usernameField")
+    write(user)
+    clickOn("#passwordField")
+    write(password)
+    clickOn("#loginButton")
+    sleep(6000)
+  }
   @After
   def closeStage(): Unit = {
     Platform.runLater(()=>myStage.close())
