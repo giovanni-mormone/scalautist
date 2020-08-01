@@ -33,7 +33,7 @@ class ChangePasswordTest extends BaseTest  with StartServer{
     changeView.changePassword(OLD_PASS,VALID_PASS,VALID_PASS)
     ensureEventQueueComplete()
     Thread.sleep(10000)
-    val msgLabel:Label = find("#messageLabel"): @nowarn
+    val msgLabel:Label = find("#messageLabel")
     assert(msgLabel.getText.equals("Password Cambiata con successo!"))
     changeView.clickModalButton()
   }
@@ -42,7 +42,7 @@ class ChangePasswordTest extends BaseTest  with StartServer{
   def displayLoading(): Unit = {
     changeView.changePassword(OLD_PASS, VALID_PASS, VALID_PASS)
     ensureEventQueueComplete()
-    val loadBox: VBox = find("#loadingBox"): @nowarn
+    val loadBox: VBox = find("#loadingBox")
     assert(loadBox.isVisible)
   }
 
@@ -98,17 +98,17 @@ class ChangePasswordTest extends BaseTest  with StartServer{
   }
 
   private def confirmError(): Unit = {
-    val error: Label = find("#confirmError"): @nowarn
+    val error: Label = find("#confirmError")
     assert(error.isVisible)
   }
 
   private def passError(): Unit = {
-    val error: Label = find("#passError"): @nowarn
+    val error: Label = find("#passError")
     assert(error.isVisible)
   }
 
   private def changeButtonDisabled(): Unit = {
-    val changeButton: Button = find("#changePasswordButton"): @nowarn
+    val changeButton: Button = find("#changePasswordButton")
     assert(changeButton.isDisable)
   }
 
