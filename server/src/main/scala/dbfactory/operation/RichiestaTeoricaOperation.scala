@@ -201,9 +201,9 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
     }yield if (!insertDay.contains(StatusCodes.SUCCES_CODE))  {allInsert.foreach(deleteAll); insertDay} else insertDay
 
   @nowarn//at this point req is always defined
-  private def checkOverlappingRequests(requests: List[RichiestaTeorica], toCompareList: List[RichiestaTeorica]):Option[(List[RichiestaTeorica],List[RichiestaTeorica])] = {
+  private def checkOverlappingRequests(overlappingRequests: List[RichiestaTeorica], toCompareList: List[RichiestaTeorica]):Option[(List[RichiestaTeorica],List[RichiestaTeorica])] = {
     @scala.annotation.tailrec
-    def _checkOverlappingRequests(_requests: List[RichiestaTeorica],toCompare: RichiestaTeorica, result: (List[RichiestaTeorica],List[RichiestaTeorica])=(List.empty,List.empty)): Option[(List[RichiestaTeorica],List[RichiestaTeorica])]= _requests match {
+    def _checkOverlappingRequests(_overlappingRequests: List[RichiestaTeorica], toCompare: RichiestaTeorica, result: (List[RichiestaTeorica],List[RichiestaTeorica])=(List.empty,List.empty)): Option[(List[RichiestaTeorica],List[RichiestaTeorica])]= _overlappingRequests match {
       case ::(req, next) if req.dataInizio.compareTo(toCompare.dataInizio) < 0 =>
         update(RichiestaTeorica(req.dataInizio, endOfMonth(previousMonthDate(toCompare.dataInizio)), req.terminaleId, req.idRichiestaTeorica))
         _checkOverlappingRequests(next,toCompare,(toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
@@ -216,9 +216,9 @@ object RichiestaTeoricaOperation extends RichiestaTeoricaOperation {
         _checkOverlappingRequests(next,toCompare, (toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
       case ::(req,next) => _checkOverlappingRequests(next,toCompare, (toCompare.copy(terminaleId = req.terminaleId) :: result._1,result._2))
       case Nil =>
-        Some(toCompareList.filter(x => !requests.exists(_.terminaleId==x.terminaleId)) ::: result._1.distinct,result._2)
+        Some(toCompareList.filter(x => !overlappingRequests.exists(_.terminaleId==x.terminaleId)) ::: result._1.distinct,result._2)
     }
-    _checkOverlappingRequests(requests,toCompareList.head)
+    _checkOverlappingRequests(overlappingRequests,toCompareList.head)
   }
 
   private def insertDay(days: List[RequestGiorno], idRT:Option[List[Int]]): Future[Option[Int]] = days match{

@@ -12,14 +12,6 @@ There are three type of user:
  - Driver: D can watch his work shifts and his salary
  
 ## Note to work
-To run correctly the system you need to start RabbitMQ on docker with this command
-```bash
-docker run -p 8888:5672 rabbitmq:3-management
-```
-If you've some problem install docker and run this command
-```bash
-docker pull rabbitmq
-```
  
 ## Client
 Client is the sub-system that allows user to interface to the system and make operation that he needs.
@@ -27,9 +19,18 @@ To run the client application with the local server:
 ```bash
 scala client.jar
 ```
-To run the client application with the another server, you have to specify ip and port:
+or with
 ```bash
-scala client.jar ip:port
+java -jar client.jar
+```
+Note tha if you run the client locally you need to start a local instance of the server.
+To run the client with a connection to a remote server:
+```bash
+scala client.jar remote
+```
+or with 
+```bash
+java -jar client.jar remote
 ```
 
 ## Server
@@ -38,14 +39,23 @@ To run the server application:
 ```bash
 scala server.jar
 ```
-But there is a docker instance of server that you can run with the command
+or with:
 ```bash
-docker run -p 8080:8080 giovannimormone/scalautistserver:lastest
+java -jar server.jar
 ```
-To download this version you can use 
+If you like you can also pull a docker image containing an istance of the server.
 ```bash
-docker pull giovannimormone/scalautistserver
+pull DOCKER DEL SERVER
 ```
+This instance is meant to work locally as a substitute of the server.jar, you can run it
+with:
+```bash
+docker run -p8080:8080 dockerimage
+```
+There is also a remote docker container with an istance of the server already running, you can interact with it
+simply running the client in remote mode.
+
+
 
 ## Team members
 

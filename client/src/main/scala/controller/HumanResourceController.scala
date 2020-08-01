@@ -124,7 +124,7 @@ object HumanResourceController {
     override def recruit(persona: Assumi): Unit =
       model.recruit(persona).onComplete(result =>
         responseValutation[Login](result,
-          login => showResult(messageOnModal = false, login.user + ": " + login.password),
+          login => showResult(messageOnModal = false, "Credenziali dell'utente:\n" + login.user + ": " + login.password),
           _ => None,
           EmployeeView.recruit,
           showSuccess = false))

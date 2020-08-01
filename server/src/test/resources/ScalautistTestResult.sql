@@ -2119,3 +2119,5 @@ INSERT INTO [dbo].[RisultatoSets] ([IdRisultato], [Data], [Persone_Matricola], [
 SET IDENTITY_INSERT [dbo].[RisultatoSets] OFF
 
 --//RISULTATOSETS
+
+select * from RisultatoSets where Persone_Matricola=187
