@@ -16,7 +16,7 @@ object HomeDriver {
     override def clickHomeMenu(): Unit = toTest.clickOn("#labelHome")
 
     override def clickTable(): Unit = {
-      toTest.moveTo("#tableTurno").clickOn( "8:00-12:00")
+      toTest.moveTo("#tableTurno").clickOn( "6:00 alle 10:00")
     }
     override def clickHeader(): Unit = {
       toTest.moveTo("#tableTurno")

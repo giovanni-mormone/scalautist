@@ -33,6 +33,7 @@ class ManagerTeoricRequest extends BaseTest{
     teoricRequest = ManagerTeoricRequestOperation(this)
     managerOperations = ManagerOperations(this)
   }
+
   @After
   def closeStage():Unit={
     closeCurrentWindow()

@@ -19,7 +19,7 @@ class TurnoTest extends BaseTest with StartServer3{
     driverTurno = TurnoDriver(this)
   }
   private def login()={
-    val user: String = "root2"
+    val user: String = "tutuMaestro"
     val password: String = "rootrootN2"
 
     clickOn("#usernameField")

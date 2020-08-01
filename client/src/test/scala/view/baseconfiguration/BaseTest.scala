@@ -4,7 +4,8 @@ import javafx.application.Application
 import javafx.scene.Node
 import javafx.scene.input.{KeyCode, MouseButton}
 import javafx.stage.Stage
-import org.junit.After
+import org.junit.{After, BeforeClass}
+import org.testfx.api.FxToolkit.registerPrimaryStage
 import org.testfx.framework.junit.ApplicationTest
 import org.testfx.util.WaitForAsyncUtils
 

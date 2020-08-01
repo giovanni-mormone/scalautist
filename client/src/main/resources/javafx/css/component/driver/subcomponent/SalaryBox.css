@@ -49,10 +49,7 @@
     -fx-text-fill: #7c8a96;
     -fx-spacing: 10;
 }
-.date-picker-popup >  .calendar-grid {
-    -fx-min-height: 300;
-    -fx-min-width: 30;
-}
+
 #salaryList{
     -fx-min-width: 150;
 }

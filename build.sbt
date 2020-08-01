@@ -24,8 +24,7 @@ lazy val client = project.settings(
     librariesTest.junitParams
   ),
   scalacOptions ++= compilerOptions,
-  assemblySettings,
-
+  assemblySettings
 ).dependsOn(utils,event)
 
 lazy val server = project.enablePlugins(JavaAppPackaging).
@@ -159,6 +158,7 @@ lazy val librariesTest = new {
   val scalaCheckOrg      = "org.scalacheck"
   val testFXVersion      ="4.0.13-alpha"
   val testFXOrg          = "org.testfx"
+  val monocleVersion      ="1.8.0_20"
   val junitParamsVersion = "1.1.1"
   val akkaStream         = "akka-stream-testkit"
   val akkaHttp           = "akka-http-testkit"
@@ -169,7 +169,7 @@ lazy val librariesTest = new {
   val scalaCheck         = "org.scalacheck" %% "scalacheck"     % scalaCheckVersion % Test
   val testFXTest         ="org.testfx" % "testfx-junit" % testFXVersion % Test
   val testFXCore         = "org.testfx" % "testfx-core" % testFXVersion % Test
-  val monocle            ="org.testfx" % "openjfx-monocle" % "1.8.0_20" % Test
+  val monocle            ="org.testfx" % "openjfx-monocle" % monocleVersion  % Test
   val junitParams        = "pl.pragmatists" % "JUnitParams" % junitParamsVersion % Test
   val testKitStream      ="com.typesafe.akka" %% "akka-stream-testkit" % libraries.akkaVersion % Test
   val testKitHttp        ="com.typesafe.akka" %% "akka-http-testkit" % libraries.akkaHttpVersion % Test
