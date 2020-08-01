@@ -1183,7 +1183,7 @@ INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalat
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (13,N'20200422',N'20200431',1,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (15,N'20200422',N'20200429',1,7)
 
-INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (16,N'20200322',N'20200629',1,2)
+INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (16,N'20200322',N'20200329',1,2)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (18,N'20200322',N'20200331',1,5)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (20,N'20200322',N'20200529',1,7)
 INSERT INTO [dbo].[AssenzaSets] ([IdAssenza], [DataInizio], [DataFine], [IsMalattia],[PersoneSet_Matricola]) VALUES (21,N'20200511',N'20200514',1,5)

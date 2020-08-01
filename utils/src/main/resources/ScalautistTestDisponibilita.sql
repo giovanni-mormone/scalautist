@@ -3290,3 +3290,11 @@ INSERT INTO [dbo].[RichiestaSets] ([IdRichiesta], [Turno_IdTurno],[Giorno_IdGior
 SET IDENTITY_INSERT [dbo].[RichiestaSets] OFF
 
 --//RICHIESTASETS
+
+SET IDENTITY_INSERT [dbo].[ParametriSet] ON
+INSERT INTO [dbo].[ParametriSet] ([IdParametri], [TreSabato], [NomeParametro]) VALUES (1,true,N'natale')
+SET IDENTITY_INSERT [dbo].[ParametriSet] OFF
+
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSet] ON
+INSERT INTO [dbo].[ZonaTerminaleSet] ([IdonaTerminale], [Zona], [Terminale], [ParametriSetIdParametri]) VALUES (1,2,2,1)
+SET IDENTITY_INSERT [dbo].[ZonaTerminaleSet] OFF

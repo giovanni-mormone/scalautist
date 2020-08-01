@@ -2,6 +2,7 @@ package view.baseconfiguration.humanresource
 
 import java.time.LocalDate
 
+import javafx.application.Platform
 import javafx.scene.control.{Button, Label}
 import junitparams.JUnitParamsRunner
 import org.junit.runner.RunWith
@@ -11,11 +12,9 @@ import view.baseconfiguration.BaseTest
 import view.humanresourceoperation.FerieOperation
 import view.launchview.HumanResourceLaunch
 
-import scala.annotation.nowarn
-
 @RunWith(classOf[JUnitParamsRunner])
 class FerieTest extends BaseTest with StartServer{
-  val textOk:String = "Ferie Assegnate Correttamente"
+  val textOk:String = "Inserito Correttamente"
   var ferie:FerieOperation = _
   val date:LocalDate =LocalDate.of(2020,6,12)
   val dateF:LocalDate =LocalDate.of(2020,6,15)
@@ -41,7 +40,7 @@ class FerieTest extends BaseTest with StartServer{
   }
   @After
   def closeStage():Unit={
-    closeCurrentWindow()
+    Platform.runLater(()=>myStage.close())
   }
 
   @Test
@@ -55,7 +54,8 @@ class FerieTest extends BaseTest with StartServer{
     ferie.enterSecondDate(dateF)
     ferie.clickModalButton()
     sleep(5000)
-    val msgLabel:Label = find("#messageLabel"): @nowarn
+    val msgLabel:Label = find("#messageLabel")
+    sleep(2000)
     assert(msgLabel.getText.equals(textOk))
 
   }
@@ -67,7 +67,8 @@ class FerieTest extends BaseTest with StartServer{
     ferie.clickTable()
     sleep(3000)
     ferie.clickModalButton()
-    val modalButton:Button = find("#button"): @nowarn
+    val modalButton:Button = find("#button")
+    sleep(2000)
     assert(modalButton.isDisable)
 
   }

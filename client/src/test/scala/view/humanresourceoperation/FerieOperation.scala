@@ -22,28 +22,34 @@ object FerieOperation {
 
     override def enterFirstDate(day: LocalDate): Unit = {
       val initDate:DatePicker = toTest.find("#initDate")
+      toTest.sleep(1000)
       toTest.clickOn(initDate)
       initDate.setValue(day)
     }
 
     override def enterSecondDate(day: LocalDate): Unit = {
       val finishDate:DatePicker = toTest.find("#finishDate")
+      toTest.sleep(1000)
       toTest.clickOn(finishDate)
       finishDate.setValue(day)
     }
 
     override def clickButtonHoliday(): Unit = {
       toTest.clickOn("#holidays")
+      toTest.sleep(1000)
     }
     override def clickButtonCloseError(): Unit = {
       toTest.clickOn("#confirmationButton")
+      toTest.sleep(1000)
     }
     override def clickModalButton(): Unit = {
       toTest.clickOn("#button")
+      toTest.sleep(1000)
     }
 
     override def clickTable(): Unit = {
       toTest.doubleClickOn("2")
+      toTest.sleep(1000)
     }
   }
 }
